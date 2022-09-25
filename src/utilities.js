@@ -45,6 +45,5 @@ export async function parseSchedule(response) {
         schedule.push(day);
     });
     temp.remove();
-    console.log(schedule);
     return schedule;
 }

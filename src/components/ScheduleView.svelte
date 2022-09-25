@@ -3,14 +3,16 @@
     import { fetchBaka, parseSchedule } from "../utilities";
     import GridCell from "./GridCell.svelte";
 
-    let scheduleData = [];
+    let scheduleData = JSON.parse(localStorage.getItem(`schedule:${$scheduleParams.class.id}:${$scheduleParams.mode}`)) ?? [];
 
     scheduleParams.subscribe((data) => {
         updateSchedule(parseSchedule(fetchBaka(data)));
     });
 
     async function updateSchedule(scheduleRequest) {
+        console.log(scheduleRequest);
         scheduleData = await scheduleRequest;
+        localStorage.setItem(`schedule:${$scheduleParams.class.id}:${$scheduleParams.mode}`, JSON.stringify(scheduleData));
     }
 </script>
 
