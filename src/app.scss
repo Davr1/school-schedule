@@ -1,0 +1,411 @@
+:root {
+    --main-background: #21262e;
+    --element-background: #434c56;
+    --dimmed-background: #31383f;
+    --accent: #1f6feb;
+    --alt-accent: #2dac45;
+    --text: #c9d1d9;
+    --text-active: #ffffff;
+}
+
+@media (max-aspect-ratio: 1/2) {
+    html,
+    body {
+        font-size: 1.3vh !important;
+    }
+
+    .cell {
+        min-width: 9vh !important;
+    }
+}
+
+@media (max-aspect-ratio: 3/4) {
+    #weekButtons {
+        width: 100%;
+        max-height: 2.7rem;
+        grid-column: 1/3;
+    }
+
+    #weekButtons button {
+        width: 100% !important;
+        font-size: 1.1rem;
+    }
+
+    #dropdown {
+        order: 1;
+        width: 10rem !important;
+    }
+
+    #reload {
+        order: 2;
+        width: 100%;
+        max-height: 2.7rem;
+    }
+
+    main {
+        height: auto !important;
+    }
+
+    nav {
+        display: grid !important;
+        grid-template-columns: 10rem 1fr;
+        grid-template-rows: 1fr 1fr;
+        width: 90% !important;
+        height: 5.6rem !important;
+        place-items: center;
+    }
+
+    #info {
+        font-size: 1.1rem;
+    }
+}
+
+@media (min-aspect-ratio: 2/5) and (max-aspect-ratio: 3/2) {
+    html,
+    body {
+        font-size: 1.4vh !important;
+    }
+
+    main {
+        height: auto !important;
+    }
+
+    .cell {
+        min-width: 11vh !important;
+    }
+}
+
+@media (min-aspect-ratio: 3/1) {
+    html,
+    body {
+        font-size: 1.7vh !important;
+    }
+
+    main {
+        max-width: 200vh;
+    }
+}
+
+@media (pointer: fine) {
+    .day-item-hover:hover {
+        box-shadow: 1px 1px 5px 3px #0005;
+        transform: scale(1.02);
+        filter: brightness(1.02);
+    }
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    font-size: 1.7vh;
+    font-family: "Inter var", Inter, sans-serif;
+    font-feature-settings: "tnum";
+    font-weight: 300;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background: var(--main-background);
+    color: var(--text);
+    cursor: default;
+}
+
+main {
+    height: 100%;
+    width: 100%;
+    overflow: auto;
+    display: grid;
+    grid-template-rows: /*3.4rem*/ repeat(5, 1fr);
+    grid-auto-flow: column;
+    scrollbar-width: thin;
+    scrollbar-color: dark;
+}
+
+::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+    background: #1d2128;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #373e47;
+    border-radius: 4px;
+}
+
+.day-row {
+    display: flex;
+}
+
+.cell-container {
+    display: inline-grid;
+    grid-auto-columns: 1fr;
+    grid-auto-flow: column;
+    flex: 1;
+}
+
+.cell {
+    margin: 0.3rem;
+    position: relative;
+    min-width: 0;
+    transition: ease-out 100ms;
+}
+
+.cell-content {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.group {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    border-radius: 0.3rem;
+    min-height: 0;
+    background: var(--element-background);
+    box-shadow: 1px 1px 3px 2px #0002;
+    transition: ease-out 200ms;
+    flex: 1 1 auto;
+}
+
+.group:only-child {
+    min-height: 13.5vh;
+}
+
+.group:not(:last-of-type) {
+    margin-bottom: 0.6rem;
+}
+
+.group.changed {
+    background: var(--accent);
+    color: var(--text-active);
+}
+
+.group.changed2 {
+    background: var(--alt-accent);
+    color: var(--text-active);
+}
+
+.bk-timetable-day {
+    flex: 0 0 1rem;
+}
+
+.bk-day-wrapper {
+    display: inline-block;
+    writing-mode: vertical-rl;
+    flex: 1;
+    width: 1rem;
+}
+
+.absence {
+    display: none;
+}
+
+.group-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    padding: 0.2rem;
+    box-sizing: border-box;
+}
+
+.top {
+    display: flex;
+    justify-content: space-between;
+}
+
+.middle {
+    font-size: 1.45rem;
+    font-weight: 500;
+    text-align: center;
+    margin: auto;
+    line-height: 0;
+}
+
+.bottom {
+    text-align: center;
+}
+
+.day-name {
+    padding: 0.4rem 0 0.4rem 0.2rem;
+}
+
+.bk-timetable-hours {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    padding-left: 1.2rem;
+}
+
+.bk-hour-wrapper {
+    left: unset !important;
+    width: unset !important;
+    position: relative !important;
+    flex: 1 1 0;
+    margin: 0.3rem;
+    text-align: center;
+}
+
+.bk-hour-wrapper .num {
+    font-weight: 500;
+    font-size: 1.4rem;
+}
+
+nav {
+    position: relative;
+    height: 2.6rem;
+    margin: 0.4rem 0;
+    width: 100%;
+    flex: 0 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 300;
+}
+
+nav * {
+    font-family: inherit;
+    font-feature-settings: "tnum";
+}
+
+#weekButtons {
+    display: flex;
+    background: var(--dimmed-background);
+    padding: 0.2rem;
+    border-radius: 0.4rem;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+button {
+    background: inherit;
+    border: unset;
+    color: var(--text);
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: ease-out 100ms;
+}
+
+#classButton {
+    padding: 0 0.5rem 0 0.7rem;
+    background: var(--dimmed-background);
+    border-radius: 0.4rem;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#weekButtons > button {
+    position: relative;
+    width: 11.7rem;
+    border-radius: 0.3rem;
+}
+
+#weekButtons > button:not(.active) + button:not(.active)::before {
+    content: "";
+    position: absolute;
+    top: 0.1rem;
+    left: -1px;
+    bottom: 0.1rem;
+    border-left: 1px solid #0003;
+}
+
+button:hover {
+    filter: brightness(1.1);
+}
+
+button.active {
+    background: var(--element-background);
+    color: var(--text-active);
+}
+
+button.disabled {
+    pointer-events: none;
+    filter: opacity(0.4);
+}
+
+#weekButtons {
+    display: flex;
+    background: var(--dimmed-background);
+    padding: 0.2rem;
+    border-radius: 0.4rem;
+    height: 100%;
+    box-sizing: border-box;
+    gap: 1px;
+}
+
+#reload {
+    background: var(--dimmed-background);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    border-radius: 0.4rem;
+    gap: 0.5rem;
+    padding: 0 0.8rem 0 0.5rem;
+    white-space: nowrap;
+}
+
+#weekButtons,
+#reload,
+#classButton {
+    box-shadow: 0 1px 3px 2px #0001;
+}
+
+#reload > svg,
+#classButton > svg {
+    width: 1.8rem;
+    height: 1.8rem;
+}
+
+#dropdown {
+    width: 7rem;
+    height: 100%;
+    position: relative;
+}
+#dropdown.isVisible svg {
+    transform: rotate(-180deg);
+}
+
+#classSelect {
+    position: absolute;
+    left: 0;
+    bottom: -0.4rem;
+    transform: translateY(100%);
+    z-index: 2;
+    background: var(--dimmed-background);
+    border-radius: 0.6rem;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    width: 10rem;
+    gap: 1px;
+    padding: 0.2rem;
+    box-shadow: 0 1px 3px 2px #0005;
+    scrollbar-width: thin;
+    scrollbar-color: dark;
+}
+
+.option {
+    position: relative;
+    width: 100%;
+    text-align: left;
+    height: 2.6rem;
+    padding: 0 0.7rem;
+    border-radius: 0.4rem;
+    flex: 0 0 auto;
+}
+
+svg {
+    transition: ease-out 150ms;
+}
