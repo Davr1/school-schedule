@@ -1,7 +1,7 @@
 <script>
-    import Controls from "./components/Controls.svelte";
+    import Options from "./components/Options.svelte";
     import ScheduleView from "./components/ScheduleView.svelte";
 </script>
 
-<Controls />
+<Options />
 <ScheduleView />
