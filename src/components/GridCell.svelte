@@ -1,13 +1,13 @@
 <script>
     export let subject = {};
     let room = subject.room ?? "";
-    let subjectAbbr = subject.subjectAbbr ?? "";
+    let subjectAbbr = subject.subjectAbbr ?? subject.special ?? "";
     let teacherAbbr = subject.teacherAbbr ?? "";
     let group = subject.group ?? "";
     let changed = subject.changed;
 </script>
 
-<div class="group" class:changed>
+<div class="group" class:changed class:changed2={subject.special}>
     <div class="group-content">
         <div class="top">
             <div class="left">{group}</div>

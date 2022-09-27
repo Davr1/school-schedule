@@ -87,7 +87,7 @@
 }
 
 @media (pointer: fine) {
-    .group-content:hover {
+    .group:not(.changed2):hover {
         box-shadow: 1px 1px 5px 3px #0005;
         transform: scale(1.02);
         filter: brightness(1.02);
@@ -187,21 +187,6 @@ button {
     align-items: center;
 }
 
-#weekButtons > button {
-    position: relative;
-    width: 11.7rem;
-    border-radius: 0.3rem;
-}
-
-#weekButtons > button:not(.active) + button:not(.active)::before {
-    content: "";
-    position: absolute;
-    top: 0.1rem;
-    left: -1px;
-    bottom: 0.1rem;
-    border-left: 1px solid #0003;
-}
-
 #weekButtons {
     display: flex;
     background: var(--dimmed-background);
@@ -210,6 +195,20 @@ button {
     height: 100%;
     box-sizing: border-box;
     gap: 1px;
+
+    & > button {
+        position: relative;
+        width: 11.7rem;
+        border-radius: 0.3rem;
+        &:not(.active) + button:not(.active)::before {
+            content: "";
+            position: absolute;
+            top: 0.1rem;
+            left: -1px;
+            bottom: 0.1rem;
+            border-left: 1px solid #0003;
+        }
+    }
 }
 
 #reload {

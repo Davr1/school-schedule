@@ -38,7 +38,10 @@ export async function parseSchedule(response) {
                 subject.push({});
             }
             if (cell.querySelector(".empty")) {
-                subject.push({ special: cell.querySelector("span")?.textContent.trim() });
+                subject.push({
+                    special: cell.querySelector("span")?.textContent.trim(),
+                    id: Symbol()
+                });
             }
             day.push(subject);
         });
