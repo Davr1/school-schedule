@@ -1,5 +1,5 @@
 <script>
-    import { scheduleParams } from "../mainStore";
+    import { scheduleParams, hours } from "../mainStore";
     import { fetchBaka, parseSchedule } from "../utilities";
     import GridCell from "./GridCell.svelte";
 
@@ -17,6 +17,18 @@
 </script>
 
 <main>
+    <div class="hours">
+        {#each hours.time as hour, index}
+            <div class="hour-container">
+                <div class="num">{index + 1}</div>
+                <div class="hour">
+                    <span>{hour[0]}</span>
+                    -
+                    <span>{hour[1]}</span>
+                </div>
+            </div>
+        {/each}
+    </div>
     {#each scheduleData as day}
         <div class="day-row">
             <div class="cell-container">

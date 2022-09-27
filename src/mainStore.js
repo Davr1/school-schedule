@@ -15,6 +15,37 @@ export const classList = [
     { name: "T4.C", id: "U9" }
 ];
 
+export const hours = {
+    offsets: [
+        [475, 5],
+        [45, 10],
+        [45, 20],
+        [45, 10],
+        [45, 10],
+        [45, 10],
+        [45, 10],
+        [45, 10],
+        [45, 10],
+        [45, 10],
+        [45, 10],
+        [45, 10],
+        [45, 10]
+    ],
+    get time() {
+        let output = [];
+        let time = 0;
+        this.offsets.forEach(([cls, brk]) => {
+            let a = Math.floor(time / 60) + ":" + ("0" + (time % 60)).slice(-2);
+            time += cls;
+            let b = Math.floor(time / 60) + ":" + ("0" + (time % 60)).slice(-2);
+            time += brk;
+            output.push([a, b]);
+        });
+        output.shift();
+        return output;
+    }
+};
+
 export let fetchCount = writable(0);
 
 export let scheduleParams = writable({ class: classList.find((e) => e.name === "P2.B"), mode: "Actual" });

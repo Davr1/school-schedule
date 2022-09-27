@@ -27,12 +27,13 @@ export async function parseSchedule(response) {
         row.querySelectorAll(".bk-timetable-cell").forEach((cell) => {
             let subject = [];
             cell.querySelectorAll(".day-item-hover").forEach((group) => {
-                let metadata = JSON.parse(group.dataset.detail);
-                metadata.id = Symbol();
-                metadata.subjectAbbr = group.querySelector(".middle")?.textContent.trim();
-                metadata.teacherAbbr = group.querySelector(".bottom>span")?.textContent.trim();
-                metadata.changed = Boolean(group.classList.contains("pink"));
-                subject.push(metadata);
+                subject.push({
+                    ...JSON.parse(group.dataset.detail),
+                    id: Symbol(),
+                    subjectAbbr: group.querySelector(".middle")?.textContent.trim(),
+                    teacherAbbr: group.querySelector(".bottom>span")?.textContent.trim(),
+                    changed: Boolean(group.classList.contains("pink"))
+                });
             });
             if (cell.children.length === 0) {
                 subject.push({});

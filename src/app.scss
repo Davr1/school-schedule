@@ -120,7 +120,7 @@ main {
     width: 100%;
     overflow: auto;
     display: grid;
-    grid-template-rows: /*3.4rem*/ repeat(5, 1fr);
+    grid-template-rows: 3.4rem repeat(5, 1fr);
     grid-auto-flow: column;
     scrollbar-width: thin;
     scrollbar-color: dark;
@@ -383,23 +383,18 @@ svg {
     padding: 0.4rem 0 0.4rem 0.2rem;
 }
 
-.bk-timetable-hours {
+.hours {
     position: relative;
     display: flex;
     flex-direction: row;
     padding-left: 1.2rem;
-}
-
-.bk-hour-wrapper {
-    left: unset !important;
-    width: unset !important;
-    position: relative !important;
-    flex: 1 1 0;
-    margin: 0.3rem;
-    text-align: center;
-}
-
-.bk-hour-wrapper .num {
-    font-weight: 500;
-    font-size: 1.4rem;
+    .hour-container {
+        flex: 1 1 0;
+        margin: 0.3rem;
+        text-align: center;
+        .num {
+            font-weight: 500;
+            font-size: 1.4rem;
+        }
+    }
 }
