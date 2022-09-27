@@ -52,3 +52,8 @@ export async function parseSchedule(response) {
     temp.remove();
     return schedule;
 }
+
+export function setURL(path = "/", parameters) {
+    parameters = new URLSearchParams(parameters).toString().replaceAll(/=(?=$|&)/g, "");
+    window.history.pushState(null, "", location.origin + path + parameters ? "?" + parameters : "");
+}

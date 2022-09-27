@@ -48,4 +48,8 @@ export const hours = {
 
 export let fetchCount = writable(0);
 
-export let scheduleParams = writable({ class: classList.find((e) => e.name === "P2.B"), mode: "Actual" });
+let params = new URL(document.location).searchParams;
+export let scheduleParams = writable({
+    class: classList.find((e) => e.name === (params.get("cls") ?? "P2.B")),
+    mode: params.has("Next") ? "Next" : params.has("Permanent") ? "Permanent" : "Actual"
+});

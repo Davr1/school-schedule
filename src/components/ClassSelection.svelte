@@ -1,7 +1,6 @@
 <script>
     import { classList, scheduleParams } from "../mainStore";
     import ChevronDownIcon from "../assets/icons/chevronDown.svg";
-    import { dataset_dev } from "svelte/internal";
 
     let isVisible = false;
 
