@@ -23,7 +23,8 @@ export async function parseSchedule(response) {
     let temp = document.createElement("div");
     temp.innerHTML = await response;
     temp.querySelectorAll(".bk-timetable-row").forEach((row) => {
-        let day = [];
+        let subjects = [];
+        let date = [row.querySelector(".bk-day-day").textContent, row.querySelector(".bk-day-date").textContent];
         row.querySelectorAll(".bk-timetable-cell").forEach((cell) => {
             let subject = [];
             cell.querySelectorAll(".day-item-hover").forEach((group) => {
@@ -44,9 +45,9 @@ export async function parseSchedule(response) {
                     id: Symbol()
                 });
             }
-            day.push(subject);
+            subjects.push(subject);
         });
-        schedule.push(day);
+        schedule.push({ subjects, date });
     });
     temp.remove();
     return schedule;

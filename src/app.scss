@@ -368,19 +368,12 @@ svg {
     }
 }
 
-.bk-timetable-day {
-    flex: 0 0 1rem;
-}
-
-.bk-day-wrapper {
+.day {
+    padding: 0.4rem 0 0.4rem 0.2rem;
     display: inline-block;
     writing-mode: vertical-rl;
-    flex: 1;
+    flex: 0 0 1rem;
     width: 1rem;
-}
-
-.day-name {
-    padding: 0.4rem 0 0.4rem 0.2rem;
 }
 
 .hours {
