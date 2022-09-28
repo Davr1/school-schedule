@@ -148,15 +148,6 @@ nav {
     }
 }
 
-#weekButtons {
-    display: flex;
-    background: var(--dimmed-background);
-    padding: 3px;
-    border-radius: 0.4rem;
-    height: 100%;
-    box-sizing: border-box;
-}
-
 button {
     background: inherit;
     border: unset;
@@ -193,8 +184,8 @@ button {
 
 #weekButtons {
     display: flex;
+    padding: 3px;
     background: var(--dimmed-background);
-    padding: 0.2rem;
     border-radius: 0.4rem;
     height: 100%;
     box-sizing: border-box;
