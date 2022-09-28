@@ -21,7 +21,7 @@ export function fetchCORSless(url, charset = "utf-8") {
 export async function parseSchedule(response) {
     let schedule = [];
     let temp = document.createElement("div");
-    temp.innerHTML = (await response).replace(/<head>(.|\n)*?<\/head>/, "");
+    temp.innerHTML = (await response).replace(/(?<=<img[^>]+)src=".*?"/, "");
     temp.querySelectorAll(".bk-timetable-row").forEach((row) => {
         let subjects = [];
         let date = [row.querySelector(".bk-day-day").textContent, row.querySelector(".bk-day-date").textContent];
