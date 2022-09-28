@@ -6,6 +6,9 @@
     function updateScheduleParams(newParams = {}) {
         scheduleParams.update((o) => ({ ...o, ...newParams }));
     }
+
+    let maxFetchCount;
+    $: maxFetchCount = $scheduleParams.mode === "Permanent" ? 1 : 6;
 </script>
 
 <nav>
@@ -19,6 +22,6 @@
     </div>
     <button id="reload" on:click={() => updateScheduleParams()}>
         <ReloadIcon />
-        <span id="info">{$fetchCount} / 6 fetched</span>
+        <span id="info">{$fetchCount} / {maxFetchCount} fetched</span>
     </button>
 </nav>

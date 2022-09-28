@@ -11,6 +11,7 @@
 
     async function updateSchedule(schedule) {
         scheduleData = await parseBakaSchedule(fetchBaka(schedule));
+        if ($scheduleParams.mode === "Permanent") return;
         for (let day of scheduleData) {
             const date = new Date().getFullYear() + "-" + day.date[1].split("/").reverse().join("-");
             const alternativeSchedule = await parseWebSchedule(fetchWebSchedule(date));
