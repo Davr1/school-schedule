@@ -1,12 +1,12 @@
 <script>
     import { scheduleParams, hours } from "../mainStore";
-    import { fetchBaka, parseSchedule } from "../utilities";
+    import { fetchBaka, parseBakaSchedule } from "../utilities";
     import GridCell from "./GridCell.svelte";
 
     let scheduleData = [];
 
     scheduleParams.subscribe((data) => {
-        updateSchedule(parseSchedule(fetchBaka(data)));
+        updateSchedule(parseBakaSchedule(fetchBaka(data)));
     });
 
     async function updateSchedule(scheduleRequest) {

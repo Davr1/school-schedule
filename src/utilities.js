@@ -9,8 +9,12 @@ export function fetchBaka(data) {
     });
 }
 
-export function fetchCORSless(url, charset = "utf-8") {
-    return fetch(`https://api.allorigins.win/get?charset=${charset}&url=${encodeURIComponent("https://" + url)}`).then((response) => {
+export function fetchWebSchedule(date) {
+    return fetch(
+        `https://api.allorigins.win/get?charset=windows-1250&url=${encodeURIComponent(
+            "https://www.sssvt.cz/main.php?p=IS&pp=suplak&datum=" + date
+        )}`
+    ).then((response) => {
         if (response.ok) {
             fetchCount.update((v) => v++);
             return response.json();
@@ -18,10 +22,9 @@ export function fetchCORSless(url, charset = "utf-8") {
     });
 }
 
-export async function parseSchedule(response) {
+export async function parseBakaSchedule(response) {
     let schedule = [];
-    let temp = document.createElement("div");
-    temp.innerHTML = (await response).replace(/(?<=<img[^>]+)src=".*?"/, "");
+    let temp = new DOMParser().parseFromString(await response, "text/html");
     temp.querySelectorAll(".bk-timetable-row").forEach((row) => {
         let subjects = [];
         let date = [row.querySelector(".bk-day-day").textContent, row.querySelector(".bk-day-date").textContent];
@@ -49,12 +52,18 @@ export async function parseSchedule(response) {
         });
         schedule.push({ subjects, date });
     });
-    temp.remove();
     return schedule;
+}
+
+export async function parseWebSchedule(response) {
+    let daySchedule = [];
+    let temp = new DOMParser().parseFromString(await response, "text/html");
+    temp.querySelectorAll(".table-responsive tbody tr:not(.prvniradek)").forEach((row) =>
+        Array.from(row.querySelectorAll("td:not(:first-of-type, .heightfix)"))
+    );
 }
 
 export function setURL(path = "/", parameters) {
     parameters = new URLSearchParams(parameters).toString().replaceAll(/=(?=$|&)/g, "");
-    console.log(parameters);
     window.history.pushState(null, "", location.origin + path + parameters ? "?" + parameters : "");
 }
