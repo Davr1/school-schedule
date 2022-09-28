@@ -1,17 +1,31 @@
 <script>
     import { scheduleParams, hours } from "../mainStore";
-    import { fetchBaka, parseBakaSchedule } from "../utilities";
+    import { fetchBaka, parseBakaSchedule, fetchWebSchedule, parseWebSchedule } from "../utilities";
     import GridCell from "./GridCell.svelte";
 
     let scheduleData = [];
 
     scheduleParams.subscribe((data) => {
-        updateSchedule(parseBakaSchedule(fetchBaka(data)));
+        updateSchedule(data);
     });
 
-    async function updateSchedule(scheduleRequest) {
-        scheduleData = await scheduleRequest;
-        // localStorage.setItem(`schedule:${$scheduleParams.class.id}:${$scheduleParams.mode}`, JSON.stringify(scheduleData));
+    async function updateSchedule(schedule) {
+        scheduleData = await parseBakaSchedule(fetchBaka(schedule));
+        for (let day of scheduleData) {
+            const date = new Date().getFullYear() + "-" + day.date[1].split("/").reverse().join("-");
+            const alternativeSchedule = await parseWebSchedule(fetchWebSchedule(date));
+
+            for (let [i, subject] of alternativeSchedule.find((e) => e.cls.slice(1) === schedule.class.name.slice(1)).subjects.entries()) {
+                subject.forEach((s) => {
+                    const found = day.subjects[i].findIndex((a) => a.group === s.group);
+                    day.subjects[i][found] = { ...day.subjects[i][found], ...s };
+                    if (found === -1) {
+                        console.error(day.subjects[i], s);
+                    }
+                });
+            }
+            scheduleData = scheduleData;
+        }
     }
 </script>
 

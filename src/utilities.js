@@ -16,7 +16,7 @@ export function fetchWebSchedule(date) {
         )}`
     ).then((response) => {
         if (response.ok) {
-            fetchCount.update((v) => v++);
+            fetchCount.update((v) => (v += 1));
             return response.json();
         }
     });
@@ -57,10 +57,52 @@ export async function parseBakaSchedule(response) {
 
 export async function parseWebSchedule(response) {
     let daySchedule = [];
-    let temp = new DOMParser().parseFromString(await response, "text/html");
-    temp.querySelectorAll(".table-responsive tbody tr:not(.prvniradek)").forEach((row) =>
-        Array.from(row.querySelectorAll("td:not(:first-of-type, .heightfix)"))
-    );
+    let temp = new DOMParser().parseFromString((await response).contents, "text/html");
+    temp.querySelectorAll(".table-responsive tbody tr:not(.prvniradek):nth-child(2n)").forEach((row) => {
+        let cls = row.firstChild.textContent;
+        let subjects = [];
+        let firstHalf = Array.from(row.querySelectorAll("td:not(:first-of-type, .heightfix)"));
+        let secondHalf = Array.from(row.nextElementSibling.querySelectorAll("td:not(.heightfix)"));
+        firstHalf.forEach((cell) => {
+            if (cell.childNodes[0].textContent.replace(/\s+/, "")) {
+                let subject = [];
+                let group = "";
+                if (cell.querySelector("strong")?.nextSibling?.nodeName === "#text") {
+                    group = cell.querySelector("strong").nextSibling.textContent.match(/\d+\.sk/)[0];
+                } else if (cell.firstChild.nodeName === "#text" && /\d+\.sk/.test(cell.firstChild.textContent)) {
+                    group = cell.firstChild.textContent.match(/\d+\.sk/)[0];
+                }
+                subject.push({
+                    room: cell.querySelector("[href*='/room/']")?.textContent,
+                    group,
+                    id: Symbol(),
+                    subjectAbbr: cell.querySelector("strong")?.textContent,
+                    teacherAbbr: cell.querySelector("[href*='/teacher/']")?.textContent,
+                    changed: true
+                });
+                if (cell.rowSpan === 1) {
+                    let alternativeGroup = secondHalf.shift();
+                    let group2 = "";
+                    if (alternativeGroup.querySelector("strong")?.nextSibling?.nodeName === "#text") {
+                        group2 = alternativeGroup.querySelector("strong").nextSibling.textContent.match(/\d+\.sk/)[0];
+                    }
+                    subject.push({
+                        room: alternativeGroup.querySelector("[href*='/room/']")?.textContent,
+                        group: group2,
+                        id: Symbol(),
+                        subjectAbbr: alternativeGroup.querySelector("strong")?.textContent,
+                        teacherAbbr: alternativeGroup.querySelector("[href*='/teacher/']")?.textContent,
+                        changed: true
+                    });
+                }
+                subjects.push(subject);
+            } else {
+                subjects.push([]);
+            }
+        });
+        daySchedule.push({ cls, subjects });
+    });
+    return daySchedule;
 }
 
 export function setURL(path = "/", parameters) {
