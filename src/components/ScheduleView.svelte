@@ -12,11 +12,15 @@
     async function updateSchedule(schedule) {
         scheduleData = await parseBakaSchedule(fetchBaka(schedule));
         if ($scheduleParams.mode === "Permanent") return;
+        let alternativeSchedule = [];
         for (let day of scheduleData) {
             const date = new Date().getFullYear() + "-" + day.date[1].split("/").reverse().join("-");
-            const alternativeSchedule = await parseWebSchedule(fetchWebSchedule(date));
-
-            for (let [i, subject] of alternativeSchedule.find((e) => e.cls.slice(1) === schedule.class.name.slice(1)).subjects.entries()) {
+            alternativeSchedule.push(parseWebSchedule(fetchWebSchedule(date)));
+        }
+        for (let [x, day] of scheduleData.entries()) {
+            for (let [i, subject] of (await alternativeSchedule[x])
+                .find((e) => e.cls.slice(1) === schedule.class.name.slice(1))
+                .subjects.entries()) {
                 subject.forEach((s) => {
                     const found = day.subjects[i].findIndex((a) => a.group === s.group);
                     day.subjects[i][found] = { ...day.subjects[i][found], ...s };
