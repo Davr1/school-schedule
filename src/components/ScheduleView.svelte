@@ -5,9 +5,7 @@
 
     let scheduleData = [];
 
-    scheduleParams.subscribe((data) => {
-        updateSchedule(data);
-    });
+    scheduleParams.subscribe((data) => updateSchedule(data));
 
     async function updateSchedule(schedule) {
         scheduleData = await parseBakaSchedule(fetchBaka(schedule));
@@ -20,8 +18,8 @@
         for (let [x, day] of scheduleData.entries()) {
             for (let [i, subject] of (await alternativeSchedule[x])
                 .find((e) => e.cls.slice(1) === schedule.class.name.slice(1))
-                .subjects.entries()) {
-                subject.forEach((s) => {
+                ?.subjects.entries() ?? []) {
+                subject?.forEach((s) => {
                     const found = day.subjects[i].findIndex((a) => a.group === s.group);
                     day.subjects[i][found] = { ...day.subjects[i][found], ...s };
                     if (found === -1) {
@@ -57,11 +55,9 @@
                 {#each day.subjects as cell}
                     <div class="cell">
                         {#if cell[0].id}
-                            <div class="cell-content">
-                                {#each cell as subject (subject.id)}
-                                    <GridCell {subject} />
-                                {/each}
-                            </div>
+                            {#each cell as subject (subject.id)}
+                                <GridCell {subject} />
+                            {/each}
                         {/if}
                     </div>
                 {/each}

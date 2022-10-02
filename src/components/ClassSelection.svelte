@@ -17,7 +17,7 @@
                     isVisible = false;
                 };
                 document.addEventListener("click", handleDropdownClicks);
-            }, 0);
+            });
         }
     }
 </script>

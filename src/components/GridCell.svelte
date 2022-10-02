@@ -21,8 +21,8 @@
             .join("\n");
 </script>
 
-<div class="group" class:changed class:changed2={subject.special} {title}>
-    <div class="group-content">
+<div class="subject" class:changed class:changed2={subject.special} {title}>
+    <div class="subject-content">
         <div class="top">
             <div class="left">{group}</div>
             <div class="right">{room}</div>
