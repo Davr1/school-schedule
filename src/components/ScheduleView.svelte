@@ -1,5 +1,5 @@
 <script>
-    import { scheduleParams, hours } from "../mainStore";
+    import { scheduleParams, hours, fetchCount } from "../mainStore";
     import { fetchBaka, parseBakaSchedule, fetchWebSchedule, parseWebSchedule } from "../utilities";
     import GridCell from "./GridCell.svelte";
 
@@ -8,6 +8,7 @@
     scheduleParams.subscribe((data) => updateSchedule(data));
 
     async function updateSchedule(schedule) {
+        $fetchCount = 0;
         scheduleData = await parseBakaSchedule(fetchBaka(schedule));
         if ($scheduleParams.mode === "Permanent") return;
         let alternativeSchedule = [];

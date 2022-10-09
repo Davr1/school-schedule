@@ -3,7 +3,7 @@ import { fetchCount } from "./mainStore";
 export function fetchBaka(data) {
     return fetch(`https://is.sssvt.cz/IS/Timetable/Public/${data.mode}/Class/${data.class.id}`).then((response) => {
         if (response.ok) {
-            fetchCount.update(() => 1);
+            fetchCount.update((v) => (v += 1));
             return response.text();
         }
     });
