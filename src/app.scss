@@ -237,7 +237,7 @@ svg {
     height: 100%;
     position: relative;
 
-    .isVisible svg {
+    &.isVisible svg {
         transform: rotate(-180deg);
     }
 }
