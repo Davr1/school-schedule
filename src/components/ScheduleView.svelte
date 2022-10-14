@@ -2,6 +2,9 @@
     import { scheduleParams, hours, fetchCount } from "../mainStore";
     import { fetchBaka, parseBakaSchedule, fetchWebSchedule, parseWebSchedule } from "../utilities";
     import GridCell from "./GridCell.svelte";
+    import { createEventDispatcher } from "svelte";
+
+    const dispatch = createEventDispatcher();
 
     let scheduleData = [];
 
@@ -10,6 +13,7 @@
     async function updateSchedule(schedule) {
         $fetchCount = 0;
         scheduleData = await parseBakaSchedule(fetchBaka(schedule));
+        dispatch("loadingFinished");
         if ($scheduleParams.mode === "Permanent") return;
         let alternativeSchedule = [];
         for (let day of scheduleData) {

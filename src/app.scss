@@ -383,3 +383,20 @@ svg {
         }
     }
 }
+
+#overlay {
+    position: absolute;
+    inset: 0;
+    background: inherit;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+
+    h1 {
+        font-weight: 400;
+        font-size: 2.4rem;
+        user-select: none;
+    }
+}
