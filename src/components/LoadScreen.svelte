@@ -1,8 +1,9 @@
 <script>
     import Uwu from "../assets/uwu.svg";
+    import Loading from "../assets/loading.svg";
 </script>
 
 <div id="overlay">
-    <h1>Načítání</h1>
-    <Uwu width="auto" height="3rem" />
+    <Loading height="3rem" />
+    <Uwu height="3rem" />
 </div>
