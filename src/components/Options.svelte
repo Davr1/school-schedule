@@ -20,7 +20,7 @@
         <button class:active={$scheduleParams.mode === "Actual"} on:click={() => updateScheduleParams({ mode: "Actual" })}>Current</button>
         <button class:active={$scheduleParams.mode === "Next"} on:click={() => updateScheduleParams({ mode: "Next" })}>Next</button>
     </div>
-    <button id="reload" on:click={() => updateScheduleParams()}>
+    <button id="reloadButton" on:click={() => updateScheduleParams()}>
         <ReloadIcon />
         <span id="info">{$fetchCount} / {maxFetchCount} fetched</span>
     </button>

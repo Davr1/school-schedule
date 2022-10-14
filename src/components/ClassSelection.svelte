@@ -22,13 +22,13 @@
     }
 </script>
 
-<div id="dropdown" class:isVisible>
+<div class="dropdown" class:isVisible>
     <button id="classButton" on:click={handleClick}>
         {$scheduleParams.class.name}
         <ChevronDownIcon />
     </button>
     {#if isVisible}
-        <div id="classSelect">
+        <div class="options">
             {#each classList as cls}
                 <button class="option" class:active={$scheduleParams.class === cls} on:click={() => updateScheduleParams({ class: cls })}>
                     {cls.name}
