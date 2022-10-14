@@ -15,7 +15,7 @@
 {/if}
 <Options />
 <ScheduleView
-    on:loadingFinished={() => {
+    on:loadingFinished|once={() => {
         isLoadScreenVisible = false;
     }}
 />
