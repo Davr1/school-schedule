@@ -91,7 +91,7 @@
 }
 
 @media (pointer: fine) {
-    .subject:not(.changed2):hover {
+    .subject:not(.changed2):is(:hover, .floating) {
         box-shadow: 1px 1px 5px 3px #0005;
         transform: scale(1.02);
         filter: brightness(1.02);
@@ -122,7 +122,8 @@ body {
 main {
     height: 100%;
     width: 100%;
-    overflow: auto;
+    overflow-x: auto;
+    overflow-y: hidden;
     display: grid;
     grid-template-rows: 3.4rem repeat(5, 1fr);
     grid-auto-flow: column;
@@ -312,6 +313,9 @@ svg {
     box-shadow: 1px 1px 3px 2px #0002;
     transition: ease-out 200ms;
     flex: 1 1 auto;
+    user-select: none;
+    cursor: pointer;
+    position: relative;
 
     &:only-child {
         min-height: 13.5vh;
@@ -329,6 +333,11 @@ svg {
     &.changed2 {
         background: var(--alt-accent);
         color: var(--text-active);
+    }
+
+    &.floating {
+        z-index: 2;
+        pointer-events: none;
     }
 
     .subject-content {
@@ -388,9 +397,33 @@ svg {
     position: absolute;
     inset: 0;
     background: inherit;
-    z-index: 2;
+    z-index: 3;
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 1.4rem;
+}
+
+#dim-overlay {
+    position: absolute;
+    inset: 0;
+    background: #000a;
+    backdrop-filter: blur(5px);
+    z-index: 1;
+    transition: opacity ease-out 80ms;
+    visibility: hidden;
+    opacity: 0;
+
+    &.dimmed {
+        visibility: visible;
+        opacity: 1;
+    }
+}
+
+#subject-info {
+    position: absolute;
+    z-index: 2;
+    width: max-content;
+    max-width: 40vw;
+    margin: -0.67em 2rem;
 }

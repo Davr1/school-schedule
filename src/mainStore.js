@@ -53,3 +53,5 @@ export let scheduleParams = writable({
     class: classList.find((e) => e.name === (params.get("cls") ?? "P2.B")),
     mode: params.has("Next") ? "Next" : params.has("Permanent") ? "Permanent" : "Actual"
 });
+
+export let isSubjectInfoVisible = writable(false);
