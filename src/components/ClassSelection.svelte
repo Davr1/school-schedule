@@ -29,7 +29,7 @@
     </button>
     {#if isVisible}
         <div class="options">
-            {#each classList as cls}
+            {#each classList.classes as cls}
                 <button class="option" class:active={$scheduleParams.class === cls} on:click={() => updateScheduleParams({ class: cls })}>
                     {cls.name}
                 </button>
