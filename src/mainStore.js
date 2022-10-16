@@ -23,7 +23,7 @@ export const classList = {
     }
 };
 
-export const modes = ["Next", "Permanent", "Actual"];
+export const modes = ["Next", "Permanent", "Actual", "Other"];
 
 export const hours = {
     offsets: [
@@ -61,7 +61,9 @@ export let fetchCount = writable(0);
 let params = new URL(document.location).searchParams;
 export let scheduleParams = writable({
     class: classList.list.includes(params.get("cls")) ? classList.findClass(params.get("cls")) : classList.findClass("P2.B"),
-    mode: modes.includes(Array.from(params.keys())[0]) ? Array.from(params.keys())[0] : "Actual"
+    mode: modes.includes(Array.from(params.keys())[0]) ? Array.from(params.keys())[0] : "Actual",
+    type: params.get("type"),
+    value: params.get("value")
 });
 
 export let isSubjectInfoVisible = writable(false);

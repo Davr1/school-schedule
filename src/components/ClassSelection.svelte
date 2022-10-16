@@ -1,10 +1,12 @@
 <script>
     import { classList, scheduleParams } from "../mainStore";
+    import { get } from "svelte/store";
     import ChevronDownIcon from "../assets/icons/chevronDown.svg";
 
     let isVisible = false;
 
     function updateScheduleParams(newParams = {}) {
+        if (get(scheduleParams).mode === "Other") newParams.mode = "Actual";
         scheduleParams.update((o) => ({ ...o, ...newParams }));
     }
 

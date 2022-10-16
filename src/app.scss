@@ -313,8 +313,6 @@ svg {
     box-shadow: 1px 1px 3px 2px #0002;
     transition: ease-out 200ms;
     flex: 1 1 auto;
-    user-select: none;
-    cursor: pointer;
     position: relative;
 
     &:only-child {
@@ -338,6 +336,9 @@ svg {
     &.floating {
         z-index: 2;
         pointer-events: none;
+        #subject-info {
+            pointer-events: auto;
+        }
     }
 
     .subject-content {
@@ -347,6 +348,8 @@ svg {
         height: 100%;
         padding: 0.2rem;
         box-sizing: border-box;
+        cursor: pointer;
+        user-select: none;
 
         & .top {
             display: flex;
@@ -426,4 +429,19 @@ svg {
     width: max-content;
     max-width: 40vw;
     margin: -0.67em 2rem;
+    background: inherit;
+    border-radius: inherit;
+    box-shadow: inherit;
+    padding: 0 1.4rem;
+
+    svg {
+        vertical-align: sub;
+        height: 2rem;
+        margin-right: 0.3rem;
+    }
+
+    .link {
+        text-decoration: dotted underline 2px;
+        cursor: pointer;
+    }
 }

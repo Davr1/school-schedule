@@ -8,7 +8,7 @@
     }
 
     let maxFetchCount;
-    $: maxFetchCount = $scheduleParams.mode === "Permanent" ? 1 : 6;
+    $: maxFetchCount = $scheduleParams.mode === "Permanent" || $scheduleParams.mode === "Other" ? 1 : 6;
 </script>
 
 <nav>
