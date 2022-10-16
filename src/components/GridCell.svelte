@@ -38,6 +38,7 @@
     let position;
 
     function showSubjectInfoScreen() {
+        document.addEventListener("keydown", esc);
         position = {
             size: cell.getBoundingClientRect(),
             get x() {
@@ -56,6 +57,13 @@
         isSubjectInfoVisible.set(true);
         // the actual value is stored separately so updating it won't show all the cells at once
         _subjectInfoVisible = true;
+    }
+
+    function esc(e) {
+        if (e.key === "Escape") {
+            isSubjectInfoVisible.set(false);
+            document.removeEventListener("keydown", esc);
+        }
     }
 </script>
 
