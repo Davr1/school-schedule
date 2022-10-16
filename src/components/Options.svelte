@@ -2,6 +2,7 @@
     import { fetchCount, scheduleParams } from "../mainStore";
     import ReloadIcon from "../assets/icons/reload.svg";
     import ClassSelection from "./ClassSelection.svelte";
+    import Dots from "../assets/icons/dots.svg";
 
     function updateScheduleParams(newParams = {}) {
         scheduleParams.update((o) => ({ ...o, ...newParams }));
@@ -19,6 +20,7 @@
         </button>
         <button class:active={$scheduleParams.mode === "Actual"} on:click={() => updateScheduleParams({ mode: "Actual" })}>Current</button>
         <button class:active={$scheduleParams.mode === "Next"} on:click={() => updateScheduleParams({ mode: "Next" })}>Next</button>
+        <button class="disabled" class:active={$scheduleParams.mode === "Other"}><Dots /></button>
     </div>
     <button id="reloadButton" on:click={() => updateScheduleParams()}>
         <ReloadIcon />

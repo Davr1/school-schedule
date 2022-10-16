@@ -24,10 +24,10 @@
         width: 100%;
         max-height: 2.7rem;
         grid-column: 1/3;
+        max-width: unset !important;
     }
 
     #weekButtons button {
-        width: 100% !important;
         font-size: 1.1rem;
     }
 
@@ -93,7 +93,7 @@
 @media (pointer: fine) {
     .subject:not(.changed2):is(:hover, .floating) {
         box-shadow: 1px 1px 5px 3px #0005;
-        transform: scale(1.02);
+        transform: scale(1.023);
         filter: brightness(1.02);
     }
 }
@@ -152,7 +152,7 @@ nav {
     #weekButtons,
     #reloadButton {
         box-shadow: 0 1px 3px 2px #0001;
-        & > svg {
+        svg {
             width: 1.8rem;
             height: 1.8rem;
         }
@@ -198,17 +198,19 @@ svg {
 }
 
 #weekButtons {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 4rem;
+    max-width: 39rem;
     padding: 3px;
     background: var(--dimmed-background);
     border-radius: 0.4rem;
     height: 100%;
     box-sizing: border-box;
     gap: 1px;
+    flex: 1;
 
     & > button {
         position: relative;
-        width: 11.7rem;
         border-radius: 0.3rem;
         &:not(.active) + button:not(.active)::before {
             content: "";
@@ -217,6 +219,9 @@ svg {
             left: -1px;
             bottom: 0.1rem;
             border-left: 1px solid #0003;
+        }
+        svg {
+            vertical-align: bottom;
         }
     }
 }
