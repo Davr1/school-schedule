@@ -1,7 +1,6 @@
-import { fetchCount, scheduleParams } from "./mainStore";
+import { fetchCount, scheduleParams, classList, modes } from "./mainStore";
 import { get } from "svelte/store";
 import { encode } from "windows-1250";
-import { get_root_for_style } from "svelte/internal";
 
 export function fetchBaka(data) {
     return fetch(`https://is.sssvt.cz/IS/Timetable/Public/${data.mode}/Class/${data.class.id}`).then((response) => {
@@ -166,4 +165,14 @@ export async function parseWebScheduleAlt(response) {
 export function setURL(path = "/", parameters) {
     parameters = new URLSearchParams(parameters).toString().replaceAll(/=(?=$|&)/g, "");
     window.history.pushState(null, "", location.origin + path + parameters ? "?" + parameters : "");
+}
+
+export function readURL(location) {
+    let params = new URL(location).searchParams;
+    return {
+        class: classList.list.includes(params.get("cls")) ? classList.findClass(params.get("cls")) : classList.findClass("P2.B"),
+        mode: modes.includes(Array.from(params.keys())[0]) ? Array.from(params.keys())[0] : "Actual",
+        type: params.get("type"),
+        value: params.get("value")
+    };
 }

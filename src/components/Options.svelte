@@ -1,5 +1,6 @@
 <script>
     import { fetchCount, scheduleParams } from "../mainStore";
+    import { readURL } from "../utilities";
     import ReloadIcon from "../assets/icons/reload.svg";
     import ClassSelection from "./ClassSelection.svelte";
     import Dots from "../assets/icons/dots.svg";
@@ -7,6 +8,8 @@
     function updateScheduleParams(newParams = {}) {
         scheduleParams.update((o) => ({ ...o, ...newParams }));
     }
+
+    window.addEventListener("popstate", () => updateScheduleParams(readURL(window.location)));
 
     let maxFetchCount;
     $: maxFetchCount = $scheduleParams.mode === "Permanent" || $scheduleParams.mode === "Other" ? 1 : 6;
