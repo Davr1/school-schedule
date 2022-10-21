@@ -117,6 +117,10 @@ body {
     background: var(--main-background);
     color: var(--text);
     cursor: default;
+
+    * {
+        font-family: inherit;
+    }
 }
 
 main {
@@ -144,11 +148,10 @@ nav {
     font-weight: 300;
 
     * {
-        font-family: inherit;
         font-feature-settings: "tnum";
     }
 
-    #classButton,
+    .dropdownButton,
     #weekButtons,
     #reloadButton {
         box-shadow: 0 1px 3px 2px #0001;
@@ -185,7 +188,7 @@ svg {
     transition: ease-out 150ms;
 }
 
-#classButton {
+.dropdownButton {
     padding: 0 0.5rem 0 0.7rem;
     background: var(--dimmed-background);
     border-radius: 0.4rem;
@@ -449,4 +452,16 @@ svg {
         text-decoration: dotted underline 2px;
         cursor: pointer;
     }
+}
+
+#modal {
+    position: absolute;
+    width: min(100%, 40rem);
+    height: min(100%, 80vh);
+    background: var(--dimmed-background);
+    z-index: 2;
+    border-radius: 0.4rem;
+    box-shadow: 0 1px 10px 2px #0003;
+    padding: 0.8rem 2.4rem;
+    box-sizing: border-box;
 }

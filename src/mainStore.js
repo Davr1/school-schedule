@@ -1,6 +1,6 @@
 import { writable } from "svelte/store";
 
-export const classList = {
+export const scheduleMetadata = {
     classes: [
         { name: "P1.A", id: "UG" },
         { name: "P1.B", id: "UI" },
@@ -18,9 +18,11 @@ export const classList = {
     findClass: function (value) {
         return this.classes.find((c) => c.name === value);
     },
-    get list() {
+    get listClasses() {
         return this.classes.map((c) => c.name);
-    }
+    },
+    teachers: [],
+    rooms: []
 };
 
 export const modes = ["Next", "Permanent", "Actual", "Other"];
@@ -60,10 +62,14 @@ export let fetchCount = writable(0);
 
 let params = new URL(document.location).searchParams;
 export let scheduleParams = writable({
-    class: classList.list.includes(params.get("cls")) ? classList.findClass(params.get("cls")) : classList.findClass("P2.B"),
+    class: scheduleMetadata.listClasses.includes(params.get("cls"))
+        ? scheduleMetadata.findClass(params.get("cls"))
+        : scheduleMetadata.findClass("P2.B"),
     mode: modes.includes(Array.from(params.keys())[0]) ? Array.from(params.keys())[0] : "Actual",
     type: params.get("type"),
     value: params.get("value")
 });
 
 export let isSubjectInfoVisible = writable(false);
+
+export let isModalVisible = writable(false);

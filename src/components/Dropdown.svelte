@@ -1,14 +1,13 @@
 <script>
-    import { classList, scheduleParams } from "../mainStore";
-    import { get } from "svelte/store";
     import ChevronDownIcon from "../assets/icons/chevronDown.svg";
 
-    let isVisible = false;
+    export let options = [];
+    export let activeOption = {};
+    export let callback = (a) => a;
+    export let genericName = "";
+    export let genericKey = "";
 
-    function updateScheduleParams(newParams = {}) {
-        if (get(scheduleParams).mode === "Other") newParams.mode = "Actual";
-        scheduleParams.update((o) => ({ ...o, ...newParams }));
-    }
+    let isVisible = false;
 
     function handleClick() {
         if (!isVisible) {
@@ -25,15 +24,12 @@
 </script>
 
 <div class="dropdown" class:isVisible>
-    <button id="classButton" on:click={handleClick}>
-        {$scheduleParams.class.name}
-        <ChevronDownIcon />
-    </button>
+    <button class="dropdownButton" on:click={handleClick}>{activeOption[genericName]} <ChevronDownIcon /></button>
     {#if isVisible}
         <div class="options">
-            {#each classList.classes as cls}
-                <button class="option" class:active={$scheduleParams.class === cls} on:click={() => updateScheduleParams({ class: cls })}>
-                    {cls.name}
+            {#each options as option}
+                <button class="option" class:active={activeOption[genericKey] === option[genericKey]} on:click={() => callback(option)}>
+                    {option[genericName]}
                 </button>
             {/each}
         </div>

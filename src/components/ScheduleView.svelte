@@ -10,7 +10,6 @@
     } from "../utilities";
     import GridCell from "./GridCell.svelte";
     import { createEventDispatcher } from "svelte";
-    import { group_outros } from "svelte/internal";
 
     const dispatch = createEventDispatcher();
 

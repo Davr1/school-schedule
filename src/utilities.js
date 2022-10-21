@@ -1,7 +1,14 @@
-import { fetchCount, scheduleParams, classList, modes } from "./mainStore";
+import { fetchCount, scheduleParams, scheduleMetadata, modes } from "./mainStore";
 import { get } from "svelte/store";
 import { encode } from "windows-1250";
 
+// Makes element arrays iterable
+HTMLCollection.prototype[Symbol.iterator] = Array.prototype[Symbol.iterator];
+HTMLCollection.prototype["forEach"] = Array.prototype.forEach;
+NodeList.prototype[Symbol.iterator] = Array.prototype[Symbol.iterator];
+NodeList.prototype["find"] = Array.prototype.find;
+
+// Public Bakalari schedule
 export function fetchBaka(data) {
     return fetch(`https://is.sssvt.cz/IS/Timetable/Public/${data.mode}/Class/${data.class.id}`).then((response) => {
         if (response.ok) {
@@ -11,6 +18,7 @@ export function fetchBaka(data) {
     });
 }
 
+// Substitution schedule from sssvt.cz
 export function fetchWebSchedule(date) {
     return fetch(
         "https://api.allorigins.win/get?charset=windows-1250&url=" +
@@ -23,6 +31,7 @@ export function fetchWebSchedule(date) {
     });
 }
 
+// Teacher/room schedule
 export function fetchWebScheduleAlt(mode, value, sub = true) {
     let encodedValue = Array.from(encode(value))
         .map((v) => "%25" + v.toString(16))
@@ -33,6 +42,17 @@ export function fetchWebScheduleAlt(mode, value, sub = true) {
     ).then((response) => {
         if (response.ok) {
             fetchCount.update((v) => (v += 1));
+            return response.json();
+        }
+    });
+}
+
+// Empty schedule, only used for getting teacher and room ids
+export function fetchWebScheduleMetadata() {
+    return fetch(
+        "https://api.allorigins.win/get?charset=windows-1250&url=" + encodeURIComponent("https://www.sssvt.cz/IS/rozvrh-hodin/class/")
+    ).then((response) => {
+        if (response.ok) {
             return response.json();
         }
     });
@@ -137,7 +157,7 @@ export async function parseWebScheduleAlt(response) {
                     } else if (get(scheduleParams).type === "room") {
                         teacherAbbr = group.querySelector(".teacher a")?.textContent.match(/\S+/)[0];
                     }
-                    let teacher = Array.from(temp.querySelectorAll(".links a")).find((a) => a.textContent.trim() === teacherAbbr)?.title;
+                    let teacher = temp.querySelectorAll(".links a").find((a) => a.textContent.trim() === teacherAbbr)?.title;
                     subject.push({
                         cls: group.querySelector("[href*='/class/']")?.textContent.match(/\S+/)[0],
                         room: group.querySelector(".room [href*='/room/']")?.textContent ?? get(scheduleParams).value,
@@ -150,7 +170,6 @@ export async function parseWebScheduleAlt(response) {
                     });
                 });
                 subjects.push(subject);
-                console.log(subject);
             } else {
                 subjects.push([{}]);
             }
@@ -158,8 +177,21 @@ export async function parseWebScheduleAlt(response) {
         subjects.push([{}], [{}], [{}]); // padding
         daySchedule.push({ day, subjects });
     });
-    console.log(daySchedule);
     return daySchedule;
+}
+
+export async function parseWebScheduleMetadata(response) {
+    let temp = new DOMParser().parseFromString((await response).contents, "text/html");
+    let classes = [];
+    let rooms = [];
+    let teachers = [];
+    temp.querySelectorAll("#tt+.links a[href*='/class/']").forEach((e) => classes.push(e.textContent.trim()));
+    temp.querySelectorAll("#tt+.links+.links a[href*='/room/']").forEach((e) => rooms.push(e.textContent.trim()));
+    temp.querySelectorAll("#tt+.links+.links+.links a[href*='/teacher/']").forEach((e) =>
+        teachers.push({ abbr: e.textContent.trim(), name: e.title })
+    );
+
+    return { classes, rooms, teachers };
 }
 
 export function setURL(path = "/", parameters) {
@@ -167,10 +199,12 @@ export function setURL(path = "/", parameters) {
     window.history.pushState(null, "", location.origin + path + parameters ? "?" + parameters : "");
 }
 
-export function readURL(location) {
-    let params = new URL(location).searchParams;
+export function readURL(url) {
+    let params = new URL(url).searchParams;
     return {
-        class: classList.list.includes(params.get("cls")) ? classList.findClass(params.get("cls")) : classList.findClass("P2.B"),
+        class: scheduleMetadata.listClasses.includes(params.get("cls"))
+            ? scheduleMetadata.findClass(params.get("cls"))
+            : scheduleMetadata.findClass("P2.B"),
         mode: modes.includes(Array.from(params.keys())[0]) ? Array.from(params.keys())[0] : "Actual",
         type: params.get("type"),
         value: params.get("value")
