@@ -10,6 +10,7 @@
     } from "../utilities";
     import GridCell from "./GridCell.svelte";
     import { createEventDispatcher } from "svelte";
+    import { group_outros } from "svelte/internal";
 
     const dispatch = createEventDispatcher();
 
@@ -77,7 +78,7 @@
                 {#each day.subjects as cell}
                     <div class="cell">
                         {#if cell[0]?.id}
-                            {#each cell as subject (subject.id)}
+                            {#each cell.sort((a, b) => a.group?.localeCompare(b.group)) as subject (subject.id)}
                                 <GridCell {subject} />
                             {/each}
                         {/if}
