@@ -36,7 +36,7 @@
     }
 </script>
 
-<div class="dropdown" class:isVisible>
+<div class="dropdown" class:visible={isVisible}>
     <button class="dropdown-button styled-button" on:click={handleClick} bind:this={dropdownButton}>
         {activeOption[genericName]}
         <ChevronDownIcon />

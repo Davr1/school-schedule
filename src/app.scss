@@ -275,7 +275,7 @@ svg {
         background: var(--element-background);
     }
 
-    &.isVisible svg {
+    &.visible svg {
         transform: rotate(-180deg);
     }
 }
