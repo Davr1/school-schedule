@@ -11,7 +11,7 @@
 
     const dispatch = createEventDispatcher();
 
-    let { updateURL, keepState, loadscreen, useWeb } = $config;
+    let { updateURL, keepState, useWeb, sundayOverride, loadscreen } = $config;
 
     // URL update
     $: {
@@ -32,11 +32,14 @@
     // keep state
     $: $config.keepState = keepState;
 
-    // load screen
-    $: $config.loadscreen = loadscreen;
-
     // use school website
     $: $config.useWeb = useWeb;
+
+    // Sunday override
+    $: $config.sundayOverride = sundayOverride;
+
+    // load screen
+    $: $config.loadscreen = loadscreen;
 
     // dropdowns
     let classDropdownOptions, modeDropdownOptions, specialModeDropdownOptions, specialValueDropdownOptions;
@@ -132,6 +135,10 @@
     <div class="option-row">Use the school's website for substitutions <Switch bind:value={useWeb} /></div>
     <p>
         <span>Substituted classes taken from the school's website will be merged with the full schedule.</span>
+    </p>
+    <div class="option-row">Show next week on Sunday <Switch bind:value={sundayOverride} /></div>
+    <p>
+        <span>The current schedule will show the next week's schedule on Sundays.</span>
     </p>
     <div class="option-row">
         <span><Uwu height="1em" style="vertical-align: sub;" /> loading screen</span>

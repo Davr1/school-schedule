@@ -1,6 +1,6 @@
 <script>
     import { fetchCount } from "../mainStore";
-    import { hours } from "../staticStore";
+    import { hours, modes } from "../staticStore";
     import {
         fetchBaka,
         parseBakaSchedule,
@@ -20,23 +20,34 @@
     scheduleParams.subscribe((data) => updateSchedule(data));
 
     async function updateSchedule(schedule) {
+        schedule = structuredClone(schedule);
+
         $fetchCount = 0;
+
         if ($scheduleParams.mode.id !== "Other") {
+            if ($scheduleParams.mode.id === "Actual" && $config.sundayOverride) schedule.mode = modes.search("name", "Next");
+
             scheduleData = await parseBakaSchedule(fetchBaka(schedule));
             dispatch("loadingFinished");
+
             if ($scheduleParams.mode.id === "Permanent" || $config.useWeb === false) return;
+
             let alternativeSchedule = [];
+
             for (let day of scheduleData) {
                 const date = new Date().getFullYear() + "-" + day.date[1].split("/").reverse().join("-");
                 alternativeSchedule.push(parseWebSchedule(fetchWebSchedule(date)));
             }
+
             for (let [x, day] of scheduleData.entries()) {
                 for (let [i, subject] of (await alternativeSchedule[x])
                     .find((e) => e.cls.slice(1) === schedule.class.name.slice(1))
                     ?.subjects.entries() ?? []) {
                     subject?.forEach((s) => {
                         const found = day.subjects[i].findIndex((a) => a.group === s.group);
+
                         day.subjects[i][found] = { ...day.subjects[i][found], ...s };
+
                         if (found === -1) {
                             console.error(day.subjects[i], s);
                         }
