@@ -1,20 +1,34 @@
 <script>
-    import { scheduleParams, isSubjectInfoVisible, isModalVisible, scheduleMetadata } from "./mainStore";
-    import { setURL, fetchWebScheduleMetadata, parseWebScheduleMetadata, fetchWebScheduleAlt } from "./utilities";
+    import { isSubjectInfoVisible, isModalVisible } from "./mainStore";
+    import { scheduleMetadata } from "./staticStore";
+    import { config, scheduleParams } from "./configStore";
+    import { setURL, fetchWebScheduleMetadata, parseWebScheduleMetadata } from "./utilities";
     import Options from "./components/Options.svelte";
     import ScheduleView from "./components/ScheduleView.svelte";
     import LoadScreen from "./components/LoadScreen.svelte";
     import AdvancedSettingsModal from "./components/AdvancedSettingsModal.svelte";
 
-    let isLoadScreenVisible = true;
+    let isLoadScreenVisible = $config.loadscreen;
+
+    scheduleParams.subscribe((v) => {
+        setURL(
+            "/",
+            v.mode.id !== "Other"
+                ? {
+                      [v.mode.name]: "",
+                      cls: v.class.name
+                  }
+                : {
+                      Other: "",
+                      type: v.type,
+                      value: v.value
+                  }
+        );
+    });
 
     function loadingFinished() {
         isLoadScreenVisible = false;
     }
-
-    scheduleParams.subscribe((v) =>
-        setURL("/", v.mode !== "Other" ? { [v.mode]: "", cls: v.class?.name } : { Other: "", type: v.type, value: v.value })
-    );
 
     let isBackgroundDimmed = false;
 

@@ -1,6 +1,8 @@
 <script>
-    import { isSubjectInfoVisible, scheduleParams } from "../mainStore";
+    import { isSubjectInfoVisible } from "../mainStore";
+    import { scheduleParams } from "../configStore";
     import SubjectInfo from "./SubjectInfo.svelte";
+    import { getPosition } from "../utilities";
 
     export let subject = {};
     let cell;
@@ -42,21 +44,7 @@
     let position;
 
     function showSubjectInfoScreen() {
-        position = {
-            size: cell.getBoundingClientRect(),
-            get x() {
-                return this.size.left + this.size.width / 2;
-            },
-            get y() {
-                return this.size.top + this.size.height / 2;
-            },
-            get windowX() {
-                return document.body.clientWidth / 2;
-            },
-            get windowY() {
-                return document.body.clientHeight / 2;
-            }
-        };
+        position = getPosition(cell);
         isSubjectInfoVisible.set(true);
         // the actual value is stored separately so updating it won't show all the cells at once
         _subjectInfoVisible = true;
@@ -76,16 +64,12 @@
             data={{
                 position,
                 subject: {
-                    cls,
                     room,
                     teacher,
                     theme,
-                    subjectAbbr,
                     subjectText,
                     teacherAbbr,
                     group,
-                    changed,
-                    changeInfo,
                     specialChange
                 }
             }}

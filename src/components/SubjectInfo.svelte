@@ -1,5 +1,5 @@
 <script>
-    import { scheduleParams } from "../mainStore";
+    import { updateScheduleParams } from "../configStore";
     import TextSnippet from "../assets/icons/textSnippet.svg";
     import Info from "../assets/icons/info.svg";
     import Person from "../assets/icons/person.svg";
@@ -12,10 +12,6 @@
     let bottomOffset = data.position.y > data.position.windowY ? "0" : undefined;
 
     let { specialChange, theme, subjectText, room, group, teacherAbbr, teacher } = data.subject;
-
-    function updateScheduleParams(newParams = {}) {
-        scheduleParams.update((o) => ({ ...o, ...newParams }));
-    }
 </script>
 
 <div id="subject-info" style:left={leftOffset} style:right={rightOffset} style:top={topOffset} style:bottom={bottomOffset}>

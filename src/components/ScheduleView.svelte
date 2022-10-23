@@ -1,5 +1,6 @@
 <script>
-    import { scheduleParams, hours, fetchCount } from "../mainStore";
+    import { fetchCount } from "../mainStore";
+    import { hours } from "../staticStore";
     import {
         fetchBaka,
         parseBakaSchedule,
@@ -8,6 +9,7 @@
         fetchWebScheduleAlt,
         parseWebScheduleAlt
     } from "../utilities";
+    import { config, scheduleParams } from "../configStore";
     import GridCell from "./GridCell.svelte";
     import { createEventDispatcher } from "svelte";
 
@@ -19,10 +21,10 @@
 
     async function updateSchedule(schedule) {
         $fetchCount = 0;
-        if ($scheduleParams.mode !== "Other") {
+        if ($scheduleParams.mode.id !== "Other") {
             scheduleData = await parseBakaSchedule(fetchBaka(schedule));
             dispatch("loadingFinished");
-            if ($scheduleParams.mode === "Permanent") return;
+            if ($scheduleParams.mode.id === "Permanent" || $config.useWeb === false) return;
             let alternativeSchedule = [];
             for (let day of scheduleData) {
                 const date = new Date().getFullYear() + "-" + day.date[1].split("/").reverse().join("-");
@@ -41,7 +43,6 @@
                     });
                 }
                 scheduleData = scheduleData;
-                console.log(scheduleData);
             }
         } else {
             scheduleData = await parseWebScheduleAlt(fetchWebScheduleAlt(schedule.type, schedule.value));

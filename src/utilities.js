@@ -1,8 +1,9 @@
-import { fetchCount, scheduleParams, scheduleMetadata, modes } from "./mainStore";
+import { fetchCount } from "./mainStore";
+import { scheduleParams } from "./configStore";
+import { config } from "./configStore";
 import { get } from "svelte/store";
 import { encode } from "windows-1250";
 
-// Makes element arrays iterable
 HTMLCollection.prototype[Symbol.iterator] = Array.prototype[Symbol.iterator];
 HTMLCollection.prototype["forEach"] = Array.prototype.forEach;
 NodeList.prototype[Symbol.iterator] = Array.prototype[Symbol.iterator];
@@ -10,7 +11,7 @@ NodeList.prototype["find"] = Array.prototype.find;
 
 // Public Bakalari schedule
 export function fetchBaka(data) {
-    return fetch(`https://is.sssvt.cz/IS/Timetable/Public/${data.mode}/Class/${data.class.id}`).then((response) => {
+    return fetch(`https://is.sssvt.cz/IS/Timetable/Public/${data.mode.id}/Class/${data.class.id}`).then((response) => {
         if (response.ok) {
             fetchCount.update((v) => (v += 1));
             return response.text();
@@ -186,7 +187,9 @@ export async function parseWebScheduleMetadata(response) {
     let rooms = [];
     let teachers = [];
     temp.querySelectorAll("#tt+.links a[href*='/class/']").forEach((e) => classes.push(e.textContent.trim()));
-    temp.querySelectorAll("#tt+.links+.links a[href*='/room/']").forEach((e) => rooms.push(e.textContent.trim()));
+    temp.querySelectorAll("#tt+.links+.links a[href*='/room/']").forEach((e) =>
+        rooms.push({ abbr: e.textContent.trim(), name: e.textContent.trim() })
+    );
     temp.querySelectorAll("#tt+.links+.links+.links a[href*='/teacher/']").forEach((e) =>
         teachers.push({ abbr: e.textContent.trim(), name: e.title })
     );
@@ -195,18 +198,45 @@ export async function parseWebScheduleMetadata(response) {
 }
 
 export function setURL(path = "/", parameters) {
-    parameters = new URLSearchParams(parameters).toString().replaceAll(/=(?=$|&)/g, "");
-    window.history.pushState(null, "", location.origin + path + parameters ? "?" + parameters : "");
+    if (get(config).updateURL) {
+        parameters = new URLSearchParams(parameters).toString().replaceAll(/=(?=$|&)/g, "");
+        window.history.pushState(null, "", location.origin + path + parameters ? "?" + parameters : "");
+    }
 }
 
 export function readURL(url) {
     let params = new URL(url).searchParams;
     return {
-        class: scheduleMetadata.listClasses.includes(params.get("cls"))
-            ? scheduleMetadata.findClass(params.get("cls"))
-            : scheduleMetadata.findClass("P2.B"),
-        mode: modes.includes(Array.from(params.keys())[0]) ? Array.from(params.keys())[0] : "Actual",
+        class: params.get("cls"),
+        mode: Array.from(params.keys())[0],
         type: params.get("type"),
         value: params.get("value")
+    };
+}
+
+export function getPosition(element) {
+    return {
+        size: element.getBoundingClientRect(),
+        get x() {
+            return this.size.left + this.size.width / 2;
+        },
+        get y() {
+            return this.size.top + this.size.height / 2;
+        },
+        get windowWidth() {
+            return window.innerWidth;
+        },
+        get windowHeight() {
+            return window.innerHeight;
+        },
+        get windowX() {
+            return this.windowWidth / 2;
+        },
+        get windowY() {
+            return this.windowHeight / 2;
+        },
+        get parentSize() {
+            return document.querySelector("body>:first-child").getBoundingClientRect();
+        }
     };
 }

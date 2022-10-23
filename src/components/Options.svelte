@@ -1,5 +1,7 @@
 <script>
-    import { fetchCount, scheduleParams, scheduleMetadata } from "../mainStore";
+    import { fetchCount } from "../mainStore";
+    import { scheduleMetadata } from "../staticStore";
+    import { config, scheduleParams, updateScheduleParams } from "../configStore";
     import { readURL } from "../utilities";
     import { createEventDispatcher } from "svelte";
     import { get } from "svelte/store";
@@ -7,42 +9,48 @@
     import Dropdown from "./Dropdown.svelte";
     import Dots from "../assets/icons/dots.svg";
 
-    function updateScheduleParams(newParams = {}) {
-        scheduleParams.update((o) => ({ ...o, ...newParams }));
-        dropdownOptions.activeOption = $scheduleParams.class;
-    }
-
-    window.addEventListener("popstate", () => updateScheduleParams(readURL(window.location)));
+    window.addEventListener("popstate", () => {
+        alert(1);
+        updateScheduleParams(readURL(window.location));
+    });
 
     let maxFetchCount;
-    $: maxFetchCount = $scheduleParams.mode === "Permanent" || $scheduleParams.mode === "Other" ? 1 : 6;
+    $: if ($scheduleParams.mode.id === "Permanent" || $scheduleParams.mode.id === "Other" || $config.useWeb === false) {
+        maxFetchCount = 1;
+    } else {
+        maxFetchCount = 6;
+    }
 
     const dispatch = createEventDispatcher();
 
-    let dropdownOptions = {
+    let dropdownOptions;
+    $: dropdownOptions = {
         options: scheduleMetadata.classes,
-        activeOption: $scheduleParams.class,
+        activeOption: scheduleMetadata.classes.search("id", $scheduleParams.class.id),
         callback: (val) => {
-            let newParams = { class: val };
-            if (get(scheduleParams).mode === "Other") newParams.mode = "Actual";
+            let newParams = { class: val.name };
+            if (get(scheduleParams).mode.id === "Other") newParams.mode = "Actual";
             updateScheduleParams(newParams);
+            dropdownOptions.activeOption = scheduleMetadata.classes.search("id", $scheduleParams.class.id);
         },
         genericName: "name",
         genericKey: "id"
     };
+
+    function setMode(mode) {
+        updateScheduleParams({ mode });
+    }
 </script>
 
 <nav>
     <Dropdown {...dropdownOptions} />
     <div id="weekButtons">
-        <button class:active={$scheduleParams.mode === "Permanent"} on:click={() => updateScheduleParams({ mode: "Permanent" })}>
-            Permanent
-        </button>
-        <button class:active={$scheduleParams.mode === "Actual"} on:click={() => updateScheduleParams({ mode: "Actual" })}>Current</button>
-        <button class:active={$scheduleParams.mode === "Next"} on:click={() => updateScheduleParams({ mode: "Next" })}>Next</button>
-        <button class:active={$scheduleParams.mode === "Other"} on:click={() => dispatch("modalOpen")}><Dots /></button>
+        <button class:active={$scheduleParams.mode.id === "Permanent"} on:click={() => setMode("Permanent")}>Permanent</button>
+        <button class:active={$scheduleParams.mode.id === "Actual"} on:click={() => setMode("Actual")}>Current</button>
+        <button class:active={$scheduleParams.mode.id === "Next"} on:click={() => setMode("Next")}>Next</button>
+        <button class:active={$scheduleParams.mode.id === "Other"} on:click={() => dispatch("modalOpen")}><Dots /></button>
     </div>
-    <button id="reloadButton" on:click={() => updateScheduleParams()}>
+    <button id="reloadButton" class="styled-button" on:click={() => updateScheduleParams()}>
         <ReloadIcon />
         <span id="info">{$fetchCount} / {maxFetchCount} fetched</span>
     </button>
