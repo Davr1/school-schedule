@@ -9,10 +9,7 @@
     import Dropdown from "./Dropdown.svelte";
     import Dots from "../assets/icons/dots.svg";
 
-    window.addEventListener("popstate", () => {
-        alert(1);
-        updateScheduleParams(readURL(window.location));
-    });
+    window.addEventListener("popstate", () => updateScheduleParams(readURL(window.location)));
 
     let maxFetchCount;
     $: if ($scheduleParams.mode.id === "Permanent" || $scheduleParams.mode.id === "Other" || $config.useWeb === false) {

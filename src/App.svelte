@@ -67,7 +67,7 @@
     <LoadScreen />
 {/if}
 {#if $isModalVisible}
-    <AdvancedSettingsModal />
+    <AdvancedSettingsModal on:hideScreenOverlay={hideScreenOverlay} />
 {/if}
 <div id="dim-overlay" class:dimmed={isBackgroundDimmed} on:click={hideScreenOverlay} />
 <Options on:modalOpen={() => isModalVisible.set(true)} />

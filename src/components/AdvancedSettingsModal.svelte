@@ -2,10 +2,14 @@
     import { config, scheduleParams, updateScheduleParams } from "../configStore";
     import { scheduleMetadata, modes } from "../staticStore";
     import { setURL } from "../utilities";
+    import { createEventDispatcher } from "svelte";
     import Switch from "./Switch.svelte";
     import Dropdown from "./Dropdown.svelte";
     import Modal from "./Modal.svelte";
     import Uwu from "../assets/uwu.svg";
+    import Close from "../assets/icons/close.svg";
+
+    const dispatch = createEventDispatcher();
 
     let { updateURL, keepState, loadscreen, useWeb } = $config;
 
@@ -92,9 +96,14 @@
             value: specialValueDropdownOptions.activeOption.abbr
         });
     }
+
+    function closeModal() {
+        dispatch("hideScreenOverlay");
+    }
 </script>
 
 <Modal>
+    <button id="close-button" on:click={closeModal}><Close /></button>
     <h1>Schedule</h1>
     <div class="option-row">Mode <Dropdown {...modeDropdownOptions} /></div>
     <div class="option-row" class:disabled={modeDropdownOptions.activeOption.id === "Other"}>
