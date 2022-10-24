@@ -25,7 +25,8 @@
         $fetchCount = 0;
 
         if ($scheduleParams.mode.id !== "Other") {
-            if ($scheduleParams.mode.id === "Actual" && $config.sundayOverride) schedule.mode = modes.search("name", "Next");
+            if ($scheduleParams.mode.id === "Actual" && $config.sundayOverride && new Date().getDay() === 0)
+                schedule.mode = modes.search("name", "Next");
 
             scheduleData = await parseBakaSchedule(fetchBaka(schedule));
             dispatch("loadingFinished");
