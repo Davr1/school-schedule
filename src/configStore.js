@@ -58,7 +58,14 @@ export function configDeformatter(config) {
 // Schedule params
 
 export function updateScheduleParams(newParams = {}) {
-    newParams = paramsFormatter({ ...get(scheduleParams), ...newParams });
+    let oldParams = get(scheduleParams);
+    newParams = paramsFormatter({
+        class: oldParams?.class?.name,
+        mode: oldParams?.mode?.name,
+        type: oldParams?.type,
+        value: oldParams?.value,
+        ...newParams
+    });
     scheduleParams.set(newParams);
     config.update((a) => a);
 }
