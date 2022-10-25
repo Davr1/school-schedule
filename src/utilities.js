@@ -12,10 +12,7 @@ NodeList.prototype["find"] = Array.prototype.find;
 // Public Bakalari schedule
 export function fetchBaka(data) {
     return fetch(`https://is.sssvt.cz/IS/Timetable/Public/${data.mode.id}/Class/${data.class.id}`).then((response) => {
-        if (response.ok) {
-            fetchCount.update((v) => (v += 1));
-            return response.text();
-        }
+        if (response.ok) return response.text();
     });
 }
 
@@ -25,10 +22,7 @@ export function fetchWebSchedule(date) {
         "https://api.allorigins.win/get?charset=windows-1250&url=" +
             encodeURIComponent("https://www.sssvt.cz/main.php?p=IS&pp=suplak&datum=" + date)
     ).then((response) => {
-        if (response.ok) {
-            fetchCount.update((v) => (v += 1));
-            return response.json();
-        }
+        if (response.ok) return response.json();
     });
 }
 
@@ -42,7 +36,6 @@ export function fetchWebScheduleAlt(mode, value, sub = true) {
             encodeURIComponent("https://www.sssvt.cz/IS/rozvrh-hodin/" + mode + "/" + encodedValue + "/" + (sub ? "suplovaci" : ""))
     ).then((response) => {
         if (response.ok) {
-            fetchCount.update((v) => (v += 1));
             return response.json();
         }
     });

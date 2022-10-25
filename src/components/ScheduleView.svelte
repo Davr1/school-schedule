@@ -1,5 +1,5 @@
 <script>
-    import { fetchCount } from "../mainStore";
+    import { fetchCount, fetchQueue } from "../mainStore";
     import { hours, modes } from "../staticStore";
     import {
         fetchBaka,
@@ -24,12 +24,18 @@
 
         $fetchCount = 0;
 
-        if ($scheduleParams.mode.id !== "Other") {
+        // unique id for this specific queue of requests; prevents incorrect schedule merging
+        $fetchQueue = Symbol();
+        let localFetchQueue = $fetchQueue;
+
+        fetchProcess: if ($scheduleParams.mode.id !== "Other") {
             if ($scheduleParams.mode.id === "Actual" && $config.sundayOverride && new Date().getDay() === 0)
                 schedule.mode = modes.search("name", "Next");
 
             scheduleData = await parseBakaSchedule(fetchBaka(schedule));
             dispatch("loadingFinished");
+            if (localFetchQueue !== $fetchQueue) break fetchProcess;
+            fetchCount.update((v) => (v += 1));
 
             if ($scheduleParams.mode.id === "Permanent" || $config.useWeb === false) return;
 
@@ -41,9 +47,11 @@
             }
 
             for (let [x, day] of scheduleData.entries()) {
-                for (let [i, subject] of (await alternativeSchedule[x])
-                    .find((e) => e.cls.slice(1) === schedule.class.name.slice(1))
-                    ?.subjects.entries() ?? []) {
+                if (localFetchQueue !== $fetchQueue) break fetchProcess;
+                let response = await alternativeSchedule[x];
+                fetchCount.update((v) => (v += 1));
+
+                for (let [i, subject] of response.find((e) => e.cls.slice(1) === schedule.class.name.slice(1))?.subjects.entries() ?? []) {
                     subject?.forEach((s) => {
                         const found = day.subjects[i].findIndex((a) => a.group === s.group);
 
