@@ -66,6 +66,7 @@
             }
         } else {
             scheduleData = await parseWebScheduleAlt(fetchWebScheduleAlt(schedule.type, schedule.value));
+            fetchCount.update((v) => (v += 1));
             dispatch("loadingFinished");
         }
     }
