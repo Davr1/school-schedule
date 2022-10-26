@@ -42,7 +42,7 @@
             let alternativeSchedule = [];
 
             for (let day of scheduleData) {
-                const date = new Date().getFullYear() + "-" + day.date[1].split("/").reverse().join("-");
+                const date = new Date().getFullYear() + "-" + day.date[1].match(/\d+/g).reverse().join("-");
                 alternativeSchedule.push(parseWebSchedule(fetchWebSchedule(date)));
             }
 
