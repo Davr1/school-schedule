@@ -8,8 +8,6 @@
     export let context = { subject: {} };
 
     let { special, theme, subjectText, room, group, teacherAbbr, teacher } = context.subject;
-
-    console.log(context);
 </script>
 
 <Modal on:hideScreenOverlay>
