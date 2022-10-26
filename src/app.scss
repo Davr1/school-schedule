@@ -66,8 +66,12 @@
     #modal {
         border-radius: 1rem 1rem 0 0 !important;
         bottom: 0;
-        height: max-content !important;
-        max-height: 60vh !important;
+        padding: 0.8rem !important;
+        padding-bottom: 0 !important;
+
+        &.scrollable {
+            height: 60vh !important;
+        }
     }
 }
 
@@ -315,6 +319,7 @@ svg {
     height: 8px;
     width: 8px;
     background: #1d2128;
+    border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -488,59 +493,67 @@ svg {
 #modal {
     position: absolute;
     width: min(100%, 40rem);
-    height: 100%;
-    max-height: 80vh;
     min-height: 5.4rem;
     background: var(--main-background);
     z-index: 2;
-    border-radius: 0.4rem;
+    border-radius: 0.8rem;
     box-shadow: 0 1px 10px 2px #0003;
-    padding: 0.8rem 2.4rem;
+    padding: 0.5rem;
     box-sizing: border-box;
-    overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: dark;
+    overflow: hidden;
 
-    h1,
-    h2 {
-        svg {
-            vertical-align: sub;
-            height: 2rem;
-            margin-right: 0.3rem;
-        }
+    &.scrollable {
+        height: 85vh;
     }
 
-    .option-row {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        height: 3rem;
-        font-size: 1.2rem;
+    .modal-content {
+        padding: 0 1.8rem;
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: dark;
+        max-height: 100%;
 
-        &.disabled {
-            opacity: 0.4;
-            pointer-events: none;
-        }
-
-        .dropdown {
-            width: 14rem;
-            height: 2.6rem;
-
-            .options {
-                box-shadow: 0 1px 3px 2px #0002;
+        h1,
+        h2 {
+            svg {
+                vertical-align: sub;
+                height: 2rem;
+                margin-right: 0.3rem;
             }
         }
 
-        &.right-aligned {
-            justify-content: right;
-        }
-    }
+        .option-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 3rem;
+            font-size: 1.2rem;
 
-    p {
-        margin-top: 0;
-        filter: brightness(0.5);
-        line-height: 1.4;
-        padding-left: 0.6rem;
+            &.disabled {
+                opacity: 0.4;
+                pointer-events: none;
+            }
+
+            .dropdown {
+                width: 14rem;
+                height: 2.6rem;
+
+                .options {
+                    box-shadow: 0 1px 3px 2px #0002;
+                }
+            }
+
+            &.right-aligned {
+                justify-content: right;
+            }
+        }
+
+        p {
+            margin-top: 0;
+            filter: brightness(0.5);
+            line-height: 1.4;
+            padding-left: 0.6rem;
+        }
     }
 }
 
@@ -552,6 +565,7 @@ svg {
     height: 3rem;
     padding: 0;
     border-radius: 0.4rem;
+    z-index: 1;
 
     & + * {
         max-width: calc(100% - 3rem);

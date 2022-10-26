@@ -97,7 +97,7 @@
     }
 </script>
 
-<Modal on:hideScreenOverlay>
+<Modal on:hideScreenOverlay scrollable={true}>
     <h1>Schedule</h1>
     <div class="option-row">Mode <Dropdown {...modeDropdownOptions} /></div>
     <div class="option-row" class:disabled={modeDropdownOptions.activeOption.id === "Other"}>
