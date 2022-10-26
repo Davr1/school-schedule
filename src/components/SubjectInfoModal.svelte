@@ -7,26 +7,30 @@
 
     export let context = { subject: {} };
 
-    let { specialChange, theme, subjectText, room, group, teacherAbbr, teacher } = context.subject;
+    let { special, theme, subjectText, room, group, teacherAbbr, teacher } = context.subject;
 
     console.log(context);
 </script>
 
 <Modal on:hideScreenOverlay>
-    {#if specialChange || theme}
-        <h1><TextSnippet /> {specialChange ?? theme}</h1>
+    {#if special || theme}
+        <h1><TextSnippet /> {special ?? theme}</h1>
     {/if}
-    <h2>
-        <Info />
-        {subjectText.split("|")[0]}
-        <span class="link" on:click={() => updateScheduleParams({ mode: "Other", type: "room", value: room })}>
-            {room}{group ? " / " + group : ""}
-        </span>
-    </h2>
-    <h2>
-        <Person />
-        <span class="link" on:click={() => updateScheduleParams({ mode: "Other", type: "teacher", value: teacherAbbr })}>
-            {teacher}
-        </span>
-    </h2>
+    {#if group || room}
+        <h2>
+            <Info />
+            {subjectText.split("|")[0]}
+            <span class="link" on:click={() => updateScheduleParams({ mode: "Other", type: "room", value: room })}>
+                {room}{group ? " / " + group : ""}
+            </span>
+        </h2>
+    {/if}
+    {#if teacher}
+        <h2>
+            <Person />
+            <span class="link" on:click={() => updateScheduleParams({ mode: "Other", type: "teacher", value: teacherAbbr })}>
+                {teacher}
+            </span>
+        </h2>
+    {/if}
 </Modal>

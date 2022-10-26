@@ -52,8 +52,9 @@
     });
 
     function showSubjectInfoScreen() {
+        position = getPosition(cell);
+
         if (window.innerWidth / window.innerHeight > 3 / 4) {
-            position = getPosition(cell);
             isSubjectInfoVisible.set(true);
             // the actual value is stored separately so updating it won't show all the cells at once
             _subjectInfoVisible = true;
@@ -73,7 +74,7 @@
     bind:this={cell}
 >
     {#if _subjectInfoVisible}
-        <SubjectInfo data={{ position, ...{ subject: _subject } }} />
+        <SubjectInfo data={{ position, ...{ subject: _subject } }} on:modalOpen />
     {/if}
     <div class="subject-content" {title}>
         <div class="top">

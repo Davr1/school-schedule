@@ -152,6 +152,7 @@ nav {
     align-items: center;
     gap: 0.5rem;
     font-weight: 300;
+    max-width: 96%;
 
     * {
         font-feature-settings: "tnum";
@@ -465,7 +466,6 @@ svg {
     position: absolute;
     z-index: 2;
     width: max-content;
-    max-width: 40vw;
     margin: -0.67em 2rem;
     background: inherit;
     border-radius: inherit;
