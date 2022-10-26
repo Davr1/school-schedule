@@ -65,7 +65,7 @@ export async function parseBakaSchedule(response) {
                     ...JSON.parse(group.dataset.detail),
                     id: Symbol(),
                     subjectAbbr: group.querySelector(".middle")?.textContent.trim(),
-                    teacherAbbr: group.querySelector(".bottom>span")?.textContent.trim(),
+                    teacherAbbr: group.querySelector(".bottom>span")?.textContent.trim() ?? "",
                     changed: Boolean(group.classList.contains("pink"))
                 });
             });

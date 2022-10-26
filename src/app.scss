@@ -373,6 +373,7 @@ svg {
     &.floating {
         z-index: 2;
         pointer-events: none;
+
         #subject-info {
             pointer-events: auto;
         }
@@ -497,6 +498,15 @@ svg {
     scrollbar-width: thin;
     scrollbar-color: dark;
 
+    h1,
+    h2 {
+        svg {
+            vertical-align: sub;
+            height: 2rem;
+            margin-right: 0.3rem;
+        }
+    }
+
     .option-row {
         display: flex;
         align-items: center;
@@ -539,6 +549,10 @@ svg {
     height: 3rem;
     padding: 0;
     border-radius: 0.4rem;
+
+    & + * {
+        max-width: calc(100% - 3rem);
+    }
 }
 
 .switch {

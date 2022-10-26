@@ -8,6 +8,7 @@
     import ReloadIcon from "../assets/icons/reload.svg";
     import Dropdown from "./Dropdown.svelte";
     import Dots from "../assets/icons/dots.svg";
+    import AdvancedSettingsModal from "./AdvancedSettingsModal.svelte";
 
     window.addEventListener("popstate", () => updateScheduleParams(readURL(window.location)));
 
@@ -37,6 +38,10 @@
     function setMode(mode) {
         updateScheduleParams({ mode });
     }
+
+    function openModal() {
+        dispatch("modalOpen", { type: "AdvancedSettingsModal" });
+    }
 </script>
 
 <nav>
@@ -45,7 +50,7 @@
         <button class:active={$scheduleParams.mode.id === "Permanent"} on:click={() => setMode("Permanent")}>Permanent</button>
         <button class:active={$scheduleParams.mode.id === "Actual"} on:click={() => setMode("Actual")}>Current</button>
         <button class:active={$scheduleParams.mode.id === "Next"} on:click={() => setMode("Next")}>Next</button>
-        <button class:active={$scheduleParams.mode.id === "Other"} on:click={() => dispatch("modalOpen")}><Dots /></button>
+        <button class:active={$scheduleParams.mode.id === "Other"} on:click={openModal}><Dots /></button>
     </div>
     <button id="reloadButton" class="styled-button" on:click={() => updateScheduleParams()}>
         <ReloadIcon />

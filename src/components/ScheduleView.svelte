@@ -100,7 +100,7 @@
                     <div class="cell">
                         {#if cell[0]?.id}
                             {#each cell.sort((a, b) => a.group?.localeCompare(b.group)) as subject (subject.id)}
-                                <GridCell {subject} />
+                                <GridCell {subject} on:modalOpen />
                             {/each}
                         {/if}
                     </div>

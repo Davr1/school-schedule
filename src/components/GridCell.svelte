@@ -1,30 +1,40 @@
 <script>
     import { isSubjectInfoVisible } from "../mainStore";
     import { scheduleParams } from "../configStore";
-    import SubjectInfo from "./SubjectInfo.svelte";
     import { getPosition } from "../utilities";
+    import { createEventDispatcher } from "svelte";
+    import SubjectInfo from "./SubjectInfo.svelte";
+
+    const dispatch = createEventDispatcher();
+
+    let cell, position, title;
 
     export let subject = {};
-    let cell;
+    let _subject = {
+        cls: "",
+        room: "",
+        teacher: "",
+        theme: "",
+        subjectAbbr: "",
+        subjectText: "",
+        teacherAbbr: "",
+        group: "",
+        changed: undefined,
+        changeInfo: undefined,
+        special: undefined,
+        ...subject
+    };
+    _subject.subjectText = subject.subjecttext ?? subject.subjectAbbr ?? "";
+    _subject.group = ($scheduleParams.mode === "Other" ? subject.cls + " " : "") + (subject.group ?? "");
 
-    let cls = subject.cls ?? "";
-    let room = subject.room ?? "";
-    let teacher = subject.teacher ?? "";
-    let theme = subject.theme ?? "";
-    let subjectAbbr = subject.subjectAbbr ?? "";
-    let subjectText = subject.subjecttext ?? subjectAbbr ?? "";
-    let teacherAbbr = subject.teacherAbbr ?? "";
-    let group = ($scheduleParams.mode === "Other" ? cls + " " : "") + (subject.group ?? "");
-    let changed = subject.changed;
-    let changeInfo = subject.changeInfo;
-    let specialChange = subject.special;
-
-    let title =
-        specialChange ??
+    title =
+        _subject.special ??
         [
-            `${theme ? theme + "\n\n" : ""}${subjectText}`,
-            `${teacher}`,
-            `${changed && changeInfo ? changeInfo : room}${group ? " - " + group : ""}`
+            `${_subject.theme ? _subject.theme + "\n\n" : ""}${_subject.subjectText}`,
+            `${_subject.teacher}`,
+            `${_subject.changed && _subject.changeInfo ? _subject.changeInfo : _subject.room}${
+                _subject.group ? " - " + _subject.group : ""
+            }`
         ]
             .filter((e) => e)
             .join("\n");
@@ -41,46 +51,36 @@
         _subjectInfoVisible = false;
     });
 
-    let position;
-
     function showSubjectInfoScreen() {
-        position = getPosition(cell);
-        isSubjectInfoVisible.set(true);
-        // the actual value is stored separately so updating it won't show all the cells at once
-        _subjectInfoVisible = true;
+        if (window.innerWidth / window.innerHeight > 3 / 4) {
+            position = getPosition(cell);
+            isSubjectInfoVisible.set(true);
+            // the actual value is stored separately so updating it won't show all the cells at once
+            _subjectInfoVisible = true;
+        } else {
+            dispatch("modalOpen", { type: "SubjectInfoModal", context: { subject: _subject } });
+        }
     }
 </script>
 
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
     class="subject"
-    class:changed
-    class:changed2={subject.special}
+    class:changed={_subject.changed}
+    class:changed2={_subject.special}
     class:floating={_subjectInfoVisible}
     on:click={showSubjectInfoScreen}
     bind:this={cell}
 >
     {#if _subjectInfoVisible}
-        <SubjectInfo
-            data={{
-                position,
-                subject: {
-                    room,
-                    teacher,
-                    theme,
-                    subjectText,
-                    teacherAbbr,
-                    group,
-                    specialChange
-                }
-            }}
-        />
+        <SubjectInfo data={{ position, ...{ subject: _subject } }} />
     {/if}
     <div class="subject-content" {title}>
         <div class="top">
-            <div class="left">{group}</div>
-            <div class="right">{room}</div>
+            <div class="left">{_subject.group}</div>
+            <div class="right">{_subject.room}</div>
         </div>
-        <div class="middle">{specialChange ?? subjectAbbr}</div>
-        <div class="bottom">{teacherAbbr}</div>
+        <div class="middle">{_subject.special ?? _subject.subjectAbbr}</div>
+        <div class="bottom">{_subject.teacherAbbr ?? ""}</div>
     </div>
 </div>
