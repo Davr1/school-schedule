@@ -16,25 +16,25 @@ function createElement(el) {
     return new Proxy(el, elementProxy);
 }
 
+function functionProxy(original, modify) {
+    return new Proxy(original, {
+        apply: function (target, thisArg, argList) {
+            return modify(Reflect.apply(target, thisArg, argList));
+        }
+    });
+}
+
 const elementProxy = {
     get: function (target, property) {
-        let temp;
+        let temp, proxied;
         switch (property) {
             case "$":
             case "querySelector":
-                temp = new Proxy(target.querySelector, {
-                    apply: function (target, thisArg, argList) {
-                        return createElement(Reflect.apply(target, thisArg, argList));
-                    }
-                });
+                proxied = functionProxy(target.querySelector, (a) => createElement(a));
                 break;
             case "$$":
             case "querySelectorAll":
-                temp = new Proxy(target.querySelectorAll, {
-                    apply: function (target, thisArg, argList) {
-                        return Array.from(Reflect.apply(target, thisArg, argList)).map((e) => createElement(e));
-                    }
-                });
+                proxied = functionProxy(target.querySelectorAll, (a) => Array.from(a).map((e) => createElement(e)));
                 break;
             case "next":
                 temp = target.nextSibling;
@@ -49,9 +49,13 @@ const elementProxy = {
             default:
                 temp = target[property];
         }
-        if (typeof temp === "function") {
-            temp = Function.prototype.bind.call(temp, target);
-        } else if (typeof temp === "object") {
+        if (proxied) {
+            temp = Function.prototype.bind.call(proxied, target);
+        }
+        if (temp instanceof HTMLCollection || temp instanceof NodeList) {
+            temp = Array.from(temp).map((e) => createElement(e));
+        }
+        if (temp instanceof Node) {
             temp = createElement(temp);
         }
         return temp;
@@ -156,7 +160,7 @@ export async function parseWebSchedule(response) {
         let secondHalf = row.nextEl.$$("td:not(.heightfix)");
 
         firstHalf.forEach((cell) => {
-            if (cell.childNodes[0].textContent.replace(/\s+/, "")) {
+            if (cell.childNodes[0].text.replace(/\s+/, "")) {
                 let subject = [];
                 let group = "";
 
