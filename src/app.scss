@@ -596,7 +596,7 @@ svg {
             height: 100%;
             aspect-ratio: 1/1;
             box-sizing: border-box;
-            background: white;
+            background: #fffc;
             transform: scale(0.7);
             border-radius: 50%;
             transition: inherit;
@@ -608,6 +608,7 @@ svg {
 
         &::before {
             margin-left: calc(100% - 2rem);
+            background: white;
         }
     }
 }
