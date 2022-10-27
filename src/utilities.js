@@ -3,22 +3,63 @@ import { config } from "./configStore";
 import { get } from "svelte/store";
 import { encode } from "windows-1250";
 
-HTMLElement.prototype["$"] = function (s) {
-    return this.querySelector(s);
+function createElement(el) {
+    if (!el) return null;
+    if (typeof el === "string") {
+        try {
+            el = new DOMParser().parseFromString(el, "text/html");
+        } catch {
+            console.error(el);
+            return;
+        }
+    }
+    return new Proxy(el, elementProxy);
+}
+
+const elementProxy = {
+    get: function (target, property) {
+        let temp;
+        switch (property) {
+            case "$":
+            case "querySelector":
+                temp = new Proxy(target.querySelector, {
+                    apply: function (target, thisArg, argList) {
+                        return createElement(Reflect.apply(target, thisArg, argList));
+                    }
+                });
+                break;
+            case "$$":
+            case "querySelectorAll":
+                temp = new Proxy(target.querySelectorAll, {
+                    apply: function (target, thisArg, argList) {
+                        return Array.from(Reflect.apply(target, thisArg, argList)).map((e) => createElement(e));
+                    }
+                });
+                break;
+            case "next":
+            case "nextSibling":
+                temp = createElement(target.nextSibling);
+                break;
+            case "nextEl":
+            case "nextElementSibling":
+                temp = createElement(target.nextElementSibling);
+                break;
+            case "firstChild":
+                temp = createElement(target.nextElementSibling);
+                break;
+            case "text":
+            case "textContent":
+                temp = target.textContent.trim();
+                break;
+            default:
+                temp = target[property];
+        }
+        if (typeof temp === "function") {
+            temp = Function.prototype.bind.call(temp, target);
+        }
+        return temp;
+    }
 };
-HTMLElement.prototype["$$"] = function (s) {
-    return this.querySelectorAll(s);
-};
-HTMLDocument.prototype["$"] = function (s) {
-    return this.querySelector(s);
-};
-HTMLDocument.prototype["$$"] = function (s) {
-    return this.querySelectorAll(s);
-};
-HTMLCollection.prototype[Symbol.iterator] = Array.prototype[Symbol.iterator];
-HTMLCollection.prototype["forEach"] = Array.prototype.forEach;
-NodeList.prototype[Symbol.iterator] = Array.prototype[Symbol.iterator];
-NodeList.prototype["find"] = Array.prototype.find;
 
 // Public Bakalari schedule
 export function fetchBaka(data) {
@@ -64,12 +105,12 @@ export function fetchWebScheduleMetadata() {
 }
 
 export async function parseBakaSchedule(response) {
-    let temp = new DOMParser().parseFromString(await response, "text/html");
+    let temp = createElement(await response);
 
     let schedule = [];
 
     temp.$$(".bk-timetable-row").forEach((row) => {
-        let date = [row.$(".bk-day-day").textContent, row.$(".bk-day-date").textContent];
+        let date = [row.$(".bk-day-day").text, row.$(".bk-day-date").text];
         let subjects = [];
 
         row.$$(".bk-timetable-cell").forEach((cell) => {
@@ -79,8 +120,8 @@ export async function parseBakaSchedule(response) {
                 subject.push({
                     ...JSON.parse(group.dataset.detail),
                     id: Symbol(),
-                    subjectAbbr: group.$(".middle")?.textContent.trim(),
-                    teacherAbbr: group.$(".bottom>span")?.textContent.trim() ?? "",
+                    subjectAbbr: group.$(".middle")?.text,
+                    teacherAbbr: group.$(".bottom>span")?.text ?? "",
                     changed: Boolean(group.classList.contains("pink"))
                 });
             });
@@ -91,7 +132,7 @@ export async function parseBakaSchedule(response) {
 
             if (cell.$(".empty")) {
                 subject.push({
-                    special: cell.$("span")?.textContent.trim(),
+                    special: cell.$("span")?.text,
                     id: Symbol()
                 });
             }
@@ -106,34 +147,34 @@ export async function parseBakaSchedule(response) {
 }
 
 export async function parseWebSchedule(response) {
-    let temp = new DOMParser().parseFromString((await response).contents, "text/html");
+    let temp = createElement((await response).contents);
 
     let daySchedule = [];
 
     temp.$$(".table-responsive tbody tr:not(.prvniradek):nth-child(2n)").forEach((row) => {
-        let cls = row.firstChild.textContent;
+        let cls = row.firstChild.text;
         let subjects = [];
 
-        let firstHalf = Array.from(row.$$("td:not(:first-of-type, .heightfix)"));
-        let secondHalf = Array.from(row.nextElementSibling.$$("td:not(.heightfix)"));
+        let firstHalf = row.$$("td:not(:first-of-type, .heightfix)");
+        let secondHalf = row.nextEl.$$("td:not(.heightfix)");
 
         firstHalf.forEach((cell) => {
             if (cell.childNodes[0].textContent.replace(/\s+/, "")) {
                 let subject = [];
                 let group = "";
 
-                if (cell.$("strong")?.nextSibling?.nodeName === "#text") {
-                    group = cell.$("strong").nextSibling.textContent.match(/\d+\.sk/)[0];
-                } else if (cell.firstChild.nodeName === "#text" && /\d+\.sk/.test(cell.firstChild.textContent)) {
-                    group = cell.firstChild.textContent.match(/\d+\.sk/)[0];
+                if (cell.$("strong")?.next?.nodeName === "#text") {
+                    group = cell.$("strong").next.text.match(/\d+\.sk/)[0];
+                } else if (cell.firstChild.nodeName === "#text" && /\d+\.sk/.test(cell.firstChild.text)) {
+                    group = cell.firstChild.text.match(/\d+\.sk/)[0];
                 }
 
                 subject.push({
-                    room: cell.$("[href*='/room/']")?.textContent,
+                    room: cell.$("[href*='/room/']")?.text,
                     group,
                     id: Symbol(),
-                    subjectAbbr: cell.$("strong")?.textContent,
-                    teacherAbbr: cell.$("[href*='/teacher/']")?.textContent,
+                    subjectAbbr: cell.$("strong")?.text,
+                    teacherAbbr: cell.$("[href*='/teacher/']")?.text,
                     changed: true
                 });
 
@@ -141,16 +182,16 @@ export async function parseWebSchedule(response) {
                     let alternativeGroup = secondHalf.shift();
                     let group2 = "";
 
-                    if (alternativeGroup.$("strong")?.nextSibling?.nodeName === "#text") {
-                        group2 = alternativeGroup.$("strong").nextSibling.textContent.match(/\d+\.sk/)[0];
+                    if (alternativeGroup.$("strong")?.next?.nodeName === "#text") {
+                        group2 = alternativeGroup.$("strong").next.text.match(/\d+\.sk/)[0];
                     }
 
                     subject.push({
-                        room: alternativeGroup.$("[href*='/room/']")?.textContent,
+                        room: alternativeGroup.$("[href*='/room/']")?.text,
                         group: group2,
                         id: Symbol(),
-                        subjectAbbr: alternativeGroup.$("strong")?.textContent,
-                        teacherAbbr: alternativeGroup.$("[href*='/teacher/']")?.textContent,
+                        subjectAbbr: alternativeGroup.$("strong")?.text,
+                        teacherAbbr: alternativeGroup.$("[href*='/teacher/']")?.text,
                         changed: true
                     });
                 }
@@ -168,12 +209,12 @@ export async function parseWebSchedule(response) {
 }
 
 export async function parseWebScheduleAlt(response) {
-    let temp = new DOMParser().parseFromString((await response).contents, "text/html");
+    let temp = createElement((await response).contents);
 
     let daySchedule = [];
 
     temp.$$(".day").forEach((row) => {
-        let day = row.$(".dayTitle").textContent.match(/\S+/)[0];
+        let day = row.$(".dayTitle").text.match(/\S+/)[0];
         let subjects = [];
 
         row.$$(".hour:not(.dayTitle)").forEach((cell) => {
@@ -186,17 +227,17 @@ export async function parseWebScheduleAlt(response) {
                     if (get(scheduleParams).type === "teacher") {
                         teacherAbbr = get(scheduleParams).value;
                     } else if (get(scheduleParams).type === "room") {
-                        teacherAbbr = group.$(".teacher a")?.textContent.match(/\S+/)[0];
+                        teacherAbbr = group.$(".teacher a")?.text.match(/\S+/)[0];
                     }
 
-                    let teacher = temp.$$(".links a").find((a) => a.textContent.trim() === teacherAbbr)?.title;
+                    let teacher = temp.$$(".links a").find((a) => a.text.trim() === teacherAbbr)?.title;
 
                     subject.push({
-                        cls: group.$("[href*='/class/']")?.textContent.match(/\S+/)[0],
-                        room: group.$(".room [href*='/room/']")?.textContent ?? get(scheduleParams).value,
-                        group: group.$(".classGroup .group")?.textContent.match(/\d+\.sk/)[0],
+                        cls: group.$("[href*='/class/']")?.text.match(/\S+/)[0],
+                        room: group.$(".room [href*='/room/']")?.text ?? get(scheduleParams).value,
+                        group: group.$(".classGroup .group")?.text.match(/\d+\.sk/)[0],
                         id: Symbol(),
-                        subjectAbbr: group.$("strong")?.textContent.trim(),
+                        subjectAbbr: group.$("strong")?.text.trim(),
                         teacherAbbr,
                         changed: group.classList.contains("zmena"),
                         teacher
@@ -217,15 +258,15 @@ export async function parseWebScheduleAlt(response) {
 }
 
 export async function parseWebScheduleMetadata(response) {
-    let temp = new DOMParser().parseFromString((await response).contents, "text/html");
+    let temp = createElement((await response).contents);
 
     let classes = [];
     let rooms = [];
     let teachers = [];
 
-    temp.$$("#tt+.links a[href*='/class/']").forEach((e) => classes.push(e.textContent.trim()));
-    temp.$$("#tt+.links+.links a[href*='/room/']").forEach((e) => rooms.push({ abbr: e.textContent.trim(), name: e.textContent.trim() }));
-    temp.$$("#tt+.links+.links+.links a[href*='/teacher/']").forEach((e) => teachers.push({ abbr: e.textContent.trim(), name: e.title }));
+    temp.$$("#tt+.links a[href*='/class/']").forEach((e) => classes.push(e.text));
+    temp.$$("#tt+.links+.links a[href*='/room/']").forEach((e) => rooms.push({ abbr: e.text, name: e.text }));
+    temp.$$("#tt+.links+.links+.links a[href*='/teacher/']").forEach((e) => teachers.push({ abbr: e.text, name: e.title }));
 
     return { classes, rooms, teachers };
 }
@@ -269,7 +310,7 @@ export function getPosition(element) {
             return this.windowHeight / 2;
         },
         get parentSize() {
-            return document.$("body>:first-child").getBoundingClientRect();
+            return document.querySelector("body>:first-child").getBoundingClientRect();
         }
     };
 }
