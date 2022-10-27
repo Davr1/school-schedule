@@ -8,7 +8,6 @@
     import ReloadIcon from "../assets/icons/reload.svg";
     import Dropdown from "./Dropdown.svelte";
     import Dots from "../assets/icons/dots.svg";
-    import AdvancedSettingsModal from "./AdvancedSettingsModal.svelte";
 
     window.addEventListener("popstate", () => updateScheduleParams(readURL(window.location)));
 
