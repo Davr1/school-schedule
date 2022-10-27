@@ -37,15 +37,10 @@ const elementProxy = {
                 });
                 break;
             case "next":
-            case "nextSibling":
-                temp = createElement(target.nextSibling);
+                temp = target.nextSibling;
                 break;
             case "nextEl":
-            case "nextElementSibling":
-                temp = createElement(target.nextElementSibling);
-                break;
-            case "firstChild":
-                temp = createElement(target.nextElementSibling);
+                temp = target.nextElementSibling;
                 break;
             case "text":
             case "textContent":
@@ -56,6 +51,8 @@ const elementProxy = {
         }
         if (typeof temp === "function") {
             temp = Function.prototype.bind.call(temp, target);
+        } else if (typeof temp === "object") {
+            temp = createElement(temp);
         }
         return temp;
     }
