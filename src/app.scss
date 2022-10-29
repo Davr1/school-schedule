@@ -138,6 +138,10 @@ body {
     }
 }
 
+* {
+    -webkit-tap-highlight-color: transparent;
+}
+
 main {
     height: 100%;
     width: 100%;
