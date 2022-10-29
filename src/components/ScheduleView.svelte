@@ -43,6 +43,7 @@
 
             for (let day of scheduleData) {
                 const date = new Date().getFullYear() + "-" + day.date[1].match(/\d+/g).reverse().join("-");
+                // begin fetching each day asynchronously
                 alternativeSchedule.push(parseWebSchedule(fetchWebSchedule(date)));
             }
 
@@ -74,13 +75,13 @@
 
 <main>
     <div class="hours">
-        {#each hours.time as hour, index}
+        {#each hours.formattedTime as [from, until], index}
             <div class="hour-container">
                 <div class="num">{index + 1}</div>
                 <div class="hour">
-                    <span>{hour[0]}</span>
+                    <span>{from}</span>
                     -
-                    <span>{hour[1]}</span>
+                    <span>{until}</span>
                 </div>
             </div>
         {/each}

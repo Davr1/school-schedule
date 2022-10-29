@@ -16,12 +16,14 @@ export const scheduleMetadata = {
     teachers: [{ abbr: null, name: null }],
     rooms: [{ abbr: null, name: null }]
 };
+
 export const modes = [
     { name: "Permanent", id: "Permanent" },
     { name: "Current", id: "Actual" },
     { name: "Next", id: "Next" },
     { name: "Other", id: "Other" }
 ];
+
 export const hours = {
     offsets: [
         [475, 5],
@@ -38,13 +40,13 @@ export const hours = {
         [45, 10],
         [45, 10]
     ],
-    get time() {
+    get formattedTime() {
         let output = [];
         let time = 0;
         this.offsets.forEach(([cls, brk]) => {
-            let a = Math.floor(time / 60) + ":" + ("0" + (time % 60)).slice(-2);
+            let a = Math.floor(time / 60) + ":" + `0${time % 60}`.slice(-2);
             time += cls;
-            let b = Math.floor(time / 60) + ":" + ("0" + (time % 60)).slice(-2);
+            let b = Math.floor(time / 60) + ":" + `0${time % 60}`.slice(-2);
             time += brk;
             output.push([a, b]);
         });

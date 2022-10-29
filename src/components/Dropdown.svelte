@@ -31,8 +31,8 @@
         transform = position.y > position.windowHeight * (3 / 4) ? "translateY(-100%)" : "translateY(100%)";
         maxHeight =
             position.y > position.windowHeight * (3 / 4)
-                ? `${position.size.top - position.parentSize.top - 40}px`
-                : `${position.parentSize.bottom - position.size.bottom - 40}px`;
+                ? `${position.size.top - position.containerSize.top - 40}px`
+                : `${position.containerSize.bottom - position.size.bottom - 40}px`;
     }
 </script>
 

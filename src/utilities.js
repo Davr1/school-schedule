@@ -310,8 +310,8 @@ export function getPosition(element) {
         get windowY() {
             return this.windowHeight / 2;
         },
-        get parentSize() {
-            return document.querySelector("body>:first-child").getBoundingClientRect();
+        get containerSize() {
+            return document.body.children[0].getBoundingClientRect();
         }
     };
 }

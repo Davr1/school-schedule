@@ -19,8 +19,9 @@
             <Info />
             {subjectText.split("|")[0]}
             <span class="link" on:click={() => updateScheduleParams({ mode: "Other", type: "room", value: room })}>
-                {room}{group ? " / " + group : ""}
+                {room}
             </span>
+            {group ? " / " + group : ""}
         </h2>
     {/if}
     {#if teacher}
