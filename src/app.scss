@@ -107,6 +107,10 @@
         transform: scale(1.023);
         filter: brightness(1.02);
     }
+
+    #dim-overlay.dimmed {
+        backdrop-filter: blur(5px);
+    }
 }
 
 html,
@@ -456,7 +460,6 @@ svg {
     position: absolute;
     inset: 0;
     background: #000a;
-    backdrop-filter: blur(5px);
     z-index: 1;
     transition: opacity ease-out 80ms;
     visibility: hidden;
