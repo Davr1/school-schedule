@@ -25,7 +25,7 @@
         ...subject
     };
     _subject.subjectText = subject.subjecttext ?? subject.subjectAbbr ?? "";
-    _subject.group = ($scheduleParams.mode === "Other" ? subject.cls + " " : "") + (subject.group ?? "");
+    _subject.group = ($scheduleParams.mode.id === "Other" ? subject.cls + " " : "") + (subject.group ?? "");
 
     title =
         _subject.special ??

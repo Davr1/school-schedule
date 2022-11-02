@@ -276,6 +276,8 @@ export function setURL(path = "/", parameters) {
     if (get(config).updateURL) {
         parameters = new URLSearchParams(parameters).toString().replaceAll(/=(?=$|&)/g, "");
         window.history.pushState(null, "", location.origin + path + parameters ? "?" + parameters : "");
+    } else {
+        window.history.pushState(null, "", location.origin);
     }
 }
 
@@ -311,7 +313,7 @@ export function getPosition(element) {
             return this.windowHeight / 2;
         },
         get containerSize() {
-            return document.body.children[0].getBoundingClientRect();
+            return (document.querySelector(".modal-content") ?? document.body).getBoundingClientRect();
         }
     };
 }

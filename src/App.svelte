@@ -11,7 +11,9 @@
 
     let isLoadScreenVisible = $config.loadscreen;
 
-    scheduleParams.subscribe((v) => {
+    scheduleParams.subscribe((v) => updateURL(v));
+
+    function updateURL(v) {
         setURL(
             "/",
             v.mode.id !== "Other"
@@ -25,7 +27,7 @@
                       value: v.value
                   }
         );
-    });
+    }
 
     function loadingFinished() {
         isLoadScreenVisible = false;
@@ -81,7 +83,7 @@
 {/if}
 {#if $modal.visible}
     {#if $modal.type === "AdvancedSettingsModal"}
-        <AdvancedSettingsModal on:hideScreenOverlay={hideScreenOverlay} />
+        <AdvancedSettingsModal on:hideScreenOverlay={hideScreenOverlay} on:updateURL={() => updateURL($scheduleParams)} />
     {:else if $modal.type === "SubjectInfoModal"}
         <SubjectInfoModal on:hideScreenOverlay={hideScreenOverlay} context={$modal.context} />
     {/if}

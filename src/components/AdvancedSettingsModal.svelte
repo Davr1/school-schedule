@@ -2,27 +2,20 @@
     import { config, scheduleParams, updateScheduleParams } from "../configStore";
     import { scheduleMetadata, modes } from "../staticStore";
     import { setURL } from "../utilities";
+    import { createEventDispatcher } from "svelte";
     import Switch from "./Switch.svelte";
     import Dropdown from "./Dropdown.svelte";
     import Modal from "./Modal.svelte";
     import Uwu from "../assets/uwu.svg";
+
+    const dispatch = createEventDispatcher();
 
     let { updateURL, keepState, useWeb, sundayOverride, loadscreen } = $config;
 
     // URL update
     $: {
         $config.updateURL = updateURL;
-        if (!updateURL) {
-            window.history.pushState(null, "", location.origin);
-        } else {
-            let params = $scheduleParams;
-            setURL(
-                "/",
-                params.mode.id !== "Other"
-                    ? { [params.mode.name]: "", cls: params.class.name }
-                    : { Other: "", type: params.type, value: params.value }
-            );
-        }
+        dispatch("updateURL");
     }
 
     // keep state
