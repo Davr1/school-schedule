@@ -8,111 +8,6 @@
     --text-active: #ffffff;
 }
 
-@media (max-aspect-ratio: 1/2) {
-    html,
-    body {
-        font-size: 1.3vh !important;
-    }
-
-    .cell {
-        min-width: 9vh !important;
-    }
-}
-
-@media (max-aspect-ratio: 3/4) {
-    #weekButtons {
-        width: 100%;
-        max-height: 2.7rem;
-        grid-column: 1/3;
-        max-width: unset !important;
-    }
-
-    #weekButtons button {
-        font-size: 1.1rem;
-    }
-
-    #reloadButton {
-        order: 2;
-        width: 100%;
-        max-height: 2.7rem;
-    }
-
-    main {
-        height: auto !important;
-    }
-
-    nav {
-        display: grid !important;
-        grid-template-columns: 10rem 1fr;
-        grid-template-rows: 1fr 1fr;
-        width: 90% !important;
-        height: 5.6rem !important;
-        place-items: center;
-
-        .dropdown {
-            order: 1;
-            width: 10rem !important;
-        }
-    }
-
-    #info {
-        font-size: 1.1rem;
-    }
-
-    .subject.changed2 .subject-content .middle {
-        margin-left: 3rem;
-    }
-
-    #modal {
-        border-radius: 1rem 1rem 0 0 !important;
-        bottom: 0;
-        padding: 0.8rem !important;
-        padding-bottom: 0 !important;
-
-        &.scrollable {
-            height: 60vh !important;
-        }
-    }
-}
-
-@media (min-aspect-ratio: 2/5) and (max-aspect-ratio: 3/2) {
-    html,
-    body {
-        font-size: 1.4vh !important;
-    }
-
-    main {
-        height: auto !important;
-    }
-
-    .cell {
-        min-width: 11vh !important;
-    }
-}
-
-@media (min-aspect-ratio: 3/1) {
-    html,
-    body {
-        font-size: 1.7vh !important;
-    }
-
-    main {
-        max-width: 200vh;
-    }
-}
-
-@media (pointer: fine) {
-    .subject:not(.changed2):is(:hover, .floating) {
-        box-shadow: 1px 1px 5px 3px #0005;
-        transform: scale(1.023);
-        filter: brightness(1.02);
-    }
-
-    #dim-overlay.dimmed {
-        backdrop-filter: blur(5px);
-    }
-}
-
 html,
 body {
     width: 100%;
@@ -145,8 +40,7 @@ body {
 main {
     height: 100%;
     width: 100%;
-    overflow-x: auto;
-    overflow-y: hidden;
+    overflow: auto hidden;
     display: grid;
     grid-template-rows: 3.4rem repeat(5, 1fr);
     grid-auto-flow: column;
@@ -313,7 +207,6 @@ svg {
     white-space: pre;
 
     .option {
-        position: relative;
         width: 100%;
         text-align: left;
         height: 2.6rem;
@@ -617,5 +510,110 @@ svg {
             margin-left: calc(100% - 2rem);
             background: white;
         }
+    }
+}
+
+@media (max-aspect-ratio: 1/2) {
+    html,
+    body {
+        font-size: 1.3vh;
+    }
+
+    .cell {
+        min-width: 9vh;
+    }
+}
+
+@media (max-aspect-ratio: 3/4) {
+    #weekButtons {
+        width: 100%;
+        max-height: 2.7rem;
+        grid-column: 1/3;
+        max-width: unset;
+    }
+
+    #weekButtons button {
+        font-size: 1.1rem;
+    }
+
+    #reloadButton {
+        order: 2;
+        width: 100%;
+        max-height: 2.7rem;
+    }
+
+    main {
+        height: auto;
+    }
+
+    nav {
+        display: grid;
+        grid-template-columns: 10rem 1fr;
+        grid-template-rows: 1fr 1fr;
+        width: 90%;
+        height: 5.6rem;
+        place-items: center;
+
+        .dropdown {
+            order: 1;
+            width: 10rem;
+        }
+    }
+
+    #info {
+        font-size: 1.1rem;
+    }
+
+    .subject.changed2 .subject-content .middle {
+        margin-left: 3rem;
+    }
+
+    #modal {
+        border-radius: 1rem 1rem 0 0;
+        bottom: 0;
+        padding: 0.8rem;
+        padding-bottom: 0;
+
+        &.scrollable {
+            height: 60vh;
+        }
+    }
+}
+
+@media (min-aspect-ratio: 2/5) and (max-aspect-ratio: 3/2) {
+    html,
+    body {
+        font-size: 1.4vh;
+    }
+
+    main {
+        height: auto;
+    }
+
+    .cell {
+        min-width: 11vh;
+    }
+}
+
+@media (min-aspect-ratio: 3/1) {
+    html,
+    body {
+        font-size: 1.7vh;
+    }
+
+    main {
+        max-width: 200vh;
+    }
+}
+
+@media (pointer: fine) {
+    .subject:not(.changed2):is(:hover, .floating) {
+        box-shadow: 1px 1px 5px 3px #0005;
+        transform: scale(1.023);
+        filter: brightness(1.02);
+    }
+
+    #dim-overlay.dimmed {
+        backdrop-filter: blur(5px);
     }
 }

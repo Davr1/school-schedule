@@ -1,14 +1,7 @@
 <script>
     import { fetchCount, fetchQueue } from "../mainStore";
     import { hours, modes } from "../staticStore";
-    import {
-        fetchBaka,
-        parseBakaSchedule,
-        fetchWebSchedule,
-        parseWebSchedule,
-        fetchWebScheduleAlt,
-        parseWebScheduleAlt
-    } from "../utilities";
+    import { getBakaSchedule, getWebSchedule, getWebScheduleAlt } from "../utilities";
     import { config, scheduleParams } from "../configStore";
     import GridCell from "./GridCell.svelte";
     import { createEventDispatcher } from "svelte";
@@ -29,10 +22,11 @@
         let localFetchQueue = $fetchQueue;
 
         fetchProcess: if ($scheduleParams.mode.id !== "Other") {
-            if ($scheduleParams.mode.id === "Actual" && $config.sundayOverride && new Date().getDay() === 0)
+            if ($scheduleParams.mode.id === "Actual" && $config.sundayOverride && new Date().getDay() === 0) {
                 schedule.mode = modes.search("name", "Next");
+            }
 
-            scheduleData = await parseBakaSchedule(fetchBaka(schedule));
+            scheduleData = await getBakaSchedule(schedule);
             dispatch("loadingFinished");
             if (localFetchQueue !== $fetchQueue) break fetchProcess;
             fetchCount.update((v) => (v += 1));
@@ -44,7 +38,7 @@
             for (let day of scheduleData) {
                 const date = new Date().getFullYear() + "-" + day.date[1].match(/\d+/g).reverse().join("-");
                 // begin fetching each day asynchronously
-                alternativeSchedule.push(parseWebSchedule(fetchWebSchedule(date)));
+                alternativeSchedule.push(getWebSchedule(date));
             }
 
             for (let [x, day] of scheduleData.entries()) {
@@ -66,7 +60,7 @@
                 scheduleData = scheduleData;
             }
         } else {
-            scheduleData = await parseWebScheduleAlt(fetchWebScheduleAlt(schedule.type, schedule.value));
+            scheduleData = await getWebScheduleAlt(schedule.type, schedule.value);
             fetchCount.update((v) => (v += 1));
             dispatch("loadingFinished");
         }

@@ -54,3 +54,9 @@ export const hours = {
         return output;
     }
 };
+
+export const urls = {
+    proxy: "https://api.allorigins.win/get?charset=windows-1250&url=",
+    schoolWebsite: "https://www.sssvt.cz",
+    baka: "https://is.sssvt.cz/IS"
+};

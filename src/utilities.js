@@ -1,5 +1,5 @@
-import { scheduleParams } from "./configStore";
-import { config } from "./configStore";
+import { scheduleParams, config } from "./configStore";
+import { urls } from "./staticStore";
 import { get } from "svelte/store";
 import { encode } from "windows-1250";
 
@@ -64,29 +64,25 @@ const elementProxy = {
 
 // Public Bakalari schedule
 export function fetchBaka(data) {
-    return fetch(`https://is.sssvt.cz/IS/Timetable/Public/${data.mode.id}/Class/${data.class.id}`).then((response) => {
+    return fetch(`${urls.baka}/Timetable/Public/${data.mode.id}/Class/${data.class.id}`).then((response) => {
         if (response.ok) return response.text();
     });
 }
 
 // Substitution schedule from sssvt.cz
 export function fetchWebSchedule(date) {
-    return fetch(
-        "https://api.allorigins.win/get?charset=windows-1250&url=" +
-            encodeURIComponent("https://www.sssvt.cz/main.php?p=IS&pp=suplak&datum=" + date)
-    ).then((response) => {
+    return fetch(urls.proxy + encodeURIComponent(`${urls.schoolWebsite}/main.php?p=IS&pp=suplak&datum=${date}`)).then((response) => {
         if (response.ok) return response.json();
     });
 }
 
 // Teacher/room schedule
-export function fetchWebScheduleAlt(mode, value, sub = true) {
+export function fetchWebScheduleAlt(mode, value, sub) {
     let encodedValue = Array.from(encode(value))
         .map((v) => "%25" + v.toString(16))
         .join("");
     return fetch(
-        "https://api.allorigins.win/get?charset=windows-1250&url=" +
-            encodeURIComponent("https://www.sssvt.cz/IS/rozvrh-hodin/" + mode + "/" + encodedValue + "/" + (sub ? "suplovaci" : ""))
+        urls.proxy + encodeURIComponent(`${urls.schoolWebsite}/IS/rozvrh-hodin/${mode}/${encodedValue}/${sub ? "suplovaci" : ""}`)
     ).then((response) => {
         if (response.ok) {
             return response.json();
@@ -96,17 +92,15 @@ export function fetchWebScheduleAlt(mode, value, sub = true) {
 
 // Empty schedule, only used for getting teacher and room ids
 export function fetchWebScheduleMetadata() {
-    return fetch(
-        "https://api.allorigins.win/get?charset=windows-1250&url=" + encodeURIComponent("https://www.sssvt.cz/IS/rozvrh-hodin/class/")
-    ).then((response) => {
+    return fetch(urls.proxy + encodeURIComponent(`${urls.schoolWebsite}/IS/rozvrh-hodin/class/`)).then((response) => {
         if (response.ok) {
             return response.json();
         }
     });
 }
 
-export async function parseBakaSchedule(response) {
-    let temp = createElement(await response);
+export async function getBakaSchedule(data) {
+    let temp = createElement(await fetchBaka(data));
 
     let schedule = [];
 
@@ -123,7 +117,7 @@ export async function parseBakaSchedule(response) {
                     id: Symbol(),
                     subjectAbbr: group.$(".middle")?.text,
                     teacherAbbr: group.$(".bottom>span")?.text ?? "",
-                    changed: Boolean(group.classList.contains("pink"))
+                    changed: group.classList.contains("pink")
                 });
             });
 
@@ -147,8 +141,8 @@ export async function parseBakaSchedule(response) {
     return schedule;
 }
 
-export async function parseWebSchedule(response) {
-    let temp = createElement((await response).contents);
+export async function getWebSchedule(date) {
+    let temp = createElement((await fetchWebSchedule(date)).contents);
 
     let daySchedule = [];
 
@@ -209,8 +203,8 @@ export async function parseWebSchedule(response) {
     return daySchedule;
 }
 
-export async function parseWebScheduleAlt(response) {
-    let temp = createElement((await response).contents);
+export async function getWebScheduleAlt(mode, value, sub = true) {
+    let temp = createElement((await fetchWebScheduleAlt(mode, value, sub)).contents);
 
     let daySchedule = [];
 
@@ -258,8 +252,8 @@ export async function parseWebScheduleAlt(response) {
     return daySchedule;
 }
 
-export async function parseWebScheduleMetadata(response) {
-    let temp = createElement((await response).contents);
+export async function getWebScheduleMetadata() {
+    let temp = createElement((await fetchWebScheduleMetadata()).contents);
 
     let classes = [];
     let rooms = [];

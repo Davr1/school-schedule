@@ -2,7 +2,7 @@
     import { isSubjectInfoVisible, modal } from "./mainStore";
     import { scheduleMetadata } from "./staticStore";
     import { config, scheduleParams } from "./configStore";
-    import { setURL, fetchWebScheduleMetadata, parseWebScheduleMetadata } from "./utilities";
+    import { setURL, getWebScheduleMetadata } from "./utilities";
     import Options from "./components/Options.svelte";
     import ScheduleView from "./components/ScheduleView.svelte";
     import LoadScreen from "./components/LoadScreen.svelte";
@@ -27,10 +27,6 @@
                       value: v.value
                   }
         );
-    }
-
-    function loadingFinished() {
-        isLoadScreenVisible = false;
     }
 
     let isBackgroundDimmed = false;
@@ -69,13 +65,11 @@
         });
     }
 
-    async function getScheduleMetadata() {
-        let additionalScheduleMetadata = await parseWebScheduleMetadata(fetchWebScheduleMetadata());
+    (async () => {
+        let additionalScheduleMetadata = await getWebScheduleMetadata();
         scheduleMetadata.rooms = additionalScheduleMetadata.rooms;
         scheduleMetadata.teachers = additionalScheduleMetadata.teachers;
-    }
-
-    getScheduleMetadata();
+    })();
 </script>
 
 {#if isLoadScreenVisible}
@@ -90,4 +84,9 @@
 {/if}
 <div id="dim-overlay" class:dimmed={isBackgroundDimmed} on:click={hideScreenOverlay} />
 <Options on:modalOpen={openModal} />
-<ScheduleView on:loadingFinished={loadingFinished} on:modalOpen={openModal} />
+<ScheduleView
+    on:loadingFinished={() => {
+        isLoadScreenVisible = false;
+    }}
+    on:modalOpen={openModal}
+/>

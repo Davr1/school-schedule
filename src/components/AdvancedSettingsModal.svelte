@@ -45,7 +45,7 @@
 
     modeDropdownOptions = {
         options: modes,
-        activeOption: modes.find((a) => a.id === $scheduleParams.mode.id),
+        activeOption: modes.search("id", $scheduleParams.mode.id),
         callback: (val) => {
             modeDropdownOptions.activeOption = val;
         },
