@@ -13,6 +13,8 @@
     scheduleParams.subscribe((data) => updateSchedule(data));
 
     async function updateSchedule(schedule) {
+        localStorage.removeItem("schedule");
+
         schedule = structuredClone(schedule);
 
         $fetchCount = 0;
@@ -64,6 +66,8 @@
             fetchCount.update((v) => (v += 1));
             dispatch("loadingFinished");
         }
+
+        localStorage.setItem("schedule", JSON.stringify(scheduleData));
     }
 </script>
 
