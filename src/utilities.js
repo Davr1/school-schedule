@@ -71,9 +71,13 @@ export function fetchBaka(data) {
 
 // Substitution schedule from sssvt.cz
 export function fetchWebSchedule(date) {
-    return fetch(urls.proxy + encodeURIComponent(`${urls.schoolWebsite}/main.php?p=IS&pp=suplak&datum=${date}`)).then((response) => {
-        if (response.ok) return response.json();
-    });
+    const formattedDate = [date.getFullYear(), date.getMonth() + 1, date.getDate()].join("-");
+
+    return fetch(urls.proxy + encodeURIComponent(`${urls.schoolWebsite}/main.php?p=IS&pp=suplak&datum=${formattedDate}`)).then(
+        (response) => {
+            if (response.ok) return response.json();
+        }
+    );
 }
 
 // Teacher/room schedule

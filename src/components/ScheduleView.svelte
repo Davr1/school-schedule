@@ -37,8 +37,14 @@
 
             let alternativeSchedule = [];
 
+            const currentDate = new Date();
+
             for (let day of scheduleData) {
-                const date = new Date().getFullYear() + "-" + day.date[1].match(/\d+/g).reverse().join("-");
+                const [d, m] = day.date[1].match(/\d+/g);
+                const tempDate = new Date(currentDate.getFullYear(), m - 1, d + 7);
+
+                const date = new Date(currentDate.getFullYear() + (tempDate < currentDate ? 1 : 0), m - 1, d);
+
                 // begin fetching each day asynchronously
                 alternativeSchedule.push(getWebSchedule(date));
             }
