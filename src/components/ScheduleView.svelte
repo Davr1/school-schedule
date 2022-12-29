@@ -58,9 +58,9 @@
                     subject?.forEach((s) => {
                         const found = day.subjects[i].findIndex((a) => a.group === s.group);
 
-                        day.subjects[i][found] = { ...day.subjects[i][found], ...s };
-
-                        if (found === -1) {
+                        if (found !== -1) {
+                            day.subjects[i][found] = { ...day.subjects[i][found], ...s };
+                        } else {
                             console.error(day.subjects[i], s);
                         }
                     });
