@@ -1,7 +1,6 @@
 <script>
     import { config, scheduleParams, updateScheduleParams } from "../configStore";
     import { scheduleMetadata, modes } from "../staticStore";
-    import { setURL } from "../utilities";
     import { createEventDispatcher } from "svelte";
     import Switch from "./Switch.svelte";
     import Dropdown from "./Dropdown.svelte";

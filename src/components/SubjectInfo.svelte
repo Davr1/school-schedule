@@ -1,8 +1,6 @@
 <script>
     import { updateScheduleParams } from "../configStore";
     import { scheduleMetadata } from "../staticStore";
-    import { scheduleParams } from "../configStore";
-    import { get } from "svelte/store";
     import TextSnippet from "../assets/icons/textSnippet.svg";
     import Info from "../assets/icons/info.svg";
     import Person from "../assets/icons/person.svg";
@@ -43,14 +41,14 @@
                 {room}
             </span>
             {#if group}
+                /
                 {#if scheduleMetadata.classes.find((a) => a.name === group.trim().split(" ")[0])}
                     <!-- svelte-ignore a11y-click-events-have-key-events -->
-                    /
                     <span class="link" on:click={() => updateScheduleParams({ class: group.trim().split(" ")[0], mode: "Actual" })}>
                         {group}
                     </span>
                 {:else}
-                    {" / " + group}
+                    {group}
                 {/if}
             {/if}
         </h2>

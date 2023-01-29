@@ -14,19 +14,11 @@
     scheduleParams.subscribe((v) => updateURL(v));
 
     function updateURL(v) {
-        setURL(
-            "/",
-            v.mode.id !== "Other"
-                ? {
-                      [v.mode.name]: "",
-                      cls: v.class.name
-                  }
-                : {
-                      Other: "",
-                      type: v.type,
-                      value: v.value
-                  }
-        );
+        if (v.mode.id === "Other") {
+            setURL("/", { [v.mode.name]: "", type: v.type, value: v.value });
+        } else {
+            setURL("/", { [v.mode.name]: "", cls: v.class.name });
+        }
     }
 
     let isBackgroundDimmed = false;
@@ -82,6 +74,7 @@
         <SubjectInfoModal on:hideScreenOverlay={hideScreenOverlay} context={$modal.context} />
     {/if}
 {/if}
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <div id="dim-overlay" class:dimmed={isBackgroundDimmed} on:click={hideScreenOverlay} />
 <Options on:modalOpen={openModal} />
 <ScheduleView

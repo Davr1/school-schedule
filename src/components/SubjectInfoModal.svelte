@@ -18,6 +18,7 @@
         <h2>
             <Info />
             {subjectText.split("|")[0]}
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
             <span class="link" on:click={() => updateScheduleParams({ mode: "Other", type: "room", value: room })}>
                 {room}
             </span>
@@ -27,6 +28,7 @@
     {#if teacher}
         <h2>
             <Person />
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
             <span class="link" on:click={() => updateScheduleParams({ mode: "Other", type: "teacher", value: teacherAbbr })}>
                 {teacher}
             </span>

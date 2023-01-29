@@ -4,7 +4,7 @@
 
     export let options = [];
     export let activeOption = {};
-    export let callback = (a) => a;
+    export let callback = () => {};
     export let genericName = "";
     export let genericKey = "";
 
