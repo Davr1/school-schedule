@@ -1,6 +1,6 @@
 <script>
     import { fetchCount, fetchQueue } from "../mainStore";
-    import { hours, modes } from "../staticStore";
+    import { hours, modes, scheduleMetadata } from "../staticStore";
     import { getBakaSchedule, getWebSchedule, getWebScheduleAlt } from "../utilities";
     import { config, scheduleParams } from "../configStore";
     import GridCell from "./GridCell.svelte";
@@ -59,7 +59,16 @@
                         const found = day.subjects[i].findIndex((a) => a.group === s.group);
 
                         if (found !== -1) {
-                            day.subjects[i][found] = { ...day.subjects[i][found], ...s };
+                            let temp = { ...day.subjects[i][found], ...s };
+                            if (day.subjects[i][found].subjectAbbr !== s.subjectAbbr) {
+                                temp.subject = s.subjectAbbr;
+                                temp.theme = "";
+                            }
+                            if (day.subjects[i][found].teacherAbbr !== s.teacherAbbr) {
+                                temp.teacher = scheduleMetadata.teachers.find((o) => o.abbr === s.teacherAbbr)?.name ?? s.teacherAbbr;
+                            }
+
+                            day.subjects[i][found] = temp;
                         } else {
                             console.error(day.subjects[i], s);
                         }
