@@ -116,23 +116,44 @@ export async function getBakaSchedule(data) {
             let subject = [];
 
             cell.$$(".day-item-hover").forEach((group) => {
-                subject.push({
-                    ...JSON.parse(group.dataset.detail),
-                    id: Symbol(),
-                    subjectAbbr: group.$(".middle")?.text,
-                    teacherAbbr: group.$(".bottom>span")?.text ?? "",
-                    changed: group.classList.contains("pink")
-                });
+                let data = JSON.parse(group.dataset.detail);
+
+                if (data.type === "removed") {
+                    subject.push({
+                        type: 0,
+                        changed: true,
+                        changeInfo: data.removedinfo
+                    });
+                } else {
+                    subject.push({
+                        type: 1,
+                        id: Symbol(),
+                        subject: data.subjecttext.split("|")[0].trim(),
+                        subjectAbbr: group.$(".middle")?.text,
+                        teacher: data.teacher,
+                        teacherAbbr: group.$(".bottom>span")?.text ?? "",
+                        room: data.room,
+                        group: data.group,
+                        theme: data.theme,
+                        changed: group.classList.contains("pink"),
+                        changeInfo: data.changeinfo
+                    });
+                }
             });
 
             if (cell.children.length === 0) {
-                subject.push({});
+                subject.push({
+                    type: 0,
+                    changed: false,
+                    changeInfo: ""
+                });
             }
 
             if (cell.$(".empty")) {
                 subject.push({
-                    special: cell.$("span")?.text,
-                    id: Symbol()
+                    type: 2,
+                    id: Symbol(),
+                    special: cell.$("span")?.text
                 });
             }
 
@@ -169,9 +190,10 @@ export async function getWebSchedule(date) {
                 }
 
                 subject.push({
+                    type: 1,
+                    id: Symbol(),
                     room: cell.$("[href*='/room/']")?.text,
                     group,
-                    id: Symbol(),
                     subjectAbbr: cell.$("strong")?.text,
                     teacherAbbr: cell.$("[href*='/teacher/']")?.text,
                     changed: true
@@ -186,9 +208,10 @@ export async function getWebSchedule(date) {
                     }
 
                     subject.push({
+                        type: 1,
+                        id: Symbol(),
                         room: alternativeGroup.$("[href*='/room/']")?.text,
                         group: group2,
-                        id: Symbol(),
                         subjectAbbr: alternativeGroup.$("strong")?.text,
                         teacherAbbr: alternativeGroup.$("[href*='/teacher/']")?.text,
                         changed: true
@@ -232,14 +255,15 @@ export async function getWebScheduleAlt(mode, value, sub = true) {
                     let teacher = temp.$$(".links a").find((a) => a.text.trim() === teacherAbbr)?.title;
 
                     subject.push({
+                        type: 1,
+                        id: Symbol(),
                         cls: group.$("[href*='/class/']")?.text.match(/\S+/)[0],
+                        subjectAbbr: group.$("strong")?.text.trim(),
+                        teacher,
+                        teacherAbbr,
                         room: group.$(".room [href*='/room/']")?.text ?? get(scheduleParams).value,
                         group: group.$(".classGroup .group")?.text.match(/\d+\.sk/)[0],
-                        id: Symbol(),
-                        subjectAbbr: group.$("strong")?.text.trim(),
-                        teacherAbbr,
-                        changed: group.classList.contains("zmena"),
-                        teacher
+                        changed: group.classList.contains("zmena")
                     });
                 });
 

@@ -11,26 +11,27 @@
 
     export let subject = {};
     let _subject = {
+        type: 0,
         cls: "",
-        room: "",
-        teacher: "",
-        theme: "",
+        subject: "",
         subjectAbbr: "",
-        subjectText: "",
+        teacher: "",
         teacherAbbr: "",
+        room: "",
         group: "",
+        theme: "",
         changed: undefined,
         changeInfo: undefined,
         special: undefined,
         ...subject
     };
-    _subject.subjectText = subject.subjecttext ?? subject.subjectAbbr ?? "";
+    _subject.subject = subject.subject ?? subject.subjectAbbr ?? "";
     _subject.group = ($scheduleParams.mode.id === "Other" ? subject.cls + " " : "") + (subject.group ?? "");
 
     title =
         _subject.special ??
         [
-            `${_subject.theme ? _subject.theme + "\n\n" : ""}${_subject.subjectText}`,
+            `${_subject.theme ? _subject.theme + "\n\n" : ""}${_subject.subject}`,
             `${_subject.teacher}`,
             `${_subject.changed && _subject.changeInfo ? _subject.changeInfo : _subject.room}${
                 _subject.group ? " - " + _subject.group : ""
