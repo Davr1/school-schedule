@@ -18,7 +18,7 @@
             ? `${data.position.windowWidth - data.position.size.x - data.position.size.width - 90}px`
             : `${data.position.size.x - 90}px`;
 
-    let { specialChange, theme, subject, room, group, teacherAbbr, teacher } = data.subject;
+    let { special, theme, subject, room, group, teacherAbbr, teacher } = data.subject;
 </script>
 
 <div
@@ -29,8 +29,8 @@
     style:bottom={bottomOffset}
     style:max-width={maxWidth}
 >
-    {#if specialChange || theme}
-        <h1><TextSnippet /> {specialChange ?? theme}</h1>
+    {#if special || theme}
+        <h1><TextSnippet /> {special ?? theme}</h1>
     {/if}
     {#if group || room}
         <h2>

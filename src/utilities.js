@@ -124,6 +124,14 @@ export async function getBakaSchedule(data) {
                         changed: true,
                         changeInfo: data.removedinfo
                     });
+                } else if (data.type === "absent") {
+                    subject.push({
+                        type: 2,
+                        id: Symbol(),
+                        special: data.InfoAbsentName,
+                        specialAbbr: data.absentinfo,
+                        changeInfo: data.removedinfo
+                    });
                 } else {
                     subject.push({
                         type: 1,
@@ -153,7 +161,9 @@ export async function getBakaSchedule(data) {
                 subject.push({
                     type: 2,
                     id: Symbol(),
-                    special: cell.$("span")?.text
+                    special: cell.$("span")?.text,
+                    specialAbbr: undefined,
+                    changeInfo: ""
                 });
             }
 

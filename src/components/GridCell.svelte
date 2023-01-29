@@ -23,6 +23,7 @@
         changed: undefined,
         changeInfo: undefined,
         special: undefined,
+        specialAbrr: undefined,
         ...subject
     };
     _subject.subject = subject.subject ?? subject.subjectAbbr ?? "";
@@ -82,7 +83,7 @@
             <div class="left">{_subject.group}</div>
             <div class="right">{_subject.room}</div>
         </div>
-        <div class="middle">{_subject.special ?? _subject.subjectAbbr}</div>
+        <div class="middle">{_subject.specialAbbr ?? _subject.special ?? _subject.subjectAbbr}</div>
         <div class="bottom">{_subject.teacherAbbr ?? ""}</div>
     </div>
 </div>

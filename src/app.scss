@@ -607,7 +607,7 @@ svg {
 }
 
 @media (pointer: fine) {
-    .subject:not(.changed2):is(:hover, .floating) {
+    .cell:not(:only-child) > .subject:is(:hover, .floating) {
         box-shadow: 1px 1px 5px 3px #0005;
         transform: scale(1.023);
         filter: brightness(1.02);
