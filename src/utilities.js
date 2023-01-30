@@ -73,11 +73,13 @@ export function fetchBaka(data) {
 export function fetchWebSchedule(date) {
     const formattedDate = [date.getFullYear(), date.getMonth() + 1, date.getDate()].join("-");
 
-    return fetch(urls.proxy + encodeURIComponent(`${urls.schoolWebsite}/main.php?p=IS&pp=suplak&datum=${formattedDate}`)).then(
-        (response) => {
-            if (response.ok) return response.json();
-        }
-    );
+    return fetch(
+        urls.proxy +
+            encodeURIComponent(`${urls.schoolWebsite}/main.php?p=IS&pp=suplak&datum=${formattedDate}`) +
+            (!get(config).cache ? `&timestamp=${+new Date()}` : "")
+    ).then((response) => {
+        if (response.ok) return response.json();
+    });
 }
 
 // Teacher/room schedule

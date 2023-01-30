@@ -7,7 +7,7 @@
 
     export let context = { subject: {} };
 
-    let { special, theme, subjectText, room, group, teacherAbbr, teacher } = context.subject;
+    let { special, theme, subject, room, group, teacherAbbr, teacher } = context.subject;
 </script>
 
 <Modal on:hideScreenOverlay>
@@ -17,7 +17,7 @@
     {#if group || room}
         <h2>
             <Info />
-            {subjectText.split("|")[0]}
+            {subject.split("|")[0]}
             <!-- svelte-ignore a11y-click-events-have-key-events -->
             <span class="link" on:click={() => updateScheduleParams({ mode: "Other", type: "room", value: room })}>
                 {room}

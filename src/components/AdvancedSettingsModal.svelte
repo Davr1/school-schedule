@@ -9,7 +9,7 @@
 
     const dispatch = createEventDispatcher();
 
-    let { updateURL, keepState, useWeb, sundayOverride, loadscreen } = $config;
+    let { updateURL, keepState, useWeb, cache, sundayOverride, loadscreen } = $config;
 
     // URL update
     $: {
@@ -22,6 +22,9 @@
 
     // use school website
     $: $config.useWeb = useWeb;
+
+    // http cache
+    $: $config.cache = cache;
 
     // Sunday override
     $: $config.sundayOverride = sundayOverride;
@@ -113,11 +116,15 @@
     <div class="option-row">Save last selected schedule options <Switch bind:value={keepState} /></div>
     <p>
         <span>Schedule options will be saved in the browser's local storage.</span>
-        <span>They will be used as the defaults when you visit the base domain.</span>
+        <span>They will be used as the defaults if no other overrides are present.</span>
     </p>
     <div class="option-row">Use the school's website for substitutions <Switch bind:value={useWeb} /></div>
     <p>
         <span>Substituted classes taken from the school's website will be merged with the full schedule.</span>
+    </p>
+    <div class="option-row">Cache server responses <Switch bind:value={cache} /></div>
+    <p>
+        <span>Improves loading speeds, but it could lead to inaccuracies.</span>
     </p>
     <div class="option-row">Show next week on Sunday <Switch bind:value={sundayOverride} /></div>
     <p>

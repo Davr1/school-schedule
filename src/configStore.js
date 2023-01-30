@@ -24,6 +24,7 @@ export const defaultLSConfig = {
     useWeb: true,
     sundayOverride: true,
     loadscreen: true,
+    cache: false,
     scheduleParams: {
         class: "P2.B",
         mode: "Current",
