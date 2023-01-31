@@ -60,3 +60,51 @@ export const urls = {
     schoolWebsite: "https://www.sssvt.cz",
     baka: "https://is.sssvt.cz/IS"
 };
+
+class Subject {
+    constructor(args) {
+        Object.assign(this, this.defaults, args);
+    }
+    type = -1;
+    id = Symbol();
+    defaults = {};
+}
+
+class EmptySubject extends Subject {
+    type = 0;
+    defaults = {
+        changed: false,
+        changeInfo: ""
+    };
+}
+
+class StandardSubject extends Subject {
+    type = 1;
+    defaults = {
+        cls: "",
+        subject: "",
+        subjectAbbr: "",
+        teacher: "",
+        teacherAbbr: "",
+        room: "",
+        group: "",
+        theme: "",
+        changed: false,
+        changeInfo: ""
+    };
+}
+
+class SpecialSubject extends Subject {
+    type = 2;
+    defaults = {
+        special: "",
+        specialAbbr: "",
+        changeInfo: ""
+    };
+}
+
+export const templates = {
+    EmptySubject,
+    StandardSubject,
+    SpecialSubject
+};

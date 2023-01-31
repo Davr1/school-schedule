@@ -10,47 +10,29 @@
     let cell, position, title;
 
     export let subject = {};
-    let _subject = {
-        type: 0,
-        cls: "",
-        subject: "",
-        subjectAbbr: "",
-        teacher: "",
-        teacherAbbr: "",
-        room: "",
-        group: "",
-        theme: "",
-        changed: undefined,
-        changeInfo: undefined,
-        special: undefined,
-        specialAbrr: undefined,
-        ...subject
-    };
-    _subject.subject = subject.subject ?? subject.subjectAbbr ?? "";
-    _subject.group = ($scheduleParams.mode.id === "Other" ? subject.cls + " " : "") + (subject.group ?? "");
+    subject.subject = subject.subject ?? subject.subjectAbbr ?? "";
+    subject.group = ($scheduleParams.mode.id === "Other" ? subject.cls + " " : "") + (subject.group ?? "");
 
     title =
-        _subject.special ??
+        subject.special ??
         [
-            `${_subject.theme ? _subject.theme + "\n\n" : ""}${_subject.subject}`,
-            `${_subject.teacher}`,
-            `${_subject.changed && _subject.changeInfo ? _subject.changeInfo : _subject.room}${
-                _subject.group ? " - " + _subject.group : ""
-            }`
+            `${subject.theme ? subject.theme + "\n\n" : ""}${subject.subject}`,
+            `${subject.teacher}`,
+            `${subject.changed && subject.changeInfo ? subject.changeInfo : subject.room}${subject.group ? " - " + subject.group : ""}`
         ]
             .filter((e) => e)
             .join("\n");
 
-    let _subjectInfoVisible;
+    let subjectInfoVisible;
 
     isSubjectInfoVisible.subscribe((value) => {
         if (value === false) {
-            _subjectInfoVisible = false;
+            subjectInfoVisible = false;
         }
     });
 
     scheduleParams.subscribe(() => {
-        _subjectInfoVisible = false;
+        subjectInfoVisible = false;
     });
 
     function showSubjectInfoScreen() {
@@ -59,9 +41,9 @@
         if (window.innerWidth / window.innerHeight > 3 / 4) {
             isSubjectInfoVisible.set(true);
             // the actual value is stored separately so updating it won't show all the cells at once
-            _subjectInfoVisible = true;
+            subjectInfoVisible = true;
         } else {
-            dispatch("modalOpen", { type: "SubjectInfoModal", context: { subject: _subject } });
+            dispatch("modalOpen", { type: "SubjectInfoModal", context: { subject: subject } });
         }
     }
 </script>
@@ -69,21 +51,21 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
     class="subject"
-    class:changed={_subject.changed}
-    class:changed2={_subject.special}
-    class:floating={_subjectInfoVisible}
+    class:changed={subject.changed}
+    class:changed2={subject.special}
+    class:floating={subjectInfoVisible}
     on:click={showSubjectInfoScreen}
     bind:this={cell}
 >
-    {#if _subjectInfoVisible}
-        <SubjectInfo data={{ position, ...{ subject: _subject } }} on:modalOpen />
+    {#if subjectInfoVisible}
+        <SubjectInfo data={{ position, ...{ subject: subject } }} on:modalOpen />
     {/if}
     <div class="subject-content" {title}>
         <div class="top">
-            <div class="left">{_subject.group}</div>
-            <div class="right">{_subject.room}</div>
+            <div class="left">{subject.group}</div>
+            <div class="right">{subject.room}</div>
         </div>
-        <div class="middle">{_subject.specialAbbr ?? _subject.special ?? _subject.subjectAbbr}</div>
-        <div class="bottom">{_subject.teacherAbbr ?? ""}</div>
+        <div class="middle">{subject.specialAbbr ?? subject.special ?? subject.subjectAbbr}</div>
+        <div class="bottom">{subject.teacherAbbr ?? ""}</div>
     </div>
 </div>

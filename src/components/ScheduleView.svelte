@@ -108,7 +108,7 @@
             <div class="cell-container">
                 {#each day.subjects as cell}
                     <div class="cell">
-                        {#if cell[0]?.id}
+                        {#if cell[0]?.type !== 0}
                             {#each cell.sort((a, b) => a.group?.localeCompare(b.group)) as subject (subject.id)}
                                 <GridCell {subject} on:modalOpen />
                             {/each}

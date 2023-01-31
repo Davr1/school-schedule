@@ -1,5 +1,5 @@
 import { scheduleParams, config } from "./configStore";
-import { urls } from "./staticStore";
+import { urls, templates } from "./staticStore";
 import { get } from "svelte/store";
 import { encode } from "windows-1250";
 
@@ -119,54 +119,49 @@ export async function getBakaSchedule(data) {
 
             cell.$$(".day-item-hover").forEach((group) => {
                 let data = JSON.parse(group.dataset.detail);
+                let subjectInstance;
 
-                if (data.type === "removed") {
-                    subject.push({
-                        type: 0,
-                        changed: true,
-                        changeInfo: data.removedinfo
-                    });
-                } else if (data.type === "absent") {
-                    subject.push({
-                        type: 2,
-                        id: Symbol(),
-                        special: data.InfoAbsentName,
-                        specialAbbr: data.absentinfo,
-                        changeInfo: data.removedinfo
-                    });
-                } else {
-                    subject.push({
-                        type: 1,
-                        id: Symbol(),
-                        subject: data.subjecttext.split("|")[0].trim(),
-                        subjectAbbr: group.$(".middle")?.text,
-                        teacher: data.teacher,
-                        teacherAbbr: group.$(".bottom>span")?.text ?? "",
-                        room: data.room,
-                        group: data.group,
-                        theme: data.theme,
-                        changed: group.classList.contains("pink"),
-                        changeInfo: data.changeinfo
-                    });
+                switch (data.type) {
+                    case "removed":
+                        subjectInstance = new templates.EmptySubject({
+                            changed: true,
+                            changeInfo: data.removedinfo
+                        });
+                        break;
+                    case "absent":
+                        subjectInstance = new templates.SpecialSubject({
+                            special: data.InfoAbsentName,
+                            specialAbbr: data.absentinfo,
+                            changeInfo: data.removedinfo
+                        });
+                        break;
+                    default:
+                        subjectInstance = new templates.StandardSubject({
+                            subject: data.subjecttext.split("|")[0].trim(),
+                            subjectAbbr: group.$(".middle")?.text,
+                            teacher: data.teacher,
+                            teacherAbbr: group.$(".bottom>span")?.text ?? "",
+                            room: data.room,
+                            group: data.group,
+                            theme: data.theme,
+                            changed: group.classList.contains("pink"),
+                            changeInfo: data.changeinfo
+                        });
                 }
+
+                subject.push(subjectInstance);
             });
 
             if (cell.children.length === 0) {
-                subject.push({
-                    type: 0,
-                    changed: false,
-                    changeInfo: ""
-                });
+                subject.push(new templates.EmptySubject());
             }
 
             if (cell.$(".empty")) {
-                subject.push({
-                    type: 2,
-                    id: Symbol(),
-                    special: cell.$("span")?.text,
-                    specialAbbr: undefined,
-                    changeInfo: ""
-                });
+                subject.push(
+                    new templates.SpecialSubject({
+                        special: cell.$("span")?.text
+                    })
+                );
             }
 
             subjects.push(subject);
@@ -201,15 +196,15 @@ export async function getWebSchedule(date) {
                     group = cell.firstChild.text.match(/\d+\.sk/)[0];
                 }
 
-                subject.push({
-                    type: 1,
-                    id: Symbol(),
-                    room: cell.$("[href*='/room/']")?.text,
-                    group,
-                    subjectAbbr: cell.$("strong")?.text,
-                    teacherAbbr: cell.$("[href*='/teacher/']")?.text,
-                    changed: true
-                });
+                subject.push(
+                    new templates.StandardSubject({
+                        room: cell.$("[href*='/room/']")?.text,
+                        group,
+                        subjectAbbr: cell.$("strong")?.text,
+                        teacherAbbr: cell.$("[href*='/teacher/']")?.text,
+                        changed: true
+                    })
+                );
 
                 if (cell.rowSpan === 1) {
                     let alternativeGroup = secondHalf.shift();
@@ -219,15 +214,15 @@ export async function getWebSchedule(date) {
                         group2 = alternativeGroup.$("strong").next.text.match(/\d+\.sk/)[0];
                     }
 
-                    subject.push({
-                        type: 1,
-                        id: Symbol(),
-                        room: alternativeGroup.$("[href*='/room/']")?.text,
-                        group: group2,
-                        subjectAbbr: alternativeGroup.$("strong")?.text,
-                        teacherAbbr: alternativeGroup.$("[href*='/teacher/']")?.text,
-                        changed: true
-                    });
+                    subject.push(
+                        new templates.StandardSubject({
+                            room: alternativeGroup.$("[href*='/room/']")?.text,
+                            group: group2,
+                            subjectAbbr: alternativeGroup.$("strong")?.text,
+                            teacherAbbr: alternativeGroup.$("[href*='/teacher/']")?.text,
+                            changed: true
+                        })
+                    );
                 }
 
                 subjects.push(subject);
@@ -266,26 +261,26 @@ export async function getWebScheduleAlt(mode, value, sub = true) {
 
                     let teacher = temp.$$(".links a").find((a) => a.text.trim() === teacherAbbr)?.title;
 
-                    subject.push({
-                        type: 1,
-                        id: Symbol(),
-                        cls: group.$("[href*='/class/']")?.text.match(/\S+/)[0],
-                        subjectAbbr: group.$("strong")?.text.trim(),
-                        teacher,
-                        teacherAbbr,
-                        room: group.$(".room [href*='/room/']")?.text ?? get(scheduleParams).value,
-                        group: group.$(".classGroup .group")?.text.match(/\d+\.sk/)[0],
-                        changed: group.classList.contains("zmena")
-                    });
+                    subject.push(
+                        new templates.StandardSubject({
+                            cls: group.$("[href*='/class/']")?.text.match(/\S+/)[0],
+                            subjectAbbr: group.$("strong")?.text.trim(),
+                            teacher,
+                            teacherAbbr,
+                            room: group.$(".room [href*='/room/']")?.text ?? get(scheduleParams).value,
+                            group: group.$(".classGroup .group")?.text.match(/\d+\.sk/)[0],
+                            changed: group.classList.contains("zmena")
+                        })
+                    );
                 });
 
                 subjects.push(subject);
             } else {
-                subjects.push([{}]);
+                subjects.push([new templates.EmptySubject()]);
             }
         });
 
-        subjects.push([{}], [{}], [{}]); // padding
+        subjects.push([new templates.EmptySubject()], [new templates.EmptySubject()], [new templates.EmptySubject()]); // padding
         daySchedule.push({ day, subjects });
     });
 
