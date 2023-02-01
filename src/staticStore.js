@@ -63,44 +63,52 @@ export const urls = {
 
 class Subject {
     constructor(args) {
-        Object.assign(this, this.defaults, args);
+        Object.assign(this, args);
     }
     type = -1;
     id = Symbol();
-    defaults = {};
 }
 
 class EmptySubject extends Subject {
+    constructor(args) {
+        super({
+            changed: false,
+            changeInfo: "",
+            ...args
+        });
+    }
     type = 0;
-    defaults = {
-        changed: false,
-        changeInfo: ""
-    };
 }
 
 class StandardSubject extends Subject {
+    constructor(args) {
+        super({
+            cls: "",
+            subject: "",
+            subjectAbbr: "",
+            teacher: "",
+            teacherAbbr: "",
+            room: "",
+            group: "",
+            theme: "",
+            changed: false,
+            changeInfo: "",
+            ...args
+        });
+    }
     type = 1;
-    defaults = {
-        cls: "",
-        subject: "",
-        subjectAbbr: "",
-        teacher: "",
-        teacherAbbr: "",
-        room: "",
-        group: "",
-        theme: "",
-        changed: false,
-        changeInfo: ""
-    };
 }
 
 class SpecialSubject extends Subject {
+    constructor(args) {
+        super({
+            special: "",
+            specialAbbr: "",
+            changeInfo: "",
+            ...args
+        });
+    }
     type = 2;
-    defaults = {
-        special: "",
-        specialAbbr: "",
-        changeInfo: ""
-    };
 }
 
 export const templates = {

@@ -57,7 +57,10 @@
                         const found = day.subjects[i].findIndex((a) => a.group === s.group);
 
                         if (found !== -1) {
-                            let temp = { ...day.subjects[i][found], ...s };
+                            let temp = {};
+                            for (const prop in day.subjects[i][found]) {
+                                temp[prop] = s[prop] || day.subjects[i][found][prop];
+                            }
                             if (day.subjects[i][found].subjectAbbr !== s.subjectAbbr) {
                                 temp.subject = s.subjectAbbr;
                                 temp.theme = "";
@@ -108,11 +111,9 @@
             <div class="cell-container">
                 {#each day.subjects as cell}
                     <div class="cell">
-                        {#if cell[0]?.type !== 0}
-                            {#each cell.sort((a, b) => a.group?.localeCompare(b.group)) as subject (subject.id)}
-                                <GridCell {subject} on:modalOpen />
-                            {/each}
-                        {/if}
+                        {#each cell.sort((a, b) => a.group?.localeCompare(b.group)) as subject (subject.id)}
+                            <GridCell {subject} on:modalOpen />
+                        {/each}
                     </div>
                 {/each}
             </div>

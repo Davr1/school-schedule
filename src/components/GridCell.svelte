@@ -49,23 +49,44 @@
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-<div
-    class="subject"
-    class:changed={subject.changed}
-    class:changed2={subject.special}
-    class:floating={subjectInfoVisible}
-    on:click={showSubjectInfoScreen}
-    bind:this={cell}
->
-    {#if subjectInfoVisible}
-        <SubjectInfo data={{ position, ...{ subject: subject } }} on:modalOpen />
-    {/if}
-    <div class="subject-content" {title}>
-        <div class="top">
-            <div class="left">{subject.group}</div>
-            <div class="right">{subject.room}</div>
+{#if subject.type === 1}
+    <div
+        class="subject"
+        class:changed={subject.changed}
+        class:floating={subjectInfoVisible}
+        on:click={showSubjectInfoScreen}
+        bind:this={cell}
+    >
+        {#if subjectInfoVisible}
+            <SubjectInfo data={{ position, ...{ subject } }} on:modalOpen />
+        {/if}
+        <div class="subject-content" {title}>
+            <div class="top">
+                <div class="left">{subject.group}</div>
+                <div class="right">{subject.room}</div>
+            </div>
+            <div class="middle">{subject.subjectAbbr}</div>
+            <div class="bottom">{subject.teacherAbbr}</div>
         </div>
-        <div class="middle">{subject.specialAbbr ?? subject.special ?? subject.subjectAbbr}</div>
-        <div class="bottom">{subject.teacherAbbr ?? ""}</div>
     </div>
-</div>
+{:else if subject.type === 2}
+    <div
+        class="subject changed2"
+        class:floating={subjectInfoVisible}
+        on:click={() => {
+            if (subject.specialAbbr && subject.special) showSubjectInfoScreen();
+        }}
+        bind:this={cell}
+    >
+        {#if subjectInfoVisible}
+            <SubjectInfo data={{ position, ...{ subject } }} on:modalOpen />
+        {/if}
+        <div class="subject-content" {title}>
+            <div class="middle">{subject.specialAbbr || subject.special}</div>
+        </div>
+    </div>
+{:else if subject.type === 0 && subject.changed}
+    <div class="subject changed2" bind:this={cell}>
+        <div class="subject-content" />
+    </div>
+{/if}

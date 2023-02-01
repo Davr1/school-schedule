@@ -196,15 +196,23 @@ export async function getWebSchedule(date) {
                     group = cell.firstChild.text.match(/\d+\.sk/)[0];
                 }
 
-                subject.push(
-                    new templates.StandardSubject({
-                        room: cell.$("[href*='/room/']")?.text,
-                        group,
-                        subjectAbbr: cell.$("strong")?.text,
-                        teacherAbbr: cell.$("[href*='/teacher/']")?.text,
-                        changed: true
-                    })
-                );
+                if (cell.$("strong")) {
+                    subject.push(
+                        new templates.StandardSubject({
+                            room: cell.$("[href*='/room/']")?.text,
+                            group,
+                            subjectAbbr: cell.$("strong")?.text,
+                            teacherAbbr: cell.$("[href*='/teacher/']")?.text,
+                            changed: true
+                        })
+                    );
+                } else {
+                    subject.push(
+                        new templates.EmptySubject({
+                            changed: true
+                        })
+                    );
+                }
 
                 if (cell.rowSpan === 1) {
                     let alternativeGroup = secondHalf.shift();
