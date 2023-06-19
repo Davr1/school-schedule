@@ -12,7 +12,9 @@
         <link rel="preload" href="https://rsms.me/inter/inter.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
         <script type="module" src="/src/main.js" defer></script>
         <title>ŠŠŠVT rozvrh</title>
+        %sveltekit.head%
     </head>
-
-    <body></body>
+    <body data-sveltekit-preload-data="hover">
+        <div>%sveltekit.body%</div>
+    </body>
 </html>
