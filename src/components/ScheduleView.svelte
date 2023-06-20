@@ -1,16 +1,26 @@
 <script>
+    import { createEventDispatcher, onDestroy, onMount } from "svelte";
+    import { config, scheduleParams } from "../configStore";
     import { fetchCount, fetchQueue } from "../mainStore";
     import { hours, modes, scheduleMetadata } from "../staticStore";
     import { getBakaSchedule, getWebSchedule, getWebScheduleAlt } from "../utilities";
-    import { config, scheduleParams } from "../configStore";
     import GridCell from "./GridCell.svelte";
-    import { createEventDispatcher } from "svelte";
 
     const dispatch = createEventDispatcher();
 
     let scheduleData = [];
 
-    scheduleParams.subscribe((data) => updateSchedule(data));
+    let scheduleParamsSubscriber;
+
+    // Register the subscriber on mount
+    onMount(() => {
+        scheduleParams.subscribe((data) => updateSchedule(data));
+    });
+
+    // On unmount, unsubscribe
+    onDestroy(() => {
+        scheduleParamsSubscriber?.();
+    });
 
     async function updateSchedule(schedule) {
         schedule = structuredClone(schedule);
