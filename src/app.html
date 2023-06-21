@@ -10,9 +10,10 @@
         <link rel="icon" href="/src/assets/logo.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/src/assets/logo180.png" type="image/png" />
         <link rel="preload" href="https://rsms.me/inter/inter.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
-        <script type="module" src="/src/main.js" defer></script>
         <title>ŠŠŠVT rozvrh</title>
+        %sveltekit.head%
     </head>
-
-    <body></body>
+    <body data-sveltekit-preload-data="hover">
+        %sveltekit.body%
+    </body>
 </html>

@@ -1,22 +1,23 @@
 {
-  "name": "my-app",
-  "private": true,
-  "version": "1.0.0",
-  "type": "module",
-  "scripts": {
-    "dev": "vite --port 1006",
-    "build": "vite build",
-    "preview": "vite preview"
-  },
-  "devDependencies": {
-    "@sveltejs/vite-plugin-svelte": "^1.0.2",
-    "rollup-plugin-svelte-svg": "^1.0.0-beta.6",
-    "svelte": "^3.49.0",
-    "svelte-preprocess-sass": "^2.0.1",
-    "vite": "^3.1.0"
-  },
-  "dependencies": {
-    "svelte-preprocess": "^4.10.7",
-    "windows-1250": "^3.0.4"
-  }
+    "name": "my-app",
+    "private": true,
+    "version": "1.0.0",
+    "type": "module",
+    "scripts": {
+        "dev": "vite dev",
+        "build": "vite build",
+        "preview": "vite preview"
+    },
+    "devDependencies": {
+        "@sveltejs/adapter-node": "^1.2.4",
+        "@sveltejs/kit": "^1.20.4",
+        "rollup-plugin-svelte-svg": "^1.0.0-beta.6",
+        "svelte": "^3.54.0",
+        "svelte-preprocess": "^5.0.4",
+        "svelte-preprocess-sass": "^2.0.1",
+        "vite": "^4.3.0"
+    },
+    "dependencies": {
+        "windows-1250": "^3.0.4"
+    }
 }

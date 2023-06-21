@@ -1,5 +1,6 @@
-import { scheduleMetadata, modes } from "./staticStore";
-import { writable, get } from "svelte/store";
+import { browser } from "$app/environment";
+import { get, writable } from "svelte/store";
+import { modes, scheduleMetadata } from "./staticStore";
 import { readURL } from "./utilities";
 
 Array.prototype["search"] = function (key, value, fallback) {
@@ -39,7 +40,10 @@ export const scheduleParams = writable(get(config).scheduleParams);
 
 config.subscribe((value) => {
     value.scheduleParams = get(scheduleParams);
-    localStorage.setItem("config", JSON.stringify(configDeformatter(value)));
+
+    if (browser) {
+        localStorage.setItem("config", JSON.stringify(configDeformatter(value)));
+    }
 });
 
 export function configFormatter(config, fallback = {}) {

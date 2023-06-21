@@ -1,15 +1,17 @@
 <script>
-    import { fetchCount } from "../mainStore";
-    import { scheduleMetadata } from "../staticStore";
-    import { config, scheduleParams, updateScheduleParams } from "../configStore";
-    import { readURL } from "../utilities";
     import { createEventDispatcher } from "svelte";
     import { get } from "svelte/store";
-    import ReloadIcon from "../assets/icons/reload.svg";
-    import Dropdown from "./Dropdown.svelte";
     import Dots from "../assets/icons/dots.svg";
+    import ReloadIcon from "../assets/icons/reload.svg";
+    import { config, scheduleParams, updateScheduleParams } from "../configStore";
+    import { fetchCount } from "../mainStore";
+    import { scheduleMetadata } from "../staticStore";
+    import { readURL } from "../utilities";
+    import Dropdown from "./Dropdown.svelte";
 
-    window.addEventListener("popstate", () => updateScheduleParams(readURL(window.location)));
+    import { browser } from "$app/environment";
+
+    if (browser) window.addEventListener("popstate", () => updateScheduleParams(readURL(window.location)));
 
     let maxFetchCount;
     $: if ($scheduleParams.mode.id === "Permanent" || $scheduleParams.mode.id === "Other" || $config.useWeb === false) {

@@ -1,0 +1,19 @@
+# Git files
+.git/
+.gitignore
+.gitattributes
+
+# Node files
+node_modules/
+
+# Svelte files
+.svelte-kit/
+build/
+
+# Docker files
+.dockerignore
+Dockerfile
+
+# Prettier config
+.prettierignore
+.prettierrc

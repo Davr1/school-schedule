@@ -1,17 +1,43 @@
 <script>
-    import { isSubjectInfoVisible, modal } from "./mainStore";
-    import { scheduleMetadata } from "./staticStore";
-    import { config, scheduleParams } from "./configStore";
-    import { setURL, getWebScheduleMetadata } from "./utilities";
-    import Options from "./components/Options.svelte";
-    import ScheduleView from "./components/ScheduleView.svelte";
-    import LoadScreen from "./components/LoadScreen.svelte";
-    import AdvancedSettingsModal from "./components/AdvancedSettingsModal.svelte";
-    import SubjectInfoModal from "./components/SubjectInfoModal.svelte";
+    import { onDestroy, onMount } from "svelte";
+    import AdvancedSettingsModal from "../components/AdvancedSettingsModal.svelte";
+    import LoadScreen from "../components/LoadScreen.svelte";
+    import Options from "../components/Options.svelte";
+    import ScheduleView from "../components/ScheduleView.svelte";
+    import SubjectInfoModal from "../components/SubjectInfoModal.svelte";
+    import { config, scheduleParams } from "../configStore";
+    import { isSubjectInfoVisible, modal } from "../mainStore";
+    import { scheduleMetadata } from "../staticStore";
+    import { getWebScheduleMetadata, setURL } from "../utilities";
 
     let isLoadScreenVisible = $config.loadscreen;
 
-    scheduleParams.subscribe((v) => updateURL(v));
+    let scheduleParamsSubscriber;
+    let isSubjectInfoVisibleSubscriber;
+    let modalSubscriber;
+
+    // Subscribe to stores on mount
+    onMount(() => {
+        scheduleParamsSubscriber = scheduleParams.subscribe((v) => {
+            updateURL(v); // Note: I merged your 2 subscribers here..
+            hideScreenOverlay();
+        });
+        isSubjectInfoVisibleSubscriber = isSubjectInfoVisible.subscribe((value) => screenOverlayEventHandler(value));
+        modalSubscriber = modal.subscribe((value) => screenOverlayEventHandler(value.visible));
+
+        // Fetch schedule metadata
+        getWebScheduleMetadata().then((metadata) => {
+            scheduleMetadata.rooms = metadata.rooms;
+            scheduleMetadata.teachers = metadata.teachers;
+        });
+    });
+
+    // anndd unsubscribe on unmount
+    onDestroy(() => {
+        scheduleParamsSubscriber?.();
+        isSubjectInfoVisibleSubscriber?.();
+        modalSubscriber?.();
+    });
 
     function updateURL(v) {
         if (v.mode.id === "Other") {
@@ -22,10 +48,6 @@
     }
 
     let isBackgroundDimmed = false;
-
-    isSubjectInfoVisible.subscribe((value) => screenOverlayEventHandler(value));
-    modal.subscribe((value) => screenOverlayEventHandler(value.visible));
-    scheduleParams.subscribe(() => hideScreenOverlay());
 
     function screenOverlayEventHandler(value) {
         isBackgroundDimmed = value;
@@ -56,12 +78,6 @@
             return v;
         });
     }
-
-    (async () => {
-        let additionalScheduleMetadata = await getWebScheduleMetadata();
-        scheduleMetadata.rooms = additionalScheduleMetadata.rooms;
-        scheduleMetadata.teachers = additionalScheduleMetadata.teachers;
-    })();
 </script>
 
 {#if isLoadScreenVisible}
