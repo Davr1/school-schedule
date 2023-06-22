@@ -112,7 +112,7 @@ export async function fetchWebScheduleAlt(mode, value, sub) {
 
 // Empty schedule, only used for getting teacher and room ids
 export function fetchWebScheduleMetadata() {
-    return fetch(urls.proxy + encodeURIComponent(`${urls.schoolWebsite}/IS/rozvrh-hodin/class/`)).then((response) => {
+    return fetch(`${urls.schedule}/class/`).then((response) => {
         if (response.ok) {
             return response.json();
         }
