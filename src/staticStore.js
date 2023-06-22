@@ -56,8 +56,8 @@ export const hours = {
 };
 
 export const urls = {
-    proxy: "https://api.allorigins.win/get?charset=windows-1250&url=",
-    schoolWebsite: "https://www.sssvt.cz",
+    substitution: "/sssvt/substitution",
+    schedule: "/sssvt/schedule",
     baka: "https://is.sssvt.cz/IS"
 };
 

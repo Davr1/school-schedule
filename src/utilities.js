@@ -1,7 +1,7 @@
-import { scheduleParams, config } from "./configStore";
-import { urls, templates } from "./staticStore";
 import { get } from "svelte/store";
 import { encode } from "windows-1250";
+import { config, scheduleParams } from "./configStore";
+import { templates, urls } from "./staticStore";
 
 function createElement(el) {
     if (!el) return null;
@@ -69,36 +69,50 @@ export function fetchBaka(data) {
     });
 }
 
-// Substitution schedule from sssvt.cz
-export function fetchWebSchedule(date) {
+/**
+ * Fetch the substitution schedule from sssvt.cz
+ *
+ * Note: This uses the proxy endpoint
+ * @param {Date} date The date to fetch the schedule for
+ * @returns {Promise<string>} The schedule as a UTF-8 string
+ */
+export async function fetchWebSchedule(date) {
     const formattedDate = [date.getFullYear(), date.getMonth() + 1, date.getDate()].join("-");
 
-    return fetch(
-        urls.proxy +
-            encodeURIComponent(`${urls.schoolWebsite}/main.php?p=IS&pp=suplak&datum=${formattedDate}`) +
-            (!get(config).cache ? `&timestamp=${+new Date()}` : "")
-    ).then((response) => {
-        if (response.ok) return response.json();
-    });
+    // Fetch the schedule from the school's server
+    const response = await fetch(`${urls.substitution}/${formattedDate}`);
+
+    // If the response is not OK, throw an error
+    if (!response.ok) throw new Error("Failed to fetch schedule");
+
+    return response.text();
 }
 
-// Teacher/room schedule
-export function fetchWebScheduleAlt(mode, value, sub) {
+/**
+ * Fetch the teacher / room schedule
+ *
+ * Note: also uses the proxy endpoint
+ * @param {string} mode The mode to fetch the schedule for (ig)
+ * @param {string} value
+ * @param {boolean} sub Whether to fetch the substitution schedule
+ * @returns {Promise<string>} The schedule as a UTF-8 string
+ */
+export async function fetchWebScheduleAlt(mode, value, sub) {
     let encodedValue = Array.from(encode(value))
         .map((v) => "%25" + v.toString(16))
         .join("");
-    return fetch(
-        urls.proxy + encodeURIComponent(`${urls.schoolWebsite}/IS/rozvrh-hodin/${mode}/${encodedValue}/${sub ? "suplovaci" : ""}`)
-    ).then((response) => {
-        if (response.ok) {
-            return response.json();
-        }
-    });
+
+    const response = await fetch(`${urls.schedule}/${mode}/${encodedValue}/${sub ? "suplovaci" : ""}`);
+
+    // If the response is not OK, throw an error
+    if (!response.ok) throw new Error("Failed to fetch schedule");
+
+    return response.text();
 }
 
 // Empty schedule, only used for getting teacher and room ids
 export function fetchWebScheduleMetadata() {
-    return fetch(urls.proxy + encodeURIComponent(`${urls.schoolWebsite}/IS/rozvrh-hodin/class/`)).then((response) => {
+    return fetch(`${urls.schedule}/class/`).then((response) => {
         if (response.ok) {
             return response.json();
         }
@@ -174,7 +188,7 @@ export async function getBakaSchedule(data) {
 }
 
 export async function getWebSchedule(date) {
-    let temp = createElement((await fetchWebSchedule(date)).contents);
+    let temp = createElement(await fetchWebSchedule(date));
 
     let daySchedule = [];
 
@@ -246,7 +260,7 @@ export async function getWebSchedule(date) {
 }
 
 export async function getWebScheduleAlt(mode, value, sub = true) {
-    let temp = createElement((await fetchWebScheduleAlt(mode, value, sub)).contents);
+    let temp = createElement(await fetchWebScheduleAlt(mode, value, sub));
 
     let daySchedule = [];
 

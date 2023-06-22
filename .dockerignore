@@ -17,3 +17,8 @@ Dockerfile
 # Prettier config
 .prettierignore
 .prettierrc
+
+# .env files
+# This is because environment variables are set in docker-compose.yml
+.env
+.env.*
