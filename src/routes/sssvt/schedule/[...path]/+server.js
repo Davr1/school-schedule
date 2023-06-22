@@ -1,4 +1,6 @@
+import axios from "axios";
 import { decode } from "windows-1250";
+import { getHttpsAgent, userAgent } from "../../../../lib/server/agent"; // yikes
 
 /**
  * Get the school's schedule.. This is basically just a proxy for the /IS/rozvrh-hodin endpoint
@@ -14,14 +16,18 @@ export async function GET({ params }) {
     const url = params.path;
 
     // Fetch the schedule from the school's server
-    const response = await fetch(`https://www.sssvt.cz/IS/rozvrh-hodin/${url}`);
+    const response = await axios.get(`https://www.sssvt.cz/IS/rozvrh-hodin/${url}`, {
+        httpsAgent: getHttpsAgent(),
+        headers: { "User-Agent": userAgent },
+        responseType: "arraybuffer",
+        responseEncoding: "binary"
+    });
 
     // If the response is not OK, return the same response
-    if (!response.ok) return response;
+    if (response.status !== 200) return new Response(response.data, { status: response.status });
 
     // Get the response as text and parse it from whatever the fuck that is
-    const text = await response.arrayBuffer();
-    const buffer = Buffer.from(text);
+    const buffer = Buffer.from(response.data);
     const parsed = decode(buffer);
 
     // Return the parsed schedule

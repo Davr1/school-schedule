@@ -18,6 +18,8 @@
         "vite": "^4.3.0"
     },
     "dependencies": {
+        "axios": "^1.4.0",
+        "socks-proxy-agent": "^8.0.1",
         "windows-1250": "^3.0.4"
     }
 }
