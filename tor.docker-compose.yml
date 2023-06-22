@@ -1,0 +1,15 @@
+version: "3.8"
+
+services:
+    schedule:
+        build:
+            context: .
+            dockerfile: Dockerfile
+            args:
+                PROXY: socks5://tor:9050
+        restart: always
+        ports:
+            - "3000:3000"
+    tor:
+        image: dperson/torproxy
+        restart: always

@@ -20,9 +20,12 @@ RUN npm ci
 # See .dockerignore for what is not copied
 COPY . .
 
+# Set the environment variable "proxy" 
+ARG PROXY=""
+ENV PROXY=${PROXY}
+
 # Build the app
 RUN npm run build
-
 
 # The runner
 # This starts the node server using the app we built in the builder
