@@ -5,12 +5,11 @@
     import { config, scheduleParams, updateScheduleParams } from "../configStore";
     import { fetchCount } from "../mainStore";
     import { scheduleMetadata, sheduleModes } from "../staticStore";
-    import { readURL } from "../utilities";
     import Dropdown from "./Dropdown.svelte";
 
     import { browser } from "$app/environment";
 
-    if (browser) window.addEventListener("popstate", () => updateScheduleParams(readURL(window.location)));
+    // if (browser) window.addEventListener("popstate", () => updateScheduleParams(readURL(window.location)));
 
     let maxFetchCount;
     $: if ($scheduleParams.weekMode === "Permanent" || $scheduleParams.scheduleMode !== "Class" || $config.useWeb === false) {

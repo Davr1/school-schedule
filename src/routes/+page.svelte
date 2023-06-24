@@ -7,8 +7,6 @@
     import SubjectInfoModal from "../components/SubjectInfoModal.svelte";
     import { config, scheduleParams } from "../configStore";
     import { isSubjectInfoVisible, modal } from "../mainStore";
-    import { scheduleMetadata } from "../staticStore";
-    import { setURL } from "../utilities";
 
     let isLoadScreenVisible = $config.loadscreen;
 
@@ -19,7 +17,7 @@
     // Subscribe to stores on mount
     onMount(() => {
         scheduleParamsSubscriber = scheduleParams.subscribe((v) => {
-            updateURL(v); // Note: I merged your 2 subscribers here..
+            //updateURL(v); // Note: I merged your 2 subscribers here..
             hideScreenOverlay();
         });
         isSubjectInfoVisibleSubscriber = isSubjectInfoVisible.subscribe((value) => screenOverlayEventHandler(value));
@@ -32,14 +30,6 @@
         isSubjectInfoVisibleSubscriber?.();
         modalSubscriber?.();
     });
-
-    function updateURL(v) {
-        /*if (v.mode.id === "Other") {
-            setURL("/", { [v.mode.name]: "", type: v.type, value: v.value });
-        } else {
-            setURL("/", { [v.mode.name]: "", cls: v.class.name });
-        }*/
-    }
 
     let isBackgroundDimmed = false;
 
@@ -79,7 +69,7 @@
 {/if}
 {#if $modal.visible}
     {#if $modal.type === "AdvancedSettingsModal"}
-        <AdvancedSettingsModal on:hideScreenOverlay={hideScreenOverlay} on:updateURL={() => updateURL($scheduleParams)} />
+        <AdvancedSettingsModal on:hideScreenOverlay={hideScreenOverlay} />
     {:else if $modal.type === "SubjectInfoModal"}
         <SubjectInfoModal on:hideScreenOverlay={hideScreenOverlay} context={$modal.context} />
     {/if}

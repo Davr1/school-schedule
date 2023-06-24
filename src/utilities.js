@@ -259,25 +259,6 @@ export async function getWebSchedule(date) {
     return daySchedule;
 }
 
-export function setURL(path = "/", parameters) {
-    if (get(config).updateURL) {
-        parameters = new URLSearchParams(parameters).toString().replaceAll(/=(?=$|&)/g, "");
-        window.history.pushState(null, "", location.origin + path + parameters ? "?" + parameters : "");
-    } else {
-        window.history.pushState(null, "", location.origin);
-    }
-}
-
-export function readURL(url) {
-    let params = new URL(url).searchParams;
-    return {
-        class: params.get("cls"),
-        mode: Array.from(params.keys())[0],
-        type: params.get("type"),
-        value: params.get("value")
-    };
-}
-
 export function getPosition(element) {
     return {
         size: element.getBoundingClientRect(),
