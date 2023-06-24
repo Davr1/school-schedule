@@ -42,14 +42,19 @@
             </span>
             {#if group}
                 /
-                {#if scheduleMetadata.classes.find((a) => a.name === group.trim().split(" ")[0])}
-                    <!-- svelte-ignore a11y-click-events-have-key-events -->
-                    <span class="link" on:click={() => updateScheduleParams({ value: group.trim().split(" ")[0], scheduleMode: "Class" })}>
-                        {group}
-                    </span>
-                {:else}
-                    {group}
-                {/if}
+                {#each group.split(", ") as singleGroup}
+                    {#if scheduleMetadata.classes.find((a) => a.name === singleGroup.trim().split(" ")[0])}
+                        <!-- svelte-ignore a11y-click-events-have-key-events -->
+                        <span
+                            class="link"
+                            on:click={() => updateScheduleParams({ value: singleGroup.trim().split(" ")[0], scheduleMode: "Class" })}
+                        >
+                            {singleGroup}
+                        </span>
+                    {:else}
+                        {singleGroup}
+                    {/if}
+                {/each}
             {/if}
         </h2>
     {/if}

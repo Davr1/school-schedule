@@ -391,6 +391,10 @@ svg {
 .link {
     text-decoration: dotted underline 2px;
     cursor: pointer;
+
+    & + .link {
+        margin-left: 0.5rem;
+    }
 }
 
 #modal {
