@@ -1,7 +1,7 @@
 <script>
     import { config } from "$stores/config";
 
-    import Uwu from "$assets/uwu.svg";
+    import UwU from "$assets/uwu.svg";
 
     import Modal from "$components/Modal.svelte";
     import Switch from "$components/Switch.svelte";
@@ -36,7 +36,7 @@
         <span>The current schedule will show the next week's schedule on Sundays.</span>
     </p>
     <div class="option-row">
-        <span><Uwu height="1em" style="vertical-align: sub;" /> loading screen</span>
+        <span><UwU height="1em" style="vertical-align: sub;" /> loading screen</span>
         <Switch bind:value={loadscreen} />
     </div>
     <p><span>What's this?</span></p>
