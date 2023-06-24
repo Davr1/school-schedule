@@ -37,14 +37,14 @@
             <Info />
             {subject.split("|")[0]}
             <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <span class="link" on:click={() => updateScheduleParams({ mode: "Other", type: "room", value: room })}>
+            <span class="link" on:click={() => updateScheduleParams({ value: room, scheduleMode: "Room" })}>
                 {room}
             </span>
             {#if group}
                 /
                 {#if scheduleMetadata.classes.find((a) => a.name === group.trim().split(" ")[0])}
                     <!-- svelte-ignore a11y-click-events-have-key-events -->
-                    <span class="link" on:click={() => updateScheduleParams({ class: group.trim().split(" ")[0], mode: "Actual" })}>
+                    <span class="link" on:click={() => updateScheduleParams({ value: group.trim().split(" ")[0], scheduleMode: "Class" })}>
                         {group}
                     </span>
                 {:else}
@@ -57,7 +57,7 @@
         <h2>
             <Person />
             <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <span class="link" on:click={() => updateScheduleParams({ mode: "Other", type: "teacher", value: teacherAbbr })}>
+            <span class="link" on:click={() => updateScheduleParams({ value: teacherAbbr, scheduleMode: "Teacher" })}>
                 {teacher}
             </span>
         </h2>

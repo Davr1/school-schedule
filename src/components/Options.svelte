@@ -18,14 +18,23 @@
         maxFetchCount = 6;
     }
 
-    function getNewDropdownValues(mode) {
-        return { Class: scheduleMetadata.classes, Teacher: scheduleMetadata.teachers, Room: scheduleMetadata.rooms }[mode];
+    function getDropdownValues(mode) {
+        let options = { Class: scheduleMetadata.classes, Teacher: scheduleMetadata.teachers, Room: scheduleMetadata.rooms }[mode];
+        return {
+            options,
+            activeOption: options.search("name", $scheduleParams.value),
+            callback: (val) => {
+                updateScheduleParams({ value: val.name });
+                valuesDropdown.activeOption = options.search("name", $scheduleParams.value);
+            },
+            genericName: "name",
+            genericKey: "id"
+        };
     }
 
     const dispatch = createEventDispatcher();
 
     const indexedScheduleModes = sheduleModes.map((m) => ({ name: m, id: m }));
-    let indexedScheduleValues = getNewDropdownValues($scheduleParams.scheduleMode);
 
     let modeDropdown;
     $: modeDropdown = {
@@ -33,7 +42,6 @@
         activeOption: indexedScheduleModes.search("id", $scheduleParams.scheduleMode, "Class"),
         callback: (val) => {
             updateScheduleParams({ scheduleMode: val.name });
-            indexedScheduleValues = getNewDropdownValues($scheduleParams.scheduleMode);
             modeDropdown.activeOption = indexedScheduleModes.search("name", $scheduleParams.scheduleMode);
         },
         genericName: "name",
@@ -41,16 +49,7 @@
     };
 
     let valuesDropdown;
-    $: valuesDropdown = {
-        options: indexedScheduleValues,
-        activeOption: indexedScheduleValues.search("name", $scheduleParams.value),
-        callback: (val) => {
-            updateScheduleParams({ value: val.name });
-            valuesDropdown.activeOption = indexedScheduleValues.search("name", $scheduleParams.value);
-        },
-        genericName: "name",
-        genericKey: "id"
-    };
+    $: valuesDropdown = getDropdownValues($scheduleParams.scheduleMode);
 
     function setMode(weekMode) {
         updateScheduleParams({ weekMode });

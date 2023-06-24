@@ -1,6 +1,7 @@
 import { browser } from "$app/environment";
 import { get, writable } from "svelte/store";
 import { PUBLIC_VERSION } from "$env/static/public";
+import { scheduleMetadata } from "./staticStore";
 
 Array.prototype["search"] = function (key, value, fallback) {
     return this.find((o) => o[key] === value) ?? this.find((o) => o[key] === fallback);
@@ -40,6 +41,12 @@ const defaultValues = {
     Room: "104"
 };
 
+const possibleValues = {
+    Class: scheduleMetadata.classes.map((c) => c.name),
+    Teacher: scheduleMetadata.teachers.map((t) => t.name),
+    Room: scheduleMetadata.rooms.map((r) => r.name)
+};
+
 export const config = writable({ ...defaultConfig, ...localConfig });
 export const scheduleParams = writable(get(config).scheduleParams);
 
@@ -55,10 +62,23 @@ config.subscribe((value) => {
 
 export function updateScheduleParams(newParams = {}) {
     let oldParams = get(scheduleParams);
-    if (newParams.scheduleMode && newParams.scheduleMode !== oldParams.scheduleMode) {
+    if (newParams.scheduleMode && newParams.scheduleMode !== oldParams.scheduleMode && !newParams.value) {
         newParams.value = defaultValues[newParams.scheduleMode];
     }
+
     newParams = { ...oldParams, ...newParams };
+
+    if (newParams.scheduleMode === "Teacher") {
+        // replace abbreviation with full name
+        let teacher = scheduleMetadata.teachers.find((t) => t.abbr === newParams.value || t.name === newParams.value);
+        newParams.value = teacher.name;
+    }
+
+    if (possibleValues[newParams.scheduleMode].indexOf(newParams.value) === -1) {
+        newParams.value = defaultValues[newParams.scheduleMode];
+    }
+
+    console.log(newParams);
     scheduleParams.set(newParams);
     config.update((a) => a);
 }

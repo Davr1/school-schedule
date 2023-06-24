@@ -1,6 +1,4 @@
-import { get } from "svelte/store";
 import { encode } from "windows-1250";
-import { config, scheduleParams } from "./configStore";
 import { templates, toBakaParams, urls } from "./staticStore";
 
 function createElement(el) {
