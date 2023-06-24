@@ -1,43 +1,58 @@
 <script>
     import { createEventDispatcher } from "svelte";
-    import { get } from "svelte/store";
     import Dots from "../assets/icons/dots.svg";
     import ReloadIcon from "../assets/icons/reload.svg";
     import { config, scheduleParams, updateScheduleParams } from "../configStore";
     import { fetchCount } from "../mainStore";
-    import { scheduleMetadata } from "../staticStore";
-    import { readURL } from "../utilities";
+    import { scheduleMetadata, sheduleModes } from "../staticStore";
     import Dropdown from "./Dropdown.svelte";
 
     import { browser } from "$app/environment";
 
-    if (browser) window.addEventListener("popstate", () => updateScheduleParams(readURL(window.location)));
+    // if (browser) window.addEventListener("popstate", () => updateScheduleParams(readURL(window.location)));
 
     let maxFetchCount;
-    $: if ($scheduleParams.mode.id === "Permanent" || $scheduleParams.mode.id === "Other" || $config.useWeb === false) {
+    $: if ($scheduleParams.weekMode === "Permanent" || $scheduleParams.scheduleMode !== "Class" || $config.useWeb === false) {
         maxFetchCount = 1;
     } else {
         maxFetchCount = 6;
     }
 
+    function getDropdownValues(mode) {
+        let options = { Class: scheduleMetadata.classes, Teacher: scheduleMetadata.teachers, Room: scheduleMetadata.rooms }[mode];
+        return {
+            options,
+            activeOption: options.search("name", $scheduleParams.value),
+            callback: (val) => {
+                updateScheduleParams({ value: val.name });
+                valuesDropdown.activeOption = options.search("name", $scheduleParams.value);
+            },
+            genericName: "name",
+            genericKey: "id"
+        };
+    }
+
     const dispatch = createEventDispatcher();
 
-    let dropdownOptions;
-    $: dropdownOptions = {
-        options: scheduleMetadata.classes,
-        activeOption: scheduleMetadata.classes.search("id", $scheduleParams.class.id),
+    const indexedScheduleModes = sheduleModes.map((m) => ({ name: m, id: m }));
+
+    let modeDropdown;
+    $: modeDropdown = {
+        options: indexedScheduleModes,
+        activeOption: indexedScheduleModes.search("id", $scheduleParams.scheduleMode, "Class"),
         callback: (val) => {
-            let newParams = { class: val.name };
-            if (get(scheduleParams).mode.id === "Other") newParams.mode = "Actual";
-            updateScheduleParams(newParams);
-            dropdownOptions.activeOption = scheduleMetadata.classes.search("id", $scheduleParams.class.id);
+            updateScheduleParams({ scheduleMode: val.name });
+            modeDropdown.activeOption = indexedScheduleModes.search("name", $scheduleParams.scheduleMode);
         },
         genericName: "name",
         genericKey: "id"
     };
 
-    function setMode(mode) {
-        updateScheduleParams({ mode });
+    let valuesDropdown;
+    $: valuesDropdown = getDropdownValues($scheduleParams.scheduleMode);
+
+    function setMode(weekMode) {
+        updateScheduleParams({ weekMode });
     }
 
     function openModal() {
@@ -46,12 +61,13 @@
 </script>
 
 <nav>
-    <Dropdown {...dropdownOptions} />
+    <Dropdown {...modeDropdown} />
+    <Dropdown {...valuesDropdown} />
     <div id="weekButtons">
-        <button class:active={$scheduleParams.mode.id === "Permanent"} on:click={() => setMode("Permanent")}>Permanent</button>
-        <button class:active={$scheduleParams.mode.id === "Actual"} on:click={() => setMode("Actual")}>Current</button>
-        <button class:active={$scheduleParams.mode.id === "Next"} on:click={() => setMode("Next")}>Next</button>
-        <button class:active={$scheduleParams.mode.id === "Other"} on:click={openModal}><Dots /></button>
+        <button class:active={$scheduleParams.weekMode === "Permanent"} on:click={() => setMode("Permanent")}>Permanent</button>
+        <button class:active={$scheduleParams.weekMode === "Current"} on:click={() => setMode("Current")}>Current</button>
+        <button class:active={$scheduleParams.weekMode === "Next"} on:click={() => setMode("Next")}>Next</button>
+        <button on:click={openModal}><Dots /></button>
     </div>
     <button id="reloadButton" class="styled-button" on:click={() => updateScheduleParams()}>
         <ReloadIcon />

@@ -66,11 +66,17 @@ nav {
     }
 
     .dropdown {
-        width: 7rem;
         height: 100%;
+        width: 12rem;
+        flex: 0 1 12rem;
 
         .options {
             box-shadow: 0 1px 3px 2px #0005;
+        }
+
+        &:first-child {
+            width: 8rem;
+            flex: 0 1 8rem;
         }
     }
 
@@ -81,6 +87,7 @@ nav {
         svg {
             width: 1.8rem;
             height: 1.8rem;
+            flex: 0 0 auto;
         }
     }
 }
@@ -109,7 +116,6 @@ button {
 
     &.styled-button {
         border-radius: 0.4rem;
-        padding: 0 0.8rem;
         white-space: nowrap;
         background: var(--dimmed-background);
         height: 2.6rem;
@@ -121,13 +127,14 @@ svg {
 }
 
 .dropdown-button {
-    padding: 0 0.5rem 0 0.7rem;
+    padding: 0 0.5rem 0 0.8rem;
     width: 100%;
     height: 100%;
     text-align: center;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    overflow: hidden;
 
     svg {
         width: 1.8rem;
@@ -144,7 +151,7 @@ svg {
     height: 100%;
     box-sizing: border-box;
     gap: 1px;
-    flex: 1;
+    flex: 1 2 100%;
     border-radius: 0.4rem;
 
     & > button {
@@ -389,6 +396,10 @@ svg {
 .link {
     text-decoration: dotted underline 2px;
     cursor: pointer;
+
+    & + .link {
+        margin-left: 0.5rem;
+    }
 }
 
 #modal {
@@ -529,12 +540,12 @@ svg {
     #weekButtons {
         width: 100%;
         max-height: 2.7rem;
-        grid-column: 1/3;
+        grid-column: 1/4;
         max-width: unset;
-    }
 
-    #weekButtons button {
-        font-size: 1.1rem;
+        button {
+            font-size: 1.1rem;
+        }
     }
 
     #reloadButton {
@@ -549,15 +560,14 @@ svg {
 
     nav {
         display: grid;
-        grid-template-columns: 10rem 1fr;
-        grid-template-rows: 1fr 1fr;
+        grid-template-columns: 8rem 12rem 1fr;
         width: 90%;
         height: 5.6rem;
         place-items: center;
 
         .dropdown {
             order: 1;
-            width: 10rem;
+            width: 100%;
         }
     }
 

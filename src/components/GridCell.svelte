@@ -11,7 +11,7 @@
 
     export let subject = {};
     subject.subject = subject.subject ?? subject.subjectAbbr ?? "";
-    subject.group = ($scheduleParams.mode.id === "Other" ? subject.cls + " " : "") + (subject.group ?? "");
+    subject.group = ($scheduleParams.scheduleMode !== "Class" ? subject.cls + " " : "") + (subject.group ?? "");
 
     title =
         subject.special ??
@@ -66,7 +66,7 @@
                 <div class="right">{subject.room}</div>
             </div>
             <div class="middle">{subject.subjectAbbr}</div>
-            <div class="bottom">{subject.teacherAbbr}</div>
+            <div class="bottom">{subject.teacherAbbr.split(",")[0]}</div>
         </div>
     </div>
 {:else if subject.type === 2}

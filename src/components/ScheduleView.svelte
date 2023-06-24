@@ -2,8 +2,8 @@
     import { createEventDispatcher, onDestroy, onMount } from "svelte";
     import { config, scheduleParams } from "../configStore";
     import { fetchCount, fetchQueue } from "../mainStore";
-    import { hours, modes, scheduleMetadata } from "../staticStore";
-    import { getBakaSchedule, getWebSchedule, getWebScheduleAlt } from "../utilities";
+    import { hours, scheduleMetadata } from "../staticStore";
+    import { getBakaSchedule, getWebSchedule } from "../utilities";
     import GridCell from "./GridCell.svelte";
 
     const dispatch = createEventDispatcher();
@@ -11,6 +11,8 @@
     let scheduleData = [];
 
     let scheduleParamsSubscriber;
+
+    let today = new Date().getDay();
 
     // Register the subscriber on mount
     onMount(() => {
@@ -31,9 +33,9 @@
         $fetchQueue = Symbol();
         let localFetchQueue = $fetchQueue;
 
-        fetchProcess: if ($scheduleParams.mode.id !== "Other") {
-            if ($scheduleParams.mode.id === "Actual" && $config.sundayOverride && new Date().getDay() === 0) {
-                schedule.mode = modes.search("name", "Next");
+        fetchProcess: {
+            if ($scheduleParams.weekMode === "Current" && $config.sundayOverride && today === 0) {
+                schedule.mode = "Next";
             }
 
             scheduleData = await getBakaSchedule(schedule);
@@ -41,7 +43,7 @@
             if (localFetchQueue !== $fetchQueue) break fetchProcess;
             fetchCount.update((v) => (v += 1));
 
-            if ($scheduleParams.mode.id === "Permanent" || $config.useWeb === false) return;
+            if ($scheduleParams.weekMode === "Permanent" || $scheduleParams.scheduleMode !== "Class" || $config.useWeb === false) return;
 
             let alternativeSchedule = [];
 
@@ -62,7 +64,7 @@
                 let response = await alternativeSchedule[x];
                 fetchCount.update((v) => (v += 1));
 
-                for (let [i, subject] of response.find((e) => e.cls.slice(1) === schedule.class.name.slice(1))?.subjects.entries() ?? []) {
+                for (let [i, subject] of response.find((e) => e.cls.slice(1) === schedule.value.slice(1))?.subjects.entries() ?? []) {
                     subject?.forEach((s) => {
                         const found = day.subjects[i].findIndex((a) => a.group === s.group);
 
@@ -87,10 +89,6 @@
                 }
                 scheduleData = scheduleData;
             }
-        } else {
-            scheduleData = await getWebScheduleAlt(schedule.type, schedule.value);
-            fetchCount.update((v) => (v += 1));
-            dispatch("loadingFinished");
         }
     }
 </script>

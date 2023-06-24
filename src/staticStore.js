@@ -13,16 +13,94 @@ export const scheduleMetadata = {
         { name: "P4.B", id: "U8" },
         { name: "T4.C", id: "U9" }
     ],
-    teachers: [{ abbr: null, name: null }],
-    rooms: [{ abbr: null, name: null }]
+    teachers: [
+        { name: "Antoš Petr", id: "U0030", abbr: "An" },
+        { name: "Bláhová Ludmila", id: "UKYOM", abbr: "Bh" },
+        { name: "Dvořáková Lenka", id: "UWYPV", abbr: "Dv" },
+        { name: "Fiala Libor", id: "U30J8", abbr: "Fi" },
+        { name: "Filip Petr", id: "UZYNS", abbr: "Fp" },
+        { name: "Foltýn Pavel", id: "UUYPK", abbr: "Fo" },
+        { name: "Fučíková Jana", id: "URYP4", abbr: "Fu" },
+        { name: "Hromádko Přemysl", id: "UKYOL", abbr: "Hm" },
+        { name: "Ivon Pavel", id: "ULYOS", abbr: "Iv" },
+        { name: "Jurčeková Martina", id: "UTYP8", abbr: "Ju" },
+        { name: "Jurčík Martin", id: "UVYPO", abbr: "Jí" },
+        { name: "Klein Ivan", id: "U0011", abbr: "Kn" },
+        { name: "Kleinová Radka", id: "U0025", abbr: "Ká" },
+        { name: "Korovin Vsevolod", id: "UQYOY", abbr: "Kv" },
+        { name: "Kratochvíl Aleš", id: "U0037", abbr: "Kt" },
+        { name: "Mašát Marek", id: "UUYPL", abbr: "Mš" },
+        { name: "Mašek Petr", id: "UZYNH", abbr: "Ma" },
+        { name: "Megvinet Ivana", id: "UYGLD", abbr: "Me" },
+        { name: "Pelikánová Zdeňka", id: "UQYP2", abbr: "Pe" },
+        { name: "Pícha Miloš", id: "UUYPM", abbr: "Pí" },
+        { name: "Pivoňka Jakub", id: "URYP3", abbr: "Pv" },
+        { name: "Šafránková Hana", id: "UZ2TE", abbr: "Ša" },
+        { name: "Šibrava Ondřej", id: "ULYOP", abbr: "Šb" },
+        { name: "Strnka Richard", id: "URYP5", abbr: "St" },
+        { name: "Týfová Ilse", id: "UKYOK", abbr: "Tý" },
+        { name: "Vaněček Ondřej", id: "UVYPP", abbr: "Va" },
+        { name: "Vodička Martin", id: "U0001", abbr: "Vo" },
+        { name: "Vostárek Tomáš", id: "UZYNE", abbr: "Vs" },
+        { name: "Westfál David", id: "UWYPU", abbr: "We" },
+        { name: "Zikán Jiří", id: "UTYPB", abbr: "Zk" }
+    ],
+    rooms: [
+        { name: "01", id: "U2" },
+        { name: "02", id: "GZ" },
+        { name: "03", id: "A5" },
+        { name: "06", id: "IZ" },
+        { name: "102", id: "6B" },
+        { name: "103", id: "35" },
+        { name: "104", id: "OG" },
+        { name: "107", id: "VF" },
+        { name: "108", id: "LG" },
+        { name: "109", id: "FO" },
+        { name: "114", id: "00" },
+        { name: "115", id: "30" },
+        { name: "116", id: "ZZ" },
+        { name: "202", id: "9A" },
+        { name: "203", id: "84" },
+        { name: "204", id: "51" },
+        { name: "208", id: "C0" },
+        { name: "209", id: "N5" },
+        { name: "210", id: "DT" },
+        { name: "211", id: "32" },
+        { name: "213", id: "ZX" },
+        { name: "214", id: "G0" },
+        { name: "TĚL", id: "T0" }
+    ]
 };
 
-export const modes = [
-    { name: "Permanent", id: "Permanent" },
-    { name: "Current", id: "Actual" },
-    { name: "Next", id: "Next" },
-    { name: "Other", id: "Other" }
-];
+export function toBakaParams(params) {
+    let newParams = {};
+    newParams.scheduleMode = params.scheduleMode;
+    switch (params.weekMode) {
+        case "Permanent":
+        case "Next":
+            newParams.weekMode = params.weekMode;
+            break;
+        case "Current":
+        default:
+            newParams.weekMode = "Actual";
+    }
+    switch (params.scheduleMode) {
+        case "Teacher":
+            newParams.value = scheduleMetadata.teachers.find((t) => t.name === params.value || t.abbr === params.value)?.id;
+            break;
+        case "Room":
+            newParams.value = scheduleMetadata.rooms.find((r) => r.name === params.value)?.id;
+            break;
+        case "Class":
+        default:
+            newParams.value = scheduleMetadata.classes.find((c) => c.name === params.value)?.id;
+    }
+    return newParams;
+}
+
+export const weekModes = ["Permanent", "Current", "Next"];
+
+export const sheduleModes = ["Class", "Teacher", "Room"];
 
 export const hours = {
     offsets: [

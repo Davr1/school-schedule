@@ -1,7 +1,5 @@
-import { get } from "svelte/store";
 import { encode } from "windows-1250";
-import { config, scheduleParams } from "./configStore";
-import { templates, urls } from "./staticStore";
+import { templates, toBakaParams, urls } from "./staticStore";
 
 function createElement(el) {
     if (!el) return null;
@@ -64,7 +62,7 @@ const elementProxy = {
 
 // Public Bakalari schedule
 export function fetchBaka(data) {
-    return fetch(`${urls.baka}/Timetable/Public/${data.mode.id}/Class/${data.class.id}`).then((response) => {
+    return fetch(`${urls.baka}/Timetable/Public/${data.weekMode}/${data.scheduleMode}/${data.value}`).then((response) => {
         if (response.ok) return response.text();
     });
 }
@@ -119,8 +117,8 @@ export function fetchWebScheduleMetadata() {
     });
 }
 
-export async function getBakaSchedule(data) {
-    let temp = createElement(await fetchBaka(data));
+export async function getBakaSchedule(params) {
+    let temp = createElement(await fetchBaka(toBakaParams(params)));
 
     let schedule = [];
 
@@ -257,89 +255,6 @@ export async function getWebSchedule(date) {
     });
 
     return daySchedule;
-}
-
-export async function getWebScheduleAlt(mode, value, sub = true) {
-    let temp = createElement(await fetchWebScheduleAlt(mode, value, sub));
-
-    let daySchedule = [];
-
-    temp.$$(".day").forEach((row) => {
-        let day = row.$(".dayTitle").text.match(/\S+/)[0];
-        let subjects = [];
-
-        row.$$(".hour:not(.dayTitle)").forEach((cell) => {
-            if (!cell.classList.contains("group0")) {
-                let subject = [];
-
-                cell.$$("div.group").forEach((group) => {
-                    let teacherAbbr;
-
-                    if (get(scheduleParams).type === "teacher") {
-                        teacherAbbr = get(scheduleParams).value;
-                    } else if (get(scheduleParams).type === "room") {
-                        teacherAbbr = group.$(".teacher a")?.text.match(/\S+/)[0];
-                    }
-
-                    let teacher = temp.$$(".links a").find((a) => a.text.trim() === teacherAbbr)?.title;
-
-                    subject.push(
-                        new templates.StandardSubject({
-                            cls: group.$("[href*='/class/']")?.text.match(/\S+/)[0],
-                            subjectAbbr: group.$("strong")?.text.trim(),
-                            teacher,
-                            teacherAbbr,
-                            room: group.$(".room [href*='/room/']")?.text ?? get(scheduleParams).value,
-                            group: group.$(".classGroup .group")?.text.match(/\d+\.sk/)[0],
-                            changed: group.classList.contains("zmena")
-                        })
-                    );
-                });
-
-                subjects.push(subject);
-            } else {
-                subjects.push([new templates.EmptySubject()]);
-            }
-        });
-
-        subjects.push([new templates.EmptySubject()], [new templates.EmptySubject()], [new templates.EmptySubject()]); // padding
-        daySchedule.push({ day, subjects });
-    });
-
-    return daySchedule;
-}
-
-export async function getWebScheduleMetadata() {
-    let temp = createElement((await fetchWebScheduleMetadata()).contents);
-
-    let classes = [];
-    let rooms = [];
-    let teachers = [];
-
-    temp.$$("#tt+.links a[href*='/class/']").forEach((e) => classes.push(e.text));
-    temp.$$("#tt+.links+.links a[href*='/room/']").forEach((e) => rooms.push({ abbr: e.text, name: e.text }));
-    temp.$$("#tt+.links+.links+.links a[href*='/teacher/']").forEach((e) => teachers.push({ abbr: e.text, name: e.title }));
-
-    return { classes, rooms, teachers };
-}
-
-export function setURL(path = "/", parameters) {
-    if (get(config).updateURL) {
-        parameters = new URLSearchParams(parameters).toString().replaceAll(/=(?=$|&)/g, "");
-        window.history.pushState(null, "", location.origin + path + parameters ? "?" + parameters : "");
-    } else {
-        window.history.pushState(null, "", location.origin);
-    }
-}
-
-export function readURL(url) {
-    let params = new URL(url).searchParams;
-    return {
-        class: params.get("cls"),
-        mode: Array.from(params.keys())[0],
-        type: params.get("type"),
-        value: params.get("value")
-    };
 }
 
 export function getPosition(element) {

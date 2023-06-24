@@ -1,7 +1,6 @@
-import { browser } from "$app/environment";
+import { browser, version } from "$app/environment";
 import { get, writable } from "svelte/store";
-import { modes, scheduleMetadata } from "./staticStore";
-import { readURL } from "./utilities";
+import { scheduleMetadata } from "./staticStore";
 
 Array.prototype["search"] = function (key, value, fallback) {
     return this.find((o) => o[key] === value) ?? this.find((o) => o[key] === fallback);
@@ -12,72 +11,71 @@ let localConfig;
 
 try {
     localConfig = JSON.parse(localStorage.getItem("config"));
-    if (!localConfig.keepState) {
+    if (localConfig.version !== version) localConfig = {};
+    /*if (!localConfig.keepState) {
         localConfig.scheduleParams = readURL(window.location);
-    }
+    }*/
 } catch {
     localConfig = {};
 }
 
-export const defaultLSConfig = {
-    updateURL: true,
-    keepState: false,
+export const defaultConfig = {
     useWeb: true,
     sundayOverride: true,
     loadscreen: true,
     cache: true,
     scheduleParams: {
-        class: "P2.B",
-        mode: "Current",
-        type: undefined,
-        value: undefined
-    }
+        scheduleMode: "Class",
+        weekMode: "Current",
+        value: "P2.B"
+    },
+    version: version
 };
 
-export const defaultConfig = configFormatter(defaultLSConfig);
-export const config = writable(configFormatter(localConfig, defaultConfig));
+const defaultValues = {
+    Class: "P2.B",
+    Teacher: "Mašek Petr",
+    Room: "104"
+};
+
+const possibleValues = {
+    Class: scheduleMetadata.classes.map((c) => c.name),
+    Teacher: scheduleMetadata.teachers.map((t) => t.name),
+    Room: scheduleMetadata.rooms.map((r) => r.name)
+};
+
+export const config = writable({ ...defaultConfig, ...localConfig });
 export const scheduleParams = writable(get(config).scheduleParams);
 
 config.subscribe((value) => {
     value.scheduleParams = get(scheduleParams);
 
     if (browser) {
-        localStorage.setItem("config", JSON.stringify(configDeformatter(value)));
+        localStorage.setItem("config", JSON.stringify(value));
     }
 });
-
-export function configFormatter(config, fallback = {}) {
-    let _fallback = structuredClone(fallback);
-    let output = Object.assign(_fallback, config);
-    output.scheduleParams = paramsFormatter(output.scheduleParams ?? {});
-    return output;
-}
-
-export function configDeformatter(config) {
-    let output = structuredClone(config);
-    output.scheduleParams.mode = config.scheduleParams.mode.name;
-    output.scheduleParams.class = config.scheduleParams.class.name;
-    return output;
-}
 
 // Schedule params
 
 export function updateScheduleParams(newParams = {}) {
     let oldParams = get(scheduleParams);
-    newParams = paramsFormatter({
-        class: oldParams?.class?.name,
-        mode: oldParams?.mode?.name,
-        type: oldParams?.type,
-        value: oldParams?.value,
-        ...newParams
-    });
+    if (newParams.scheduleMode && newParams.scheduleMode !== oldParams.scheduleMode && !newParams.value) {
+        newParams.value = defaultValues[newParams.scheduleMode];
+    }
+
+    newParams = { ...oldParams, ...newParams };
+
+    if (newParams.scheduleMode === "Teacher") {
+        // replace abbreviation with full name
+        let teacher = scheduleMetadata.teachers.find((t) => t.abbr === newParams.value || t.name === newParams.value);
+        newParams.value = teacher.name;
+    }
+
+    if (possibleValues[newParams.scheduleMode].indexOf(newParams.value) === -1) {
+        newParams.value = defaultValues[newParams.scheduleMode];
+    }
+
+    console.log(newParams);
     scheduleParams.set(newParams);
     config.update((a) => a);
-}
-
-export function paramsFormatter(params) {
-    let output = structuredClone(params);
-    output.mode = modes.search("name", params.mode, defaultLSConfig.scheduleParams.mode);
-    output.class = scheduleMetadata.classes.search("name", params.class, defaultLSConfig.scheduleParams.class);
-    return output;
 }
