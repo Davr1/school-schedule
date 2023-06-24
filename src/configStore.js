@@ -20,8 +20,6 @@ try {
 }
 
 export const defaultConfig = {
-    updateURL: true,
-    keepState: false,
     useWeb: true,
     sundayOverride: true,
     loadscreen: true,
