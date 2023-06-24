@@ -8,7 +8,7 @@
     import { config, scheduleParams } from "../configStore";
     import { isSubjectInfoVisible, modal } from "../mainStore";
     import { scheduleMetadata } from "../staticStore";
-    import { getWebScheduleMetadata, setURL } from "../utilities";
+    import { setURL } from "../utilities";
 
     let isLoadScreenVisible = $config.loadscreen;
 
@@ -24,12 +24,6 @@
         });
         isSubjectInfoVisibleSubscriber = isSubjectInfoVisible.subscribe((value) => screenOverlayEventHandler(value));
         modalSubscriber = modal.subscribe((value) => screenOverlayEventHandler(value.visible));
-
-        // Fetch schedule metadata
-        getWebScheduleMetadata().then((metadata) => {
-            scheduleMetadata.rooms = metadata.rooms;
-            scheduleMetadata.teachers = metadata.teachers;
-        });
     });
 
     // anndd unsubscribe on unmount
@@ -40,11 +34,11 @@
     });
 
     function updateURL(v) {
-        if (v.mode.id === "Other") {
+        /*if (v.mode.id === "Other") {
             setURL("/", { [v.mode.name]: "", type: v.type, value: v.value });
         } else {
             setURL("/", { [v.mode.name]: "", cls: v.class.name });
-        }
+        }*/
     }
 
     let isBackgroundDimmed = false;

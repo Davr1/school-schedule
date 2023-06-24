@@ -11,7 +11,7 @@
 
     export let subject = {};
     subject.subject = subject.subject ?? subject.subjectAbbr ?? "";
-    subject.group = ($scheduleParams.mode.id === "Other" ? subject.cls + " " : "") + (subject.group ?? "");
+    subject.group = ($scheduleParams.scheduleMode !== "Class" ? subject.cls + " " : "") + (subject.group ?? "");
 
     title =
         subject.special ??
