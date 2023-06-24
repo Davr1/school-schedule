@@ -1,6 +1,6 @@
 import { browser } from "$app/environment";
 import { get, writable } from "svelte/store";
-import { readURL } from "./utilities";
+import { PUBLIC_VERSION } from "$env/static/public";
 
 Array.prototype["search"] = function (key, value, fallback) {
     return this.find((o) => o[key] === value) ?? this.find((o) => o[key] === fallback);
@@ -11,6 +11,7 @@ let localConfig;
 
 try {
     localConfig = JSON.parse(localStorage.getItem("config"));
+    if (localConfig.version !== PUBLIC_VERSION) localConfig = {};
     /*if (!localConfig.keepState) {
         localConfig.scheduleParams = readURL(window.location);
     }*/
@@ -29,7 +30,8 @@ export const defaultConfig = {
         scheduleMode: "Class",
         weekMode: "Current",
         value: "P2.B"
-    }
+    },
+    version: PUBLIC_VERSION
 };
 
 const defaultValues = {
