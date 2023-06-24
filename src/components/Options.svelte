@@ -1,6 +1,5 @@
 <script>
     import { createEventDispatcher } from "svelte";
-    import { get } from "svelte/store";
     import Dots from "../assets/icons/dots.svg";
     import ReloadIcon from "../assets/icons/reload.svg";
     import { config, scheduleParams, updateScheduleParams } from "../configStore";
@@ -14,27 +13,28 @@
     if (browser) window.addEventListener("popstate", () => updateScheduleParams(readURL(window.location)));
 
     let maxFetchCount;
-    $: if ($scheduleParams.weekMode === "Permanent" || $config.useWeb === false) {
+    $: if ($scheduleParams.weekMode === "Permanent" || $scheduleParams.scheduleMode !== "Class" || $config.useWeb === false) {
         maxFetchCount = 1;
     } else {
         maxFetchCount = 6;
     }
 
+    function getNewDropdownValues(mode) {
+        return { Class: scheduleMetadata.classes, Teacher: scheduleMetadata.teachers, Room: scheduleMetadata.rooms }[mode];
+    }
+
     const dispatch = createEventDispatcher();
 
     const indexedScheduleModes = sheduleModes.map((m) => ({ name: m, id: m }));
-    let indexedScheduleValues = { Class: scheduleMetadata.classes, Teacher: scheduleMetadata.teachers, Room: scheduleMetadata.rooms }[
-        $scheduleParams.scheduleMode
-    ];
+    let indexedScheduleValues = getNewDropdownValues($scheduleParams.scheduleMode);
+
     let modeDropdown;
     $: modeDropdown = {
         options: indexedScheduleModes,
         activeOption: indexedScheduleModes.search("id", $scheduleParams.scheduleMode, "Class"),
         callback: (val) => {
             updateScheduleParams({ scheduleMode: val.name });
-            indexedScheduleValues = { Class: scheduleMetadata.classes, Teacher: scheduleMetadata.teachers, Room: scheduleMetadata.rooms }[
-                $scheduleParams.scheduleMode
-            ];
+            indexedScheduleValues = getNewDropdownValues($scheduleParams.scheduleMode);
             modeDropdown.activeOption = indexedScheduleModes.search("name", $scheduleParams.scheduleMode);
         },
         genericName: "name",

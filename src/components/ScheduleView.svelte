@@ -2,7 +2,7 @@
     import { createEventDispatcher, onDestroy, onMount } from "svelte";
     import { config, scheduleParams } from "../configStore";
     import { fetchCount, fetchQueue } from "../mainStore";
-    import { hours, weekModes, scheduleMetadata } from "../staticStore";
+    import { hours, scheduleMetadata } from "../staticStore";
     import { getBakaSchedule, getWebSchedule } from "../utilities";
     import GridCell from "./GridCell.svelte";
 
@@ -11,6 +11,8 @@
     let scheduleData = [];
 
     let scheduleParamsSubscriber;
+
+    let today = new Date().getDay();
 
     // Register the subscriber on mount
     onMount(() => {
@@ -32,7 +34,7 @@
         let localFetchQueue = $fetchQueue;
 
         fetchProcess: {
-            if ($scheduleParams.weekMode === "Current" && $config.sundayOverride && new Date().getDay() === 0) {
+            if ($scheduleParams.weekMode === "Current" && $config.sundayOverride && today === 0) {
                 schedule.mode = "Next";
             }
 
@@ -41,7 +43,7 @@
             if (localFetchQueue !== $fetchQueue) break fetchProcess;
             fetchCount.update((v) => (v += 1));
 
-            if ($scheduleParams.weekMode === "Permanent" || $scheduleParams.schedule !== "Class" || $config.useWeb === false) return;
+            if ($scheduleParams.weekMode === "Permanent" || $scheduleParams.scheduleMode !== "Class" || $config.useWeb === false) return;
 
             let alternativeSchedule = [];
 
