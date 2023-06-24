@@ -66,7 +66,7 @@
                 <div class="right">{subject.room}</div>
             </div>
             <div class="middle">{subject.subjectAbbr}</div>
-            <div class="bottom">{subject.teacherAbbr}</div>
+            <div class="bottom">{subject.teacherAbbr.split(",")[0]}</div>
         </div>
     </div>
 {:else if subject.type === 2}

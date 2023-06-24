@@ -62,8 +62,8 @@
         <h2>
             <Person />
             <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <span class="link" on:click={() => updateScheduleParams({ value: teacherAbbr, scheduleMode: "Teacher" })}>
-                {teacher}
+            <span class="link" on:click={() => updateScheduleParams({ value: teacherAbbr.split(",")[0], scheduleMode: "Teacher" })}>
+                {teacher.split(",")[0]}
             </span>
         </h2>
     {/if}
