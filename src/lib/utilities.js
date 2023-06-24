@@ -1,5 +1,6 @@
 import { encode } from "windows-1250";
-import { templates, toBakaParams, urls } from "./staticStore";
+
+import { templates, toBakaParams, urls } from "$stores/static";
 
 function createElement(el) {
     if (!el) return null;

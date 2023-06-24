@@ -10,5 +10,13 @@ export default defineConfig({
             svgo: {},
             enforce: "pre"
         })
-    ]
+    ],
+    resolve: {
+        alias: {
+            $components: "/src/components",
+            $stores: "/src/stores",
+            $styles: "/src/styles",
+            $assets: "/src/assets"
+        }
+    }
 });

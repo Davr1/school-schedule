@@ -1,9 +1,10 @@
 <script>
-    import { config } from "../configStore";
-    import { createEventDispatcher } from "svelte";
-    import Switch from "./Switch.svelte";
-    import Modal from "./Modal.svelte";
-    import Uwu from "../assets/uwu.svg";
+    import { config } from "$stores/config";
+
+    import Uwu from "$assets/uwu.svg";
+
+    import Modal from "$components/Modal.svelte";
+    import Switch from "$components/Switch.svelte";
 
     let { useWeb, cache, sundayOverride, loadscreen } = $config;
 

@@ -1,6 +1,7 @@
 import axios from "axios";
 import { decode } from "windows-1250";
-import { getHttpsAgent, userAgent } from "../../../../lib/server/agent"; // ... can we use ts paths..... please.
+
+import { getHttpsAgent, userAgent } from "$lib/server/agent";
 
 /**
  * Get the school's substitution schedule for the given date

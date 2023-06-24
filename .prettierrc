@@ -1,7 +1,21 @@
 {
+    "plugins": ["@trivago/prettier-plugin-sort-imports", "prettier-plugin-svelte"],
     "trailingComma": "none",
     "tabWidth": 4,
     "semi": true,
     "printWidth": 140,
-    "htmlWhitespaceSensitivity": "ignore"
+    "htmlWhitespaceSensitivity": "ignore",
+    "importOrder": [
+        "^\\$lib|app|env/(.+)$",
+        "^\\$stores/(.+)$",
+        "^\\$assets/(.+)$",
+        "^\\$components/(.+)$",
+        "^\\$styles/(.+)$",
+        "^\\$(.+)/(.+)$",
+        "$\\.{1,2}/(.+)$"
+    ],
+    "importOrderSeparation": true,
+    "importOrderSortSpecifiers": true,
+    "importOrderCaseInsensitive": true,
+    "importOrderParserPlugins": ["typescript", "jsx", "importAssertions"]
 }

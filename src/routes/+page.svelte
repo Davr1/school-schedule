@@ -1,12 +1,14 @@
 <script>
     import { onDestroy, onMount } from "svelte";
-    import AdvancedSettingsModal from "../components/AdvancedSettingsModal.svelte";
-    import LoadScreen from "../components/LoadScreen.svelte";
-    import Options from "../components/Options.svelte";
-    import ScheduleView from "../components/ScheduleView.svelte";
-    import SubjectInfoModal from "../components/SubjectInfoModal.svelte";
-    import { config, scheduleParams } from "../configStore";
-    import { isSubjectInfoVisible, modal } from "../mainStore";
+
+    import { config, scheduleParams } from "$stores/config";
+    import { isSubjectInfoVisible, modal } from "$stores/main";
+
+    import AdvancedSettingsModal from "$components/AdvancedSettingsModal.svelte";
+    import LoadScreen from "$components/LoadScreen.svelte";
+    import Options from "$components/Options.svelte";
+    import ScheduleView from "$components/ScheduleView.svelte";
+    import SubjectInfoModal from "$components/SubjectInfoModal.svelte";
 
     let isLoadScreenVisible = $config.loadscreen;
 

@@ -1,5 +1,6 @@
-import { PROXY } from "$env/static/private";
 import { SocksProxyAgent } from "socks-proxy-agent";
+
+import { PROXY } from "$env/static/private";
 
 /** @type {SocksProxyAgent} */
 let socksProxyAgent;

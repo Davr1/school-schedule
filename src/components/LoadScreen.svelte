@@ -1,6 +1,6 @@
 <script>
-    import Uwu from "../assets/uwu.svg";
-    import Loading from "../assets/loading.svg";
+    import Loading from "$assets/loading.svg";
+    import Uwu from "$assets/uwu.svg";
 </script>
 
 <div id="overlay">
