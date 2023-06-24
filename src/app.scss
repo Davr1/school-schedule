@@ -66,12 +66,17 @@ nav {
     }
 
     .dropdown {
-        width: 10rem;
         height: 100%;
-        flex: 0 1 10rem;
+        width: 12rem;
+        flex: 0 1 12rem;
 
         .options {
             box-shadow: 0 1px 3px 2px #0005;
+        }
+
+        &:first-child {
+            width: 8rem;
+            flex: 0 1 8rem;
         }
     }
 
@@ -82,6 +87,7 @@ nav {
         svg {
             width: 1.8rem;
             height: 1.8rem;
+            flex: 0 0 auto;
         }
     }
 }
@@ -110,7 +116,6 @@ button {
 
     &.styled-button {
         border-radius: 0.4rem;
-        padding: 0 0.8rem;
         white-space: nowrap;
         background: var(--dimmed-background);
         height: 2.6rem;
@@ -122,7 +127,7 @@ svg {
 }
 
 .dropdown-button {
-    padding: 0 0.5rem 0 0.7rem;
+    padding: 0 0.5rem 0 0.8rem;
     width: 100%;
     height: 100%;
     text-align: center;
@@ -555,14 +560,14 @@ svg {
 
     nav {
         display: grid;
-        grid-template-columns: 10rem 10rem 1fr;
+        grid-template-columns: 8rem 12rem 1fr;
         width: 90%;
         height: 5.6rem;
         place-items: center;
 
         .dropdown {
             order: 1;
-            width: 10rem;
+            width: 100%;
         }
     }
 
