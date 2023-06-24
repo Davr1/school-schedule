@@ -1,10 +1,12 @@
 <script>
-    import { updateScheduleParams } from "../configStore";
-    import { scheduleMetadata } from "../staticStore";
-    import TextSnippet from "../assets/icons/textSnippet.svg";
-    import Info from "../assets/icons/info.svg";
-    import Person from "../assets/icons/person.svg";
-    import Modal from "./Modal.svelte";
+    import { updateScheduleParams } from "$stores/config";
+    import { scheduleMetadata } from "$stores/static";
+
+    import Info from "$assets/icons/info.svg";
+    import Person from "$assets/icons/person.svg";
+    import TextSnippet from "$assets/icons/textSnippet.svg";
+
+    import Modal from "$components/Modal.svelte";
 
     export let context = { subject: {} };
 

@@ -1,6 +1,8 @@
-import { browser, version } from "$app/environment";
 import { get, writable } from "svelte/store";
-import { scheduleMetadata } from "./staticStore";
+
+import { browser, version } from "$app/environment";
+
+import { scheduleMetadata } from "$stores/static";
 
 Array.prototype["search"] = function (key, value, fallback) {
     return this.find((o) => o[key] === value) ?? this.find((o) => o[key] === fallback);

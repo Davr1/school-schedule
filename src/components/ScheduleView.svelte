@@ -1,10 +1,13 @@
 <script>
     import { createEventDispatcher, onDestroy, onMount } from "svelte";
-    import { config, scheduleParams } from "../configStore";
-    import { fetchCount, fetchQueue } from "../mainStore";
-    import { hours, scheduleMetadata } from "../staticStore";
-    import { getBakaSchedule, getWebSchedule } from "../utilities";
-    import GridCell from "./GridCell.svelte";
+
+    import { getBakaSchedule, getWebSchedule } from "$lib/utilities";
+
+    import { config, scheduleParams } from "$stores/config";
+    import { fetchCount, fetchQueue } from "$stores/main";
+    import { hours, scheduleMetadata } from "$stores/static";
+
+    import GridCell from "$components/GridCell.svelte";
 
     const dispatch = createEventDispatcher();
 

@@ -1,13 +1,14 @@
 <script>
     import { createEventDispatcher } from "svelte";
-    import Dots from "../assets/icons/dots.svg";
-    import ReloadIcon from "../assets/icons/reload.svg";
-    import { config, scheduleParams, updateScheduleParams } from "../configStore";
-    import { fetchCount } from "../mainStore";
-    import { scheduleMetadata, sheduleModes } from "../staticStore";
-    import Dropdown from "./Dropdown.svelte";
 
-    import { browser } from "$app/environment";
+    import { config, scheduleParams, updateScheduleParams } from "$stores/config";
+    import { fetchCount } from "$stores/main";
+    import { scheduleMetadata, sheduleModes } from "$stores/static";
+
+    import Dots from "$assets/icons/dots.svg";
+    import ReloadIcon from "$assets/icons/reload.svg";
+
+    import Dropdown from "$components/Dropdown.svelte";
 
     // if (browser) window.addEventListener("popstate", () => updateScheduleParams(readURL(window.location)));
 

@@ -1,6 +1,7 @@
 import axios from "axios";
 import { decode } from "windows-1250";
-import { getHttpsAgent, userAgent } from "../../../../lib/server/agent"; // yikes
+
+import { getHttpsAgent, userAgent } from "$lib/server/agent";
 
 /**
  * Get the school's schedule.. This is basically just a proxy for the /IS/rozvrh-hodin endpoint

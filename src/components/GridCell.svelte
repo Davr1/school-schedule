@@ -1,9 +1,12 @@
 <script>
-    import { isSubjectInfoVisible } from "../mainStore";
-    import { scheduleParams } from "../configStore";
-    import { getPosition } from "../utilities";
     import { createEventDispatcher } from "svelte";
-    import SubjectInfo from "./SubjectInfo.svelte";
+
+    import { getPosition } from "$lib/utilities";
+
+    import { scheduleParams } from "$stores/config";
+    import { isSubjectInfoVisible } from "$stores/main";
+
+    import SubjectInfo from "$components/SubjectInfo.svelte";
 
     const dispatch = createEventDispatcher();
 

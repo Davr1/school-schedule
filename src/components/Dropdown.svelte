@@ -1,6 +1,7 @@
 <script>
-    import ChevronDownIcon from "../assets/icons/chevronDown.svg";
-    import { getPosition } from "../utilities";
+    import { getPosition } from "$lib/utilities";
+
+    import ChevronDownIcon from "$assets/icons/chevronDown.svg";
 
     export let options = [];
     export let activeOption = {};
