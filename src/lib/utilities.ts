@@ -1,6 +1,6 @@
 import { encode } from "windows-1250";
 
-import { templates, toBakaParams, urls } from "$stores/static";
+import { EmptySubject, SpecialSubject, StandardSubject, Subject, toBakaParams, urls } from "$stores/static";
 
 function createElement(el) {
     if (!el) return null;
@@ -121,35 +121,35 @@ export function fetchWebScheduleMetadata() {
 export async function getBakaSchedule(params) {
     let temp = createElement(await fetchBaka(toBakaParams(params)));
 
-    let schedule = [];
+    let schedule: { date: [string, string]; subjects: Subject[][] }[] = [];
 
     temp.$$(".bk-timetable-row").forEach((row) => {
-        let date = [row.$(".bk-day-day").text, row.$(".bk-day-date").text];
-        let subjects = [];
+        let date: [string, string] = [row.$(".bk-day-day").text, row.$(".bk-day-date").text];
+        let subjects: Subject[][] = [];
 
         row.$$(".bk-timetable-cell").forEach((cell) => {
-            let subject = [];
+            let subject: Subject[] = [];
 
             cell.$$(".day-item-hover").forEach((group) => {
                 let data = JSON.parse(group.dataset.detail);
-                let subjectInstance;
+                let subjectInstance: Subject;
 
                 switch (data.type) {
                     case "removed":
-                        subjectInstance = new templates.EmptySubject({
+                        subjectInstance = new EmptySubject({
                             changed: true,
                             changeInfo: data.removedinfo
                         });
                         break;
                     case "absent":
-                        subjectInstance = new templates.SpecialSubject({
+                        subjectInstance = new SpecialSubject({
                             special: data.InfoAbsentName,
                             specialAbbr: data.absentinfo,
                             changeInfo: data.removedinfo
                         });
                         break;
                     default:
-                        subjectInstance = new templates.StandardSubject({
+                        subjectInstance = new StandardSubject({
                             subject: data.subjecttext.split("|")[0].trim(),
                             subjectAbbr: group.$(".middle")?.text,
                             teacher: data.teacher,
@@ -166,12 +166,12 @@ export async function getBakaSchedule(params) {
             });
 
             if (cell.children.length === 0) {
-                subject.push(new templates.EmptySubject());
+                subject.push(new EmptySubject({}));
             }
 
             if (cell.$(".empty")) {
                 subject.push(
-                    new templates.SpecialSubject({
+                    new SpecialSubject({
                         special: cell.$("span")?.text
                     })
                 );
@@ -189,18 +189,18 @@ export async function getBakaSchedule(params) {
 export async function getWebSchedule(date) {
     let temp = createElement(await fetchWebSchedule(date));
 
-    let daySchedule = [];
+    let daySchedule: { cls: string; subjects: Subject[][] }[] = [];
 
     temp.$$(".table-responsive tbody tr:not(.prvniradek):nth-child(2n)").forEach((row) => {
-        let cls = row.firstChild.text;
-        let subjects = [];
+        let cls: string = row.firstChild.text;
+        let subjects: Subject[][] = [];
 
         let firstHalf = row.$$("td:not(:first-of-type, .heightfix)");
         let secondHalf = row.nextEl.$$("td:not(.heightfix)");
 
         firstHalf.forEach((cell) => {
             if (cell.childNodes[0].text.replace(/\s+/, "")) {
-                let subject = [];
+                let subject: Subject[] = [];
                 let group = "";
 
                 if (cell.$("strong")?.next?.nodeName === "#text") {
@@ -211,7 +211,7 @@ export async function getWebSchedule(date) {
 
                 if (cell.$("strong")) {
                     subject.push(
-                        new templates.StandardSubject({
+                        new StandardSubject({
                             room: cell.$("[href*='/room/']")?.text,
                             group,
                             subjectAbbr: cell.$("strong")?.text,
@@ -221,7 +221,7 @@ export async function getWebSchedule(date) {
                     );
                 } else {
                     subject.push(
-                        new templates.EmptySubject({
+                        new EmptySubject({
                             changed: true
                         })
                     );
@@ -236,7 +236,7 @@ export async function getWebSchedule(date) {
                     }
 
                     subject.push(
-                        new templates.StandardSubject({
+                        new StandardSubject({
                             room: alternativeGroup.$("[href*='/room/']")?.text,
                             group: group2,
                             subjectAbbr: alternativeGroup.$("strong")?.text,
@@ -258,7 +258,7 @@ export async function getWebSchedule(date) {
     return daySchedule;
 }
 
-export function getPosition(element) {
+export function getPosition(element: HTMLElement) {
     return {
         size: element.getBoundingClientRect(),
         get x() {

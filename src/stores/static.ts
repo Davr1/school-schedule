@@ -163,7 +163,7 @@ export const urls = {
     baka: "https://is.sssvt.cz/IS"
 } as const;
 
-class Subject {
+export class Subject {
     constructor(args) {
         Object.assign(this, args);
     }
@@ -171,7 +171,7 @@ class Subject {
     id = Symbol();
 }
 
-class EmptySubject extends Subject {
+export class EmptySubject extends Subject {
     constructor(args) {
         super({
             changed: false,
@@ -182,7 +182,7 @@ class EmptySubject extends Subject {
     type = 0;
 }
 
-class StandardSubject extends Subject {
+export class StandardSubject extends Subject {
     constructor(args) {
         super({
             cls: "",
@@ -201,7 +201,7 @@ class StandardSubject extends Subject {
     type = 1;
 }
 
-class SpecialSubject extends Subject {
+export class SpecialSubject extends Subject {
     constructor(args) {
         super({
             special: "",
@@ -212,9 +212,3 @@ class SpecialSubject extends Subject {
     }
     type = 2;
 }
-
-export const templates = {
-    EmptySubject,
-    StandardSubject,
-    SpecialSubject
-};
