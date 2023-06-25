@@ -5,8 +5,8 @@
     import { fetchCount } from "$stores/main";
     import { scheduleMetadata, sheduleModes } from "$stores/static";
 
-    import Dots from "$assets/icons/dots.svg";
-    import ReloadIcon from "$assets/icons/reload.svg";
+    import MoreHoriz from "@material-design-icons/svg/filled/more_horiz.svg?component";
+    import Refresh from "@material-design-icons/svg/filled/refresh.svg?component";
 
     import Dropdown from "$components/Dropdown.svelte";
 
@@ -68,10 +68,10 @@
         <button class:active={$scheduleParams.weekMode === "Permanent"} on:click={() => setMode("Permanent")}>Permanent</button>
         <button class:active={$scheduleParams.weekMode === "Current"} on:click={() => setMode("Current")}>Current</button>
         <button class:active={$scheduleParams.weekMode === "Next"} on:click={() => setMode("Next")}>Next</button>
-        <button on:click={openModal}><Dots /></button>
+        <button on:click={openModal}><MoreHoriz /></button>
     </div>
     <button id="reloadButton" class="styled-button" on:click={() => updateScheduleParams()}>
-        <ReloadIcon />
+        <Refresh />
         <span id="info">{$fetchCount} / {maxFetchCount} fetched</span>
     </button>
 </nav>

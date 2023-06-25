@@ -2,9 +2,9 @@
     import { updateScheduleParams } from "$stores/config";
     import { scheduleMetadata } from "$stores/static";
 
-    import Info from "$assets/icons/info.svg";
-    import Person from "$assets/icons/person.svg";
-    import TextSnippet from "$assets/icons/textSnippet.svg";
+    import Info from "@material-design-icons/svg/filled/info.svg?component";
+    import Person from "@material-design-icons/svg/filled/person.svg?component";
+    import TextSnippet from "@material-design-icons/svg/filled/text_snippet.svg?component";
 
     import Modal from "$components/Modal.svelte";
 

@@ -1,7 +1,7 @@
 <script>
     import { getPosition } from "$lib/utilities";
 
-    import ChevronDownIcon from "$assets/icons/chevronDown.svg";
+    import ExpandMore from "@material-design-icons/svg/filled/expand_more.svg?component";
 
     export let options = [];
     export let activeOption = {};
@@ -40,7 +40,7 @@
 <div class="dropdown" class:visible={isVisible}>
     <button class="dropdown-button styled-button" on:click={handleClick} bind:this={dropdownButton}>
         {activeOption[genericName]}
-        <ChevronDownIcon />
+        <ExpandMore />
     </button>
     {#if isVisible}
         <div class="options" style:top style:bottom style:transform style:max-height={maxHeight}>

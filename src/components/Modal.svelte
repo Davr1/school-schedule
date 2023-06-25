@@ -1,7 +1,7 @@
 <script>
     import { createEventDispatcher } from "svelte";
 
-    import Close from "$assets/icons/close.svg";
+    import Close from "@material-design-icons/svg/filled/close.svg?component";
 
     export let scrollable = false;
 
