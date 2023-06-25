@@ -1,3 +1,4 @@
+/** All the classes, teachers and rooms in the school... */
 export const scheduleMetadata = {
     classes: [
         { name: "P1.A", id: "UG" },
@@ -70,37 +71,58 @@ export const scheduleMetadata = {
         { name: "214", id: "G0" },
         { name: "TĚL", id: "T0" }
     ]
-};
+} as const;
 
-export function toBakaParams(params) {
-    let newParams = {};
-    newParams.scheduleMode = params.scheduleMode;
-    switch (params.weekMode) {
-        case "Permanent":
-        case "Next":
-            newParams.weekMode = params.weekMode;
-            break;
-        case "Current":
-        default:
-            newParams.weekMode = "Actual";
-    }
+/** Parameters used by Bakalari */
+interface BakalariParams {
+    scheduleMode: "Class" | "Teacher" | "Room";
+    weekMode: "Actual" | "Permanent" | "Next";
+    value: string;
+}
+
+/**
+ * Remap the parameters to the format used by Bakalari
+ * @param params FIXME: Idfk what format this is
+ * @returns Remapped Bakalari parameters
+ */
+export function toBakaParams(params): BakalariParams {
+    let { weekMode, scheduleMode } = params;
+
+    // If the week mode is "Current", we want to use "Actual" instead
+    if (weekMode === "Current") weekMode = "Actual";
+
+    let value: string;
     switch (params.scheduleMode) {
         case "Teacher":
-            newParams.value = scheduleMetadata.teachers.find((t) => t.name === params.value || t.abbr === params.value)?.id;
+            value = scheduleMetadata.teachers.find((t) => t.name === params.value || t.abbr === params.value)!.id;
             break;
         case "Room":
-            newParams.value = scheduleMetadata.rooms.find((r) => r.name === params.value)?.id;
+            value = scheduleMetadata.rooms.find((r) => r.name === params.value)!.id;
             break;
         case "Class":
         default:
-            newParams.value = scheduleMetadata.classes.find((c) => c.name === params.value)?.id;
+            value = scheduleMetadata.classes.find((c) => c.name === params.value)!.id;
     }
-    return newParams;
+
+    return { weekMode, scheduleMode, value };
 }
 
+// TODO: Remove and use enums instead
 export const weekModes = ["Permanent", "Current", "Next"];
 
 export const sheduleModes = ["Class", "Teacher", "Room"];
+
+enum WeekMode {
+    Permanent,
+    Current,
+    Next
+}
+
+enum ScheduleMode {
+    Class,
+    Teacher,
+    Room
+}
 
 export const hours = {
     offsets: [
@@ -118,8 +140,9 @@ export const hours = {
         [45, 10],
         [45, 10]
     ],
+
     get formattedTime() {
-        let output = [];
+        let output: [string, string][] = [];
         let time = 0;
         this.offsets.forEach(([cls, brk]) => {
             let a = Math.floor(time / 60) + ":" + `0${time % 60}`.slice(-2);
@@ -133,11 +156,12 @@ export const hours = {
     }
 };
 
+/** Endpoints for fetching data */
 export const urls = {
     substitution: "/sssvt/substitution",
     schedule: "/sssvt/schedule",
     baka: "https://is.sssvt.cz/IS"
-};
+} as const;
 
 class Subject {
     constructor(args) {
