@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
     import Loading from "$assets/loading.svg?component";
     import UwU from "$assets/uwu.svg?component";
 </script>

@@ -1,11 +1,11 @@
-<script>
+<script lang="ts">
     import { createEventDispatcher } from "svelte";
 
     import Close from "@material-design-icons/svg/filled/close.svg?component";
 
     export let scrollable = false;
 
-    const dispatch = createEventDispatcher();
+    const dispatch = createEventDispatcher<{ hideScreenOverlay: never }>();
 
     function closeModal() {
         dispatch("hideScreenOverlay");

@@ -1,8 +1,10 @@
-<script>
+<script lang="ts">
     import { onDestroy, onMount } from "svelte";
+    import type { Unsubscriber } from "svelte/store";
 
     import { config, scheduleParams } from "$stores/config";
-    import { isSubjectInfoVisible, modal } from "$stores/main";
+    import { isSubjectInfoVisible } from "$stores/main";
+    import { modal } from "$stores/modal";
 
     import AdvancedSettingsModal from "$components/AdvancedSettingsModal.svelte";
     import LoadScreen from "$components/LoadScreen.svelte";
@@ -12,17 +14,15 @@
 
     let isLoadScreenVisible = $config.loadscreen;
 
-    let scheduleParamsSubscriber;
-    let isSubjectInfoVisibleSubscriber;
-    let modalSubscriber;
+    let scheduleParamsSubscriber: Unsubscriber;
+    let isSubjectInfoVisibleSubscriber: Unsubscriber;
+    let modalSubscriber: Unsubscriber;
 
     // Subscribe to stores on mount
     onMount(() => {
-        scheduleParamsSubscriber = scheduleParams.subscribe((v) => {
-            //updateURL(v); // Note: I merged your 2 subscribers here..
-            hideScreenOverlay();
-        });
-        isSubjectInfoVisibleSubscriber = isSubjectInfoVisible.subscribe((value) => screenOverlayEventHandler(value));
+        scheduleParamsSubscriber = scheduleParams.subscribe(hideScreenOverlay);
+        isSubjectInfoVisibleSubscriber = isSubjectInfoVisible.subscribe(screenOverlayEventHandler);
+
         modalSubscriber = modal.subscribe((value) => screenOverlayEventHandler(value.visible));
     });
 
@@ -35,18 +35,21 @@
 
     let isBackgroundDimmed = false;
 
-    function screenOverlayEventHandler(value) {
+    function screenOverlayEventHandler(value: boolean) {
         isBackgroundDimmed = value;
+
         if (value) document.addEventListener("keydown", esc);
     }
 
-    function esc(e) {
+    function esc(e: KeyboardEvent) {
         if (e.key === "Escape") hideScreenOverlay();
     }
 
     function hideScreenOverlay() {
         isBackgroundDimmed = false;
+
         document.removeEventListener("keydown", esc);
+
         setTimeout(() => {
             isSubjectInfoVisible.set(false);
             modal.update((v) => {
@@ -56,7 +59,8 @@
         });
     }
 
-    function openModal(e) {
+    // TODO: This seriously needs to be rewritten..
+    function openModal(e: any) {
         modal.update((v) => {
             v.type = e.detail?.type ?? "";
             v.context = e.detail?.context ?? {};

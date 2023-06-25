@@ -8,7 +8,7 @@
     "importOrder": [
         "^\\$lib|app|env/(.+)$",
         "^\\$stores/(.+)$",
-        "^\\$assets/(.+)$",
+        "^\\$assets/(.+)|\\.svg\\?component$",
         "^\\$components/(.+)$",
         "^\\$styles/(.+)$",
         "^\\$(.+)/(.+)$",

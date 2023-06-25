@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
     import { config } from "$stores/config";
 
     import UwU from "$assets/uwu.svg?component";

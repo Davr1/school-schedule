@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
     import { createEventDispatcher } from "svelte";
 
     import { config, scheduleParams, updateScheduleParams } from "$stores/config";
@@ -9,8 +9,6 @@
     import Refresh from "@material-design-icons/svg/filled/refresh.svg?component";
 
     import Dropdown from "$components/Dropdown.svelte";
-
-    // if (browser) window.addEventListener("popstate", () => updateScheduleParams(readURL(window.location)));
 
     let maxFetchCount;
     $: if ($scheduleParams.weekMode === "Permanent" || $scheduleParams.scheduleMode !== "Class" || $config.useWeb === false) {
@@ -52,7 +50,7 @@
     let valuesDropdown;
     $: valuesDropdown = getDropdownValues($scheduleParams.scheduleMode);
 
-    function setMode(weekMode) {
+    function setMode(weekMode: "Permanent" | "Current" | "Next") {
         updateScheduleParams({ weekMode });
     }
 

@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
     import { getPosition } from "$lib/utilities";
 
     import ExpandMore from "@material-design-icons/svg/filled/expand_more.svg?component";
