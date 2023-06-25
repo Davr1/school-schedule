@@ -16,8 +16,8 @@ export async function GET({ params }) {
 
     // Parse the date
     const [year, month, day] = date.split("-").map(Number);
-    /** @type {Date} */
-    let dateObj;
+
+    let dateObj: Date;
     try {
         dateObj = new Date(year, month - 1, day); // Month is 0-indexed
     } catch (err) {
