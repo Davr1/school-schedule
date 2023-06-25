@@ -1,3 +1,5 @@
+import type { ScheduleMode, ScheduleParams, WeekMode } from "$stores/config";
+
 /** All the classes, teachers and rooms in the school... */
 export const scheduleMetadata = {
     classes: [
@@ -73,27 +75,37 @@ export const scheduleMetadata = {
     ]
 } as const;
 
+/** A value that can be used in the Bakalari API */
+type BakalariValue =
+    | (typeof scheduleMetadata.classes)[number]["id"]
+    | (typeof scheduleMetadata.teachers)[number]["id"]
+    | (typeof scheduleMetadata.rooms)[number]["id"];
+
 /** Parameters used by Bakalari */
 interface BakalariParams {
-    scheduleMode: "Class" | "Teacher" | "Room";
-    weekMode: "Actual" | "Permanent" | "Next";
-    value: string;
+    scheduleMode: ScheduleMode;
+    weekMode: Omit<WeekMode, "Current"> | "Actual"; // "Actual" is the what Bakalari calls "Current"
+    value: BakalariValue;
 }
 
 /**
  * Remap the parameters to the format used by Bakalari
- * @param params FIXME: Idfk what format this is
+ * @param params The parameters to remap (from the config)
  * @returns Remapped Bakalari parameters
  */
-export function toBakaParams(params): BakalariParams {
-    let { weekMode, scheduleMode } = params;
+export function toBakaParams(params: ScheduleParams): BakalariParams {
+    // This declaration is weird. ik..
+    const { scheduleMode } = params;
 
     // If the week mode is "Current", we want to use "Actual" instead
-    if (weekMode === "Current") weekMode = "Actual";
+    const weekMode = params.weekMode === "Current" ? "Actual" : params.weekMode;
 
-    let value: string;
-    switch (params.scheduleMode) {
+    let value: BakalariValue;
+    switch (scheduleMode) {
         case "Teacher":
+            // @ts-ignore // TODO: obv remove this in the future
+            // Yes, this is weird and needs to be rewritten
+            // NOTE: For any future @iCyuba see the comment in config.ts:94
             value = scheduleMetadata.teachers.find((t) => t.name === params.value || t.abbr === params.value)!.id;
             break;
         case "Room":
@@ -108,21 +120,8 @@ export function toBakaParams(params): BakalariParams {
 }
 
 // TODO: Remove and use enums instead
-export const weekModes = ["Permanent", "Current", "Next"];
-
-export const sheduleModes = ["Class", "Teacher", "Room"];
-
-enum WeekMode {
-    Permanent,
-    Current,
-    Next
-}
-
-enum ScheduleMode {
-    Class,
-    Teacher,
-    Room
-}
+export const weekModes = ["Permanent", "Current", "Next"] as const;
+export const sheduleModes = ["Class", "Teacher", "Room"] as const;
 
 export const hours = {
     offsets: [
@@ -154,7 +153,7 @@ export const hours = {
         output.shift();
         return output;
     }
-};
+} as const;
 
 /** Endpoints for fetching data */
 export const urls = {
