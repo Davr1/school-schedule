@@ -38,7 +38,7 @@
 
         fetchProcess: {
             if ($scheduleParams.weekMode === "Current" && $config.sundayOverride && today === 0) {
-                schedule.mode = "Next";
+                schedule.weekMode = "Next";
             }
 
             scheduleData = await getBakaSchedule(schedule);
