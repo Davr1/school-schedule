@@ -1,7 +1,8 @@
 <script>
     import { createEventDispatcher, onDestroy, onMount } from "svelte";
 
-    import { getBakaSchedule, getWebSchedule } from "$lib/utilities";
+    import { getBakaSchedule } from "$lib/scraping";
+    import { getWebSchedule } from "$lib/utilities";
 
     import { config, scheduleParams } from "$stores/config";
     import { fetchCount, fetchQueue } from "$stores/main";

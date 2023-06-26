@@ -76,13 +76,13 @@ export const scheduleMetadata = {
 } as const;
 
 /** A value that can be used in the Bakalari API */
-type BakalariValue =
+export type BakalariValue =
     | (typeof scheduleMetadata.classes)[number]["id"]
     | (typeof scheduleMetadata.teachers)[number]["id"]
     | (typeof scheduleMetadata.rooms)[number]["id"];
 
 /** Parameters used by Bakalari */
-interface BakalariParams {
+export interface BakalariParams {
     scheduleMode: ScheduleMode;
     weekMode: Omit<WeekMode, "Current"> | "Actual"; // "Actual" is the what Bakalari calls "Current"
     value: BakalariValue;

@@ -29,6 +29,7 @@
     "dependencies": {
         "@material-design-icons/svg": "^0.14.9",
         "axios": "^1.4.0",
+        "cheerio": "^1.0.0-rc.12",
         "socks-proxy-agent": "^8.0.1",
         "windows-1250": "^3.0.4"
     }
