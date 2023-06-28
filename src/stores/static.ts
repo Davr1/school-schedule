@@ -103,7 +103,7 @@ export function toBakaParams(params: ScheduleParams): BakalariParams {
     let value: BakalariValue;
     switch (scheduleMode) {
         case "Teacher":
-            // @ts-ignore // TODO: obv remove this in the future
+            // TODO: obv remove this in the future
             // Yes, this is weird and needs to be rewritten
             // NOTE: For any future @iCyuba see the comment in config.ts:94
             value = scheduleMetadata.teachers.find((t) => t.name === params.value || t.abbr === params.value)!.id;

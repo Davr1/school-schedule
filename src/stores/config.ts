@@ -13,6 +13,7 @@ export type WeekMode = "Permanent" | "Current" | "Next";
 export type Value =
     | (typeof scheduleMetadata.classes)[number]["name"]
     | (typeof scheduleMetadata.teachers)[number]["name"]
+    | (typeof scheduleMetadata.teachers)[number]["abbr"]
     | (typeof scheduleMetadata.rooms)[number]["name"];
 
 export interface ScheduleParams {
@@ -90,7 +91,6 @@ export function updateScheduleParams(newParams: Partial<ScheduleParams> = {}) {
 
     // replace abbreviation with full name
     if (newParams.scheduleMode === "Teacher") {
-        // @ts-ignore this is bs
         // For future @iCyuba reading this. look at this message: https://discord.com/channels/@me/1115648324821843999/1122616953769566319
         let teacher = scheduleMetadata.teachers.find((t) => t.abbr === newParams.value);
 
