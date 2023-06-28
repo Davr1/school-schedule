@@ -8,7 +8,6 @@ import { get, set } from "$lib/server/archive";
  * Get the school's substitution schedule for the given date
  *
  * The date must be specified in the slug and be in the same format the school uses.. [YYYY-MM-DD]
- * @type {import('@sveltejs/kit').RequestHandler}
  * @returns The schedule as a UTF-8 string
  */
 export async function GET({ params }) {
