@@ -1,3 +1,4 @@
+import type { Document } from "bson";
 import { BSON } from "bson";
 import { readFile, writeFile } from "fs/promises";
 import { promisify } from "util";
@@ -7,25 +8,13 @@ const gZip = promisify(gzip);
 const gunZip = promisify(gunzip);
 
 /**
- * @typedef Archive The format of the archive
- * @property {Number} timestamp The timestamp of the last update
- * @property {string} response The response from the school's server
- * @exports Archive
- */
-
-/**
- * @typedef {Record<string, Archive>} ArchiveStorage The storage object
- * @exports ArchiveStorage
- */
-
-/**
  * Serialize the data to BSON and GZip it
  *
  * This is to save space on the disk
- * @param {ArchiveStorage} data The data to serialize
- * @returns {Promise<Buffer>} The gzipped BSON as a buffer
+ * @param data The data to serialize
+ * @returns The gzipped BSON as a buffer
  */
-export async function serialize(data) {
+export async function serialize<T extends Document = Document>(data: T): Promise<Buffer> {
     // Serialize the BSON
     const buffer = BSON.serialize(data);
 
@@ -37,15 +26,15 @@ export async function serialize(data) {
 
 /**
  * Deserialize the BSON and un GZip it
- * @param {Buffer} buffer The gzipped BSON as a buffer
- * @returns {Promise<ArchiveStorage>} The deserialized data
+ * @param buffer The gzipped BSON as a buffer
+ * @returns The deserialized data
  */
-export async function deserialize(buffer) {
+export async function deserialize<T extends Document>(buffer: Buffer): Promise<T> {
     // Un GZip the buffer
     const unGziped = await gunZip(buffer);
 
     // Deserialize the BSON
-    const data = BSON.deserialize(unGziped);
+    const data = BSON.deserialize(unGziped) as T;
 
     return data;
 }
@@ -54,32 +43,31 @@ export async function deserialize(buffer) {
  * Reads the file as a gzipped BSON and deserializes it
  *
  * Used internally by the archive
- * @param {string} file The file to read (defaults to data.bson)
- * @returns {Promise<ArchiveStorage>} The deserialized data
+ * @param file The file to read (defaults to data.bson)
+ * @returns The deserialized data
  */
-export async function read(file = "data.bson") {
+export async function read<T extends Document = Document>(file: string = "data.bson"): Promise<T> {
     // Read the file or create it if it doesn't exist
-    let buffer;
+    let buffer: Buffer;
     try {
         buffer = await readFile(file);
     } catch (error) {
         await write({});
-        return {};
+        return {} as T; // This is dumb lmaoo
     }
 
     // Deserialize the BSON
-    return await deserialize(buffer);
+    return await deserialize<T>(buffer);
 }
 
 /**
  * Serializes the data and writes it to the file
  *
  * Used internally by the archive
- * @param {ArchiveStorage} data The data to serialize
- * @param {string} file The file to write (defaults to data.bson)
- * @returns {Promise<void>}
+ * @param data The data to serialize
+ * @param file The file to write (defaults to data.bson)
  */
-export async function write(data, file = "data.bson") {
+export async function write<T extends Document = Document>(data: T, file: string = "data.bson"): Promise<void> {
     // Serialize the BSON
     const buffer = await serialize(data);
 
