@@ -1,18 +1,26 @@
 import { load } from "cheerio";
 
 import { fetchBaka } from "$lib/data";
+import { EmptySubject, SpecialSubject, StandardSubject, Subject } from "$lib/subject";
 
 import type { ScheduleParams } from "$stores/config";
-import { EmptySubject, SpecialSubject, StandardSubject, Subject, toBakaParams } from "$stores/static";
+import { toBakaParams } from "$stores/static";
 
-export async function getBakaSchedule(params: ScheduleParams) {
+export interface BakalariDay {
+    date: readonly [string, string];
+    subjects: readonly Subject[][];
+}
+
+export type BakalariSchedule = BakalariDay[];
+
+export async function getBakaSchedule(params: ScheduleParams): Promise<BakalariSchedule> {
     const newParams = toBakaParams(params);
     const response = await fetchBaka(newParams);
 
     const $ = load(response);
 
     // The schedule is stored in a (strange) table, so we can iterate over the rows
-    const schedule: { date: readonly [string, string]; subjects: Subject[][] }[] = [];
+    const schedule: BakalariSchedule = [];
 
     $(".bk-timetable-row").each((i, row) => {
         const date = [$(row).find(".bk-day-day").text(), $(row).find(".bk-day-date").text()] as const;

@@ -12,19 +12,25 @@
 
     let cell, position, title;
 
-    export let subject = {};
-    subject.subject = subject.subject ?? subject.subjectAbbr ?? "";
-    subject.group = ($scheduleParams.scheduleMode !== "Class" ? subject.cls + " " : "") + (subject.group ?? "");
+    /** @type {import('$lib/subject').Subject} */
+    export let subject;
 
-    title =
-        subject.special ??
-        [
-            `${subject.theme ? subject.theme + "\n\n" : ""}${subject.subject}`,
-            `${subject.teacher}`,
-            `${subject.changed && subject.changeInfo ? subject.changeInfo : subject.room}${subject.group ? " - " + subject.group : ""}`
-        ]
-            .filter((e) => e)
-            .join("\n");
+    let name = subject.isStandard() ? subject.name ?? subject.abbreviation : "";
+    let group =
+        ($scheduleParams.scheduleMode !== "Class" ? (subject.isStandard() ? subject.className : "") + " " : "") +
+        (subject.isStandard() ? subject.group : "");
+
+    title = subject.isSpecial()
+        ? subject.name
+        : subject.isStandard()
+        ? [
+              `${subject.theme + "\n\n"}${subject.name}`,
+              `${subject.teacher}`,
+              `${subject.change ?? subject.room}${subject.group ? " - " + subject.group : ""}`
+          ]
+              .filter((e) => e)
+              .join("\n")
+        : ""; // idk what you want for empty subjects..
 
     let subjectInfoVisible;
 
@@ -52,10 +58,10 @@
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-{#if subject.type === 1}
+{#if subject.isStandard()}
     <div
         class="subject"
-        class:changed={subject.changed}
+        class:changed={subject.change !== null}
         class:floating={subjectInfoVisible}
         on:click={showSubjectInfoScreen}
         bind:this={cell}
@@ -68,16 +74,18 @@
                 <div class="left">{subject.group}</div>
                 <div class="right">{subject.room}</div>
             </div>
-            <div class="middle">{subject.subjectAbbr}</div>
-            <div class="bottom">{subject.teacherAbbr.split(",")[0]}</div>
+            <div class="middle">{subject.abbreviation}</div>
+            <div class="bottom">{subject.teacher.abbreviation.split(",")[0]}</div>
         </div>
     </div>
-{:else if subject.type === 2}
+{:else if subject.isSpecial()}
     <div
         class="subject changed2"
         class:floating={subjectInfoVisible}
         on:click={() => {
-            if (subject.specialAbbr && subject.special) showSubjectInfoScreen();
+            // Idk why the check here is required.. typescript is weird
+            // It should be true at runtime anyway so it's fine
+            if (subject.isSpecial() && subject.abbreviation && subject.name) showSubjectInfoScreen();
         }}
         bind:this={cell}
     >
@@ -85,10 +93,10 @@
             <SubjectInfo data={{ position, ...{ subject } }} on:modalOpen />
         {/if}
         <div class="subject-content" {title}>
-            <div class="middle">{subject.specialAbbr || subject.special}</div>
+            <div class="middle">{subject.abbreviation || subject.name}</div>
         </div>
     </div>
-{:else if subject.type === 0 && subject.changed}
+{:else if subject.isEmpty() && subject.change}
     <div class="subject changed2" bind:this={cell}>
         <div class="subject-content" />
     </div>

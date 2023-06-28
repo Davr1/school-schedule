@@ -1,6 +1,5 @@
 import { fetchWebSchedule } from "$lib/data";
-
-import { EmptySubject, StandardSubject, Subject } from "$stores/static";
+import { EmptySubject, StandardSubject } from "$lib/subject";
 
 function createElement(el) {
     if (!el) return null;
@@ -65,18 +64,20 @@ const elementProxy = {
 export async function getWebSchedule(date) {
     let temp = createElement(await fetchWebSchedule(date));
 
-    let daySchedule: { cls: string; subjects: Subject[][] }[] = [];
+    // Note: Only types Standard and Empty can be returned
+    //       Also the types here are god awful... (as one could've guessed from the warning above)
+    let daySchedule: { cls: string; subjects: (StandardSubject | EmptySubject)[][] }[] = [];
 
     temp.$$(".table-responsive tbody tr:not(.prvniradek):nth-child(2n)").forEach((row) => {
         let cls: string = row.firstChild.text;
-        let subjects: Subject[][] = [];
+        let subjects: (StandardSubject | EmptySubject)[][] = [];
 
         let firstHalf = row.$$("td:not(:first-of-type, .heightfix)");
         let secondHalf = row.nextEl.$$("td:not(.heightfix)");
 
         firstHalf.forEach((cell) => {
             if (cell.childNodes[0].text.replace(/\s+/, "")) {
-                let subject: Subject[] = [];
+                let subject: (StandardSubject | EmptySubject)[] = [];
                 let group = "";
 
                 if (cell.$("strong")?.next?.nodeName === "#text") {
