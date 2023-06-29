@@ -4,10 +4,6 @@ import { browser, version } from "$app/environment";
 
 import { scheduleMetadata } from "$stores/static";
 
-Array.prototype["search"] = function (key, value, fallback) {
-    return this.find((o) => o[key] === value) ?? this.find((o) => o[key] === fallback);
-};
-
 export type ScheduleMode = "Class" | "Teacher" | "Room";
 export type WeekMode = "Permanent" | "Current" | "Next";
 export type Value =

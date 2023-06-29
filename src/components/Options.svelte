@@ -18,15 +18,19 @@
     }
 
     type ValuesDropdown = (typeof scheduleMetadata)[keyof typeof scheduleMetadata][number];
-    function getDropdownValues<T extends ScheduleMode>(mode: T): Dropdown<ValuesDropdown>["$$prop_def"] {
-        let options = { Class: scheduleMetadata.classes, Teacher: scheduleMetadata.teachers, Room: scheduleMetadata.rooms }[mode];
+    function getDropdownValues(mode: ScheduleMode): Dropdown<ValuesDropdown>["$$prop_def"] {
+        let options = {
+            Class: scheduleMetadata.classes,
+            Teacher: scheduleMetadata.teachers,
+            Room: scheduleMetadata.rooms
+        }[mode] as readonly ValuesDropdown[];
 
         return {
             options,
-            activeOption: options.search("name", $scheduleParams.value),
+            activeOption: options.find((v) => v.name === $scheduleParams.value)!,
             callback: (val) => {
                 updateScheduleParams({ value: val.name });
-                valuesDropdown.activeOption = options.search("name", $scheduleParams.value);
+                valuesDropdown.activeOption = options.find((v) => v.name === $scheduleParams.value)!;
             },
             genericName: "name",
             genericKey: "id"
@@ -35,21 +39,20 @@
 
     const dispatch = createEventDispatcher();
 
-    const indexedScheduleModes = sheduleModes.map((m) => ({ name: m, id: m }));
-
-    let modeDropdown;
+    type ModeDropdown = { mode: (typeof sheduleModes)[number] };
+    let modeDropdown: Dropdown<ModeDropdown>["$$prop_def"];
     $: modeDropdown = {
-        options: indexedScheduleModes,
-        activeOption: indexedScheduleModes.search("id", $scheduleParams.scheduleMode, "Class"),
+        options: sheduleModes.map((m) => ({ mode: m })),
+        activeOption: { mode: $scheduleParams.scheduleMode },
         callback: (val) => {
-            updateScheduleParams({ scheduleMode: val.name });
-            modeDropdown.activeOption = indexedScheduleModes.search("name", $scheduleParams.scheduleMode);
+            updateScheduleParams({ scheduleMode: val.mode });
+            modeDropdown.activeOption = { mode: $scheduleParams.scheduleMode };
         },
-        genericName: "name",
-        genericKey: "id"
+        genericName: "mode",
+        genericKey: "mode"
     };
 
-    let valuesDropdown;
+    let valuesDropdown: Dropdown<ValuesDropdown>["$$prop_def"];
     $: valuesDropdown = getDropdownValues($scheduleParams.scheduleMode);
 
     function setMode(weekMode: "Permanent" | "Current" | "Next") {
