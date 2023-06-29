@@ -1,7 +1,7 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
 
-    import { config, scheduleParams, updateScheduleParams } from "$stores/config";
+    import { config, type ScheduleMode, scheduleParams, updateScheduleParams } from "$stores/config";
     import { fetchCount } from "$stores/main";
     import { scheduleMetadata, sheduleModes } from "$stores/static";
 
@@ -10,15 +10,17 @@
 
     import Dropdown from "$components/Dropdown.svelte";
 
-    let maxFetchCount;
+    let maxFetchCount: number;
     $: if ($scheduleParams.weekMode === "Permanent" || $scheduleParams.scheduleMode !== "Class" || $config.useWeb === false) {
         maxFetchCount = 1;
     } else {
         maxFetchCount = 6;
     }
 
-    function getDropdownValues(mode) {
+    type ValuesDropdown = (typeof scheduleMetadata)[keyof typeof scheduleMetadata][number];
+    function getDropdownValues<T extends ScheduleMode>(mode: T): Dropdown<ValuesDropdown>["$$prop_def"] {
         let options = { Class: scheduleMetadata.classes, Teacher: scheduleMetadata.teachers, Room: scheduleMetadata.rooms }[mode];
+
         return {
             options,
             activeOption: options.search("name", $scheduleParams.value),

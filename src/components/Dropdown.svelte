@@ -3,17 +3,19 @@
 
     import ExpandMore from "@material-design-icons/svg/filled/expand_more.svg?component";
 
-    export let options = [];
-    export let activeOption = {};
-    export let callback = () => {};
-    export let genericName = "";
-    export let genericKey = "";
+    type T = $$Generic;
+
+    export let options: readonly T[] = [];
+    export let activeOption: T;
+    export let callback: (option: T) => void = () => {};
+    export let genericName: keyof T;
+    export let genericKey: keyof T;
 
     let isVisible = false;
 
-    let dropdownButton;
+    let dropdownButton: HTMLButtonElement;
 
-    let top, bottom, transform, maxHeight;
+    let top: string | undefined, bottom: string | undefined, transform: string, maxHeight: string;
 
     function handleClick() {
         if (!isVisible) {
