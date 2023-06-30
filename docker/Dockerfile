@@ -20,9 +20,12 @@ RUN npm ci
 # See .dockerignore for what is not copied
 COPY . .
 
-# Set the environment variable "proxy" 
+# Set the environment variables (provided via args in compose)
 ARG PROXY=""
+ARG HOLIDAYS="TRUE"
+
 ENV PROXY=${PROXY}
+ENV HOLIDAYS=${HOLIDAYS}
 
 # Build the app
 RUN npm run build

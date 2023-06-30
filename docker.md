@@ -6,6 +6,7 @@ Please use docker compose. The dockerfile is only for building the image...
 
 -   Default: `docker-compose.yml`
 -   Tor: `tor.docker-compose.yml`
+-   Holidays: `holidays.docker-compose.yml`
 <!-- -   Development: `dev.docker-compose.yml` -->
 
 ## How to compose them
@@ -24,6 +25,16 @@ Use tor as a proxy for outgoing connections (doesn't accept incoming connections
 
 ```sh
 docker compose -f docker/docker-compose.yml -f docker/tor.docker-compose.yml up -d --build
+```
+
+### The holidays configuration
+
+Disable the holiday check, which disables the schedule during holidays.
+
+Can be used with the tor configuration.. just add the tor compose file.
+
+```sh
+docker compose -f docker/docker-compose.yml -f docker/holidays.docker-compose.yml up -d --build
 ```
 
 <!--
