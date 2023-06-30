@@ -11,8 +11,7 @@ node_modules/
 build/
 
 # Docker files
-.dockerignore
-Dockerfile
+docker/
 
 # Prettier config
 .prettierignore
