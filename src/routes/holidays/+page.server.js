@@ -1,5 +1,7 @@
 import { redirect } from "@sveltejs/kit";
 
+import { HOLIDAYS } from "$env/static/private";
+
 import holidays from "../../holidays.json" assert { type: "json" };
 
 /**
@@ -10,6 +12,9 @@ import holidays from "../../holidays.json" assert { type: "json" };
  * Note: Only the last holiday will be checked. Add them as they happen and not in advance.
  */
 export async function load() {
+    // If the environment variable is not set to true, redirect to the main page
+    if (HOLIDAYS.toLowerCase() !== "true") throw redirect(303, "/");
+
     // Get the last holiday
     const currentHoliday = holidays[holidays.length - 1];
 
