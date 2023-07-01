@@ -1,6 +1,9 @@
 import { fetchWebSchedule } from "$lib/data";
 import { EmptySubject, StandardSubject } from "$lib/subject";
 
+import type { Value } from "$stores/config";
+import { scheduleMetadata } from "$stores/static";
+
 function createElement(el) {
     if (!el) return null;
     if (typeof el === "string") {
@@ -160,4 +163,12 @@ export function getPosition(element: HTMLElement) {
             return (document.querySelector(".modal-content") ?? document.body).getBoundingClientRect();
         }
     };
+}
+
+export function isValidMetadata(value: string): value is Value {
+    return (
+        scheduleMetadata.classes.find((classMetadata) => classMetadata.name === value) !== undefined ||
+        scheduleMetadata.rooms.find((roomMetadata) => roomMetadata.name === value) !== undefined ||
+        scheduleMetadata.teachers.find((teacherMetadata) => teacherMetadata.name === value || teacherMetadata.abbr === value) !== undefined
+    );
 }

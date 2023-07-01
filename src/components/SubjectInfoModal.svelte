@@ -7,32 +7,47 @@
     import TextSnippet from "@material-design-icons/svg/filled/text_snippet.svg?component";
 
     import Modal from "$components/Modal.svelte";
+    import { isValidMetadata } from "$lib/utilities";
 
-    export let context = { subject: {} };
+    /** @type {{ subject: import('$lib/subject').Subject }} */
+    export let context;
 
-    let { special, theme, subject, room, group, teacherAbbr, teacher } = context.subject;
+    const subject = context.subject;
 </script>
 
 <Modal on:hideScreenOverlay>
-    {#if special || theme}
-        <h1><TextSnippet /> {special ?? theme}</h1>
+    {#if subject.isSpecial()}
+        <h1><TextSnippet /> {subject.name}</h1>
+    {:else if subject.isStandard() && subject.theme}
+        <h2><TextSnippet /> {subject.theme}</h2>
     {/if}
-    {#if group || room}
+    {#if subject.isStandard()}
         <h2>
             <Info />
-            {subject.split("|")[0]}
+            {subject.name.split("|")[0]}
             <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <span class="link" on:click={() => updateScheduleParams({ value: room, scheduleMode: "Room" })}>
-                {room}
+            <span
+                class="link"
+                on:click={() => {
+                    // This is nasty. Consider refactoring..
+                    if (!subject.isStandard()) return;
+
+                    if (isValidMetadata(subject.room)) updateScheduleParams({ value: subject.room, scheduleMode: "Room" });
+                }}
+            >
+                {subject.room}
             </span>
-            {#if group}
+            {#if subject.group}
                 /
-                {#each group.split(", ") as singleGroup}
+                {#each subject.group.split(", ") as singleGroup}
                     {#if scheduleMetadata.classes.find((a) => a.name === singleGroup.trim().split(" ")[0])}
                         <!-- svelte-ignore a11y-click-events-have-key-events -->
                         <span
                             class="link"
-                            on:click={() => updateScheduleParams({ value: singleGroup.trim().split(" ")[0], scheduleMode: "Class" })}
+                            on:click={() => {
+                                const group = singleGroup.trim().split(" ")[0];
+                                if (isValidMetadata(group)) updateScheduleParams({ value: group, scheduleMode: "Class" });
+                            }}
                         >
                             {singleGroup}
                         </span>
@@ -42,13 +57,19 @@
                 {/each}
             {/if}
         </h2>
-    {/if}
-    {#if teacher}
         <h2>
             <Person />
             <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <span class="link" on:click={() => updateScheduleParams({ value: teacherAbbr.split(",")[0], scheduleMode: "Teacher" })}>
-                {teacher.split(",")[0]}
+            <span
+                class="link"
+                on:click={() => {
+                    if (!subject.isStandard()) return;
+
+                    const teacher = subject.teacher.abbreviation.split(",")[0];
+                    if (isValidMetadata(teacher)) updateScheduleParams({ value: teacher, scheduleMode: "Teacher" });
+                }}
+            >
+                {subject.teacher.abbreviation.split(",")[0]}
             </span>
         </h2>
     {/if}

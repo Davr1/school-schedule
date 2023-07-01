@@ -15,17 +15,12 @@
     /** @type {import('$lib/subject').Subject} */
     export let subject;
 
-    let name = subject.isStandard() ? subject.name ?? subject.abbreviation : "";
-    let group =
-        ($scheduleParams.scheduleMode !== "Class" ? (subject.isStandard() ? subject.className : "") + " " : "") +
-        (subject.isStandard() ? subject.group : "");
-
     title = subject.isSpecial()
         ? subject.name
         : subject.isStandard()
         ? [
               `${subject.theme + "\n\n"}${subject.name}`,
-              `${subject.teacher}`,
+              `${subject.teacher.name}`,
               `${subject.change ?? subject.room}${subject.group ? " - " + subject.group : ""}`
           ]
               .filter((e) => e)
@@ -67,7 +62,7 @@
         bind:this={cell}
     >
         {#if subjectInfoVisible}
-            <SubjectInfo data={{ position, ...{ subject } }} on:modalOpen />
+            <SubjectInfo {position} {subject} on:modalOpen />
         {/if}
         <div class="subject-content" {title}>
             <div class="top">
@@ -90,7 +85,7 @@
         bind:this={cell}
     >
         {#if subjectInfoVisible}
-            <SubjectInfo data={{ position, ...{ subject } }} on:modalOpen />
+            <SubjectInfo {position} {subject} on:modalOpen />
         {/if}
         <div class="subject-content" {title}>
             <div class="middle">{subject.abbreviation || subject.name}</div>
