@@ -1,6 +1,7 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
 
+    import type { Subject } from "$lib/subject";
     import { getPosition } from "$lib/utilities";
 
     import { scheduleParams } from "$stores/config";
@@ -12,8 +13,7 @@
 
     let cell, position, title;
 
-    /** @type {import('$lib/subject').Subject} */
-    export let subject;
+    export let subject: Subject;
 
     title = subject.isSpecial()
         ? subject.name

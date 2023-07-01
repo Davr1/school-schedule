@@ -1,22 +1,22 @@
-<script>
+<script lang="ts">
     import { createEventDispatcher, onDestroy, onMount } from "svelte";
+    import type { Unsubscriber } from "svelte/store";
 
-    import { getBakaSchedule } from "$lib/scraping";
+    import { type BakalariSchedule, getBakaSchedule } from "$lib/scraping";
+    import { StandardSubject } from "$lib/subject";
     import { getWebSchedule } from "$lib/utilities";
 
-    import { config, scheduleParams } from "$stores/config";
+    import { config, scheduleParams, type ScheduleParams } from "$stores/config";
     import { fetchCount, fetchQueue } from "$stores/main";
     import { hours, scheduleMetadata } from "$stores/static";
 
     import GridCell from "$components/GridCell.svelte";
-    import { StandardSubject } from "$lib/subject";
 
     const dispatch = createEventDispatcher();
 
-    /** @type {import("$lib/scraping").BakalariSchedule} */
-    let scheduleData = [];
+    let scheduleData: BakalariSchedule = [];
 
-    let scheduleParamsSubscriber;
+    let scheduleParamsSubscriber: Unsubscriber;
 
     let today = new Date().getDay();
 
@@ -30,7 +30,7 @@
         scheduleParamsSubscriber?.();
     });
 
-    async function updateSchedule(schedule) {
+    async function updateSchedule(schedule: ScheduleParams) {
         schedule = structuredClone(schedule);
 
         $fetchCount = 0;
@@ -51,15 +51,15 @@
 
             if ($scheduleParams.weekMode === "Permanent" || $scheduleParams.scheduleMode !== "Class" || $config.useWeb === false) return;
 
-            let alternativeSchedule = [];
+            let alternativeSchedule: ReturnType<typeof getWebSchedule>[] = [];
 
             const currentDate = new Date();
 
             for (let day of scheduleData) {
-                const [d, m] = day.date[1].match(/\d+/g);
-                const tempDate = new Date(currentDate.getFullYear(), m - 1, d + 7);
+                const [d, m] = day.date[1].match(/\d+/g) ?? [];
+                const tempDate = new Date(currentDate.getFullYear(), parseInt(m) - 1, parseInt(d ?? "") + 7);
 
-                const date = new Date(currentDate.getFullYear() + (tempDate < currentDate ? 1 : 0), m - 1, d);
+                const date = new Date(currentDate.getFullYear() + (tempDate < currentDate ? 1 : 0), parseInt(m) - 1, parseInt(d ?? ""));
 
                 // begin fetching each day asynchronously
                 alternativeSchedule.push(getWebSchedule(date));
@@ -82,16 +82,13 @@
                             // But it's a very trashy fix and probably breaks something else.
                             if (!foundSubject.isStandard() || !s.isStandard()) return console.error(day.subjects[i], s);
 
-                            /** @type {string} */
                             let name = s.name || foundSubject.name;
-                            /** @type {string} */
                             let theme = s.theme || foundSubject.theme;
                             if (foundSubject.abbreviation !== s.abbreviation) {
                                 name = s.abbreviation;
                                 theme = "";
                             }
 
-                            /** @type {import("$lib/subject").TeacherInfo} */
                             let teacher = s.teacher || foundSubject.teacher;
                             if (foundSubject.teacher.abbreviation !== s.teacher.abbreviation) {
                                 let teacherName =
@@ -112,7 +109,6 @@
                                 room: s.room || foundSubject.room
                             });
 
-                            // @ts-ignore (i don't know how to fix this)
                             day.subjects[i][found] = temp;
                         } else {
                             console.error(day.subjects[i], s);

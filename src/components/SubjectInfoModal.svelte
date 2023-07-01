@@ -12,8 +12,7 @@
     import Modal from "$components/Modal.svelte";
 
     export let context: { subject: Subject };
-
-    const subject = context.subject;
+    const { subject } = context;
 </script>
 
 <Modal on:hideScreenOverlay>
@@ -70,7 +69,7 @@
                     if (isValidMetadata(teacher)) updateScheduleParams({ value: teacher, scheduleMode: "Teacher" });
                 }}
             >
-                {subject.teacher.abbreviation.split(",")[0]}
+                {subject.teacher.name.split(",")[0]}
             </span>
         </h2>
     {/if}
