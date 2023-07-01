@@ -1,4 +1,4 @@
-<script type="ts">
+<script lang="ts">
     export let data;
 
     let date = new Date(data.end);

@@ -1,4 +1,7 @@
-<script>
+<script lang="ts">
+    import type { Subject } from "$lib/subject";
+    import { isValidMetadata } from "$lib/utilities";
+
     import { updateScheduleParams } from "$stores/config";
     import { scheduleMetadata } from "$stores/static";
 
@@ -7,10 +10,8 @@
     import TextSnippet from "@material-design-icons/svg/filled/text_snippet.svg?component";
 
     import Modal from "$components/Modal.svelte";
-    import { isValidMetadata } from "$lib/utilities";
 
-    /** @type {{ subject: import('$lib/subject').Subject }} */
-    export let context;
+    export let context: { subject: Subject };
 
     const subject = context.subject;
 </script>
