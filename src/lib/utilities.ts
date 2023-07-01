@@ -4,7 +4,8 @@ import { EmptySubject, StandardSubject } from "$lib/subject";
 import type { Value } from "$stores/config";
 import { scheduleMetadata } from "$stores/static";
 
-function createElement(el) {
+// TODO: Remove this
+function createElement(el: any) {
     if (!el) return null;
     if (typeof el === "string") {
         try {
@@ -17,7 +18,7 @@ function createElement(el) {
     return new Proxy(el, elementProxy);
 }
 
-function functionProxy(original, modify) {
+function functionProxy(original: any, modify: any) {
     return new Proxy(original, {
         apply: function (target, thisArg, argList) {
             return modify(Reflect.apply(target, thisArg, argList));
@@ -25,17 +26,17 @@ function functionProxy(original, modify) {
     });
 }
 
-const elementProxy = {
-    get: function (target, property) {
+const elementProxy: any = {
+    get: function (target: any, property: any) {
         let temp, proxied;
         switch (property) {
             case "$":
             case "querySelector":
-                proxied = functionProxy(target.querySelector, (a) => createElement(a));
+                proxied = functionProxy(target.querySelector, (a: any) => createElement(a));
                 break;
             case "$$":
             case "querySelectorAll":
-                proxied = functionProxy(target.querySelectorAll, (a) => Array.from(a).map((e) => createElement(e)));
+                proxied = functionProxy(target.querySelectorAll, (a: any) => Array.from(a).map((e) => createElement(e)));
                 break;
             case "next":
                 temp = target.nextSibling;
@@ -64,21 +65,21 @@ const elementProxy = {
 };
 
 /** WARNING: Untyped! */
-export async function getWebSchedule(date) {
+export async function getWebSchedule(date: Date) {
     let temp = createElement(await fetchWebSchedule(date));
 
     // Note: Only types Standard and Empty can be returned
     //       Also the types here are god awful... (as one could've guessed from the warning above)
     let daySchedule: { cls: string; subjects: (StandardSubject | EmptySubject)[][] }[] = [];
 
-    temp.$$(".table-responsive tbody tr:not(.prvniradek):nth-child(2n)").forEach((row) => {
+    temp.$$(".table-responsive tbody tr:not(.prvniradek):nth-child(2n)").forEach((row: any) => {
         let cls: string = row.firstChild.text;
         let subjects: (StandardSubject | EmptySubject)[][] = [];
 
         let firstHalf = row.$$("td:not(:first-of-type, .heightfix)");
         let secondHalf = row.nextEl.$$("td:not(.heightfix)");
 
-        firstHalf.forEach((cell) => {
+        firstHalf.forEach((cell: any) => {
             if (cell.childNodes[0].text.replace(/\s+/, "")) {
                 let subject: (StandardSubject | EmptySubject)[] = [];
                 let group = "";

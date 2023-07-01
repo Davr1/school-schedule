@@ -11,7 +11,7 @@
 
     const dispatch = createEventDispatcher();
 
-    let cell, position, title;
+    let cell: HTMLElement, position: ReturnType<typeof getPosition>, title: string;
 
     export let subject: Subject;
 
@@ -27,7 +27,7 @@
               .join("\n")
         : ""; // idk what you want for empty subjects..
 
-    let subjectInfoVisible;
+    let subjectInfoVisible: boolean;
 
     isSubjectInfoVisible.subscribe((value) => {
         if (value === false) {

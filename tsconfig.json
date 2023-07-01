@@ -7,7 +7,6 @@
         "esModuleInterop": true,
         "forceConsistentCasingInFileNames": true,
         "noEmit": true, // Only typecheck, don't emit JS. Handled by SvelteKit.
-        "noImplicitAny": false, // NOTE: Change this to true once the whole codebase is typed. (or remove it..)
         "paths": {
             "$lib": ["./src/lib"],
             "$lib/*": ["./src/lib/*"],
