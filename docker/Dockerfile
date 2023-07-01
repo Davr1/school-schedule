@@ -27,6 +27,9 @@ ARG HOLIDAYS="TRUE"
 ENV PROXY=${PROXY}
 ENV HOLIDAYS=${HOLIDAYS}
 
+# Run a check before building
+RUN npm run check
+
 # Build the app
 RUN npm run build
 
