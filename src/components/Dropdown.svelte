@@ -1,19 +1,21 @@
-<script>
+<script lang="ts">
     import { getPosition } from "$lib/utilities";
 
-    import ChevronDownIcon from "$assets/icons/chevronDown.svg";
+    import ExpandMore from "@material-design-icons/svg/filled/expand_more.svg?component";
 
-    export let options = [];
-    export let activeOption = {};
-    export let callback = () => {};
-    export let genericName = "";
-    export let genericKey = "";
+    type T = $$Generic;
+
+    export let options: readonly T[] = [];
+    export let activeOption: T;
+    export let callback: (option: T) => void = () => {};
+    export let genericName: keyof T;
+    export let genericKey: keyof T;
 
     let isVisible = false;
 
-    let dropdownButton;
+    let dropdownButton: HTMLButtonElement;
 
-    let top, bottom, transform, maxHeight;
+    let top: string | undefined, bottom: string | undefined, transform: string, maxHeight: string;
 
     function handleClick() {
         if (!isVisible) {
@@ -40,7 +42,7 @@
 <div class="dropdown" class:visible={isVisible}>
     <button class="dropdown-button styled-button" on:click={handleClick} bind:this={dropdownButton}>
         {activeOption[genericName]}
-        <ChevronDownIcon />
+        <ExpandMore />
     </button>
     {#if isVisible}
         <div class="options" style:top style:bottom style:transform style:max-height={maxHeight}>

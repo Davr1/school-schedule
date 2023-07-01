@@ -9,7 +9,6 @@ import { getHttpsAgent, userAgent } from "$lib/server/agent";
  * The url must be specified in the slug
  *
  * You're responsible for not sending invalid data to the school's server
- * @type {import('@sveltejs/kit').RequestHandler}
  * @returns The schedule as a UTF-8 string
  */
 export async function GET({ params }) {

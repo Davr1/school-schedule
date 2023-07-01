@@ -1,3 +1,6 @@
+import type { ScheduleMode, ScheduleParams, WeekMode } from "$stores/config";
+
+/** All the classes, teachers and rooms in the school... */
 export const scheduleMetadata = {
     classes: [
         { name: "P1.A", id: "UG" },
@@ -70,37 +73,55 @@ export const scheduleMetadata = {
         { name: "214", id: "G0" },
         { name: "TĚL", id: "T0" }
     ]
-};
+} as const;
 
-export function toBakaParams(params) {
-    let newParams = {};
-    newParams.scheduleMode = params.scheduleMode;
-    switch (params.weekMode) {
-        case "Permanent":
-        case "Next":
-            newParams.weekMode = params.weekMode;
-            break;
-        case "Current":
-        default:
-            newParams.weekMode = "Actual";
-    }
-    switch (params.scheduleMode) {
+/** A value that can be used in the Bakalari API */
+export type BakalariValue =
+    | (typeof scheduleMetadata.classes)[number]["id"]
+    | (typeof scheduleMetadata.teachers)[number]["id"]
+    | (typeof scheduleMetadata.rooms)[number]["id"];
+
+/** Parameters used by Bakalari */
+export interface BakalariParams {
+    scheduleMode: ScheduleMode;
+    weekMode: Omit<WeekMode, "Current"> | "Actual"; // "Actual" is the what Bakalari calls "Current"
+    value: BakalariValue;
+}
+
+/**
+ * Remap the parameters to the format used by Bakalari
+ * @param params The parameters to remap (from the config)
+ * @returns Remapped Bakalari parameters
+ */
+export function toBakaParams(params: ScheduleParams): BakalariParams {
+    // This declaration is weird. ik..
+    const { scheduleMode } = params;
+
+    // If the week mode is "Current", we want to use "Actual" instead
+    const weekMode = params.weekMode === "Current" ? "Actual" : params.weekMode;
+
+    let value: BakalariValue;
+    switch (scheduleMode) {
         case "Teacher":
-            newParams.value = scheduleMetadata.teachers.find((t) => t.name === params.value || t.abbr === params.value)?.id;
+            // TODO: obv remove this in the future
+            // Yes, this is weird and needs to be rewritten
+            // NOTE: For any future @iCyuba see the comment in config.ts:94
+            value = scheduleMetadata.teachers.find((t) => t.name === params.value || t.abbr === params.value)!.id;
             break;
         case "Room":
-            newParams.value = scheduleMetadata.rooms.find((r) => r.name === params.value)?.id;
+            value = scheduleMetadata.rooms.find((r) => r.name === params.value)!.id;
             break;
         case "Class":
         default:
-            newParams.value = scheduleMetadata.classes.find((c) => c.name === params.value)?.id;
+            value = scheduleMetadata.classes.find((c) => c.name === params.value)!.id;
     }
-    return newParams;
+
+    return { weekMode, scheduleMode, value };
 }
 
-export const weekModes = ["Permanent", "Current", "Next"];
-
-export const sheduleModes = ["Class", "Teacher", "Room"];
+// TODO: Remove and use enums instead
+export const weekModes = ["Permanent", "Current", "Next"] as const;
+export const sheduleModes = ["Class", "Teacher", "Room"] as const;
 
 export const hours = {
     offsets: [
@@ -118,8 +139,9 @@ export const hours = {
         [45, 10],
         [45, 10]
     ],
+
     get formattedTime() {
-        let output = [];
+        let output: [string, string][] = [];
         let time = 0;
         this.offsets.forEach(([cls, brk]) => {
             let a = Math.floor(time / 60) + ":" + `0${time % 60}`.slice(-2);
@@ -131,66 +153,11 @@ export const hours = {
         output.shift();
         return output;
     }
-};
+} as const;
 
+/** Endpoints for fetching data */
 export const urls = {
     substitution: "/sssvt/substitution",
     schedule: "/sssvt/schedule",
     baka: "https://is.sssvt.cz/IS"
-};
-
-class Subject {
-    constructor(args) {
-        Object.assign(this, args);
-    }
-    type = -1;
-    id = Symbol();
-}
-
-class EmptySubject extends Subject {
-    constructor(args) {
-        super({
-            changed: false,
-            changeInfo: "",
-            ...args
-        });
-    }
-    type = 0;
-}
-
-class StandardSubject extends Subject {
-    constructor(args) {
-        super({
-            cls: "",
-            subject: "",
-            subjectAbbr: "",
-            teacher: "",
-            teacherAbbr: "",
-            room: "",
-            group: "",
-            theme: "",
-            changed: false,
-            changeInfo: "",
-            ...args
-        });
-    }
-    type = 1;
-}
-
-class SpecialSubject extends Subject {
-    constructor(args) {
-        super({
-            special: "",
-            specialAbbr: "",
-            changeInfo: "",
-            ...args
-        });
-    }
-    type = 2;
-}
-
-export const templates = {
-    EmptySubject,
-    StandardSubject,
-    SpecialSubject
-};
+} as const;

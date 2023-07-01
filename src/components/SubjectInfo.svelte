@@ -1,25 +1,30 @@
-<script>
+<script lang="ts">
+    import type { Subject } from "$lib/subject";
+    import { type getPosition, isValidMetadata } from "$lib/utilities";
+
     import { updateScheduleParams } from "$stores/config";
-    import { scheduleMetadata } from "$stores/static";
 
-    import Info from "$assets/icons/info.svg";
-    import Person from "$assets/icons/person.svg";
-    import TextSnippet from "$assets/icons/textSnippet.svg";
+    import Info from "@material-design-icons/svg/filled/info.svg?component";
+    import Person from "@material-design-icons/svg/filled/person.svg?component";
+    import TextSnippet from "@material-design-icons/svg/filled/text_snippet.svg?component";
 
-    export let data = { position: {}, subject: {} };
+    export let position: ReturnType<typeof getPosition>;
+    export let subject: Subject;
 
-    let leftOffset, rightOffset, topOffset, bottomOffset, maxWidth;
+    let leftOffset: string | undefined,
+        rightOffset: string | undefined,
+        topOffset: string | undefined,
+        bottomOffset: string | undefined,
+        maxWidth: string | undefined;
 
-    leftOffset = data.position.x < data.position.windowX ? "100%" : undefined;
-    rightOffset = data.position.x > data.position.windowX ? "100%" : undefined;
-    topOffset = data.position.y < data.position.windowY ? "0" : undefined;
-    bottomOffset = data.position.y > data.position.windowY ? "0" : undefined;
+    leftOffset = position.x < position.windowX ? "100%" : undefined;
+    rightOffset = position.x > position.windowX ? "100%" : undefined;
+    topOffset = position.y < position.windowY ? "0" : undefined;
+    bottomOffset = position.y > position.windowY ? "0" : undefined;
     maxWidth =
-        data.position.x < data.position.windowX
-            ? `${data.position.windowWidth - data.position.size.x - data.position.size.width - 90}px`
-            : `${data.position.size.x - 90}px`;
-
-    let { special, theme, subject, room, group, teacherAbbr, teacher } = data.subject;
+        position.x < position.windowX
+            ? `${position.windowWidth - position.size.x - position.size.width - 90}px`
+            : `${position.size.x - 90}px`;
 </script>
 
 <div
@@ -30,25 +35,38 @@
     style:bottom={bottomOffset}
     style:max-width={maxWidth}
 >
-    {#if special || theme}
-        <h1><TextSnippet /> {special ?? theme}</h1>
+    {#if subject.isSpecial()}
+        <h1><TextSnippet /> {subject.name}</h1>
+    {:else if subject.isStandard() && subject.theme}
+        <h2><TextSnippet /> {subject.theme}</h2>
     {/if}
-    {#if group || room}
+    {#if subject.isStandard()}
         <h2>
             <Info />
-            {subject.split("|")[0]}
+            {subject.name.split("|")[0]}
             <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <span class="link" on:click={() => updateScheduleParams({ value: room, scheduleMode: "Room" })}>
-                {room}
+            <span
+                class="link"
+                on:click={() => {
+                    // This is nasty. Consider refactoring..
+                    if (!subject.isStandard()) return;
+
+                    if (isValidMetadata(subject.room)) updateScheduleParams({ value: subject.room, scheduleMode: "Room" });
+                }}
+            >
+                {subject.room}
             </span>
-            {#if group}
+            {#if subject.group}
                 /
-                {#each group.split(", ") as singleGroup}
-                    {#if scheduleMetadata.classes.find((a) => a.name === singleGroup.trim().split(" ")[0])}
+                {#each subject.group.split(", ") as singleGroup}
+                    {#if isValidMetadata(singleGroup.trim().split(" ")[0])}
                         <!-- svelte-ignore a11y-click-events-have-key-events -->
                         <span
                             class="link"
-                            on:click={() => updateScheduleParams({ value: singleGroup.trim().split(" ")[0], scheduleMode: "Class" })}
+                            on:click={() => {
+                                const group = singleGroup.trim().split(" ")[0];
+                                if (isValidMetadata(group)) updateScheduleParams({ value: group, scheduleMode: "Class" });
+                            }}
                         >
                             {singleGroup}
                         </span>
@@ -58,13 +76,19 @@
                 {/each}
             {/if}
         </h2>
-    {/if}
-    {#if teacher}
         <h2>
             <Person />
             <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <span class="link" on:click={() => updateScheduleParams({ value: teacherAbbr.split(",")[0], scheduleMode: "Teacher" })}>
-                {teacher.split(",")[0]}
+            <span
+                class="link"
+                on:click={() => {
+                    if (!subject.isStandard()) return;
+
+                    const teacher = subject.teacher.abbreviation.split(",")[0];
+                    if (isValidMetadata(teacher)) updateScheduleParams({ value: teacher, scheduleMode: "Teacher" });
+                }}
+            >
+                {subject.teacher.name.split(",")[0]}
             </span>
         </h2>
     {/if}
