@@ -81,6 +81,7 @@
     {/if}
 {/if}
 <!-- svelte-ignore a11y-click-events-have-key-events -->
+<!-- svelte-ignore a11y-no-static-element-interactions -->
 <div id="dim-overlay" class:dimmed={isBackgroundDimmed} on:click={hideScreenOverlay} />
 <Options on:modalOpen={openModal} />
 <ScheduleView

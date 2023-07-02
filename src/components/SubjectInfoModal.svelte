@@ -26,6 +26,7 @@
             <Info />
             {subject.name.split("|")[0]}
             <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <!-- svelte-ignore a11y-no-static-element-interactions -->
             <span
                 class="link"
                 on:click={() => {
@@ -42,6 +43,7 @@
                 {#each subject.group.split(", ") as singleGroup}
                     {#if scheduleMetadata.classes.find((a) => a.name === singleGroup.trim().split(" ")[0])}
                         <!-- svelte-ignore a11y-click-events-have-key-events -->
+                        <!-- svelte-ignore a11y-no-static-element-interactions -->
                         <span
                             class="link"
                             on:click={() => {
@@ -60,6 +62,7 @@
         <h2>
             <Person />
             <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <!-- svelte-ignore a11y-no-static-element-interactions -->
             <span
                 class="link"
                 on:click={() => {

@@ -5,7 +5,7 @@
 
     export let scrollable = false;
 
-    const dispatch = createEventDispatcher<{ hideScreenOverlay: never }>();
+    const dispatch = createEventDispatcher<{ hideScreenOverlay: null }>();
 
     function closeModal() {
         dispatch("hideScreenOverlay");

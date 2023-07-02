@@ -9,7 +9,7 @@
 
     import SubjectInfo from "$components/SubjectInfo.svelte";
 
-    const dispatch = createEventDispatcher();
+    const dispatch = createEventDispatcher<{ modalOpen: { type: "SubjectInfoModal"; context: { subject: Subject } } }>();
 
     let cell: HTMLElement, position: ReturnType<typeof getPosition>, title: string;
 
@@ -53,6 +53,7 @@
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
+<!-- svelte-ignore a11y-no-static-element-interactions -->
 {#if subject.isStandard()}
     <div
         class="subject"

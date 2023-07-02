@@ -12,7 +12,7 @@
 
     import GridCell from "$components/GridCell.svelte";
 
-    const dispatch = createEventDispatcher();
+    const dispatch = createEventDispatcher<{ loadingFinished: null }>();
 
     let scheduleData: BakalariSchedule = [];
 
