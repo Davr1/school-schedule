@@ -9,7 +9,8 @@
 }
 
 html,
-body {
+body,
+#app {
     width: 100%;
     height: 100%;
     margin: 0;
@@ -19,7 +20,7 @@ body {
     font-weight: 300;
 }
 
-body {
+#app {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -529,7 +530,8 @@ svg {
 
 @media (max-aspect-ratio: 1/2) {
     html,
-    body {
+    body,
+    #app {
         font-size: 1.3vh;
     }
 
@@ -595,7 +597,8 @@ svg {
 
 @media (min-aspect-ratio: 2/5) and (max-aspect-ratio: 3/2) {
     html,
-    body {
+    body,
+    #app {
         font-size: 1.4vh;
     }
 
@@ -610,7 +613,8 @@ svg {
 
 @media (min-aspect-ratio: 3/1) {
     html,
-    body {
+    body,
+    #app {
         font-size: 1.7vh;
     }
 
