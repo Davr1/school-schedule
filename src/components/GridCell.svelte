@@ -9,7 +9,7 @@
 
     import SubjectInfo from "$components/SubjectInfo.svelte";
 
-    const dispatch = createEventDispatcher();
+    const dispatch = createEventDispatcher<{ modalOpen: { type: "SubjectInfoModal"; context: { subject: Subject } } }>();
 
     let cell: HTMLElement, position: ReturnType<typeof getPosition>, title: string;
 

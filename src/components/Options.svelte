@@ -1,4 +1,5 @@
 <script lang="ts">
+    import type { ComponentProps } from "svelte";
     import { createEventDispatcher } from "svelte";
 
     import { config, type ScheduleMode, scheduleParams, updateScheduleParams } from "$stores/config";
@@ -18,7 +19,7 @@
     }
 
     type ValuesDropdown = (typeof scheduleMetadata)[keyof typeof scheduleMetadata][number];
-    function getDropdownValues(mode: ScheduleMode): Dropdown<ValuesDropdown>["$$prop_def"] {
+    function getDropdownValues(mode: ScheduleMode): ComponentProps<Dropdown<ValuesDropdown>> {
         let options = {
             Class: scheduleMetadata.classes,
             Teacher: scheduleMetadata.teachers,
@@ -37,10 +38,10 @@
         };
     }
 
-    const dispatch = createEventDispatcher();
+    const dispatch = createEventDispatcher<{ modalOpen: { type: "AdvancedSettingsModal" } }>();
 
     type ModeDropdown = { mode: (typeof sheduleModes)[number] };
-    let modeDropdown: Dropdown<ModeDropdown>["$$prop_def"];
+    let modeDropdown: ComponentProps<Dropdown<ModeDropdown>>;
     $: modeDropdown = {
         options: sheduleModes.map((m) => ({ mode: m })),
         activeOption: { mode: $scheduleParams.scheduleMode },
@@ -52,7 +53,7 @@
         genericKey: "mode"
     };
 
-    let valuesDropdown: Dropdown<ValuesDropdown>["$$prop_def"];
+    let valuesDropdown: ComponentProps<Dropdown<ValuesDropdown>>;
     $: valuesDropdown = getDropdownValues($scheduleParams.scheduleMode);
 
     function setMode(weekMode: "Permanent" | "Current" | "Next") {
