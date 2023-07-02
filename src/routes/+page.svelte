@@ -6,7 +6,6 @@
     import { isSubjectInfoVisible } from "$stores/main";
     import { modal } from "$stores/modal";
 
-    import AdvancedSettingsModal from "$components/AdvancedSettingsModal.svelte";
     import LoadScreen from "$components/LoadScreen.svelte";
     import Options from "$components/Options.svelte";
     import ScheduleView from "$components/ScheduleView.svelte";
@@ -74,15 +73,13 @@
     <LoadScreen />
 {/if}
 {#if $modal.visible}
-    {#if $modal.type === "AdvancedSettingsModal"}
-        <AdvancedSettingsModal on:hideScreenOverlay={hideScreenOverlay} />
-    {:else if $modal.type === "SubjectInfoModal"}
+    {#if $modal.type === "SubjectInfoModal"}
         <SubjectInfoModal on:hideScreenOverlay={hideScreenOverlay} context={$modal.context} />
     {/if}
 {/if}
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
-<div id="dim-overlay" class:dimmed={isBackgroundDimmed} on:click={hideScreenOverlay} />
+<div class="dim-overlay" class:dimmed={isBackgroundDimmed} on:click={hideScreenOverlay} />
 <Options on:modalOpen={openModal} />
 <ScheduleView
     on:loadingFinished={() => {

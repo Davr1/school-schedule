@@ -15,7 +15,7 @@
     const { subject } = context;
 </script>
 
-<Modal on:hideScreenOverlay>
+<Modal visible on:hideScreenOverlay>
     {#if subject.isSpecial()}
         <h1><TextSnippet /> {subject.name}</h1>
     {:else if subject.isStandard() && subject.theme}

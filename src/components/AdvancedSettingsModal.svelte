@@ -5,9 +5,12 @@
 
     import Modal from "$components/Modal.svelte";
     import Switch from "$components/Switch.svelte";
+
+    /** Whether the AdvancedSettingsModal is visible */
+    export let visible: boolean;
 </script>
 
-<Modal on:hideScreenOverlay scrollable={true}>
+<Modal bind:visible scrollable>
     <h1>Advanced settings</h1>
     <div class="option-row">Use the school's website for substitutions <Switch bind:value={$config.useWeb} /></div>
     <p>
