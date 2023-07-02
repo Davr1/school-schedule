@@ -1,15 +1,11 @@
 <script lang="ts">
-    import { createEventDispatcher } from "svelte";
-
     import type { Subject } from "$lib/subject";
     import { getPosition } from "$lib/utilities";
 
     import { scheduleParams } from "$stores/config";
-    import { isSubjectInfoVisible } from "$stores/main";
 
-    import SubjectInfo from "$components/SubjectInfo.svelte";
-
-    const dispatch = createEventDispatcher<{ modalOpen: { type: "SubjectInfoModal"; context: { subject: Subject } } }>();
+    import SubjectInfoModal from "$components/SubjectInfo/Modal.svelte";
+    import SubjectInfoPopover from "$components/SubjectInfo/Popover.svelte";
 
     let cell: HTMLElement, position: ReturnType<typeof getPosition>, title: string;
 
@@ -27,27 +23,30 @@
               .join("\n")
         : ""; // idk what you want for empty subjects..
 
-    let subjectInfoVisible: boolean;
+    /** Whether the subject info popover is visible */
+    let subjectInfoPopoverVisible = false;
+    /** Whether the subject info modal is visible */
+    let subjectInfoModalVisible = false;
 
-    isSubjectInfoVisible.subscribe((value) => {
-        if (value === false) {
-            subjectInfoVisible = false;
-        }
-    });
+    // Note: I wish I could combine these, but I don't really understand how svelte can just overwrite a prop...
+    $: subjectInfoVisible = subjectInfoPopoverVisible || subjectInfoModalVisible;
 
     scheduleParams.subscribe(() => {
-        subjectInfoVisible = false;
+        subjectInfoPopoverVisible = false;
+        subjectInfoModalVisible = false;
     });
 
     function showSubjectInfoScreen() {
         position = getPosition(cell);
 
         if (window.innerWidth / window.innerHeight > 3 / 4) {
-            isSubjectInfoVisible.set(true);
+            // isSubjectInfoVisible.set(true);
             // the actual value is stored separately so updating it won't show all the cells at once
-            subjectInfoVisible = true;
+            subjectInfoPopoverVisible = true;
         } else {
-            dispatch("modalOpen", { type: "SubjectInfoModal", context: { subject: subject } });
+            subjectInfoModalVisible = true;
+
+            // dispatch("modalOpen", { type: "SubjectInfoModal", context: { subject: subject } });
         }
     }
 </script>
@@ -62,8 +61,10 @@
         on:click={showSubjectInfoScreen}
         bind:this={cell}
     >
-        {#if subjectInfoVisible}
-            <SubjectInfo {position} {subject} on:modalOpen />
+        {#if subjectInfoPopoverVisible}
+            <SubjectInfoPopover {position} {subject} on:close={() => (subjectInfoPopoverVisible = false)} />
+        {:else}
+            <SubjectInfoModal bind:visible={subjectInfoModalVisible} {subject} />
         {/if}
         <div class="subject-content" {title}>
             <div class="top">
@@ -85,8 +86,10 @@
         }}
         bind:this={cell}
     >
-        {#if subjectInfoVisible}
-            <SubjectInfo {position} {subject} on:modalOpen />
+        {#if subjectInfoPopoverVisible}
+            <SubjectInfoPopover {position} {subject} on:close={() => (subjectInfoPopoverVisible = false)} />
+        {:else}
+            <SubjectInfoModal bind:visible={subjectInfoModalVisible} {subject} />
         {/if}
         <div class="subject-content" {title}>
             <div class="middle">{subject.abbreviation || subject.name}</div>

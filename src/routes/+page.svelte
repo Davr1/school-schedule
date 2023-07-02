@@ -9,7 +9,6 @@
     import LoadScreen from "$components/LoadScreen.svelte";
     import Options from "$components/Options.svelte";
     import ScheduleView from "$components/ScheduleView.svelte";
-    import SubjectInfoModal from "$components/SubjectInfoModal.svelte";
 
     let isLoadScreenVisible = $config.loadscreen;
 
@@ -71,11 +70,6 @@
 
 {#if isLoadScreenVisible}
     <LoadScreen />
-{/if}
-{#if $modal.visible}
-    {#if $modal.type === "SubjectInfoModal"}
-        <SubjectInfoModal on:hideScreenOverlay={hideScreenOverlay} context={$modal.context} />
-    {/if}
 {/if}
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
