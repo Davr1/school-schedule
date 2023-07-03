@@ -358,7 +358,7 @@ svg {
 #overlay {
     position: absolute;
     inset: 0;
-    background: inherit;
+    background: var(--main-background);
     z-index: 3;
     display: flex;
     justify-content: center;
