@@ -1,13 +1,11 @@
 <script lang="ts">
     import type { Subject } from "$lib/subject";
-    import { getPosition } from "$lib/utilities";
 
     import { scheduleParams } from "$stores/config";
 
-    import SubjectInfoModal from "$components/SubjectInfo/Modal.svelte";
-    import SubjectInfoPopover from "$components/SubjectInfo/Popover.svelte";
+    import SubjectInfo from "$components/SubjectInfo/Universal.svelte";
 
-    let cell: HTMLElement, position: ReturnType<typeof getPosition>, title: string;
+    let cell: HTMLDivElement, title: string;
 
     export let subject: Subject;
 
@@ -23,32 +21,11 @@
               .join("\n")
         : ""; // idk what you want for empty subjects..
 
-    /** Whether the subject info popover is visible */
-    let subjectInfoPopoverVisible = false;
-    /** Whether the subject info modal is visible */
-    let subjectInfoModalVisible = false;
+    /** Whether the subject info modal / popover is visible */
+    let visible = false;
 
-    // Note: I wish I could combine these, but I don't really understand how svelte can just overwrite a prop...
-    $: subjectInfoVisible = subjectInfoPopoverVisible || subjectInfoModalVisible;
-
-    scheduleParams.subscribe(() => {
-        subjectInfoPopoverVisible = false;
-        subjectInfoModalVisible = false;
-    });
-
-    function showSubjectInfoScreen() {
-        position = getPosition(cell);
-
-        if (window.innerWidth / window.innerHeight > 3 / 4) {
-            // isSubjectInfoVisible.set(true);
-            // the actual value is stored separately so updating it won't show all the cells at once
-            subjectInfoPopoverVisible = true;
-        } else {
-            subjectInfoModalVisible = true;
-
-            // dispatch("modalOpen", { type: "SubjectInfoModal", context: { subject: subject } });
-        }
-    }
+    // Hide the modal / popover when the schedule changes (when tf does this happen?)
+    scheduleParams.subscribe(() => (visible = false));
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -57,15 +34,12 @@
     <div
         class="subject"
         class:changed={subject.change !== null}
-        class:floating={subjectInfoVisible}
-        on:click={showSubjectInfoScreen}
+        class:floating={visible}
+        on:click={() => (visible = true)}
         bind:this={cell}
     >
-        {#if subjectInfoPopoverVisible}
-            <SubjectInfoPopover {position} {subject} on:close={() => (subjectInfoPopoverVisible = false)} />
-        {:else}
-            <SubjectInfoModal bind:visible={subjectInfoModalVisible} {subject} />
-        {/if}
+        <SubjectInfo {cell} {subject} bind:visible />
+
         <div class="subject-content" {title}>
             <div class="top">
                 <div class="left">{subject.group}</div>
@@ -76,21 +50,9 @@
         </div>
     </div>
 {:else if subject.isSpecial()}
-    <div
-        class="subject changed2"
-        class:floating={subjectInfoVisible}
-        on:click={() => {
-            // Idk why the check here is required.. typescript is weird
-            // It should be true at runtime anyway so it's fine
-            if (subject.isSpecial() && subject.abbreviation && subject.name) showSubjectInfoScreen();
-        }}
-        bind:this={cell}
-    >
-        {#if subjectInfoPopoverVisible}
-            <SubjectInfoPopover {position} {subject} on:close={() => (subjectInfoPopoverVisible = false)} />
-        {:else}
-            <SubjectInfoModal bind:visible={subjectInfoModalVisible} {subject} />
-        {/if}
+    <div class="subject changed2" class:floating={visible} on:click={() => (visible = true)} bind:this={cell}>
+        <SubjectInfo {cell} {subject} bind:visible />
+
         <div class="subject-content" {title}>
             <div class="middle">{subject.abbreviation || subject.name}</div>
         </div>
