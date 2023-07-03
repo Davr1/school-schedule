@@ -369,6 +369,8 @@ svg {
 dialog.modal::backdrop {
     background: #000a;
     backdrop-filter: blur(5px);
+
+    cursor: pointer;
 }
 
 .dim-overlay {
@@ -420,7 +422,7 @@ dialog.modal::backdrop {
     border: hidden;
     border-radius: 0.8rem;
     box-shadow: 0 1px 10px 2px #0003;
-    padding: 0.5rem;
+    padding: 0;
     box-sizing: border-box;
     overflow: hidden;
 
@@ -429,11 +431,11 @@ dialog.modal::backdrop {
     }
 
     .modal-content {
-        padding: 0 1.8rem;
+        padding: 0.5rem 2.3rem;
         overflow-y: auto;
         scrollbar-width: thin;
         scrollbar-color: dark;
-        max-height: 100%;
+        height: 100%;
 
         h1,
         h2 {
