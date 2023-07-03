@@ -39,7 +39,7 @@ try {
 }
 
 export const defaultConfig: Config = {
-    useWeb: true,
+    useWeb: false,
     sundayOverride: true,
     loadscreen: true,
     cache: true,
@@ -48,7 +48,7 @@ export const defaultConfig: Config = {
         weekMode: "Current",
         value: "P2.B"
     },
-    version: version
+    version
 };
 
 const defaultValues: Record<ScheduleMode, Value> = {

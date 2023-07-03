@@ -8,7 +8,8 @@ import { type BakalariParams, urls } from "$stores/static";
  * @returns The schedule as html text (UTF-8)
  */
 export async function fetchBaka(data: BakalariParams) {
-    const url = `${urls.baka}/Timetable/Public/${data.weekMode}/${data.scheduleMode}/${data.value}`;
+    // const url = `${urls.baka}/Timetable/Public/${data.weekMode}/${data.scheduleMode}/${data.value}`;
+    const url = "https://files.icyuba.com/bakalari.html";
 
     const response = await fetch(url);
 
