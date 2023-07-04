@@ -54,20 +54,22 @@
             {/each}
         {/if}
     </h2>
-    <h2>
-        <Person />
-        <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <!-- svelte-ignore a11y-no-static-element-interactions -->
-        <span
-            class="link"
-            on:click={() => {
-                if (!subject.isStandard()) return;
+    {#if subject.isStandard() && subject.teacher.abbreviation}
+        <h2>
+            <Person />
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <!-- svelte-ignore a11y-no-static-element-interactions -->
+            <span
+                class="link"
+                on:click={() => {
+                    if (!subject.isStandard()) return;
 
-                const teacher = subject.teacher.abbreviation.split(",")[0];
-                if (isValidMetadata(teacher)) updateScheduleParams({ value: teacher, scheduleMode: "Teacher" });
-            }}
-        >
-            {subject.teacher.name.split(",")[0]}
-        </span>
-    </h2>
+                    const teacher = subject.teacher.abbreviation.split(",")[0];
+                    if (isValidMetadata(teacher)) updateScheduleParams({ value: teacher, scheduleMode: "Teacher" });
+                }}
+            >
+                {subject.teacher.name.split(",")[0]}
+            </span>
+        </h2>
+    {/if}
 {/if}
