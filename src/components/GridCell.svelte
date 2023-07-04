@@ -43,10 +43,10 @@
         <div class="subject-content" {title}>
             <div class="top">
                 <div class="left">{subject.group}</div>
-                <div class="right">{subject.room}</div>
+                {#if $scheduleParams.scheduleMode !== "Room"}<div class="right">{subject.room}</div>{/if}
             </div>
             <div class="middle">{subject.abbreviation}</div>
-            <div class="bottom">{subject.teacher.abbreviation.split(",")[0]}</div>
+            {#if $scheduleParams.scheduleMode !== "Teacher"}<div class="bottom">{subject.teacher.abbreviation.split(",")[0]}</div>{/if}
         </div>
     </div>
 {:else if subject.isSpecial()}

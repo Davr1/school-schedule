@@ -2,7 +2,7 @@
     import type { Subject } from "$lib/subject";
     import { isValidMetadata } from "$lib/utilities";
 
-    import { updateScheduleParams } from "$stores/config";
+    import { scheduleParams, updateScheduleParams } from "$stores/config";
 
     import Info from "@material-design-icons/svg/filled/info.svg?component";
     import Person from "@material-design-icons/svg/filled/person.svg?component";
@@ -22,17 +22,19 @@
         {subject.name.split("|")[0]}
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <!-- svelte-ignore a11y-no-static-element-interactions -->
-        <span
-            class="link"
-            on:click={() => {
-                // This is nasty. Consider refactoring..
-                if (!subject.isStandard()) return;
+        {#if $scheduleParams.scheduleMode !== "Room"}
+            <span
+                class="link"
+                on:click={() => {
+                    // This is nasty. Consider refactoring..
+                    if (!subject.isStandard()) return;
 
-                if (isValidMetadata(subject.room)) updateScheduleParams({ value: subject.room, scheduleMode: "Room" });
-            }}
-        >
-            {subject.room}
-        </span>
+                    if (isValidMetadata(subject.room)) updateScheduleParams({ value: subject.room, scheduleMode: "Room" });
+                }}
+            >
+                {subject.room}
+            </span>
+        {/if}
         {#if subject.group}
             /
             {#each subject.group.split(", ") as singleGroup}
@@ -54,7 +56,7 @@
             {/each}
         {/if}
     </h2>
-    {#if subject.isStandard() && subject.teacher.abbreviation}
+    {#if $scheduleParams.scheduleMode !== "Teacher" && subject.teacher.name}
         <h2>
             <Person />
             <!-- svelte-ignore a11y-click-events-have-key-events -->
