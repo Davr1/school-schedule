@@ -1,6 +1,5 @@
 <script lang="ts">
     import type { ComponentProps } from "svelte";
-    import { createEventDispatcher } from "svelte";
 
     import { config, type ScheduleMode, scheduleParams, updateScheduleParams } from "$stores/config";
     import { fetchCount } from "$stores/main";
@@ -9,7 +8,11 @@
     import MoreHoriz from "@material-design-icons/svg/filled/more_horiz.svg?component";
     import Refresh from "@material-design-icons/svg/filled/refresh.svg?component";
 
+    import AdvancedSettingsModal from "$components/AdvancedSettingsModal.svelte";
     import Dropdown from "$components/Dropdown.svelte";
+
+    /** Whether the advanced settings modal is visible, false by default */
+    let advancedSettingsModal = false;
 
     let maxFetchCount: number;
     $: if ($scheduleParams.weekMode === "Permanent" || $scheduleParams.scheduleMode !== "Class" || $config.useWeb === false) {
@@ -38,8 +41,6 @@
         };
     }
 
-    const dispatch = createEventDispatcher<{ modalOpen: { type: "AdvancedSettingsModal" } }>();
-
     type ModeDropdown = { mode: (typeof sheduleModes)[number] };
     let modeDropdown: ComponentProps<Dropdown<ModeDropdown>>;
     $: modeDropdown = {
@@ -59,10 +60,6 @@
     function setMode(weekMode: "Permanent" | "Current" | "Next") {
         updateScheduleParams({ weekMode });
     }
-
-    function openModal() {
-        dispatch("modalOpen", { type: "AdvancedSettingsModal" });
-    }
 </script>
 
 <nav>
@@ -72,10 +69,12 @@
         <button class:active={$scheduleParams.weekMode === "Permanent"} on:click={() => setMode("Permanent")}>Permanent</button>
         <button class:active={$scheduleParams.weekMode === "Current"} on:click={() => setMode("Current")}>Current</button>
         <button class:active={$scheduleParams.weekMode === "Next"} on:click={() => setMode("Next")}>Next</button>
-        <button on:click={openModal}><MoreHoriz /></button>
+        <button on:click={() => (advancedSettingsModal = true)}><MoreHoriz /></button>
     </div>
     <button id="reloadButton" class="styled-button" on:click={() => updateScheduleParams()}>
         <Refresh />
         <span id="info">{$fetchCount} / {maxFetchCount} fetched</span>
     </button>
 </nav>
+
+<AdvancedSettingsModal bind:visible={advancedSettingsModal} />

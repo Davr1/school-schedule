@@ -1,17 +1,11 @@
 <script lang="ts">
-    import { createEventDispatcher } from "svelte";
-
     import type { Subject } from "$lib/subject";
-    import { getPosition } from "$lib/utilities";
 
     import { scheduleParams } from "$stores/config";
-    import { isSubjectInfoVisible } from "$stores/main";
 
-    import SubjectInfo from "$components/SubjectInfo.svelte";
+    import SubjectInfo from "$components/SubjectInfo/Universal.svelte";
 
-    const dispatch = createEventDispatcher<{ modalOpen: { type: "SubjectInfoModal"; context: { subject: Subject } } }>();
-
-    let cell: HTMLElement, position: ReturnType<typeof getPosition>, title: string;
+    let cell: HTMLDivElement, title: string;
 
     export let subject: Subject;
 
@@ -27,29 +21,11 @@
               .join("\n")
         : ""; // idk what you want for empty subjects..
 
-    let subjectInfoVisible: boolean;
+    /** Whether the subject info modal / popover is visible */
+    let visible = false;
 
-    isSubjectInfoVisible.subscribe((value) => {
-        if (value === false) {
-            subjectInfoVisible = false;
-        }
-    });
-
-    scheduleParams.subscribe(() => {
-        subjectInfoVisible = false;
-    });
-
-    function showSubjectInfoScreen() {
-        position = getPosition(cell);
-
-        if (window.innerWidth / window.innerHeight > 3 / 4) {
-            isSubjectInfoVisible.set(true);
-            // the actual value is stored separately so updating it won't show all the cells at once
-            subjectInfoVisible = true;
-        } else {
-            dispatch("modalOpen", { type: "SubjectInfoModal", context: { subject: subject } });
-        }
-    }
+    // Hide the modal / popover when the schedule changes (when tf does this happen?)
+    scheduleParams.subscribe(() => (visible = false));
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -58,36 +34,30 @@
     <div
         class="subject"
         class:changed={subject.change !== null}
-        class:floating={subjectInfoVisible}
-        on:click={showSubjectInfoScreen}
+        class:floating={visible}
+        on:click={() => (visible = true)}
         bind:this={cell}
     >
-        {#if subjectInfoVisible}
-            <SubjectInfo {position} {subject} on:modalOpen />
-        {/if}
+        <SubjectInfo {cell} {subject} bind:visible />
+
         <div class="subject-content" {title}>
             <div class="top">
                 <div class="left">{subject.group}</div>
-                <div class="right">{subject.room}</div>
+                {#if $scheduleParams.scheduleMode !== "Room"}<div class="right">{subject.room}</div>{/if}
             </div>
             <div class="middle">{subject.abbreviation}</div>
-            <div class="bottom">{subject.teacher.abbreviation.split(",")[0]}</div>
+            {#if $scheduleParams.scheduleMode !== "Teacher"}<div class="bottom">{subject.teacher.abbreviation.split(",")[0]}</div>{/if}
         </div>
     </div>
 {:else if subject.isSpecial()}
     <div
         class="subject changed2"
-        class:floating={subjectInfoVisible}
-        on:click={() => {
-            // Idk why the check here is required.. typescript is weird
-            // It should be true at runtime anyway so it's fine
-            if (subject.isSpecial() && subject.abbreviation && subject.name) showSubjectInfoScreen();
-        }}
+        class:floating={visible}
+        on:click={() => subject.isSpecial() && subject.abbreviation && subject.name && (visible = true)}
         bind:this={cell}
     >
-        {#if subjectInfoVisible}
-            <SubjectInfo {position} {subject} on:modalOpen />
-        {/if}
+        <SubjectInfo {cell} {subject} bind:visible />
+
         <div class="subject-content" {title}>
             <div class="middle">{subject.abbreviation || subject.name}</div>
         </div>

@@ -9,7 +9,8 @@
 }
 
 html,
-body {
+body,
+#app {
     width: 100%;
     height: 100%;
     margin: 0;
@@ -19,14 +20,18 @@ body {
     font-weight: 300;
 }
 
-body {
+body,
+dialog.modal {
+    background: var(--main-background);
+    color: var(--text);
+    cursor: default;
+}
+
+#app {
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    background: var(--main-background);
-    color: var(--text);
-    cursor: default;
 
     * {
         font-family: inherit;
@@ -353,7 +358,7 @@ svg {
 #overlay {
     position: absolute;
     inset: 0;
-    background: inherit;
+    background: var(--main-background);
     z-index: 3;
     display: flex;
     justify-content: center;
@@ -361,7 +366,14 @@ svg {
     gap: 1.4rem;
 }
 
-#dim-overlay {
+dialog.modal::backdrop {
+    background: #000a;
+    backdrop-filter: blur(5px);
+
+    cursor: pointer;
+}
+
+.dim-overlay {
     position: absolute;
     inset: 0;
     background: #000a;
@@ -403,15 +415,14 @@ svg {
     }
 }
 
-#modal {
-    position: absolute;
+.modal {
+    position: relative;
     width: min(100%, 40rem);
     min-height: 5.4rem;
-    background: var(--main-background);
-    z-index: 2;
+    border: hidden;
     border-radius: 0.8rem;
     box-shadow: 0 1px 10px 2px #0003;
-    padding: 0.5rem;
+    padding: 0;
     box-sizing: border-box;
     overflow: hidden;
 
@@ -420,11 +431,13 @@ svg {
     }
 
     .modal-content {
-        padding: 0 1.8rem;
+        padding: 0.5rem 2.3rem;
         overflow-y: auto;
         scrollbar-width: thin;
         scrollbar-color: dark;
-        max-height: 100%;
+        height: 100%;
+
+        pointer-events: all;
 
         h1,
         h2 {
@@ -471,7 +484,7 @@ svg {
     }
 }
 
-#close-button {
+.close-button {
     position: absolute;
     top: 1.6rem;
     right: 2rem;
@@ -480,6 +493,8 @@ svg {
     padding: 0;
     border-radius: 0.4rem;
     z-index: 3;
+
+    pointer-events: all;
 
     & + * {
         max-width: calc(100% - 3rem);
@@ -529,7 +544,8 @@ svg {
 
 @media (max-aspect-ratio: 1/2) {
     html,
-    body {
+    body,
+    #app {
         font-size: 1.3vh;
     }
 
@@ -581,21 +597,24 @@ svg {
         margin-left: 3rem;
     }
 
-    #modal {
+    .modal {
         border-radius: 1rem 1rem 0 0;
-        bottom: 0;
-        padding: 0.8rem;
-        padding-bottom: 0;
+        margin-bottom: 0;
 
         &.scrollable {
             height: 60vh;
+        }
+
+        .modal-content {
+            padding: 0.8rem 2.6rem 0;
         }
     }
 }
 
 @media (min-aspect-ratio: 2/5) and (max-aspect-ratio: 3/2) {
     html,
-    body {
+    body,
+    #app {
         font-size: 1.4vh;
     }
 
@@ -610,7 +629,8 @@ svg {
 
 @media (min-aspect-ratio: 3/1) {
     html,
-    body {
+    body,
+    #app {
         font-size: 1.7vh;
     }
 
@@ -626,7 +646,7 @@ svg {
         filter: brightness(1.02);
     }
 
-    #dim-overlay.dimmed {
+    .dim-overlay.dimmed {
         backdrop-filter: blur(5px);
     }
 }
