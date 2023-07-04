@@ -50,7 +50,12 @@
         </div>
     </div>
 {:else if subject.isSpecial()}
-    <div class="subject changed2" class:floating={visible} on:click={() => (visible = true)} bind:this={cell}>
+    <div
+        class="subject changed2"
+        class:floating={visible}
+        on:click={() => subject.isSpecial() && subject.abbreviation && subject.name && (visible = true)}
+        bind:this={cell}
+    >
         <SubjectInfo {cell} {subject} bind:visible />
 
         <div class="subject-content" {title}>
