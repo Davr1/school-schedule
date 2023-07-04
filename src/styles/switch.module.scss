@@ -1,0 +1,49 @@
+@use "transitions.scss";
+
+.switch {
+    appearance: none;
+
+    width: 3.4rem;
+    height: 2rem;
+
+    background-color: var(--element-background);
+
+    border-radius: 1rem;
+    outline: 0.2rem transparent;
+    outline-offset: 0.2rem;
+
+    cursor: pointer;
+
+    @include transitions.all((background-color, outline-color), 150ms, ease-out);
+
+    &::before {
+        content: "";
+        display: block;
+
+        width: 2rem;
+        height: 2rem;
+
+        background-color: var(--text);
+
+        border-radius: 50%;
+
+        transform: scale(0.75);
+
+        @include transitions.all((background-color, transform), 150ms, ease-out);
+    }
+
+    &:focus-visible {
+        outline-color: var(--accent);
+        outline-style: solid;
+    }
+
+    &:checked {
+        background-color: var(--accent);
+
+        &::before {
+            background-color: var(--text-active);
+
+            transform: scale(0.75) translateX(2rem);
+        }
+    }
+}
