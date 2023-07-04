@@ -437,6 +437,8 @@ dialog.modal::backdrop {
         scrollbar-color: dark;
         height: 100%;
 
+        pointer-events: all;
+
         h1,
         h2 {
             svg {
@@ -491,6 +493,8 @@ dialog.modal::backdrop {
     padding: 0;
     border-radius: 0.4rem;
     z-index: 3;
+
+    pointer-events: all;
 
     & + * {
         max-width: calc(100% - 3rem);
@@ -596,11 +600,13 @@ dialog.modal::backdrop {
     .modal {
         border-radius: 1rem 1rem 0 0;
         margin-bottom: 0;
-        padding: 0.8rem;
-        padding-bottom: 0;
 
         &.scrollable {
             height: 60vh;
+        }
+
+        .modal-content {
+            padding: 0.8rem 2.6rem 0;
         }
     }
 }

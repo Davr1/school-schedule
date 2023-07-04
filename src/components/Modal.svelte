@@ -10,14 +10,17 @@
     /** Reference to the dialog DOM node */
     let dialog: HTMLDialogElement;
 
-    // Show the modal when visible is true
-    $: if (dialog && visible) dialog.showModal();
+    // Show the modal when visible is true (only if the dialog is closed)
+    $: if (dialog && visible && !dialog.open) dialog.showModal();
 
-    // Hide the modal when visible is false
-    $: if (dialog && !visible) dialog.close();
+    // Hide the modal when visible is false (only if the dialog is open)
+    $: if (dialog && !visible && dialog.open) dialog.close();
 
     /** Hide the overlay */
-    const hide = () => (visible = false);
+    function hide() {
+        dialog.close();
+        visible = false;
+    }
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions -->

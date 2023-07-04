@@ -1,6 +1,7 @@
 <script lang="ts">
     import { beforeUpdate } from "svelte";
 
+    import { browser } from "$app/environment";
     import type { Subject } from "$lib/subject";
     import { getPosition } from "$lib/utilities";
 
@@ -19,13 +20,16 @@
     /** Whether a popover can or cannot be shown */
     let canShowPopover = false;
 
-    /** The position of the cell */
+    /** The position of the cell, can be undefined (but only if the modal is used) */
     let cellPosition: ReturnType<typeof getPosition>;
 
     // Check if a popover can be shown and recalculate the position before updating
     beforeUpdate(() => {
-        canShowPopover = window.innerWidth / window.innerHeight > 3 / 4;
-        if (cell) cellPosition = getPosition(cell);
+        // Don't run the check if visible is false
+        if (!visible) return;
+
+        canShowPopover = browser && window.innerWidth / window.innerHeight > 3 / 4;
+        if (cell && canShowPopover) cellPosition = getPosition(cell);
     });
 </script>
 
