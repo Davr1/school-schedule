@@ -1,0 +1,28 @@
+.optionRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 3rem;
+    font-size: 1.2rem;
+
+    // global cuz unused
+    &:global(.disabled) {
+        opacity: 0.4;
+        pointer-events: none;
+    }
+
+    // this ain't used anywhere either
+    :global(.dropdown) {
+        width: 14rem;
+        height: 2.6rem;
+
+        :global(.options) {
+            box-shadow: 0 1px 3px 2px #0002;
+        }
+    }
+
+    // and same thing here
+    &:global(.right-aligned) {
+        justify-content: right;
+    }
+}

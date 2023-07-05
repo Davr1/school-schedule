@@ -20,8 +20,7 @@ body,
     font-weight: 300;
 }
 
-body,
-dialog.modal {
+body {
     background: var(--main-background);
     color: var(--text);
     cursor: default;
@@ -366,13 +365,6 @@ svg {
     gap: 1.4rem;
 }
 
-dialog.modal::backdrop {
-    background: #000a;
-    backdrop-filter: blur(5px);
-
-    cursor: pointer;
-}
-
 #subject-info {
     position: absolute;
     z-index: 2;
@@ -397,133 +389,6 @@ dialog.modal::backdrop {
 
     & + .link {
         margin-left: 0.5rem;
-    }
-}
-
-.modal {
-    position: relative;
-    width: min(100%, 40rem);
-    min-height: 5.4rem;
-    border: hidden;
-    border-radius: 0.8rem;
-    box-shadow: 0 1px 10px 2px #0003;
-    padding: 0;
-    box-sizing: border-box;
-    overflow: hidden;
-
-    &.scrollable {
-        height: 85vh;
-    }
-
-    .modal-content {
-        padding: 0.5rem 2.3rem;
-        overflow-y: auto;
-        scrollbar-width: thin;
-        scrollbar-color: dark;
-        height: 100%;
-
-        pointer-events: all;
-
-        h1,
-        h2 {
-            svg {
-                vertical-align: sub;
-                width: 2rem;
-                height: 2rem;
-                margin-right: 0.3rem;
-            }
-        }
-
-        .option-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            min-height: 3rem;
-            font-size: 1.2rem;
-
-            &.disabled {
-                opacity: 0.4;
-                pointer-events: none;
-            }
-
-            .dropdown {
-                width: 14rem;
-                height: 2.6rem;
-
-                .options {
-                    box-shadow: 0 1px 3px 2px #0002;
-                }
-            }
-
-            &.right-aligned {
-                justify-content: right;
-            }
-        }
-
-        p {
-            margin-top: 0;
-            filter: brightness(0.5);
-            line-height: 1.4;
-            padding-left: 0.6rem;
-        }
-    }
-}
-
-.close-button {
-    position: absolute;
-    top: 1.6rem;
-    right: 2rem;
-    width: 3rem;
-    height: 3rem;
-    padding: 0;
-    border-radius: 0.4rem;
-    z-index: 3;
-
-    pointer-events: all;
-
-    & + * {
-        max-width: calc(100% - 3rem);
-    }
-}
-
-.switch {
-    position: relative;
-    width: 3.4rem;
-    height: 2rem;
-    flex: 0 0 auto;
-
-    input {
-        display: none;
-    }
-
-    .slider {
-        position: absolute;
-        inset: 0;
-        background: var(--element-background);
-        transition: ease-out 80ms;
-        border-radius: 1rem;
-        cursor: pointer;
-
-        &::before {
-            content: "";
-            position: absolute;
-            height: 100%;
-            aspect-ratio: 1/1;
-            box-sizing: border-box;
-            background: #fffc;
-            transform: scale(0.7);
-            border-radius: 50%;
-            transition: inherit;
-        }
-    }
-
-    input:checked + .slider {
-        background: var(--accent);
-
-        &::before {
-            margin-left: calc(100% - 2rem);
-            background: white;
-        }
     }
 }
 
@@ -580,19 +445,6 @@ dialog.modal::backdrop {
 
     .cell:only-child .subject.changed2 .subject-content .middle {
         margin-left: 3rem;
-    }
-
-    .modal {
-        border-radius: 1rem 1rem 0 0;
-        margin-bottom: 0;
-
-        &.scrollable {
-            height: 60vh;
-        }
-
-        .modal-content {
-            padding: 0.8rem 2.6rem 0;
-        }
     }
 }
 

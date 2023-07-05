@@ -1,0 +1,90 @@
+.modal {
+    position: relative;
+
+    width: min(100%, 40rem);
+    min-height: 5.4rem;
+
+    padding: 0;
+
+    background-color: var(--main-background);
+    color: var(--text);
+
+    border: hidden;
+    border-radius: 0.8rem;
+
+    box-shadow: 0 1px 10px 2px #0003;
+
+    box-sizing: border-box;
+    overflow: hidden;
+
+    &.scrollable {
+        height: 85vh;
+    }
+
+    &::backdrop {
+        background: #000a;
+        backdrop-filter: blur(5px);
+
+        cursor: pointer;
+    }
+
+    .content {
+        height: 100%;
+
+        padding: 0.5rem 2.3rem;
+
+        overflow-y: auto;
+
+        scrollbar-width: thin;
+        scrollbar-color: dark;
+
+        box-sizing: border-box;
+
+        pointer-events: all;
+
+        h1,
+        h2 {
+            svg {
+                vertical-align: sub;
+                width: 2rem;
+                height: 2rem;
+                margin-right: 0.3rem;
+            }
+        }
+
+        p {
+            margin-top: 0;
+            filter: brightness(0.5); // why...
+            line-height: 1.4;
+            padding-left: 0.6rem;
+        }
+    }
+
+    @media (max-aspect-ratio: 3/4) {
+        border-radius: 1rem 1rem 0 0;
+        margin-bottom: 0;
+
+        &.scrollable {
+            height: 60vh;
+        }
+
+        .content {
+            padding: 0.8rem 2.6rem 0;
+        }
+    }
+}
+
+.closeButton {
+    position: absolute;
+    top: 1.6rem;
+    right: 2rem;
+
+    width: 3rem;
+    height: 3rem;
+
+    padding: 0;
+
+    border-radius: 0.4rem;
+
+    z-index: 3;
+}
