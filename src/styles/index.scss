@@ -373,21 +373,6 @@ dialog.modal::backdrop {
     cursor: pointer;
 }
 
-.dim-overlay {
-    position: absolute;
-    inset: 0;
-    background: #000a;
-    z-index: 1;
-    transition: opacity ease-out 80ms;
-    visibility: hidden;
-    opacity: 0;
-
-    &.dimmed {
-        visibility: visible;
-        opacity: 1;
-    }
-}
-
 #subject-info {
     position: absolute;
     z-index: 2;
@@ -644,9 +629,5 @@ dialog.modal::backdrop {
         box-shadow: 1px 1px 5px 3px #0005;
         transform: scale(1.023);
         filter: brightness(1.02);
-    }
-
-    .dim-overlay.dimmed {
-        backdrop-filter: blur(5px);
     }
 }
