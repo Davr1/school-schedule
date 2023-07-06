@@ -1,11 +1,23 @@
+@use "original.scss" as *;
+
 :root {
-    --main-background: #21262e;
-    --element-background: #434c56;
-    --dimmed-background: #31383f;
-    --accent: #1f6feb;
-    --alt-accent: #2dac45;
-    --text: #c9d1d9;
-    --text-active: #ffffff;
+    --main-background: #{$main-background};
+    --element-background: #{$element-background};
+    --dimmed-background: #{$dimmed-background};
+    --accent: #{$accent};
+    --alt-accent: #{$alt-accent};
+    --text: #{$text};
+    --text-active: #{$text-active};
+}
+
+:root.light {
+    --main-background: var(--background-50);
+    --element-background: var(--background-200);
+    --dimmed-background: var(--background-100);
+    --accent: var(--primary-500);
+    --alt-accent: var(--secondary-500);
+    --text: var(--background-950);
+    --text-active: var(--background-50);
 }
 
 html,

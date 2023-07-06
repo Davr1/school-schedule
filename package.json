@@ -32,6 +32,7 @@
         "bson": "^5.3.0",
         "cheerio": "^1.0.0-rc.12",
         "socks-proxy-agent": "^8.0.1",
+        "tailwindcss": "^3.3.2",
         "windows-1250": "^3.0.4"
     }
 }
