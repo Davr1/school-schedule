@@ -1,33 +1,40 @@
 <script lang="ts">
-    import { onMount } from "svelte";
+    import { onDestroy, onMount } from "svelte";
+
+    import { update } from "$lib/theme";
+
+    import { config } from "$stores/config";
 
     import "$styles/index.scss";
 
-    const primary = "blue";
-    const secondary = "green";
+    let match: MediaQueryList | undefined;
 
-    const background = "slate";
+    function updateMatch(ev: MediaQueryListEvent) {
+        update($config, ev.matches ? "dark" : "light");
+    }
 
-    // On mount, assign the theme variables to the document
-    // These are loaded dynamically...
+    // On mount, perform a theme update (because the server doesn't know the user's theme)
     onMount(async () => {
-        const { default: colors } = await import("tailwindcss/colors");
+        // Get the system theme
+        match = window.matchMedia("(prefers-color-scheme: dark)");
+        const systemTheme = match.matches ? "dark" : "light";
 
-        // Assign the theme variables to the document
-        for (const [key, value] of Object.entries(colors[primary])) {
-            document.documentElement.style.setProperty(`--primary-${key}`, value);
-        }
+        // Watch for changes
+        match.addEventListener("change", updateMatch);
 
-        for (const [key, value] of Object.entries(colors[secondary])) {
-            document.documentElement.style.setProperty(`--secondary-${key}`, value);
-        }
+        config.subscribe((c) => {
+            const match = window.matchMedia("(prefers-color-scheme: dark)");
+            const systemTheme = match.matches ? "dark" : "light";
 
-        for (const [key, value] of Object.entries(colors[background])) {
-            document.documentElement.style.setProperty(`--background-${key}`, value);
-        }
+            // Update the theme
+            update(c, systemTheme);
+        });
 
-        // Add the class name to the root element
-        document.documentElement.classList.add("light");
+        update($config, systemTheme);
+    });
+
+    onDestroy(() => {
+        match?.removeEventListener("change", updateMatch);
     });
 </script>
 

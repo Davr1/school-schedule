@@ -5,6 +5,7 @@
 
     import Modal from "$components/Modal.svelte";
     import Switch from "$components/Switch.svelte";
+    import ThemeEditor from "$components/ThemeEditor.svelte";
 
     import styles from "$styles/settings.module.scss";
 
@@ -31,4 +32,6 @@
         <Switch bind:value={$config.loadscreen} />
     </div>
     <p><span>What's this?</span></p>
+
+    <ThemeEditor />
 </Modal>

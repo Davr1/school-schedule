@@ -1,4 +1,5 @@
 import { get, writable } from "svelte/store";
+import type colors from "tailwindcss/colors";
 
 import { browser, version } from "$app/environment";
 
@@ -18,12 +19,34 @@ export interface ScheduleParams {
     value: Value;
 }
 
+export type Theme = "light" | "dark" | "original";
+type ColorBlacklist =
+    | "black"
+    | "white"
+    | "transparent"
+    | "current"
+    | "inherit"
+    | "lightBlue" // use "sky" instead
+    | "warmGray" // "stone"
+    | "trueGray" // "neutral"
+    | "coolGray" // "gray"
+    | "blueGray"; // "slate"
+export type Color = Exclude<keyof typeof colors, ColorBlacklist>;
+
 export interface Config {
     useWeb: boolean;
     sundayOverride: boolean;
     loadscreen: boolean;
     cache: boolean;
     version: string;
+
+    // Theme stuff
+    system: boolean;
+    light: Theme;
+    dark: Theme;
+    background: Color;
+    primary: Color;
+    secondary: Color;
 
     scheduleParams: ScheduleParams;
 }
@@ -48,6 +71,15 @@ export const defaultConfig: Config = {
         weekMode: "Current",
         value: "P2.B"
     },
+
+    // Theme stuff
+    system: true,
+    light: "light",
+    dark: "dark",
+    background: "slate",
+    primary: "blue",
+    secondary: "green",
+
     version
 };
 
