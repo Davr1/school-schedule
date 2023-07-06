@@ -20,6 +20,16 @@
     --text-active: var(--background-50);
 }
 
+:root.dark {
+    --main-background: var(--background-900);
+    --element-background: var(--background-700);
+    --dimmed-background: var(--background-800);
+    --accent: var(--primary-500);
+    --alt-accent: var(--secondary-500);
+    --text: var(--background-200);
+    --text-active: var(--background-50);
+}
+
 html,
 body,
 #app {

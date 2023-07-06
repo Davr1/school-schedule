@@ -1,0 +1,19 @@
+:root:global(.dark) .switch {
+    background-color: var(--background-700);
+
+    &::before {
+        background-color: var(--background-200);
+    }
+
+    &:focus-visible {
+        outline-color: var(--primary-500);
+    }
+
+    &:checked {
+        background-color: var(--primary-500);
+
+        &::before {
+            background-color: var(--background-50);
+        }
+    }
+}
