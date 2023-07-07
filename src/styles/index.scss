@@ -118,7 +118,9 @@ nav {
     }
 }
 
-button {
+// TODO: Don't forget to remove this
+//       It messes with my styles rn so I'm limiting it..
+:root.original button {
     background: inherit;
     border: unset;
     outline: unset;
