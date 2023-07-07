@@ -1,0 +1,5 @@
+// Segmented control
+@use "../base/controls/segmented.scss" as segmented-base;
+@use "../original/controls/segmented.scss" as segmented-original;
+@use "../light/controls/segmented.scss" as segmented-light;
+@use "../dark/controls/segmented.scss" as segmented-dark;

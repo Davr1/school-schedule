@@ -1,0 +1,21 @@
+:root:global(.light) .segmented {
+    background-color: var(--background-100);
+
+    .control {
+        color: var(--background-600);
+
+        &:hover {
+            color: var(--background-950);
+
+            box-shadow: 0 0 1rem 1px var(--background-200);
+        }
+
+        &.active {
+            background-color: var(--background-200);
+
+            &:hover {
+                box-shadow: 0 0 0.5rem var(--background-200);
+            }
+        }
+    }
+}
