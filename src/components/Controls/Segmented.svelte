@@ -22,7 +22,5 @@
 </script>
 
 <div class={styles.segmented}>
-    <span class={styles.selection} />
-
     <slot />
 </div>
