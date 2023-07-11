@@ -6,15 +6,18 @@
 
         &:hover {
             color: var(--background-950);
-
-            box-shadow: 0 0 1rem 1px var(--background-200);
+            background-color: var(--background-200);
         }
 
         &.active {
-            background-color: var(--background-200);
+            background-color: var(--background-50);
+
+            box-shadow: 0 0 0.25rem 0.125rem var(--background-200);
 
             &:hover {
-                box-shadow: 0 0 0.5rem var(--background-200);
+                color: var(--background-950);
+
+                box-shadow: 0 0 0.5rem 0.125rem var(--background-200);
             }
         }
     }
