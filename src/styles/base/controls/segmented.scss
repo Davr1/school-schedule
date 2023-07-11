@@ -1,5 +1,7 @@
 @use "../../transitions.scss";
 
+@use "button.scss";
+
 .segmented {
     display: flex;
     gap: 0.5rem;
@@ -12,27 +14,13 @@
     border-radius: 0.5rem;
 
     box-sizing: border-box;
+}
 
-    .control {
-        appearance: none;
-        flex: 1;
+.control {
+    @extend .button;
 
-        background-color: unset;
+    flex: 1;
 
-        border: unset;
-        border-radius: 0.5rem;
-
-        font-size: inherit;
-        text-align: center;
-
-        cursor: pointer;
-
-        @include transitions.all((background-color, color, box-shadow), 150ms, ease-out);
-
-        box-sizing: border-box;
-
-        &.active {
-            background-color: var(--background-100);
-        }
-    }
+    // Box-shadow is used to indicate the active control (which is why it ain't included in the button style)
+    @include transitions.all((background-color, color, box-shadow), 150ms, ease-out);
 }

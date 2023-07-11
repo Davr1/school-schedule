@@ -1,0 +1,9 @@
+:root:global(.light) .button {
+    color: var(--background-600);
+    background-color: var(--background-100);
+
+    &:hover {
+        color: var(--background-950);
+        background-color: var(--background-200);
+    }
+}

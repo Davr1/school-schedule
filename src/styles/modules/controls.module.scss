@@ -1,3 +1,9 @@
+// Buttons
+@use "../base/controls/button.scss" as button-base;
+@use "../original/controls/button.scss" as button-original;
+@use "../light/controls/button.scss" as button-light;
+@use "../dark/controls/button.scss" as button-dark;
+
 // Segmented control
 @use "../base/controls/segmented.scss" as segmented-base;
 @use "../original/controls/segmented.scss" as segmented-original;

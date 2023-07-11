@@ -1,14 +1,14 @@
 @use "../../original.scss" as *;
 
-:root:global(.original) .segmented {
-    background-color: $dimmed-background;
+@use "button.scss";
+
+:root:global(.original) {
+    .segmented {
+        background-color: $dimmed-background;
+    }
 
     .control {
-        color: $text;
-
-        &:hover {
-            filter: brightness(1.1);
-        }
+        @extend .button;
 
         &.active {
             background-color: $element-background;

@@ -1,0 +1,38 @@
+@use "../../transitions.scss";
+
+.button {
+    appearance: none;
+    display: flex;
+
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+
+    min-height: 2.25rem;
+    min-height: 2.25rem;
+
+    padding: 0.25rem 0.5rem;
+
+    background-color: unset;
+
+    border: unset;
+    border-radius: 0.5rem;
+
+    font-size: 1.2rem;
+    text-align: center;
+
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+
+    @include transitions.all((background-color, color), 150ms, ease-out);
+
+    box-sizing: border-box;
+
+    // Icons inside buttons
+    svg {
+        width: 1.8rem;
+        height: 1.8rem;
+    }
+}

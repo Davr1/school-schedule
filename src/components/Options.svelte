@@ -10,6 +10,7 @@
     import Refresh from "@material-design-icons/svg/filled/refresh.svg?component";
 
     import AdvancedSettingsModal from "$components/AdvancedSettingsModal.svelte";
+    import Button from "$components/Controls/Button.svelte";
     import Control from "$components/Controls/Control.svelte";
     import Segmented from "$components/Controls/Segmented.svelte";
     import Dropdown from "$components/Dropdown.svelte";
@@ -74,13 +75,13 @@
         <Control name="Current" />
         <Control name="Next" />
 
-        <button on:click={() => (advancedSettingsModal = true)}><MoreHoriz /></button>
+        <Button on:click={() => (advancedSettingsModal = true)}><MoreHoriz /></Button>
     </Segmented>
 
-    <button id="reloadButton" class="styled-button" on:click={() => updateScheduleParams()}>
+    <Button id="reloadButton" on:click={() => updateScheduleParams()}>
         <Refresh />
         <span id="info">{$fetchCount} / {maxFetchCount} fetched</span>
-    </button>
+    </Button>
 </nav>
 
 <AdvancedSettingsModal bind:visible={advancedSettingsModal} />

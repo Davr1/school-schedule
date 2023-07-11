@@ -1,0 +1,10 @@
+@use "../../original.scss" as *;
+
+:root:global(.original) .button {
+    color: $text;
+    background-color: $dimmed-background;
+
+    &:hover {
+        filter: brightness(1.1);
+    }
+}
