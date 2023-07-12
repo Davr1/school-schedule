@@ -1,6 +1,8 @@
 <script lang="ts">
     import { createEventDispatcher, onDestroy, onMount } from "svelte";
 
+    import { cls } from "$lib/class";
+
     import styles from "$styles/dimOverlay.module.scss";
 
     /** Whether the overlay is shown or not */
@@ -42,7 +44,7 @@ Usage:
 <div
     bind:this={overlay}
     role="presentation"
-    class={styles.overlay + (dimmed ? ` ${styles.dimmed}` : "")}
+    class={cls(styles.overlay, dimmed && styles.dimmed)}
     on:click={() => {
         // When the overlay is clicked, close it
         dispatch("close");
