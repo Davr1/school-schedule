@@ -1,6 +1,3 @@
-import type { Falsey, RecursiveArray } from "lodash";
-import { compact, flattenDeep } from "lodash-es";
-
 /**
  * Combine an array of classes into a string
  *
@@ -9,12 +6,12 @@ import { compact, flattenDeep } from "lodash-es";
  * I'm tired of writing this...
  * @param classes Array of classes
  */
-export function cls(...classes: RecursiveArray<string | Falsey>): string {
+export function cls(...classes: (unknown | unknown[])[]): string {
     // Flatten the array first
-    const flat = flattenDeep(classes); // Using lodash because .flat() doesn't do it recursively
+    const flat = classes.flat(Infinity);
 
     // Filter out falsy values
-    const filtered = compact(flat);
+    const filtered = flat.filter(Boolean);
 
     // Join the classes with a space
     return filtered.join(" ");

@@ -17,7 +17,7 @@
               `${subject.teacher.name}`,
               `${subject.change ?? subject.room}${subject.group ? " - " + subject.group : ""}`
           ]
-              .filter((e) => e)
+              .filter(Boolean)
               .join("\n")
         : ""; // idk what you want for empty subjects..
 
