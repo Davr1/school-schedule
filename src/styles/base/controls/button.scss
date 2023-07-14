@@ -2,15 +2,15 @@
 
 .button {
     appearance: none;
-    display: flex;
+    display: inline-flex;
 
     flex-direction: row;
     justify-content: center;
     align-items: center;
     gap: 0.5rem;
 
-    min-height: 2.25rem;
-    min-height: 2.25rem;
+    // min-width: 2.75rem; // Broken for some reason...
+    min-height: 2.75rem;
 
     padding: 0.25rem 0.5rem;
 
@@ -26,7 +26,7 @@
     user-select: none;
     white-space: nowrap;
 
-    @include transitions.all((background-color, color), 150ms, ease-out);
+    @include transitions.all((background-color, color, box-shadow), 150ms, ease-out);
 
     box-sizing: border-box;
 

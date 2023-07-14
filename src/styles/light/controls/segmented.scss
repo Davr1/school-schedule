@@ -2,7 +2,13 @@
 
 :root:global(.light) {
     .segmented {
-        background-color: var(--background-100);
+        background-color: var(--background-200);
+
+        box-shadow: 0 calc(1rem / 16) calc(1rem / 4) calc(1rem / 16) var(--background-300);
+
+        .button {
+            box-shadow: none;
+        }
     }
 
     .control {
@@ -11,7 +17,9 @@
         &.active {
             background-color: var(--background-50);
 
-            box-shadow: 0 0 0.25rem 0.125rem var(--background-200);
+            // With the darker bg, this looks strange
+            // TODO: Remove ig?
+            // box-shadow: 0 0 0.25rem 0.125rem var(--background-200);
 
             &:hover {
                 box-shadow: 0 0 0.5rem 0.125rem var(--background-200);

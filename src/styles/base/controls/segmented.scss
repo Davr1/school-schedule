@@ -14,13 +14,15 @@
     border-radius: 0.5rem;
 
     box-sizing: border-box;
+
+    .button {
+        min-height: 2.25rem;
+        height: 2.25rem;
+    }
 }
 
 .control {
     @extend .button;
 
     flex: 1;
-
-    // Box-shadow is used to indicate the active control (which is why it ain't included in the button style)
-    @include transitions.all((background-color, color, box-shadow), 150ms, ease-out);
 }
