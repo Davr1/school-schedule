@@ -1,6 +1,6 @@
 @use "../transitions.scss";
 
-.switch {
+:local(.switch) {
     appearance: none;
 
     width: 3.4rem;

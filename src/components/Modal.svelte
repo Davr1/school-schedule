@@ -29,7 +29,7 @@
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions -->
-<dialog class={cls(styles.modal, scrollable && styles.scrollable)} bind:this={dialog} on:close={hide} on:click|self={hide}>
+<dialog class={styles.modal} class:scrollable bind:this={dialog} on:close={hide} on:click|self={hide}>
     <button class={cls(controlStyles.button, styles.closeButton)} on:click={hide}>
         <Close />
     </button>

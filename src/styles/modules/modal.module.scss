@@ -1,4 +1,4 @@
-.modal {
+:local(.modal) {
     position: relative;
 
     width: min(100%, 40rem);
@@ -28,7 +28,7 @@
         cursor: pointer;
     }
 
-    .content {
+    :local(.content) {
         height: 100%;
 
         padding: 0.5rem 2.3rem;
@@ -68,13 +68,13 @@
             height: 60vh;
         }
 
-        .content {
+        :local(.content) {
             padding: 0.8rem 2.6rem 0;
         }
     }
 }
 
-.closeButton {
+:local(.closeButton) {
     position: absolute;
     top: 1.6rem;
     right: 2rem;

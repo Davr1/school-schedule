@@ -9,8 +9,6 @@
     import { getContext } from "svelte";
     import type { Writable } from "svelte/store";
 
-    import { cls } from "$lib/class";
-
     import styles from "$styles/modules/controls.module.scss";
 
     /**
@@ -34,6 +32,6 @@
     if (selected) $value = name;
 </script>
 
-<button class={cls(styles.control, $value === name && styles.active)} on:click={() => ($value = name)}>
+<button class={styles.control} class:active={$value === name} on:click={() => ($value = name)}>
     <slot>{name}</slot>
 </button>

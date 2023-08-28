@@ -29,5 +29,12 @@ export default defineConfig({
             $styles: "/src/styles",
             $assets: "/src/assets"
         }
+    },
+    css: {
+        modules: {
+            // By default, all class names in your components will be passed through to the final bundle.
+            // for the hashed class names, add a :local modifier to the class name (e.g. :local(.foo) { ... })
+            scopeBehaviour: "global"
+        }
     }
 });

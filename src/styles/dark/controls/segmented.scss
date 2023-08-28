@@ -1,12 +1,12 @@
 @use "button.scss";
 
-:root:global(.dark) {
-    .segmented {
+:root.dark {
+    :local(.segmented) {
         background-color: var(--background-800);
     }
 
-    .control {
-        @extend .button;
+    :local(.control) {
+        @extend :local(.button);
 
         &.active {
             background-color: var(--background-600);

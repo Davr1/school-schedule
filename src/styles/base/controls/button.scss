@@ -1,6 +1,6 @@
 @use "../../transitions.scss";
 
-.button {
+:local(.button) {
     appearance: none;
     display: inline-flex;
 

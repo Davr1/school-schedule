@@ -1,4 +1,4 @@
-:root:global(.dark) .button {
+:root.dark :local(.button) {
     color: var(--background-200);
     background-color: var(--background-800);
 

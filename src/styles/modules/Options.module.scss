@@ -1,4 +1,4 @@
-.options {
+:local(.options) {
     position: relative;
     height: 2.6rem;
     margin: 0.4rem 0;
@@ -15,12 +15,14 @@
         font-feature-settings: "tnum";
     }
 
-    :global(.dropdown) {
+    // this class is not used anywhere
+    // so this is 100% broken...
+    .dropdown {
         height: 100%;
         width: 12rem;
         flex: 0 1 12rem;
 
-        :global(.options) {
+        .options {
             box-shadow: 0 1px 3px 2px #0005;
         }
 
@@ -30,9 +32,8 @@
         }
     }
 
-    // this will literally never match...
-    :root:global(.original) {
-        :global(.dropdown-button),
+    :root.original & {
+        .dropdown-button,
         #weekButtons,
         #reloadButton {
             box-shadow: 0 1px 3px 2px #0001;
@@ -51,7 +52,7 @@
         height: 5.6rem;
         place-items: center;
 
-        :global(.dropdown) {
+        .dropdown {
             order: 1;
             width: 100%;
         }

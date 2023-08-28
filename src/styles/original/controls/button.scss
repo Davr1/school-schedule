@@ -1,6 +1,6 @@
 @use "../../original.scss" as *;
 
-:root:global(.original) .button {
+:root.original :local(.button) {
     color: $text;
     background-color: $dimmed-background;
 

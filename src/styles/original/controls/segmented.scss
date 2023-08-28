@@ -2,13 +2,13 @@
 
 @use "button.scss";
 
-:root:global(.original) {
-    .segmented {
+:root.original {
+    :local(.segmented) {
         background-color: $dimmed-background;
     }
 
-    .control {
-        @extend .button;
+    :local(.control) {
+        @extend :local(.button);
 
         &.active {
             background-color: $element-background;

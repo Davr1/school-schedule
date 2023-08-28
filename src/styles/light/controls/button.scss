@@ -1,4 +1,4 @@
-:root:global(.light) .button {
+:root.light :local(.button) {
     color: var(--background-600);
     background-color: var(--background-200);
 

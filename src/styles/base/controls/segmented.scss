@@ -2,7 +2,7 @@
 
 @use "button.scss";
 
-.segmented {
+:local(.segmented) {
     display: flex;
     gap: 0.5rem;
 
@@ -15,14 +15,14 @@
 
     box-sizing: border-box;
 
-    .button {
+    :local(.button) {
         min-height: 2.25rem;
         height: 2.25rem;
     }
 }
 
-.control {
-    @extend .button;
+:local(.control) {
+    @extend :local(.button);
 
     flex: 1;
 }

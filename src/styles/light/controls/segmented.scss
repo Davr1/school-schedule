@@ -1,18 +1,18 @@
 @use "button.scss";
 
-:root:global(.light) {
-    .segmented {
+:root.light {
+    :local(.segmented) {
         background-color: var(--background-200);
 
         box-shadow: 0 calc(1rem / 16) calc(1rem / 4) calc(1rem / 16) var(--background-300);
 
-        .button {
+        :local(.button) {
             box-shadow: none;
         }
     }
 
-    .control {
-        @extend .button;
+    :local(.control) {
+        @extend :local(.button);
 
         &.active {
             background-color: var(--background-50);
