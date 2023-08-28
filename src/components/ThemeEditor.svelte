@@ -3,7 +3,7 @@
 
     import Switch from "$components/Switch.svelte";
 
-    import styles from "$styles/settings.module.scss";
+    import styles from "$styles/modules/settings.module.scss";
     import colors from "tailwindcss/colors";
 </script>
 
@@ -12,7 +12,7 @@
 
     <Switch bind:value={$config.system} />
 </div>
-<p><span>The app will follow the system theme.</span></p>
+<p>The app will follow the system theme.</p>
 
 <!--
     When system is false, "light" is called "Active Theme". When system is true, "light" is called "Light Theme".

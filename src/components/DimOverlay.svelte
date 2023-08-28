@@ -3,7 +3,7 @@
 
     import { cls } from "$lib/class";
 
-    import styles from "$styles/dimOverlay.module.scss";
+    import styles from "$styles/modules/dimOverlay.module.scss";
 
     /** Whether the overlay is shown or not */
     export let dimmed: boolean;

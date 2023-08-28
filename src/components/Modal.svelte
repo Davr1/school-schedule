@@ -3,8 +3,8 @@
 
     import Close from "@material-design-icons/svg/filled/close.svg?component";
 
-    import styles from "$styles/modal.module.scss";
     import controlStyles from "$styles/modules/controls.module.scss";
+    import styles from "$styles/modules/modal.module.scss";
 
     /** Whether the modal is visible */
     export let visible: boolean;
