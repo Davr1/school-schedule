@@ -1,9 +1,0 @@
-:root.dark :local(.button) {
-    color: var(--background-200);
-    background-color: var(--background-800);
-
-    &:hover {
-        background-color: var(--background-700);
-        color: var(--background-50);
-    }
-}

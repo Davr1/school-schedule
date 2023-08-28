@@ -2,35 +2,35 @@
 
 // TODO: Don't forget to remove this
 //       It messes with my styles rn so I'm limiting it..
-:root.original button {
-    background: inherit;
-    border: unset;
-    outline: unset;
-    color: var(--old--text);
-    font-size: 1.2rem;
-    cursor: pointer;
-    transition: all ease-out 100ms;
+// :root.original button {
+//     background: inherit;
+//     border: unset;
+//     outline: unset;
+//     color: var(--old--text);
+//     font-size: 1.2rem;
+//     cursor: pointer;
+//     transition: all ease-out 100ms;
 
-    &:hover {
-        filter: brightness(1.1);
-    }
-    &.active {
-        background: var(--old--element-background);
-        color: var(--old--text-active);
-    }
+//     &:hover {
+//         filter: brightness(1.1);
+//     }
+//     &.active {
+//         background: var(--old--element-background);
+//         color: var(--old--text-active);
+//     }
 
-    &.disabled {
-        pointer-events: none;
-        filter: opacity(0.4);
-    }
+//     &.disabled {
+//         pointer-events: none;
+//         filter: opacity(0.4);
+//     }
 
-    &.styled-button {
-        border-radius: 0.4rem;
-        white-space: nowrap;
-        background: var(--old--dimmed-background);
-        height: 2.6rem;
-    }
-}
+//     &.styled-button {
+//         border-radius: 0.4rem;
+//         white-space: nowrap;
+//         background: var(--old--dimmed-background);
+//         height: 2.6rem;
+//     }
+// }
 
 .dropdown-button {
     padding: 0 0.5rem 0 0.8rem;

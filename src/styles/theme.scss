@@ -2,13 +2,15 @@
 
 :root.light {
     --app-background: #fff;
-    --app-foreground: var(--background-800);
+    --app-foreground: var(--background-600);
 
     --dimmed-background: var(--background-100);
     --dimmed-foreground: var(--background-400);
 
     --element-background: var(--background-200);
-    --element-foreground: var(--background-500);
+
+    --active-background: #fff;
+    --active-foreground: var(--background-950);
 
     --accent-primary: var(--primary-500);
     --accent-secondary: var(--secondary-500);
@@ -18,11 +20,13 @@
     --app-background: var(--background-900);
     --app-foreground: var(--background-200);
 
-    --dimmed-background: var(--background-800);
+    --dimmed-background: var(--background-700);
     --dimmed-foreground: var(--background-400);
 
-    --element-background: var(--background-700);
-    --element-foreground: var(--background-200);
+    --element-background: var(--background-600);
+
+    --active-background: var(--background-500);
+    --active-foreground: var(--background-50);
 
     --accent-primary: var(--primary-600);
     --accent-secondary: var(--secondary-600);
@@ -37,8 +41,10 @@
     --dimmed-background: #31383f;
     --dimmed-foreground: #{color.mix(#c9d1d9, #000, 75%)}; // same as: filter: brightness(75%);
 
-    --element-background: #434c56;
-    --element-foreground: #c9d1d9;
+    --element-background: #{color.mix(#fff, #31383f, 5%)}; // same as: filter: brightness(1.05);
+
+    --active-background: #434c56;
+    --active-foreground: #fff;
 
     --accent-primary: #1f6feb;
     --accent-secondary: #2dac45;

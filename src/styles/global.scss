@@ -43,7 +43,7 @@ body,
     font-size: 1.7vh;
     font-family: "Inter var", Inter, sans-serif;
     font-feature-settings: "tnum";
-    font-weight: 300;
+    font-weight: 300; // i think 400 would be better. @Davr1
 
     @media (max-aspect-ratio: 1/2) {
         font-size: 1.3vh;

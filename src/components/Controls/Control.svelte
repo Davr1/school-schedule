@@ -9,7 +9,7 @@
     import { getContext } from "svelte";
     import type { Writable } from "svelte/store";
 
-    import styles from "$styles/modules/controls.module.scss";
+    import styles from "$styles/modules/Controls.module.scss";
 
     /**
      * The name to use, this will be used as the value when selected

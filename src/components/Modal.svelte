@@ -3,7 +3,7 @@
 
     import Close from "@material-design-icons/svg/filled/close.svg?component";
 
-    import controlStyles from "$styles/modules/controls.module.scss";
+    import controlStyles from "$styles/modules/Controls.module.scss";
     import styles from "$styles/modules/modal.module.scss";
 
     /** Whether the modal is visible */

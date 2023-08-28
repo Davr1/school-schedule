@@ -4,7 +4,7 @@
 
     import { controlValueKey } from "$components/Controls/Control.svelte";
 
-    import styles from "$styles/modules/controls.module.scss";
+    import styles from "$styles/modules/Controls.module.scss";
 
     /**
      * The name of the selected control

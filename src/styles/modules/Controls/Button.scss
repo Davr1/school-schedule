@@ -14,10 +14,16 @@
 
     padding: 0.25rem 0.5rem;
 
-    background-color: unset;
+    color: var(--app-foreground);
+    background-color: var(--dimmed-background);
 
     border: unset;
     border-radius: 0.5rem;
+
+    // Light theme also has a box-shadow
+    :root.light & {
+        box-shadow: 0 0.0625rem 0.25rem -0.125rem var(--background-600);
+    }
 
     font-size: 1.2rem;
     text-align: center;
@@ -29,6 +35,11 @@
     @include transitions.all((background-color, color, box-shadow), 150ms, ease-out);
 
     box-sizing: border-box;
+
+    &:hover {
+        background-color: var(--element-background);
+        color: var(--active-foreground);
+    }
 
     // Icons inside buttons
     svg {
