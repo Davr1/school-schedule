@@ -12,6 +12,8 @@
 
     import GridCell from "$components/GridCell.svelte";
 
+    import styles from "$styles/modules/ScheduleView.module.scss";
+
     const dispatch = createEventDispatcher<{ loadingFinished: null }>();
 
     let scheduleData: BakalariSchedule = [];
@@ -121,7 +123,7 @@
     }
 </script>
 
-<main>
+<main class={styles.scheduleView}>
     <div class="hours">
         {#each hours.formattedTime as [from, until], index}
             <div class="hour-container">

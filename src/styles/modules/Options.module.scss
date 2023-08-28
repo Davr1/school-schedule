@@ -1,0 +1,59 @@
+.options {
+    position: relative;
+    height: 2.6rem;
+    margin: 0.4rem 0;
+    width: 100%;
+    flex: 0 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 300;
+    max-width: 96%;
+
+    * {
+        font-feature-settings: "tnum";
+    }
+
+    :global(.dropdown) {
+        height: 100%;
+        width: 12rem;
+        flex: 0 1 12rem;
+
+        :global(.options) {
+            box-shadow: 0 1px 3px 2px #0005;
+        }
+
+        &:first-child {
+            width: 8rem;
+            flex: 0 1 8rem;
+        }
+    }
+
+    // this will literally never match...
+    :root:global(.original) {
+        :global(.dropdown-button),
+        #weekButtons,
+        #reloadButton {
+            box-shadow: 0 1px 3px 2px #0001;
+            svg {
+                width: 1.8rem;
+                height: 1.8rem;
+                flex: 0 0 auto;
+            }
+        }
+    }
+
+    @media (max-aspect-ratio: 3/4) {
+        display: grid;
+        grid-template-columns: 8rem 12rem 1fr;
+        width: 90%;
+        height: 5.6rem;
+        place-items: center;
+
+        :global(.dropdown) {
+            order: 1;
+            width: 100%;
+        }
+    }
+}

@@ -15,6 +15,8 @@
     import Segmented from "$components/Controls/Segmented.svelte";
     import Dropdown from "$components/Dropdown.svelte";
 
+    import styles from "$styles/modules/Options.module.scss";
+
     /** Whether the advanced settings modal is visible, false by default */
     let advancedSettingsModal = false;
 
@@ -66,7 +68,7 @@
     scheduleMode.subscribe((weekMode) => updateScheduleParams({ weekMode }));
 </script>
 
-<nav>
+<nav class={styles.options}>
     <Dropdown {...modeDropdown} />
     <Dropdown {...valuesDropdown} />
 
