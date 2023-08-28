@@ -41,6 +41,11 @@
         color: var(--active-foreground);
     }
 
+    // Active style (used by dropdowns and segmented controls)
+    &.active {
+        background-color: var(--active-background);
+    }
+
     // Icons inside buttons
     svg {
         width: 1.8rem;
