@@ -3,7 +3,7 @@
 
     import Switch from "$components/Switch.svelte";
 
-    import styles from "$styles/modules/settings.module.scss";
+    import styles from "$styles/modules/Settings.module.scss";
     import colors from "tailwindcss/colors";
 </script>
 

@@ -7,7 +7,7 @@
     import Switch from "$components/Switch.svelte";
     import ThemeEditor from "$components/ThemeEditor.svelte";
 
-    import styles from "$styles/modules/settings.module.scss";
+    import styles from "$styles/modules/Settings.module.scss";
 
     /** Whether the AdvancedSettingsModal is visible */
     export let visible: boolean;
