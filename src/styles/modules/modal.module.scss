@@ -6,8 +6,8 @@
 
     padding: 0;
 
-    background-color: var(--main-background);
-    color: var(--text);
+    background-color: var(--app-background);
+    color: var(--app-foreground);
 
     border: hidden;
     border-radius: 0.8rem;
@@ -54,7 +54,7 @@
 
         p {
             margin-top: 0;
-            filter: brightness(0.5); // why...
+            color: var(--dimmed-foreground);
             line-height: 1.4;
             padding-left: 0.6rem;
         }

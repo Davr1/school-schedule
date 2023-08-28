@@ -1,0 +1,47 @@
+@use "sass:color";
+
+:root.light {
+    --app-background: #fff;
+    --app-foreground: var(--background-800);
+
+    --dimmed-background: var(--background-100);
+    --dimmed-foreground: var(--background-400);
+
+    --element-background: var(--background-200);
+    --element-foreground: var(--background-500);
+
+    --accent-primary: var(--primary-500);
+    --accent-secondary: var(--secondary-500);
+}
+
+:root.dark {
+    --app-background: var(--background-900);
+    --app-foreground: var(--background-200);
+
+    --dimmed-background: var(--background-800);
+    --dimmed-foreground: var(--background-400);
+
+    --element-background: var(--background-700);
+    --element-foreground: var(--background-200);
+
+    --accent-primary: var(--primary-600);
+    --accent-secondary: var(--secondary-600);
+
+    color-scheme: dark;
+}
+
+:root.original {
+    --app-background: #21262e;
+    --app-foreground: #c9d1d9;
+
+    --dimmed-background: #31383f;
+    --dimmed-foreground: #{color.mix(#c9d1d9, #000, 75%)}; // same as: filter: brightness(75%);
+
+    --element-background: #434c56;
+    --element-foreground: #c9d1d9;
+
+    --accent-primary: #1f6feb;
+    --accent-secondary: #2dac45;
+
+    color-scheme: dark;
+}

@@ -1,5 +1,5 @@
 <script lang="ts">
-    import styles from "$styles/modules/switch.module.scss";
+    import styles from "$styles/modules/Switch.module.scss";
 
     export let value: boolean;
 </script>

@@ -6,7 +6,7 @@
     background: inherit;
     border: unset;
     outline: unset;
-    color: var(--text);
+    color: var(--old--text);
     font-size: 1.2rem;
     cursor: pointer;
     transition: all ease-out 100ms;
@@ -15,8 +15,8 @@
         filter: brightness(1.1);
     }
     &.active {
-        background: var(--element-background);
-        color: var(--text-active);
+        background: var(--old--element-background);
+        color: var(--old--text-active);
     }
 
     &.disabled {
@@ -27,7 +27,7 @@
     &.styled-button {
         border-radius: 0.4rem;
         white-space: nowrap;
-        background: var(--dimmed-background);
+        background: var(--old--dimmed-background);
         height: 2.6rem;
     }
 }
@@ -56,7 +56,7 @@
     }
 
     ::-webkit-scrollbar-thumb {
-        background: var(--element-background);
+        background: var(--old--element-background);
     }
 
     &.visible svg {
@@ -68,7 +68,7 @@
     position: absolute;
     left: 0;
     z-index: 2;
-    background: var(--dimmed-background);
+    background: var(--old--dimmed-background);
     border-radius: 0.6rem;
     display: flex;
     flex-direction: column;
@@ -118,7 +118,7 @@
     flex-direction: column;
     border-radius: 0.3rem;
     min-height: 0;
-    background: var(--element-background);
+    background: var(--old--element-background);
     box-shadow: 1px 1px 3px 2px #0002;
     transition: ease-out 200ms;
     flex: 1 1 auto;
@@ -133,13 +133,13 @@
     }
 
     &.changed {
-        background: var(--accent);
-        color: var(--text-active);
+        background: var(--old--accent);
+        color: var(--old--text-active);
     }
 
     &.changed2 {
-        background: var(--alt-accent);
-        color: var(--text-active);
+        background: var(--old--alt-accent);
+        color: var(--old--text-active);
     }
 
     &.floating {
@@ -209,7 +209,7 @@
 #overlay {
     position: absolute;
     inset: 0;
-    background: var(--main-background);
+    background: var(--old--main-background);
     z-index: 3;
     display: flex;
     justify-content: center;

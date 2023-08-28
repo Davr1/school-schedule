@@ -1,33 +1,35 @@
+@use "theme.scss";
+
 @use "original.scss" as *;
 
 :root {
-    --main-background: #{$main-background};
-    --element-background: #{$element-background};
-    --dimmed-background: #{$dimmed-background};
-    --accent: #{$accent};
-    --alt-accent: #{$alt-accent};
-    --text: #{$text};
-    --text-active: #{$text-active};
+    --old--main-background: #{$main-background};
+    --old--element-background: #{$element-background};
+    --old--dimmed-background: #{$dimmed-background};
+    --old--accent: #{$accent};
+    --old--alt-accent: #{$alt-accent};
+    --old--text: #{$text};
+    --old--text-active: #{$text-active};
 }
 
 :root.light {
-    --main-background: var(--background-50);
-    --element-background: var(--background-200);
-    --dimmed-background: var(--background-100);
-    --accent: var(--primary-500);
-    --alt-accent: var(--secondary-500);
-    --text: var(--background-950);
-    --text-active: var(--background-50);
+    --old--main-background: var(--background-50);
+    --old--element-background: var(--background-200);
+    --old--dimmed-background: var(--background-100);
+    --old--accent: var(--primary-500);
+    --old--alt-accent: var(--secondary-500);
+    --old--text: var(--background-950);
+    --old--text-active: var(--background-50);
 }
 
 :root.dark {
-    --main-background: var(--background-900);
-    --element-background: var(--background-700);
-    --dimmed-background: var(--background-800);
-    --accent: var(--primary-500);
-    --alt-accent: var(--secondary-500);
-    --text: var(--background-200);
-    --text-active: var(--background-50);
+    --old--main-background: var(--background-900);
+    --old--element-background: var(--background-700);
+    --old--dimmed-background: var(--background-800);
+    --old--accent: var(--primary-500);
+    --old--alt-accent: var(--secondary-500);
+    --old--text: var(--background-200);
+    --old--text-active: var(--background-50);
 }
 
 html,
@@ -57,8 +59,8 @@ body,
 }
 
 body {
-    background: var(--main-background);
-    color: var(--text);
+    background: var(--app-background);
+    color: var(--app-foreground);
 }
 
 #app {
