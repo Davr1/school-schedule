@@ -1,0 +1,14 @@
+:local(.overlay) {
+    display: flex;
+    position: absolute;
+
+    inset: 0;
+
+    gap: 1.4rem;
+    justify-content: center;
+    align-items: center;
+
+    background: var(--app-background);
+
+    z-index: 3;
+}
