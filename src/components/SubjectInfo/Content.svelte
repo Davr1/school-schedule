@@ -8,6 +8,8 @@
     import Person from "@material-design-icons/svg/filled/person.svg?component";
     import TextSnippet from "@material-design-icons/svg/filled/text_snippet.svg?component";
 
+    import styles from "$styles/modules/Schedule.module.scss";
+
     export let subject: Subject;
 </script>
 
@@ -24,7 +26,7 @@
         <!-- svelte-ignore a11y-no-static-element-interactions -->
         {#if $scheduleParams.scheduleMode !== "Room"}
             <span
-                class="link"
+                class={styles.link}
                 on:click={() => {
                     // This is nasty. Consider refactoring..
                     if (!subject.isStandard()) return;
@@ -42,7 +44,7 @@
                     <!-- svelte-ignore a11y-click-events-have-key-events -->
                     <!-- svelte-ignore a11y-no-static-element-interactions -->
                     <span
-                        class="link"
+                        class={styles.link}
                         on:click={() => {
                             const group = singleGroup.trim().split(" ")[0];
                             if (isValidMetadata(group)) updateScheduleParams({ value: group, scheduleMode: "Class" });
@@ -62,7 +64,7 @@
             <!-- svelte-ignore a11y-click-events-have-key-events -->
             <!-- svelte-ignore a11y-no-static-element-interactions -->
             <span
-                class="link"
+                class={styles.link}
                 on:click={() => {
                     if (!subject.isStandard()) return;
 

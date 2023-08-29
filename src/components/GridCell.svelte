@@ -5,6 +5,8 @@
 
     import SubjectInfo from "$components/SubjectInfo/Universal.svelte";
 
+    import styles from "$styles/modules/Schedule.module.scss";
+
     let cell: HTMLDivElement, title: string;
 
     export let subject: Subject;
@@ -32,15 +34,15 @@
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 {#if subject.isStandard()}
     <div
-        class="subject"
+        class={`${styles.subject} active`}
         class:changed={subject.change !== null}
         class:floating={visible}
-        on:click={() => (visible = true)}
+        on:click={() => (visible = !visible)}
         bind:this={cell}
     >
         <SubjectInfo {cell} {subject} bind:visible />
 
-        <div class="subject-content" {title}>
+        <div class={styles.content} {title}>
             <div class="top">
                 <div class="left">{subject.group}</div>
                 {#if $scheduleParams.scheduleMode !== "Room"}<div class="right">{subject.room}</div>{/if}
@@ -51,19 +53,18 @@
     </div>
 {:else if subject.isSpecial()}
     <div
-        class="subject changed2"
+        class={`${styles.subject} special`}
         class:floating={visible}
-        on:click={() => subject.isSpecial() && subject.abbreviation && subject.name && (visible = true)}
+        class:active={subject.abbreviation && subject.name}
+        on:click={() => subject.isSpecial() && subject.abbreviation && subject.name && (visible = !visible)}
         bind:this={cell}
     >
         <SubjectInfo {cell} {subject} bind:visible />
 
-        <div class="subject-content" {title}>
+        <div class={styles.content} {title}>
             <div class="middle">{subject.abbreviation || subject.name}</div>
         </div>
     </div>
 {:else if subject.isEmpty() && subject.change}
-    <div class="subject changed2" bind:this={cell}>
-        <div class="subject-content" />
-    </div>
+    <div class={`${styles.subject} special`} bind:this={cell} />
 {/if}

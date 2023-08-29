@@ -14,6 +14,9 @@
 
     --accent-primary: var(--primary-500);
     --accent-secondary: var(--secondary-500);
+
+    --hover-accent-primary: var(--primary-600);
+    --hover-accent-secondary: var(--secondary-600);
 }
 
 :root.dark {
@@ -30,6 +33,9 @@
 
     --accent-primary: var(--primary-600);
     --accent-secondary: var(--secondary-600);
+
+    --hover-accent-primary: var(--primary-500);
+    --hover-accent-secondary: var(--secondary-500);
 
     color-scheme: dark;
 }
@@ -48,6 +54,9 @@
 
     --accent-primary: #1f6feb;
     --accent-secondary: #2dac45;
+
+    --hover-accent-primary: #{color.mix(#fff, #1f6feb, 10%)}; // same as: filter: brightness(1.1);
+    --hover-accent-secondary: #{color.mix(#fff, #2dac45, 10%)}; // same as: filter: brightness(1.1);
 
     color-scheme: dark;
 }

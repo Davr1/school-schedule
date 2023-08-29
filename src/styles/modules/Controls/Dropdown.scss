@@ -24,11 +24,6 @@
     &.visible svg {
         transform: rotate(-180deg);
     }
-
-    // Disable the button's box shadow in light theme (but not for active buttons)
-    :root.light & :local(.button):not(.active) {
-        box-shadow: none;
-    }
 }
 
 :local(.options) {
@@ -55,6 +50,11 @@
 
     box-sizing: border-box;
     z-index: 2;
+
+    // Disable the button's box shadow in light theme (but not for active buttons)
+    :root.light & :local(.button):not(.active) {
+        box-shadow: none;
+    }
 
     // scroll bars
     scrollbar-width: thin;

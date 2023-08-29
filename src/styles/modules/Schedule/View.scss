@@ -1,12 +1,15 @@
-:local(.scheduleView) {
+:local(.view) {
+    display: grid;
+
     height: 100%;
     width: 100%;
+
     overflow: auto hidden;
-    display: grid;
+
     grid-template-rows: 3.4rem repeat(5, 1fr);
     grid-auto-flow: column;
+
     scrollbar-width: thin;
-    scrollbar-color: dark;
 
     @media (max-aspect-ratio: 3/4) {
         height: auto;
