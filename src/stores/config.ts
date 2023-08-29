@@ -1,5 +1,4 @@
 import { get, writable } from "svelte/store";
-import type colors from "tailwindcss/colors";
 
 import { browser, version } from "$app/environment";
 
@@ -19,19 +18,41 @@ export interface ScheduleParams {
     value: Value;
 }
 
-export type Theme = "light" | "dark" | "original";
-type ColorBlacklist =
-    | "black"
-    | "white"
-    | "transparent"
-    | "current"
-    | "inherit"
-    | "lightBlue" // use "sky" instead
-    | "warmGray" // "stone"
-    | "trueGray" // "neutral"
-    | "coolGray" // "gray"
-    | "blueGray"; // "slate"
-export type Color = Exclude<keyof typeof colors, ColorBlacklist>;
+export enum Theme {
+    Light = "light",
+    Dark = "dark",
+    Original = "original"
+}
+
+export enum BackgroundColor {
+    Slate = "slate",
+    Gray = "gray",
+    Zinc = "zinc",
+    Neutral = "neutral",
+    Stone = "stone"
+}
+
+export enum AccentColor {
+    Red = "red",
+    Orange = "orange",
+    Amber = "amber",
+    Yellow = "yellow",
+    Lime = "lime",
+    Green = "green",
+    Emerald = "emerald",
+    Teal = "teal",
+    Cyan = "cyan",
+    Sky = "sky",
+    Blue = "blue",
+    Indigo = "indigo",
+    Violet = "violet",
+    Purple = "purple",
+    Fuchsia = "fuchsia",
+    Pink = "pink",
+    Rose = "rose"
+}
+
+export type Color = AccentColor | BackgroundColor;
 
 export interface Config {
     useWeb: boolean;
@@ -44,7 +65,7 @@ export interface Config {
     system: boolean;
     light: Theme;
     dark: Theme;
-    background: Color;
+    background: BackgroundColor;
     primary: Color;
     secondary: Color;
 
@@ -74,11 +95,11 @@ export const defaultConfig: Config = {
 
     // Theme stuff
     system: true,
-    light: "light",
-    dark: "dark",
-    background: "slate",
-    primary: "blue",
-    secondary: "green",
+    light: Theme.Light,
+    dark: Theme.Dark,
+    background: BackgroundColor.Zinc,
+    primary: AccentColor.Blue,
+    secondary: AccentColor.Green,
 
     version
 };

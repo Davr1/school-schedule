@@ -1,10 +1,12 @@
 <script>
-    import { config } from "$stores/config";
+    import { AccentColor, BackgroundColor, Theme, config } from "$stores/config";
 
     import Switch from "$components/Switch.svelte";
 
     import styles from "$styles/modules/Settings.module.scss";
-    import colors from "tailwindcss/colors";
+
+    const backgroundColors = Object.entries(BackgroundColor);
+    const accentColors = [...backgroundColors, ...Object.entries(AccentColor)];
 </script>
 
 <div class={styles.optionRow}>
@@ -26,9 +28,9 @@
     {/if}
 
     <select bind:value={$config.light}>
-        <option value="light">Light</option>
-        <option value="dark">Dark</option>
-        <option value="original">Original</option>
+        <option value={Theme.Light}>Light</option>
+        <option value={Theme.Dark}>Dark</option>
+        <option value={Theme.Original}>Original</option>
     </select>
 </div>
 
@@ -56,8 +58,8 @@
     <span>Background color</span>
 
     <select bind:value={$config.background}>
-        {#each Object.keys(colors) as color}
-            <option value={color}>{color}</option>
+        {#each backgroundColors as [name, color]}
+            <option value={color}>{name}</option>
         {/each}
     </select>
 </div>
@@ -71,8 +73,8 @@
     <span>Primary accent</span>
 
     <select bind:value={$config.primary}>
-        {#each Object.keys(colors) as color}
-            <option value={color}>{color}</option>
+        {#each accentColors as [name, color]}
+            <option value={color}>{name}</option>
         {/each}
     </select>
 </div>
@@ -86,8 +88,8 @@
     <span>Secondary accent</span>
 
     <select bind:value={$config.secondary}>
-        {#each Object.keys(colors) as color}
-            <option value={color}>{color}</option>
+        {#each accentColors as [name, color]}
+            <option value={color}>{name}</option>
         {/each}
     </select>
 </div>

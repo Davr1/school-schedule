@@ -1,6 +1,4 @@
-import colors from "tailwindcss/colors";
-
-import type { Config, Theme } from "$stores/config";
+import { type Color, type Config, Theme } from "$stores/config";
 
 /** A theme according to the system */
 export type SystemTheme = "light" | "dark";
@@ -28,8 +26,10 @@ export function update(config: Config, system: SystemTheme): void {
     // Update the theme class
     updateClass(theme);
 
-    // Update the theme variables
-    updateVariables(config, theme);
+    // Update the accent colors
+    updateAccent(config.primary, AccentType.Primary);
+    updateAccent(config.secondary, AccentType.Secondary);
+    updateAccent(config.background, AccentType.Background);
 }
 
 /**
@@ -37,50 +37,33 @@ export function update(config: Config, system: SystemTheme): void {
  * @param theme The theme to use
  */
 export function updateClass(theme: Theme): void {
-    // If the themes are the same, return
-    if (document.documentElement.classList.contains(theme)) return;
-
-    // Remove all classes from the root element
-    document.documentElement.classList.remove("light", "dark", "original");
-
-    // Add the class name to the root element
-    document.documentElement.classList.add(theme);
-}
-
-/**
- * Update css variables on the document
- * @param config The user's configuration
- * @param theme The theme to use
- */
-export function updateVariables(config: Config, theme: Theme): void {
-    // Don't update if the theme is @Davr1's Original Theme
-    if (theme === "original") return;
-
-    // Loop through the colors
-    for (const [key, value] of Object.entries(colors[config.primary])) {
-        updateVariable("primary", key, value);
-    }
-
-    for (const [key, value] of Object.entries(colors[config.secondary])) {
-        updateVariable("secondary", key, value);
-    }
-
-    for (const [key, value] of Object.entries(colors[config.background])) {
-        updateVariable("background", key, value);
+    // Toggle all of the themes to the right state
+    for (const possibleTheme of Object.values(Theme)) {
+        document.documentElement.classList.toggle(possibleTheme, possibleTheme === theme);
     }
 }
 
+enum AccentType {
+    Primary = "-1",
+    Secondary = "-2",
+    Background = "-bg"
+}
+
 /**
- * Update a theme css variable on the document
- * @param name The type of the variable (primary, secondary, background)
- * @param key The key of the variable (the shade)
- * @param value The value of the variable (the color)
+ * Makes sure the correct color class is on the document root
+ *
+ * If it differs, it is removed and replaced with the correct one
+ * @param color The color to use
+ * @param type The type of color (primary, secondary, background)
  */
-export function updateVariable(name: string, key: string, value: string): void {
-    const variable = `--${name}-${key}`;
+function updateAccent(color: Color, type: AccentType) {
+    const accent = `${color}${type}`;
 
-    // Only do the update if the value is different
-    if (document.documentElement.style.getPropertyValue(variable) === value) return;
+    // Find the class on the document root that ends with the accent type and remove if it doesn't match the theme
+    const accentClass = Array.from(document.documentElement.classList).find((className) => className.endsWith(type));
+    if (accentClass && accentClass !== accent) {
+        document.documentElement.classList.remove(accentClass);
+    }
 
-    document.documentElement.style.setProperty(variable, value);
+    document.documentElement.classList.add(accent);
 }
