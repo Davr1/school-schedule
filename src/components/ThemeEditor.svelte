@@ -1,12 +1,22 @@
-<script>
+<script lang="ts">
     import { AccentColor, BackgroundColor, Theme, config } from "$stores/config";
 
     import Switch from "$components/Switch.svelte";
 
+    import Dropdown from "$components/Dropdown.svelte";
     import styles from "$styles/modules/Settings.module.scss";
 
-    const backgroundColors = Object.entries(BackgroundColor);
-    const accentColors = [...backgroundColors, ...Object.entries(AccentColor)];
+    const themeDropdownOptions = Object.entries(Theme).map(([name, value]) => ({ name, value }));
+    const lightDropdownOptions = themeDropdownOptions.filter(({ value }) => value !== Theme.Dark);
+    const darkDropdownOptions = themeDropdownOptions.filter(({ value }) => value !== Theme.Light);
+    $: lightDropdownOption = themeDropdownOptions.find(({ value }) => value === $config.light)!;
+    $: darkDropdownOption = themeDropdownOptions.find(({ value }) => value === $config.dark)!;
+
+    const backgroundColorOptions = Object.entries(BackgroundColor).map(([name, value]) => ({ name, value }));
+    const accentColorOptions = [...backgroundColorOptions, ...Object.entries(AccentColor).map(([name, value]) => ({ name, value }))];
+    $: backgroundColorOption = backgroundColorOptions.find(({ value }) => value === $config.background)!;
+    $: primaryAccentOption = accentColorOptions.find(({ value }) => value === $config.primary)!;
+    $: secondaryAccentOption = accentColorOptions.find(({ value }) => value === $config.secondary)!;
 </script>
 
 <div class={styles.optionRow}>
@@ -27,11 +37,13 @@
         <span>Active Theme</span>
     {/if}
 
-    <select bind:value={$config.light}>
-        <option value={Theme.Light}>Light</option>
-        <option value={Theme.Dark}>Dark</option>
-        <option value={Theme.Original}>Original</option>
-    </select>
+    <Dropdown
+        options={$config.system ? lightDropdownOptions : themeDropdownOptions}
+        activeOption={lightDropdownOption}
+        callback={({ value }) => ($config.light = value)}
+        genericKey="value"
+        genericName="name"
+    />
 </div>
 
 <!--
@@ -41,11 +53,13 @@
     <div class={styles.optionRow}>
         <span>Dark Theme</span>
 
-        <select bind:value={$config.dark}>
-            <option value="light">Light</option>
-            <option value="dark">Dark</option>
-            <option value="original">Original</option>
-        </select>
+        <Dropdown
+            options={darkDropdownOptions}
+            activeOption={darkDropdownOption}
+            callback={({ value }) => ($config.dark = value)}
+            genericKey="value"
+            genericName="name"
+        />
     </div>
 {/if}
 
@@ -57,11 +71,13 @@
 <div class={styles.optionRow}>
     <span>Background color</span>
 
-    <select bind:value={$config.background}>
-        {#each backgroundColors as [name, color]}
-            <option value={color}>{name}</option>
-        {/each}
-    </select>
+    <Dropdown
+        options={backgroundColorOptions}
+        activeOption={backgroundColorOption}
+        callback={({ value }) => ($config.background = value)}
+        genericKey="value"
+        genericName="name"
+    />
 </div>
 
 <!--
@@ -72,11 +88,13 @@
 <div class={styles.optionRow}>
     <span>Primary accent</span>
 
-    <select bind:value={$config.primary}>
-        {#each accentColors as [name, color]}
-            <option value={color}>{name}</option>
-        {/each}
-    </select>
+    <Dropdown
+        options={accentColorOptions}
+        activeOption={primaryAccentOption}
+        callback={({ value }) => ($config.primary = value)}
+        genericKey="value"
+        genericName="name"
+    />
 </div>
 
 <!--
@@ -87,9 +105,11 @@
 <div class={styles.optionRow}>
     <span>Secondary accent</span>
 
-    <select bind:value={$config.secondary}>
-        {#each accentColors as [name, color]}
-            <option value={color}>{name}</option>
-        {/each}
-    </select>
+    <Dropdown
+        options={accentColorOptions}
+        activeOption={secondaryAccentOption}
+        callback={({ value }) => ($config.secondary = value)}
+        genericKey="value"
+        genericName="name"
+    />
 </div>

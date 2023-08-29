@@ -28,35 +28,6 @@
         cursor: pointer;
     }
 
-    :local(.content) {
-        padding: 0.5rem 2.3rem;
-
-        overflow-y: auto;
-        scrollbar-width: thin;
-        scrollbar-color: var(--element-background) var(--dimmed-background);
-
-        box-sizing: border-box;
-
-        pointer-events: all;
-
-        h1,
-        h2 {
-            svg {
-                vertical-align: sub;
-                width: 2rem;
-                height: 2rem;
-                margin-right: 0.3rem;
-            }
-        }
-
-        p {
-            margin-top: 0;
-            color: var(--dimmed-foreground);
-            line-height: 1.4;
-            padding-left: 0.6rem;
-        }
-    }
-
     @media (max-aspect-ratio: 3/4) {
         border-radius: 1rem 1rem 0 0;
         margin-bottom: 0;
@@ -64,10 +35,44 @@
         &.scrollable {
             height: 60vh;
         }
+    }
+}
 
-        :local(.content) {
-            padding: 0.8rem 2.6rem 0;
+:local(.content) {
+    padding: 0.5rem 2.3rem;
+
+    scrollbar-width: thin;
+    scrollbar-color: var(--element-background) var(--dimmed-background);
+
+    box-sizing: border-box;
+
+    pointer-events: all;
+
+    :local(.modal).scrollable & {
+        max-height: 100%;
+
+        overflow-y: auto;
+    }
+
+    h1,
+    h2 {
+        svg {
+            vertical-align: sub;
+            width: 2rem;
+            height: 2rem;
+            margin-right: 0.3rem;
         }
+    }
+
+    p {
+        margin-top: 0;
+        color: var(--dimmed-foreground);
+        line-height: 1.4;
+        padding-left: 0.6rem;
+    }
+
+    @media (max-aspect-ratio: 3/4) {
+        padding: 0.8rem 2.6rem 0;
     }
 }
 
