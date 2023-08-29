@@ -1,3 +1,5 @@
+@use "../../transitions.scss";
+
 :local(.subject) {
     position: relative;
     display: flex;
@@ -13,7 +15,7 @@
 
     box-shadow: 0 0.0625rem 0.25rem -0.125rem #000;
 
-    transition: background-color ease-out 200ms;
+    @include transitions.all((background-color, transform), ease-out, 200ms);
 
     &:only-child {
         min-height: 13.5vh;
@@ -46,9 +48,13 @@
     }
 
     // Only apply the hover effect on desktop if there's more than 1 cell
-    :local(.cell):not(:only-child) > &.active:is(:hover, .floating) {
-        // Use the --subject-hover variable when it's defined, fallback to the default hover color
-        background-color: var(--subject-hover, var(--element-background));
+    @media (pointer: fine) {
+        :local(.cell):not(:only-child) > &.active:is(:hover, .floating) {
+            // Use the --subject-hover variable when it's defined, fallback to the default hover color
+            background-color: var(--subject-hover, var(--element-background));
+
+            transform: scale(1.023);
+        }
     }
 }
 

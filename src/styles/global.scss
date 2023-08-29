@@ -1,37 +1,5 @@
 @use "theme.scss";
 
-@use "original.scss" as *;
-
-:root {
-    --old--main-background: #{$main-background};
-    --old--element-background: #{$element-background};
-    --old--dimmed-background: #{$dimmed-background};
-    --old--accent: #{$accent};
-    --old--alt-accent: #{$alt-accent};
-    --old--text: #{$text};
-    --old--text-active: #{$text-active};
-}
-
-:root.light {
-    --old--main-background: var(--background-50);
-    --old--element-background: var(--background-200);
-    --old--dimmed-background: var(--background-100);
-    --old--accent: var(--primary-500);
-    --old--alt-accent: var(--secondary-500);
-    --old--text: var(--background-950);
-    --old--text-active: var(--background-50);
-}
-
-:root.dark {
-    --old--main-background: var(--background-900);
-    --old--element-background: var(--background-700);
-    --old--dimmed-background: var(--background-800);
-    --old--accent: var(--primary-500);
-    --old--alt-accent: var(--secondary-500);
-    --old--text: var(--background-200);
-    --old--text-active: var(--background-50);
-}
-
 html,
 body,
 #app {
