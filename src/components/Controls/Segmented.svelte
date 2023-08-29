@@ -13,6 +13,13 @@
      */
     export let selection = writable<string>();
 
+    /**
+     * Optional id for the control group
+     *
+     * Doesn't have any effect, just makes it easier to style
+     */
+    export let id: string | undefined = undefined;
+
     // If the context is already set then throw an error (because these shouldn't be nested)
     if (getContext(controlValueKey)) throw new Error("Control groups cannot be nested");
 
@@ -21,6 +28,6 @@
     setContext(controlValueKey, selection);
 </script>
 
-<div class={styles.segmented}>
+<div class={styles.segmented} {id}>
     <slot />
 </div>

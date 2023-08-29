@@ -1,5 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="en" class="original">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -11,6 +11,29 @@
         <link rel="apple-touch-icon" href="/logo180.png" type="image/png" />
         <link rel="preload" href="https://rsms.me/inter/inter.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
         <title>ŠŠŠVT rozvrh</title>
+        <script>
+            /* Set the appropriate class name */
+            var config = JSON.parse(localStorage.getItem("config") || "{}");
+
+            var dark = matchMedia("(prefers-color-scheme: dark)").matches;
+
+            var theme;
+            if (config.system && dark) {
+                theme = config.dark || "dark";
+            } else {
+                theme = config.light || "light";
+            }
+
+            document.documentElement.classList.remove("original");
+            document.documentElement.classList.add(
+                theme,
+
+                // Accent colors
+                (config.background || "zinc") + "-bg",
+                (config.primary || "blue") + "-1",
+                (config.secondary || "green") + "-2"
+            );
+        </script>
         %sveltekit.head%
     </head>
     <body data-sveltekit-preload-data="hover">

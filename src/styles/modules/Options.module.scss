@@ -1,59 +1,35 @@
 :local(.options) {
-    position: relative;
-    height: 2.6rem;
-    margin: 0.4rem 0;
-    width: 100%;
-    flex: 0 0 auto;
     display: flex;
+    position: relative;
+
+    flex: 0 0 auto;
+    width: 100%;
+    max-width: 96%;
+
+    margin: 0.4rem 0;
+
+    gap: 0.5rem;
     justify-content: center;
     align-items: center;
-    gap: 0.5rem;
+
     font-weight: 300;
-    max-width: 96%;
 
     * {
         font-feature-settings: "tnum";
     }
 
-    // this class is not used anywhere
-    // so this is 100% broken...
-    .dropdown {
-        height: 100%;
-        width: 12rem;
-        flex: 0 1 12rem;
-
-        .options {
-            box-shadow: 0 1px 3px 2px #0005;
-        }
-
-        &:first-child {
-            width: 8rem;
-            flex: 0 1 8rem;
-        }
-    }
-
-    :root.original & {
-        .dropdown-button,
-        #weekButtons,
-        #reloadButton {
-            box-shadow: 0 1px 3px 2px #0001;
-            svg {
-                width: 1.8rem;
-                height: 1.8rem;
-                flex: 0 0 auto;
-            }
-        }
-    }
-
+    // Mobile layout
     @media (max-aspect-ratio: 3/4) {
         display: grid;
-        grid-template-columns: 8rem 12rem 1fr;
-        width: 90%;
-        height: 5.6rem;
-        place-items: center;
 
-        .dropdown {
-            order: 1;
+        grid-template-columns: 1fr 1fr 2fr;
+
+        #weekButtons {
+            grid-column: 1 / span 3;
+            grid-row: 1;
+        }
+
+        > :not(#weekButtons) {
             width: 100%;
         }
     }

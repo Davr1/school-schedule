@@ -2,7 +2,7 @@
     import type { ComponentProps } from "svelte";
     import { writable } from "svelte/store";
 
-    import { config, type ScheduleMode, scheduleParams, updateScheduleParams, type WeekMode } from "$stores/config";
+    import { config, scheduleParams, updateScheduleParams, type ScheduleMode, type WeekMode } from "$stores/config";
     import { fetchCount } from "$stores/main";
     import { scheduleMetadata, sheduleModes } from "$stores/static";
 
@@ -72,7 +72,7 @@
     <Dropdown {...modeDropdown} />
     <Dropdown {...valuesDropdown} />
 
-    <Segmented bind:selection={scheduleMode}>
+    <Segmented bind:selection={scheduleMode} id="weekButtons">
         <Control name="Permanent" />
         <Control name="Current" />
         <Control name="Next" />
