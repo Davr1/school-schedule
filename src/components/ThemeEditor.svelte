@@ -13,6 +13,11 @@
         Secondary = "2"
     }
     const accent = writable(AccentSelection.Primary);
+
+    export let visible: boolean;
+
+    // On close, reset accent to primary.
+    $: if (!visible) $accent = AccentSelection.Primary;
 </script>
 
 <!--

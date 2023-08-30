@@ -8,7 +8,7 @@
      *
      *
      * Takes in a tuple of `[string, T]` where `string` is the label and `T` is the value.
-     * Or optionally with a third value of `string` which will be used as the class name
+     * Or optionally with a third value of `string` which will be used as the class name for the **label** (which wraps the radio button)
      */
     export let options: readonly (readonly [string, T] | readonly [string, T, string])[] = [];
 
@@ -34,8 +34,8 @@
         {@const label = option[0]}
         {@const className = option[2] || value}
 
-        <label class={styles.option}>
-            <input class={`${styles.radio} ${className}`} class:small type="radio" name={id} bind:group={selected} {value} />
+        <label class={`${styles.option} ${className}`}>
+            <input class={styles.radio} class:small type="radio" name={id} bind:group={selected} {value} />
 
             <span>{label}</span>
         </label>

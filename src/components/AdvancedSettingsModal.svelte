@@ -33,5 +33,5 @@
     </div>
     <p><span>What's this?</span></p>
 
-    <ThemeEditor />
+    <ThemeEditor {visible} />
 </Modal>
