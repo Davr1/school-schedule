@@ -1,36 +1,35 @@
 <script lang="ts">
     import { onDestroy, onMount } from "svelte";
 
-    import { update } from "$lib/theme";
+    import { SystemTheme, update } from "$lib/theme";
 
-    import { config } from "$stores/config";
+    import theme from "$stores/theme";
 
     import "$styles/global.scss";
 
     let match: MediaQueryList | undefined;
 
     function updateMatch(ev: MediaQueryListEvent) {
-        update($config, ev.matches ? "dark" : "light");
+        update($theme, ev.matches ? SystemTheme.Dark : SystemTheme.Light);
     }
 
-    // On mount, perform a theme update (because the server doesn't know the user's theme)
+    // Add a listener for the system theme
+    // And also a listener for subsequent changes to the theme config
+    // Note: The initial theme switch is done by the inline script in index.html so it's not necessary to do it here
     onMount(async () => {
         // Get the system theme
         match = window.matchMedia("(prefers-color-scheme: dark)");
-        const systemTheme = match.matches ? "dark" : "light";
 
         // Watch for changes
         match.addEventListener("change", updateMatch);
 
-        config.subscribe((c) => {
+        theme.subscribe((c) => {
             const match = window.matchMedia("(prefers-color-scheme: dark)");
-            const systemTheme = match.matches ? "dark" : "light";
+            const systemTheme = match.matches ? SystemTheme.Dark : SystemTheme.Light;
 
             // Update the theme
             update(c, systemTheme);
         });
-
-        update($config, systemTheme);
     });
 
     onDestroy(() => {

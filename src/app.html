@@ -13,25 +13,21 @@
         <title>ŠŠŠVT rozvrh</title>
         <script>
             /* Set the appropriate class name */
-            var config = JSON.parse(localStorage.getItem("config") || "{}");
+            var theme = JSON.parse(localStorage.getItem("theme") || "{}");
 
             var dark = matchMedia("(prefers-color-scheme: dark)").matches;
 
-            var theme;
-            if (config.system && dark) {
-                theme = config.dark || "dark";
-            } else {
-                theme = config.light || "light";
+            if (theme.active === "system") {
+                theme.active = dark ? "dark" : "light";
             }
 
             document.documentElement.classList.remove("original");
             document.documentElement.classList.add(
-                theme,
+                theme.active,
 
-                // Accent colors
-                config.primary || "blue",
-                (config.secondary || "green") + "-2",
-                (config.background || "zinc") + "-bg"
+                theme.primary || "blue",
+                (theme.secondary || "green") + "-2",
+                (theme.background || "zinc") + "-bg"
             );
         </script>
         %sveltekit.head%

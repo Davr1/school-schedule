@@ -1,17 +1,10 @@
-import { AccentColor, BackgroundColor, type Color, type Config, Theme } from "$stores/config";
+// This file contains helpers for the theme system...
+import { AccentColor, BackgroundColor, type Color, Theme, type ThemeConfig } from "$stores/theme";
 
 /** A theme according to the system */
-export type SystemTheme = "light" | "dark";
-
-/**
- * Get the theme based on the system theme and configuration
- * @param config The user's configuration
- * @param system The system theme (light or dark)
- * @returns The theme to use
- */
-export function getTheme(config: Config, system: SystemTheme): Theme {
-    if (config.system && system === "dark") return config.dark;
-    else return config.light;
+export enum SystemTheme {
+    Light = "light",
+    Dark = "dark"
 }
 
 /**
@@ -19,9 +12,9 @@ export function getTheme(config: Config, system: SystemTheme): Theme {
  * @param config The user's configuration
  * @param system The system theme (light or dark)
  */
-export function update(config: Config, system: SystemTheme): void {
+export function update(config: ThemeConfig, system: SystemTheme): void {
     // Get the theme to use
-    const theme = getTheme(config, system);
+    const theme = config.active === Theme.System ? system : config.active;
 
     // Update the theme class
     updateClass(theme);
@@ -36,7 +29,7 @@ export function update(config: Config, system: SystemTheme): void {
  * Update the theme class on the document
  * @param theme The theme to use
  */
-export function updateClass(theme: Theme): void {
+export function updateClass(theme: Theme | SystemTheme): void {
     // Toggle all of the themes to the right state
     for (const possibleTheme of Object.values(Theme)) {
         document.documentElement.classList.toggle(possibleTheme, possibleTheme === theme);

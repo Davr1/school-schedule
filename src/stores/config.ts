@@ -18,57 +18,12 @@ export interface ScheduleParams {
     value: Value;
 }
 
-export enum Theme {
-    System = "system",
-    Light = "light",
-    Dark = "dark",
-    Original = "original"
-}
-
-export enum BackgroundColor {
-    Slate = "slate",
-    Gray = "gray",
-    Zinc = "zinc",
-    Neutral = "neutral",
-    Stone = "stone"
-}
-
-export enum AccentColor {
-    Red = "red",
-    Orange = "orange",
-    Amber = "amber",
-    Yellow = "yellow",
-    Lime = "lime",
-    Green = "green",
-    Emerald = "emerald",
-    Teal = "teal",
-    Cyan = "cyan",
-    Sky = "sky",
-    Blue = "blue",
-    Indigo = "indigo",
-    Violet = "violet",
-    Purple = "purple",
-    Fuchsia = "fuchsia",
-    Pink = "pink",
-    Rose = "rose"
-}
-
-export type Color = AccentColor | BackgroundColor;
-
 export interface Config {
     useWeb: boolean;
     sundayOverride: boolean;
     loadscreen: boolean;
     cache: boolean;
     version: string;
-
-    // Theme stuff
-    system: boolean;
-    light: Theme;
-    dark: Theme;
-    background: BackgroundColor;
-    primary: Color;
-    secondary: Color;
 
     scheduleParams: ScheduleParams;
 }
@@ -93,14 +48,6 @@ export const defaultConfig: Config = {
         weekMode: "Current",
         value: "P2.B"
     },
-
-    // Theme stuff
-    system: true,
-    light: Theme.Light,
-    dark: Theme.Dark,
-    background: BackgroundColor.Zinc,
-    primary: AccentColor.Blue,
-    secondary: AccentColor.Green,
 
     version
 };

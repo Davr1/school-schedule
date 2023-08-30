@@ -69,7 +69,7 @@
 
     // Special styles for the theme picker
     #theme & {
-        border: 0.125rem solid var(--active-foreground);
+        border: 2px solid var(--active-foreground);
         --radio-ring: transparent;
 
         &[value="light"] {

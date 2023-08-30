@@ -2,8 +2,7 @@
 @use "sass:map";
 @use "colors.scss" as *;
 
-:root.light,
-:root.system {
+:root.light {
     --app-background: #fff;
     --app-foreground: var(--background-600);
 

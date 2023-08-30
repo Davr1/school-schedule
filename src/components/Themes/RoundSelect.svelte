@@ -18,7 +18,7 @@
     /**
      * The id of the select, this must be unique
      *
-     * All the options will have an id of `${id}-${value}`
+     * Maps directly to the `id` attribute of the wrapper and the `name` attribute of the radio buttons
      */
     export let id: string;
 

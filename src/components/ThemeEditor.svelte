@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { AccentColor, BackgroundColor, Theme, config } from "$stores/config";
+    import theme, { AccentColor, BackgroundColor, Theme } from "$stores/theme";
 
     import RoundSelect from "$components/Themes/RoundSelect.svelte";
     import styles from "$styles/modules/Settings.module.scss";
@@ -26,10 +26,10 @@
 
 <p>Note: The original theme doesn't support custom accent colors</p>
 
-<RoundSelect options={Object.entries(Theme)} bind:selected={$config.light} id="theme" />
+<RoundSelect options={Object.entries(Theme)} bind:selected={$theme.active} id="theme" />
 
 <!-- Don't render the color accents if the theme doesn't support them -->
-{#if $config.light !== Theme.Original}
+{#if $theme.active !== Theme.Original}
     <!--
         Accent color
 
@@ -42,8 +42,8 @@
 
         <RoundSelect
             options={[
-                ["1", AccentSelection.Primary, $config.primary],
-                ["2", AccentSelection.Secondary, $config.secondary]
+                ["1", AccentSelection.Primary, $theme.primary],
+                ["2", AccentSelection.Secondary, $theme.secondary]
             ]}
             bind:selected={$accent}
             id="accent"
@@ -54,7 +54,7 @@
     <p>
         Currently selecting the
         <!-- apply the accent class depending on the selection, this is to show the currently selected color -->
-        <span class={`${$accent === AccentSelection.Primary ? $config.primary : $config.secondary} ${themeStyles.accentLabel}`}>
+        <span class={`${$accent === AccentSelection.Primary ? $theme.primary : $theme.secondary} ${themeStyles.accentLabel}`}>
             {$accent === AccentSelection.Primary ? "primary" : "secondary"}
         </span>
         accent.
@@ -65,9 +65,9 @@
     </p>
 
     {#if $accent === AccentSelection.Primary}
-        <RoundSelect options={colors} bind:selected={$config.primary} id="primary" small />
+        <RoundSelect options={colors} bind:selected={$theme.primary} id="primary" small />
     {:else}
-        <RoundSelect options={colors} bind:selected={$config.secondary} id="secondary" small />
+        <RoundSelect options={colors} bind:selected={$theme.secondary} id="secondary" small />
     {/if}
 
     <!--    
@@ -82,7 +82,7 @@
 
     <p>If you're unsure, go with Zinc...</p>
 
-    <RoundSelect options={Object.entries(BackgroundColor)} bind:selected={$config.background} id="background" />
+    <RoundSelect options={Object.entries(BackgroundColor)} bind:selected={$theme.background} id="background" />
 {/if}
 
 <!-- for spacing -->
