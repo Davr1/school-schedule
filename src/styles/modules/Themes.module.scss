@@ -1,0 +1,125 @@
+@use "../transitions.scss";
+
+:local(.select) {
+    display: grid;
+    grid-auto-flow: row;
+
+    // max 5 colums ig.. idk... copied stackoverflow
+    grid-template-columns: repeat(auto-fit, minmax(max(5rem, 20%), 1fr));
+
+    row-gap: 0.5rem;
+    place-items: center;
+
+    width: 100%;
+}
+
+:local(.option) {
+    display: inline-flex;
+    flex-direction: column;
+
+    gap: 0.5rem;
+    align-items: center;
+
+    min-width: 3rem;
+    width: fit-content;
+
+    #accent & {
+        position: relative;
+
+        > :last-child {
+            position: absolute;
+            display: grid;
+
+            inset: 0;
+            place-items: center;
+
+            color: #fff;
+
+            font-weight: bold;
+
+            pointer-events: none;
+        }
+    }
+}
+
+:local(.radio) {
+    appearance: none;
+
+    width: 4rem;
+    height: 4rem;
+
+    margin: 0.5rem;
+
+    background-color: var(--primary-500);
+    --radio-color: transparent;
+    --radio-ring: var(--app-background);
+
+    border-radius: 50%;
+
+    box-sizing: border-box;
+    cursor: pointer;
+
+    @include transitions.all((border-width, box-shadow), 150ms, ease-out);
+
+    // Smaller variant
+    &.small {
+        width: 3rem;
+        height: 3rem;
+    }
+
+    // Special styles for the theme picker
+    #theme & {
+        border: 0.125rem solid var(--active-foreground);
+        --radio-ring: transparent;
+
+        &[value="light"] {
+            background-color: #fff;
+        }
+
+        &[value="dark"] {
+            background-color: #000;
+        }
+
+        &[value="system"] {
+            background-image: linear-gradient(45deg, #fff 50%, #000 50%);
+        }
+
+        &[value="original"] {
+            background-color: #434c56;
+            border-color: #1f6feb;
+
+            box-shadow: inset 0 0 1rem #1f6feb;
+        }
+
+        &:checked {
+            --radio-color: var(--accent-primary);
+        }
+    }
+
+    &:checked {
+        --radio-color: var(--primary-500);
+
+        // Using !important to override the styles above in #theme
+        border: 0.25rem solid var(--radio-color) !important;
+
+        box-shadow:
+            // inner ring with the app background color (to "simulate" an offset)
+            inset 0 0 0 0.25rem var(--radio-ring),
+            // inner glow
+            inset 0 0 0.75rem -0.25rem var(--radio-ring),
+            // glow around the outer ring (the border)
+            0 0 1rem -0.25rem var(--radio-color);
+
+        cursor: default;
+    }
+}
+
+:local(.accentTitle) {
+    width: 100%;
+}
+
+// This should be combined with an accent color class to work properly
+:local(.accentLabel) {
+    color: var(--primary-600);
+    font-weight: 600;
+}

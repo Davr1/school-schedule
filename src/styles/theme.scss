@@ -2,7 +2,8 @@
 @use "sass:map";
 @use "colors.scss" as *;
 
-:root.light {
+:root.light,
+:root.system {
     --app-background: #fff;
     --app-foreground: var(--background-600);
 
@@ -73,7 +74,7 @@ $accent-shades: ("500", "600");
 @each $color, $shades in $colors {
     // Generate the background shades if it's in the allow list
     @if index($backgrounds, $color) {
-        :root.#{$color}-bg {
+        .#{$color}-bg {
             @each $shade, $value in $shades {
                 // Only proceed if it's the right shade
                 @if index($background-shades, $shade) {
@@ -86,7 +87,7 @@ $accent-shades: ("500", "600");
     // Generate the accent colors
 
     // As a primary color
-    :root.#{$color}-1 {
+    .#{$color} {
         @each $shade, $value in $shades {
             // Only generate the shades in the allow list
             @if index($accent-shades, $shade) {
@@ -96,7 +97,7 @@ $accent-shades: ("500", "600");
     }
 
     // As a secondary color
-    :root.#{$color}-2 {
+    .#{$color}-2 {
         @each $shade, $value in $shades {
             // Only generate the shades in the allow list
             @if index($accent-shades, $shade) {

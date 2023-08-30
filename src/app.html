@@ -29,9 +29,9 @@
                 theme,
 
                 // Accent colors
-                (config.background || "zinc") + "-bg",
-                (config.primary || "blue") + "-1",
-                (config.secondary || "green") + "-2"
+                config.primary || "blue",
+                (config.secondary || "green") + "-2",
+                (config.background || "zinc") + "-bg"
             );
         </script>
         %sveltekit.head%

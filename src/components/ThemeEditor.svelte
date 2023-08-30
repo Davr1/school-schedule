@@ -1,115 +1,89 @@
 <script lang="ts">
     import { AccentColor, BackgroundColor, Theme, config } from "$stores/config";
 
-    import Switch from "$components/Switch.svelte";
-
-    import Dropdown from "$components/Dropdown.svelte";
+    import RoundSelect from "$components/Themes/RoundSelect.svelte";
     import styles from "$styles/modules/Settings.module.scss";
+    import themeStyles from "$styles/modules/Themes.module.scss";
+    import { writable } from "svelte/store";
 
-    const themeDropdownOptions = Object.entries(Theme).map(([name, value]) => ({ name, value }));
-    const lightDropdownOptions = themeDropdownOptions.filter(({ value }) => value !== Theme.Dark);
-    const darkDropdownOptions = themeDropdownOptions.filter(({ value }) => value !== Theme.Light);
-    $: lightDropdownOption = themeDropdownOptions.find(({ value }) => value === $config.light)!;
-    $: darkDropdownOption = themeDropdownOptions.find(({ value }) => value === $config.dark)!;
+    const colors = [...Object.entries(BackgroundColor), ...Object.entries(AccentColor)];
 
-    const backgroundColorOptions = Object.entries(BackgroundColor).map(([name, value]) => ({ name, value }));
-    const accentColorOptions = [...backgroundColorOptions, ...Object.entries(AccentColor).map(([name, value]) => ({ name, value }))];
-    $: backgroundColorOption = backgroundColorOptions.find(({ value }) => value === $config.background)!;
-    $: primaryAccentOption = accentColorOptions.find(({ value }) => value === $config.primary)!;
-    $: secondaryAccentOption = accentColorOptions.find(({ value }) => value === $config.secondary)!;
+    enum AccentSelection {
+        Primary = "1",
+        Secondary = "2"
+    }
+    const accent = writable(AccentSelection.Primary);
 </script>
 
-<div class={styles.optionRow}>
-    <span>Use system theme</span>
-
-    <Switch bind:value={$config.system} />
-</div>
-<p>The app will follow the system theme.</p>
-
 <!--
-    When system is false, "light" is called "Active Theme". When system is true, "light" is called "Light Theme".
-    This is because when system is false, the dark mode option is hidden.
+    The theme of the app
+
+    To edit entries, go to src/stores/config.ts and edit the Theme enum
 -->
 <div class={styles.optionRow}>
-    {#if $config.system}
-        <span>Light Theme</span>
-    {:else}
-        <span>Active Theme</span>
-    {/if}
-
-    <Dropdown
-        options={$config.system ? lightDropdownOptions : themeDropdownOptions}
-        activeOption={lightDropdownOption}
-        callback={({ value }) => ($config.light = value)}
-        genericKey="value"
-        genericName="name"
-    />
+    <span>Active Theme</span>
 </div>
 
-<!--
-    When system is false, "dark" is hidden.
--->
-{#if $config.system}
-    <div class={styles.optionRow}>
-        <span>Dark Theme</span>
+<p>Note: The original theme doesn't support custom accent colors</p>
 
-        <Dropdown
-            options={darkDropdownOptions}
-            activeOption={darkDropdownOption}
-            callback={({ value }) => ($config.dark = value)}
-            genericKey="value"
-            genericName="name"
+<RoundSelect options={Object.entries(Theme)} bind:selected={$config.light} id="theme" />
+
+<!-- Don't render the color accents if the theme doesn't support them -->
+{#if $config.light !== Theme.Original}
+    <!--
+        Accent color
+
+        This is a combination of both the background and accent colors..
+        again they can be found in the enums in src/stores/config.ts
+    -->
+
+    <div class={styles.optionRow} style="margin-top: 1rem;">
+        <span class={themeStyles.accentTitle}>Accent color</span>
+
+        <RoundSelect
+            options={[
+                ["1", AccentSelection.Primary, $config.primary],
+                ["2", AccentSelection.Secondary, $config.secondary]
+            ]}
+            bind:selected={$accent}
+            id="accent"
+            small
         />
     </div>
+
+    <p>
+        Currently selecting the
+        <!-- apply the accent class depending on the selection, this is to show the currently selected color -->
+        <span class={`${$accent === AccentSelection.Primary ? $config.primary : $config.secondary} ${themeStyles.accentLabel}`}>
+            {$accent === AccentSelection.Primary ? "primary" : "secondary"}
+        </span>
+        accent.
+
+        <br />
+
+        Tap the option above to switch between them.
+    </p>
+
+    {#if $accent === AccentSelection.Primary}
+        <RoundSelect options={colors} bind:selected={$config.primary} id="primary" small />
+    {:else}
+        <RoundSelect options={colors} bind:selected={$config.secondary} id="secondary" small />
+    {/if}
+
+    <!--    
+        Background color
+
+        Only a select few colors are available, to add more, go to src/stores/config.ts-
+        and edit the BackgroundColor enum and add the appropriate color variables
+    -->
+    <div class={styles.optionRow}>
+        <span>Background color</span>
+    </div>
+
+    <p>If you're unsure, go with Zinc...</p>
+
+    <RoundSelect options={Object.entries(BackgroundColor)} bind:selected={$config.background} id="background" />
 {/if}
 
-<!--    
-    Background color
-
-    Although all accent colors are supported, why would you use them?
--->
-<div class={styles.optionRow}>
-    <span>Background color</span>
-
-    <Dropdown
-        options={backgroundColorOptions}
-        activeOption={backgroundColorOption}
-        callback={({ value }) => ($config.background = value)}
-        genericKey="value"
-        genericName="name"
-    />
-</div>
-
-<!--
-    Primary accent
-
-    Used throughout the app for pretty much everything.
--->
-<div class={styles.optionRow}>
-    <span>Primary accent</span>
-
-    <Dropdown
-        options={accentColorOptions}
-        activeOption={primaryAccentOption}
-        callback={({ value }) => ($config.primary = value)}
-        genericKey="value"
-        genericName="name"
-    />
-</div>
-
-<!--
-    Secondary accent
-
-    Used for special lessons and that stuff...
--->
-<div class={styles.optionRow}>
-    <span>Secondary accent</span>
-
-    <Dropdown
-        options={accentColorOptions}
-        activeOption={secondaryAccentOption}
-        callback={({ value }) => ($config.secondary = value)}
-        genericKey="value"
-        genericName="name"
-    />
-</div>
+<!-- for spacing -->
+<br />

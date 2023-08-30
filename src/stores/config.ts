@@ -19,6 +19,7 @@ export interface ScheduleParams {
 }
 
 export enum Theme {
+    System = "system",
     Light = "light",
     Dark = "dark",
     Original = "original"

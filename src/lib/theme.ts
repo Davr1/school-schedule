@@ -1,4 +1,4 @@
-import { type Color, type Config, Theme } from "$stores/config";
+import { AccentColor, BackgroundColor, type Color, type Config, Theme } from "$stores/config";
 
 /** A theme according to the system */
 export type SystemTheme = "light" | "dark";
@@ -44,7 +44,7 @@ export function updateClass(theme: Theme): void {
 }
 
 enum AccentType {
-    Primary = "-1",
+    Primary = "",
     Secondary = "-2",
     Background = "-bg"
 }
@@ -59,8 +59,9 @@ enum AccentType {
 function updateAccent(color: Color, type: AccentType) {
     const accent = `${color}${type}`;
 
-    // Find the class on the document root that ends with the accent type and remove if it doesn't match the theme
-    const accentClass = Array.from(document.documentElement.classList).find((className) => className.endsWith(type));
+    // Find the class on the document root that matches an accent color and the optional suffix
+    const possibleAccents = [...Object.values(AccentColor), ...Object.values(BackgroundColor)].map((accent) => `${accent}${type}`);
+    const accentClass = Array.from(document.documentElement.classList).find((className) => possibleAccents.includes(className));
     if (accentClass && accentClass !== accent) {
         document.documentElement.classList.remove(accentClass);
     }
