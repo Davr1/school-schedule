@@ -1,0 +1,41 @@
+@use "../../transitions.scss";
+
+@use "button.scss";
+
+:local(.segmented) {
+    display: flex;
+    gap: 0.5rem;
+
+    width: 100%;
+    height: 2.75rem;
+
+    padding: 0.25rem;
+
+    color: var(--app-foreground);
+    background-color: var(--dimmed-background);
+
+    border-radius: 0.5rem;
+
+    // Light theme also has a box-shadow
+    :root.light & {
+        box-shadow: 0 0.0625rem 0.25rem -0.125rem var(--background-600);
+    }
+
+    box-sizing: border-box;
+
+    :local(.button) {
+        min-height: 2.25rem;
+        height: 2.25rem;
+
+        // Disable the button's box shadow in light theme (but not for active buttons)
+        :root.light &:not(.active) {
+            box-shadow: none;
+        }
+    }
+}
+
+:local(.control) {
+    @extend :local(.button);
+
+    flex: 1;
+}

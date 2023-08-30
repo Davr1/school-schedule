@@ -48,6 +48,7 @@ export const defaultConfig: Config = {
         weekMode: "Current",
         value: "P2.B"
     },
+
     version
 };
 

@@ -3,6 +3,8 @@
 
     import ExpandMore from "@material-design-icons/svg/filled/expand_more.svg?component";
 
+    import styles from "$styles/modules/Controls.module.scss";
+
     type T = $$Generic;
 
     export let options: readonly T[] = [];
@@ -39,15 +41,19 @@
     }
 </script>
 
-<div class="dropdown" class:visible={isVisible}>
-    <button class="dropdown-button styled-button" on:click={handleClick} bind:this={dropdownButton}>
+<div class={styles.dropdown} class:visible={isVisible}>
+    <button class={styles.dropdownButton} on:click={handleClick} bind:this={dropdownButton}>
         {activeOption[genericName]}
         <ExpandMore />
     </button>
     {#if isVisible}
-        <div class="options" style:top style:bottom style:transform style:max-height={maxHeight}>
+        <div class={styles.options} style:top style:bottom style:transform style:max-height={maxHeight}>
             {#each options as option (option[genericKey])}
-                <button class="option" class:active={activeOption[genericKey] === option[genericKey]} on:click={() => callback(option)}>
+                <button
+                    class={styles.option}
+                    class:active={activeOption[genericKey] === option[genericKey]}
+                    on:click={() => callback(option)}
+                >
                     {option[genericName]}
                 </button>
             {/each}

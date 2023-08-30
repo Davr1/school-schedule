@@ -1,6 +1,8 @@
 <script lang="ts">
     import { createEventDispatcher, onDestroy, onMount } from "svelte";
 
+    import styles from "$styles/modules/dimOverlay.module.scss";
+
     /** Whether the overlay is shown or not */
     export let dimmed: boolean;
 
@@ -19,7 +21,7 @@
     onDestroy(() => overlay?.parentNode?.removeChild(overlay));
 </script>
 
-<!-- 
+<!--
 @component
 A dimmed overlay that covers the entire screen.
 Use z-index to place elements above it.
@@ -40,7 +42,7 @@ Usage:
 <div
     bind:this={overlay}
     role="presentation"
-    class="dim-overlay"
+    class={styles.overlay}
     class:dimmed
     on:click={() => {
         // When the overlay is clicked, close it

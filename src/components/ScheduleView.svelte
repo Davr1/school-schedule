@@ -12,6 +12,8 @@
 
     import GridCell from "$components/GridCell.svelte";
 
+    import styles from "$styles/modules/Schedule.module.scss";
+
     const dispatch = createEventDispatcher<{ loadingFinished: null }>();
 
     let scheduleData: BakalariSchedule = [];
@@ -121,28 +123,27 @@
     }
 </script>
 
-<main>
-    <div class="hours">
+<main class={styles.view}>
+    <div class={styles.hours}>
         {#each hours.formattedTime as [from, until], index}
-            <div class="hour-container">
-                <div class="num">{index + 1}</div>
-                <div class="hour">
-                    <span>{from}</span>
-                    -
-                    <span>{until}</span>
-                </div>
+            <div class={styles.hour}>
+                <div class={styles.num}>{index + 1}</div>
+
+                <span>{from} - {until}</span>
             </div>
         {/each}
     </div>
     {#each scheduleData as day}
-        <div class="day-row">
-            <div class="day">
+        <div class={styles.row}>
+            <div class={styles.day}>
                 <span>{day.date[0]}</span>
+
                 <span>{day.date[1]}</span>
             </div>
-            <div class="cell-container">
+
+            <div class={styles.container}>
                 {#each day.subjects as cell}
-                    <div class="cell">
+                    <div class={styles.cell}>
                         {#each cell.sort( (a, b) => (!a.isStandard() || !b.isStandard() ? 0 : a.group.localeCompare(b.group)) ) as subject (subject.id)}
                             <GridCell {subject} on:modalOpen />
                         {/each}

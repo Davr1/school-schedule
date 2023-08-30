@@ -1,0 +1,54 @@
+@use "../../transitions.scss";
+
+:local(.button) {
+    appearance: none;
+    display: inline-flex;
+
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+
+    // min-width: 2.75rem; // Broken for some reason...
+    min-height: 2.75rem;
+
+    padding: 0.25rem 0.5rem;
+
+    color: var(--app-foreground);
+    background-color: var(--dimmed-background);
+
+    border: unset;
+    border-radius: 0.5rem;
+
+    // Light theme also has a box-shadow
+    :root.light & {
+        box-shadow: 0 0.0625rem 0.25rem -0.125rem var(--background-600);
+    }
+
+    font-size: 1.2rem;
+    text-align: center;
+
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+
+    @include transitions.all((background-color, color, box-shadow), 150ms, ease-out);
+
+    box-sizing: border-box;
+
+    &:hover {
+        background-color: var(--element-background);
+        color: var(--active-foreground);
+    }
+
+    // Active style (used by dropdowns and segmented controls)
+    &.active {
+        background-color: var(--active-background);
+    }
+
+    // Icons inside buttons
+    svg {
+        width: 1.8rem;
+        height: 1.8rem;
+    }
+}

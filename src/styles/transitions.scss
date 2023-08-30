@@ -1,0 +1,22 @@
+@use "sass:list";
+
+/// Mixin for generating a transition list..
+///
+/// Use this for making a list of transitions with the same duration and timing function.
+///
+/// @param $props - A list of properties to transition
+/// @param $duration - The duration of the transition
+/// @param $timing - The timing function of the transition (default: null)
+///
+/// @example
+///     @include transitions.all((background-color, color), 150ms, ease-out); // Result....
+///     transition: background-color 150ms ease-out, color 150ms ease-out;
+@mixin all($props, $duration, $timing: null) {
+    $list: ();
+
+    @each $prop in $props {
+        $list: append($list, $prop $duration $timing, comma);
+    }
+
+    transition: $list;
+}

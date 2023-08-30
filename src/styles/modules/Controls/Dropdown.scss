@@ -1,0 +1,84 @@
+@use "button.scss";
+
+// can't use just .button since I'm extending it...
+:local(.dropdownButton) {
+    @extend :local(.button);
+
+    // from .dropdown-button (i didn't include styled-button cuz it looked useless)
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 0 0.5rem 0 0.8rem;
+
+    width: 100%;
+    height: 100%;
+
+    text-align: center;
+    overflow: hidden;
+}
+
+:local(.dropdown) {
+    position: relative;
+
+    &.visible svg {
+        transform: rotate(-180deg);
+    }
+}
+
+:local(.options) {
+    position: absolute;
+    display: flex;
+
+    left: 0;
+
+    flex-direction: column;
+    gap: 0.5rem;
+    overflow-y: auto;
+
+    width: max-content;
+    min-width: max(10.5rem, 100%);
+
+    padding: 0.5rem;
+
+    background-color: var(--dimmed-background);
+    border-radius: 0.6rem;
+
+    box-shadow: 0 0.0625rem 0.25rem -0.125rem #000;
+
+    white-space: pre;
+
+    box-sizing: border-box;
+    z-index: 2;
+
+    // Disable the button's box shadow in light theme (but not for active buttons)
+    :root.light & :local(.button):not(.active) {
+        box-shadow: none;
+    }
+
+    // scroll bars
+    scrollbar-width: thin;
+
+    &::-webkit-scrollbar {
+        background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: var(--element-background);
+    }
+}
+
+:local(.option) {
+    // extend from .button as well
+    @extend :local(.button);
+
+    width: 100%;
+    height: 2.6rem;
+    flex: 0 0 auto;
+
+    padding: 0 0.7rem;
+
+    border-radius: 0.4rem;
+
+    text-align: left;
+}

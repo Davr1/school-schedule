@@ -5,6 +5,8 @@
     import DimOverlay from "$components/DimOverlay.svelte";
     import Content from "$components/SubjectInfo/Content.svelte";
 
+    import styles from "$styles/modules/Schedule.module.scss";
+
     export let position: ReturnType<typeof getPosition>;
     export let subject: Subject;
 
@@ -19,7 +21,7 @@
 </script>
 
 <div
-    id="subject-info"
+    class={styles.info}
     style:left={leftOffset}
     style:right={rightOffset}
     style:top={topOffset}

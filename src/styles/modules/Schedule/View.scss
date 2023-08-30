@@ -1,0 +1,25 @@
+:local(.view) {
+    display: grid;
+
+    height: 100%;
+    width: 100%;
+
+    overflow: auto hidden;
+
+    grid-template-rows: 3.4rem repeat(5, 1fr);
+    grid-auto-flow: column;
+
+    scrollbar-width: thin;
+
+    @media (max-aspect-ratio: 3/4) {
+        height: auto;
+    }
+
+    @media (min-aspect-ratio: 2/5) and (max-aspect-ratio: 3/2) {
+        height: auto;
+    }
+
+    @media (min-aspect-ratio: 3/1) {
+        max-width: 200vh;
+    }
+}

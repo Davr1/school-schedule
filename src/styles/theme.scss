@@ -1,0 +1,107 @@
+@use "sass:color";
+@use "sass:map";
+@use "colors.scss" as *;
+
+:root.light {
+    --app-background: #fff;
+    --app-foreground: var(--background-600);
+
+    --dimmed-background: var(--background-100);
+    --dimmed-foreground: var(--background-400);
+
+    --element-background: var(--background-200);
+
+    --active-background: #fff;
+    --active-foreground: var(--background-950);
+
+    --accent-primary: var(--primary-500);
+    --accent-secondary: var(--secondary-500);
+
+    --hover-accent-primary: var(--primary-600);
+    --hover-accent-secondary: var(--secondary-600);
+}
+
+:root.dark {
+    --app-background: var(--background-900);
+    --app-foreground: var(--background-200);
+
+    --dimmed-background: var(--background-700);
+    --dimmed-foreground: var(--background-400);
+
+    --element-background: var(--background-600);
+
+    --active-background: var(--background-500);
+    --active-foreground: var(--background-50);
+
+    --accent-primary: var(--primary-500);
+    --accent-secondary: var(--secondary-500);
+
+    --hover-accent-primary: var(--primary-400);
+    --hover-accent-secondary: var(--secondary-400);
+
+    color-scheme: dark;
+}
+
+:root.original {
+    --app-background: #21262e;
+    --app-foreground: #c9d1d9;
+
+    --dimmed-background: #31383f;
+    --dimmed-foreground: #{color.mix(#c9d1d9, #000, 75%)}; // same as: filter: brightness(75%);
+
+    --element-background: #{color.mix(#fff, #31383f, 5%)}; // same as: filter: brightness(1.05);
+
+    --active-background: #434c56;
+    --active-foreground: #fff;
+
+    --accent-primary: #1f6feb;
+    --accent-secondary: #2dac45;
+
+    --hover-accent-primary: #{color.mix(#fff, #1f6feb, 10%)}; // same as: filter: brightness(1.1);
+    --hover-accent-secondary: #{color.mix(#fff, #2dac45, 10%)}; // same as: filter: brightness(1.1);
+
+    color-scheme: dark;
+}
+
+// Generate the CSS variables for the accent colors
+// This is used in the theme switcher
+$backgrounds: ("slate", "gray", "zinc", "neutral", "stone");
+
+$background-shades: ("50", "100", "200", "400", "500", "600", "700", "900", "950");
+$accent-shades: ("400", "500", "600");
+
+@each $color, $shades in $colors {
+    // Generate the background shades if it's in the allow list
+    @if index($backgrounds, $color) {
+        .#{$color}-bg {
+            @each $shade, $value in $shades {
+                // Only proceed if it's the right shade
+                @if index($background-shades, $shade) {
+                    --background-#{$shade}: #{$value};
+                }
+            }
+        }
+    }
+
+    // Generate the accent colors
+
+    // As a primary color
+    .#{$color} {
+        @each $shade, $value in $shades {
+            // Only generate the shades in the allow list
+            @if index($accent-shades, $shade) {
+                --primary-#{$shade}: #{$value};
+            }
+        }
+    }
+
+    // As a secondary color
+    .#{$color}-2 {
+        @each $shade, $value in $shades {
+            // Only generate the shades in the allow list
+            @if index($accent-shades, $shade) {
+                --secondary-#{$shade}: #{$value};
+            }
+        }
+    }
+}

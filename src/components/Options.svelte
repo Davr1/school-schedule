@@ -1,7 +1,8 @@
 <script lang="ts">
     import type { ComponentProps } from "svelte";
+    import { writable } from "svelte/store";
 
-    import { config, type ScheduleMode, scheduleParams, updateScheduleParams } from "$stores/config";
+    import { config, scheduleParams, updateScheduleParams, type ScheduleMode, type WeekMode } from "$stores/config";
     import { fetchCount } from "$stores/main";
     import { scheduleMetadata, sheduleModes } from "$stores/static";
 
@@ -9,7 +10,12 @@
     import Refresh from "@material-design-icons/svg/filled/refresh.svg?component";
 
     import AdvancedSettingsModal from "$components/AdvancedSettingsModal.svelte";
+    import Button from "$components/Controls/Button.svelte";
+    import Control from "$components/Controls/Control.svelte";
+    import Segmented from "$components/Controls/Segmented.svelte";
     import Dropdown from "$components/Dropdown.svelte";
+
+    import styles from "$styles/modules/Options.module.scss";
 
     /** Whether the advanced settings modal is visible, false by default */
     let advancedSettingsModal = false;
@@ -57,24 +63,27 @@
     let valuesDropdown: ComponentProps<Dropdown<ValuesDropdown>>;
     $: valuesDropdown = getDropdownValues($scheduleParams.scheduleMode);
 
-    function setMode(weekMode: "Permanent" | "Current" | "Next") {
-        updateScheduleParams({ weekMode });
-    }
+    // NOTE: Consider changing this. This is kinda dumb....
+    let scheduleMode = writable<WeekMode>($scheduleParams.weekMode);
+    scheduleMode.subscribe((weekMode) => updateScheduleParams({ weekMode }));
 </script>
 
-<nav>
+<nav class={styles.options}>
     <Dropdown {...modeDropdown} />
     <Dropdown {...valuesDropdown} />
-    <div id="weekButtons">
-        <button class:active={$scheduleParams.weekMode === "Permanent"} on:click={() => setMode("Permanent")}>Permanent</button>
-        <button class:active={$scheduleParams.weekMode === "Current"} on:click={() => setMode("Current")}>Current</button>
-        <button class:active={$scheduleParams.weekMode === "Next"} on:click={() => setMode("Next")}>Next</button>
-        <button on:click={() => (advancedSettingsModal = true)}><MoreHoriz /></button>
-    </div>
-    <button id="reloadButton" class="styled-button" on:click={() => updateScheduleParams()}>
+
+    <Segmented bind:selection={scheduleMode} id="weekButtons">
+        <Control name="Permanent" />
+        <Control name="Current" />
+        <Control name="Next" />
+
+        <Button on:click={() => (advancedSettingsModal = true)}><MoreHoriz /></Button>
+    </Segmented>
+
+    <Button id="reloadButton" on:click={() => updateScheduleParams()}>
         <Refresh />
         <span id="info">{$fetchCount} / {maxFetchCount} fetched</span>
-    </button>
+    </Button>
 </nav>
 
 <AdvancedSettingsModal bind:visible={advancedSettingsModal} />

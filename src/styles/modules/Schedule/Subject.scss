@@ -1,0 +1,98 @@
+@use "../../transitions.scss";
+
+:local(.subject) {
+    position: relative;
+    display: flex;
+
+    width: 100%;
+    min-height: 0;
+
+    flex-direction: column;
+    flex: 1 1 auto;
+
+    background-color: var(--dimmed-background);
+    border-radius: 0.3rem;
+
+    box-shadow: 0 0.0625rem 0.25rem -0.125rem #000;
+
+    @include transitions.all((background-color, transform), ease-out, 200ms);
+
+    &:only-child {
+        min-height: 13.5vh;
+    }
+
+    &:not(:last-of-type) {
+        margin-bottom: 0.6rem;
+    }
+
+    &.changed {
+        --subject-hover: var(--hover-accent-primary);
+        background: var(--accent-primary);
+        color: #fff;
+    }
+
+    &.special {
+        --subject-hover: var(--hover-accent-secondary);
+        background: var(--accent-secondary);
+        color: #fff;
+    }
+
+    &.floating {
+        z-index: 2;
+        cursor: default; // i don't use pointer-events: none; because it breaks the close button
+    }
+
+    // I added this so there's no pointer on removed subjects (cuz you can't click them anyway)
+    &.active {
+        cursor: pointer;
+    }
+
+    // Only apply the hover effect on desktop if there's more than 1 cell
+    @media (pointer: fine) {
+        :local(.cell):not(:only-child) > &.active:is(:hover, .floating) {
+            // Use the --subject-hover variable when it's defined, fallback to the default hover color
+            background-color: var(--subject-hover, var(--element-background));
+
+            transform: scale(1.023);
+        }
+    }
+}
+
+:local(.content) {
+    display: flex;
+
+    flex-direction: column;
+    justify-content: space-between;
+
+    height: 100%;
+    padding: 0.2rem;
+
+    box-sizing: border-box;
+
+    user-select: none;
+
+    .top {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .middle {
+        margin: auto;
+
+        font-size: 1.45rem;
+        font-weight: 500;
+        text-align: center;
+        line-height: 0;
+
+        @media (max-aspect-ratio: 3/4) {
+            // Only applies when there's only one special subject
+            :local(.cell):only-child .subject.special & {
+                margin-left: 3rem;
+            }
+        }
+    }
+
+    .bottom {
+        text-align: center;
+    }
+}
