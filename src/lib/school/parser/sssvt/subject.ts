@@ -8,7 +8,7 @@ import { textContent } from "domutils";
  * @param lesson The lesson to get the subject is happening in
  * @returns The subject abbreviation
  */
-function getSubject(lesson: AnyNode) {
+function getSubject(lesson: AnyNode): string | null {
     // Get the subject abbreviation from the lesson
     const subject = selectOne("strong", lesson);
 

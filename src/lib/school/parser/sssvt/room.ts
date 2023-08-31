@@ -9,7 +9,7 @@ import { textContent } from "domutils";
  * @returns The room string (can't be a number cuz some rooms have letters in them)
  */
 function getRoom(lesson: AnyNode): string | null {
-    // The lesson number is conveniently in an <a> tag
+    // The room number is conveniently in an <a> tag
     const link = selectOne("[href*='/room/']", lesson);
 
     // If there's no link, return null

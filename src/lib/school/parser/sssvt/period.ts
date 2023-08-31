@@ -4,6 +4,8 @@ import lesson, { type ChangedGroupedLesson, type ChangedLesson } from "$lib/scho
 
 export type ChangedPeriod = readonly [ChangedLesson] | readonly [ChangedGroupedLesson, ChangedGroupedLesson];
 
+export type Period = ChangedPeriod | null;
+
 /**
  * Parse data for the given period
  *
@@ -11,7 +13,7 @@ export type ChangedPeriod = readonly [ChangedLesson] | readonly [ChangedGroupedL
  * @param lessonNode The 1st lesson to parse
  * @param split The lessons from the other group
  */
-function period(lessonNode: AnyNode, split: AnyNode[]): ChangedPeriod | null {
+function period(lessonNode: AnyNode, split: AnyNode[]): Period {
     // Get the 1st lesson from the period
     const lesson1 = lesson(lessonNode);
 

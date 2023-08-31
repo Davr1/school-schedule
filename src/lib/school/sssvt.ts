@@ -1,7 +1,4 @@
-import type { ChangedPeriod } from "$lib/school/parser/sssvt/period";
-
-/** All of the classes in the school with their substitutions for the day */
-type SSSVTSubstitutions = Record<string, (ChangedPeriod | null)[]>;
+import type { Period } from "$lib/school/parser/sssvt/period";
 
 /**
  * SSSVT subsitution schedule
@@ -10,14 +7,14 @@ type SSSVTSubstitutions = Record<string, (ChangedPeriod | null)[]>;
  *
  * You won't be able to get the whole schedule from this. But you can patch the static schedule with this.
  *
- * If you wan't to parse the schedule from HTML, use the static `parse` method from `SSSVTParser` instead.
+ * If you wan't to parse the schedule from HTML, use the `parse` function from `$lib/school/parser/sssvt`
  */
 class SSSVT {
     /** The date of the schedule in the following format: YYYY-MM-DD */
     readonly date: string;
 
     /** All of the classes in the school with their substitutions for the day */
-    readonly classes: SSSVTSubstitutions;
+    readonly classes: Record<string, Period[]>;
 
     /**
      * Create a new SSSVT schedule
@@ -25,7 +22,7 @@ class SSSVT {
      * @param date The date of the schedule
      * @param classes The classes with their substitutions
      */
-    constructor(date: string, classes: SSSVTSubstitutions) {
+    constructor(date: string, classes: Record<string, Period[]>) {
         this.date = date;
         this.classes = classes;
     }

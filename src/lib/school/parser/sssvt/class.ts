@@ -2,14 +2,15 @@ import selectAll from "css-select";
 import { type AnyNode, hasChildren } from "domhandler";
 import { textContent } from "domutils";
 
-import period from "$lib/school/parser/sssvt/period";
+import period, { type Period } from "$lib/school/parser/sssvt/period";
 
 /**
  * Parse lesson substitutions for the given row (class)
  *
  * @param row The row to parse
+ * @returns The parsed lesson substitutions along with the class name as a tuple
  */
-function schoolClass(row: AnyNode) {
+function schoolClass(row: AnyNode): readonly [string, Period[]] | undefined {
     // For type safery, make sure this node has children and that there's a row after it
     if (!hasChildren(row) || !row.next) return;
 
@@ -27,7 +28,7 @@ function schoolClass(row: AnyNode) {
     const split = selectAll("td:not(.heightfix)", row.next);
 
     // Loop through all the periods and parse them
-    return { name, substitutions: lessons.map((node) => period(node, split)) };
+    return [name, lessons.map((node) => period(node, split))] as const;
 }
 
 export default schoolClass;

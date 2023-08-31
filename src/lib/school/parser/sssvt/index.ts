@@ -11,7 +11,7 @@ import SSSVT from "$lib/school/sssvt";
  * @param html The html to scrape
  * @returns A SSSVT class with the scraped data
  */
-async function scrape(html: string) {
+async function scrape(html: string): Promise<SSSVT | null> {
     // Parse the html into a dom
     const scheduleDom = await dom(html);
 
@@ -23,7 +23,7 @@ async function scrape(html: string) {
     const subsitutions = classNodes.map(schoolClass).filter(Boolean) as NonNullable<ReturnType<typeof schoolClass>>[];
 
     // Turn the array into an object
-    const classes = Object.fromEntries(subsitutions.map(({ name, substitutions }) => [name, substitutions]));
+    const classes = Object.fromEntries(subsitutions);
 
     // Get the date of the schedule
     const date = getDate(scheduleDom);
