@@ -2,7 +2,7 @@ import selectAll from "css-select";
 import { type AnyNode, hasChildren } from "domhandler";
 import { textContent } from "domutils";
 
-import period from "$lib/parser/scrape/period";
+import period from "$lib/school/parser/sssvt/period";
 
 /**
  * Parse lesson substitutions for the given row (class)
@@ -27,7 +27,7 @@ function schoolClass(row: AnyNode) {
     const split = selectAll("td:not(.heightfix)", row.next);
 
     // Loop through all the periods and parse them
-    return lessons.map((node, i) => period(node, i, split));
+    return { name, substitutions: lessons.map((node) => period(node, split)) };
 }
 
 export default schoolClass;

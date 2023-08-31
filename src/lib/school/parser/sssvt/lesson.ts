@@ -1,17 +1,32 @@
 import type { AnyNode } from "domhandler";
 import { textContent } from "domutils";
 
-import getGroup from "$lib/parser/scrape/group";
-import getRoom from "$lib/parser/scrape/room";
-import getSubject from "$lib/parser/scrape/subject";
-import getTeacher from "$lib/parser/scrape/teacher";
+import getGroup from "$lib/school/parser/sssvt/group";
+import getRoom from "$lib/school/parser/sssvt/room";
+import getSubject from "$lib/school/parser/sssvt/subject";
+import getTeacher from "$lib/school/parser/sssvt/teacher";
+
+export interface CancelledLesson {
+    subject: null;
+    group: number | null;
+}
+
+export interface SubstitutedLesson {
+    subject: string;
+    group: number | null;
+    room: string | null;
+    teacher: string | null;
+}
+
+export type ChangedLesson = CancelledLesson | SubstitutedLesson;
+export type ChangedGroupedLesson = ChangedLesson & { group: number };
 
 /**
  * Parse data about a lesson substitution
  *
  * @param lesson The lesson to parse
  */
-function lesson(lesson: AnyNode) {
+function lesson(lesson: AnyNode): ChangedLesson | undefined {
     // Check if the lesson has any text inside, if not, return
     if (!textContent(lesson).trim()) return;
 
@@ -23,7 +38,7 @@ function lesson(lesson: AnyNode) {
 
     // If there's no subject, it means that the lesson is cancelled
     // Note: Only check for null because the value can be an empty string
-    if (subject === null) return null;
+    if (subject === null) return { subject, group };
 
     // Find the room the lesson is in
     const room = getRoom(lesson);
