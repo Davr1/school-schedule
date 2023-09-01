@@ -77,7 +77,6 @@ if (browser) {
     const localThemeConfig = localStorage.getItem("theme");
 
     try {
-        console.log(localThemeConfig);
         if (localThemeConfig) Object.assign(themeConfig, JSON.parse(localThemeConfig));
     } catch (e) {
         console.error("Error parsing theme config", e);

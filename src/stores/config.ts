@@ -46,7 +46,7 @@ export const defaultConfig: Config = {
     scheduleParams: {
         scheduleMode: "Class",
         weekMode: "Current",
-        value: "P2.B"
+        value: "P3.B"
     },
 
     version
