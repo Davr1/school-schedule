@@ -24,10 +24,6 @@ export async function GET({ params }) {
         return new Response("Invalid date", { status: 400 });
     }
 
-    // NOTE: DELETE THIS. THIS IS TEMPORARY
-    // Block requests for the holidays
-    if (month >= 7) return new Response("Sorry. I had to do this", { status: 400 });
-
     // Validate the date
     // This is to prevent sending invalid data to the school's server
     // There's no school over the weekend so don't send a request lmaoo

@@ -12,4 +12,4 @@ services:
             - "3000:3000"
         volumes:
             # This prevents the cache from being invalidated when the Dockerfile changes
-            - ../data.bson:/app/data.bson
+            - ../cache:/app/cache

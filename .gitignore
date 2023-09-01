@@ -34,7 +34,7 @@ vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
 # Cache file
-data.bson
+cache/
 
 # Generated files
 src/styles/colors.scss
