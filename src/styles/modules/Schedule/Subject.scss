@@ -37,19 +37,19 @@
         color: #fff;
     }
 
-    &.floating {
-        z-index: 2;
-        cursor: default; // i don't use pointer-events: none; because it breaks the close button
-    }
-
     // I added this so there's no pointer on removed subjects (cuz you can't click them anyway)
     &.active {
         cursor: pointer;
     }
 
+    &.floating {
+        z-index: 2;
+        cursor: default; // i don't use pointer-events: none; because it breaks the close button
+    }
+
     // Only apply the hover effect on desktop if there's more than 1 cell
     @media (pointer: fine) {
-        :local(.cell):not(:only-child) > &.active:is(:hover, .floating) {
+        :local(.cell):not(:only-child) > &.active:hover:not(.floating) {
             // Use the --subject-hover variable when it's defined, fallback to the default hover color
             background-color: var(--subject-hover, var(--element-background));
 
