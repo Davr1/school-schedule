@@ -82,8 +82,6 @@ if (browser) {
     } catch (e) {
         console.error("Error parsing theme config", e);
     }
-
-    console.log(themeConfig);
 }
 
 const theme = writable(themeConfig);

@@ -39,7 +39,7 @@ try {
 }
 
 export const defaultConfig: Config = {
-    useWeb: false,
+    useWeb: true,
     sundayOverride: true,
     loadscreen: true,
     cache: true,
