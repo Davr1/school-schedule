@@ -7,7 +7,7 @@ import type { Period } from "$lib/school/parser/sssvt/period";
  *
  * You won't be able to get the whole schedule from this. But you can patch the static schedule with this.
  *
- * If you wan't to parse the schedule from HTML, use the `parse` function from `$lib/school/parser/sssvt`
+ * If you want to parse the schedule from HTML, use the `scrapeSSSVT` function from `$lib/school/parser/sssvt`
  */
 class SSSVT {
     /** The date of the schedule in the following format: YYYY-MM-DD */

@@ -11,7 +11,7 @@ import SSSVT from "$lib/school/sssvt";
  * @param html The html to scrape
  * @returns A SSSVT class with the scraped data
  */
-async function scrape(html: string): Promise<SSSVT | null> {
+async function scrapeSSSVT(html: string): Promise<SSSVT | null> {
     // Parse the html into a dom
     const scheduleDom = await dom(html);
 
@@ -35,4 +35,4 @@ async function scrape(html: string): Promise<SSSVT | null> {
     return new SSSVT(date, classes);
 }
 
-export default scrape;
+export default scrapeSSSVT;
