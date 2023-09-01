@@ -4,12 +4,12 @@
     "version": "2.1.0",
     "type": "module",
     "scripts": {
-        "dev": "vite dev",
-        "build": "vite build",
+        "dev": "pnpm prebuild && vite dev",
+        "build": "pnpm prebuild && vite build",
         "preview": "vite preview",
         "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
         "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-        "prepare": "vite-node scripts/colors.ts"
+        "prebuild": "vite-node scripts/colors.ts"
     },
     "devDependencies": {
         "@poppanator/sveltekit-svg": "^4.0.0",

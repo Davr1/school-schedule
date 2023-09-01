@@ -1,20 +1,30 @@
-# Use Node 20 (based on Alpine Linux)
+# Use Node 20 
 # This is used for both the builder and the runner
-FROM node:20-alpine as base
+FROM node:20-slim as base
 
-# The builder
-# This install all packages and builds the app using vite
-FROM base as builder
+# pnpm setup ig
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+
+RUN corepack enable
 
 # Set the working directory to /app
 WORKDIR /app
 
 # Copy the package.json and package-lock.json
 # Note: I'm doing this before copying the rest of the files so Docker can cache the node_modules
-COPY package*.json ./
+COPY package.json .
+COPY pnpm-lock.yaml .
+
+FROM base AS prod-deps
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile
+
+# The builder
+# This install all packages and builds the app using vite
+FROM base as builder
 
 # Install all dependencies
-RUN npm ci
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 
 # Copy the rest of the files
 # See .dockerignore for what is not copied
@@ -28,23 +38,17 @@ ENV PROXY=${PROXY}
 ENV HOLIDAYS=${HOLIDAYS}
 
 # Run a check before building
-RUN npm run check
+RUN pnpm check
 
 # Build the app
-RUN npm run build
+RUN pnpm build
 
 # The runner
 # This starts the node server using the app we built in the builder
 FROM base as runner
 
-# Set the working directory to /app
-WORKDIR /app
-
-# Copy the package.json and package-lock.json
-COPY package*.json ./
-
-# Install the production dependencies
-RUN npm ci --only=production
+# Get the production dependencies (idk why it's not installed here, just following pnpm docs)
+COPY --from=prod-deps /app/node_modules /app/node_modules
 
 # Copy the built app from the builder
 COPY --from=builder /app/build .
