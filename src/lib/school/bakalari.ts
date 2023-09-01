@@ -1,11 +1,15 @@
 /** Days of the week... */
 export const enum Day {
+    Sunday, // Honestly this is here just for the 0 index...
     Monday,
     Tuesday,
     Wednesday,
     Thursday,
-    Friday
+    Friday,
+    Saturday // Not needed but whatever
 }
+
+type WeekDay = Day.Monday | Day.Tuesday | Day.Wednesday | Day.Thursday | Day.Friday;
 
 /**
  * Bakalari schedule
@@ -31,7 +35,7 @@ class Bakalari {
         this.schedule = schedule;
     }
 
-    private patches: Record<Day, boolean> = {
+    private patches: Record<WeekDay, boolean> = {
         [Day.Monday]: false,
         [Day.Tuesday]: false,
         [Day.Wednesday]: false,
