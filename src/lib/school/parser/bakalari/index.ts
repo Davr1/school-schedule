@@ -22,7 +22,7 @@ async function scrapeBakalari(html: string): Promise<Bakalari> {
     const permanent = start === null && end === null;
 
     // Parse the schedule
-    const schedule = parse(scheduleDom, value);
+    const schedule = parse(scheduleDom);
 
     // Return the parsed data as a Bakalari class
     return new Bakalari(type, value, permanent, { start, end }, schedule);
