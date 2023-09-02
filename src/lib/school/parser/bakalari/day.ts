@@ -8,12 +8,13 @@ import { textContent } from "domutils";
  * @param row The row to parse
  * @returns The day (from the enum)
  */
-function getDay(node: AnyNode) {
-    const dayNode = selectOne(".bk-day-date", node);
-
-    if (!dayNode) throw new Error("Could not find the day node");
-
+function getDay(node: AnyNode): Date | null {
+    const dayNode = selectOne(".bk-day-date", node)!;
     const text = textContent(dayNode);
+
+    // Return null if the text is empty (for permanent schedules)
+    if (!text) return null;
+
     const [day, month] = text.split("/").map(Number);
 
     const now = new Date();

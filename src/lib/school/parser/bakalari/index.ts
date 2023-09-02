@@ -1,6 +1,7 @@
 import Bakalari from "$lib/school/bakalari";
 import getDateRange from "$lib/school/parser/bakalari/date";
 import parse from "$lib/school/parser/bakalari/parse";
+import getValue from "$lib/school/parser/bakalari/type";
 import dom from "$lib/school/parser/dom";
 
 /**
@@ -14,17 +15,17 @@ async function scrapeBakalari(html: string): Promise<Bakalari> {
     const scheduleDom = await dom(html);
 
     // Get the date of the schedule
-    const [first, last] = getDateRange(scheduleDom);
+    const [start, end] = getDateRange(scheduleDom);
 
-    console.log(first, last);
-    // If there's no date, return null
-    // if (!date) return null;
+    // Get the type and value of the schedule
+    const { type, value } = getValue(scheduleDom);
+    const permanent = start === null && end === null;
 
     // Parse the schedule
-    const schedule = parse(scheduleDom);
+    const schedule = parse(scheduleDom, value);
 
     // Return the parsed data as a Bakalari class
-    return new Bakalari(first, last, schedule);
+    return new Bakalari(type, value, permanent, { start, end }, schedule);
 }
 
 export default scrapeBakalari;

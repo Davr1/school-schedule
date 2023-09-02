@@ -6,10 +6,10 @@ import type { BakalariData } from "$lib/school/parser/bakalari/data";
 
 interface Teacher {
     /** Abbreviation of the teacher's name */
-    abbreviation: string;
+    abbreviation: string | null;
 
     /** Full name of the teacher */
-    name: string;
+    name: string | null;
 }
 
 /**
@@ -22,7 +22,7 @@ interface Teacher {
 function getTeacher(lesson: AnyNode, data: BakalariData): Teacher {
     // Get the abbreviation from the node
     const abbreviationNode = selectOne(".bottom > span", lesson)!;
-    const abbreviation = textContent(abbreviationNode).trim();
+    const abbreviation = textContent(abbreviationNode).trim() || null;
 
     // Parse the full name from the data
     const name = data.teacher;

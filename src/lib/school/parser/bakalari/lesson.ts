@@ -5,6 +5,12 @@ import getGroup from "$lib/school/parser/bakalari/group";
 import getSubject from "$lib/school/parser/bakalari/subject";
 import getTeacher from "$lib/school/parser/bakalari/teacher";
 
+/**
+ * Parse the lesson from the given node
+ *
+ * @param node The node to parse
+ * @returns The parsed lesson
+ */
 function parseLesson(node: AnyNode) {
     // Make sure the node is an element
     if (!isTag(node)) return null;

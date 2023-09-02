@@ -3,7 +3,7 @@ import type { Element } from "domhandler";
 export interface BakalariData {
     type: string;
     subjecttext: string;
-    teacher: string;
+    teacher: string | null;
     room: string;
     group: string;
     theme: string;
