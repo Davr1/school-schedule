@@ -1,7 +1,9 @@
 import type { Element } from "domhandler";
 
+import type { LessonType } from "$lib/school/parser/bakalari/lesson";
+
 export interface BakalariData {
-    type: string;
+    type: LessonType;
     subjecttext: string;
     teacher: string | null;
     room: string;
@@ -12,7 +14,10 @@ export interface BakalariData {
     homeworks: unknown;
     absencetext: unknown;
     hasAbsent: boolean;
+    absentinfo: string | null;
     absentInfoText: string;
+    removedinfo: string | null;
+    InfoAbsentName: string | null;
 }
 
 /**
