@@ -6,6 +6,7 @@ import type { BakalariData } from "$lib/school/parser/bakalari/data";
 import getGroups from "$lib/school/parser/bakalari/group";
 import getSubject from "$lib/school/parser/bakalari/subject";
 import getTeacher from "$lib/school/parser/bakalari/teacher";
+import getTopic from "$lib/school/parser/bakalari/topic";
 
 /**
  * Parse a normal lesson from a node
@@ -15,22 +16,12 @@ import getTeacher from "$lib/school/parser/bakalari/teacher";
  * @returns The parsed lesson
  */
 function parseNormal(node: Element, data: BakalariData): NormalLesson {
-    // Get the subject name
+    // I'm not gonna add comments everywhere... just read the names
     const subject = getSubject(node, data);
-
-    // Get the teacher's name
     const teacher = getTeacher(node, data);
-
-    // The room in which the lesson is happening
-    const room = data.room;
-
-    // The topic of the lesson (replace falsy values with null)
-    const topic = data.theme || null;
-
-    // The group of the lesson
+    const { room } = data;
     const groups = getGroups(data);
-
-    // Change info
+    const topic = getTopic(node, data);
     const change = getChange(node, data);
 
     return new NormalLesson(subject, teacher, room, groups, topic, change);

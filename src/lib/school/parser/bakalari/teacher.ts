@@ -24,8 +24,8 @@ function getTeacher(lesson: AnyNode, data: BakalariData): Teacher {
     const abbreviationNode = selectOne(".bottom > span", lesson)!;
     const abbreviation = textContent(abbreviationNode).trim() || null;
 
-    // Parse the full name from the data
-    const name = data.teacher;
+    // Parse the full name from the data (make sure there's only one value)
+    const name = data.teacher?.split(",")[0].trim() ?? null;
 
     return { abbreviation, name };
 }

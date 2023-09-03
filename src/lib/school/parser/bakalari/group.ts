@@ -9,7 +9,7 @@ import type { BakalariData } from "$lib/school/parser/bakalari/data";
  */
 function getGroups(data: BakalariData): Group[] {
     // Parse the group from the data
-    const groups = data.group.split(", ");
+    const groups = data.group.split(",");
 
     // Return each group (and filter out values that are both null)
     return groups
