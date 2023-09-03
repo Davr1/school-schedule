@@ -1,9 +1,9 @@
 import type { Element } from "domhandler";
 
-import type { LessonType } from "$lib/school/parser/bakalari/lesson";
+import type { InternalLessonType } from "$lib/school/parser/bakalari/lesson";
 
 export interface BakalariData {
-    type: LessonType;
+    type: InternalLessonType;
     subjecttext: string;
     teacher: string | null;
     room: string;

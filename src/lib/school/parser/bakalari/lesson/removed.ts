@@ -1,3 +1,4 @@
+import { RemovedLesson } from "$lib/school/bakalari/lesson";
 import type { BakalariData } from "$lib/school/parser/bakalari/data";
 
 /**
@@ -6,11 +7,9 @@ import type { BakalariData } from "$lib/school/parser/bakalari/data";
  * @param data The data attribute of the node
  * @returns The parsed lesson
  */
-function parseRemoved(data: BakalariData) {
+function parseRemoved(data: BakalariData): RemovedLesson {
     // Just return the info about the removal...
-    return {
-        change: data.removedinfo! // ! for types....
-    };
+    return new RemovedLesson(data.removedinfo!);
 }
 
 export default parseRemoved;

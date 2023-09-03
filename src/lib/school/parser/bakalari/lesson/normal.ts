@@ -1,8 +1,9 @@
 import type { Element } from "domhandler";
 
+import { NormalLesson } from "$lib/school/bakalari/lesson";
 import getChange from "$lib/school/parser/bakalari/change";
 import type { BakalariData } from "$lib/school/parser/bakalari/data";
-import getGroup from "$lib/school/parser/bakalari/group";
+import getGroups from "$lib/school/parser/bakalari/group";
 import getSubject from "$lib/school/parser/bakalari/subject";
 import getTeacher from "$lib/school/parser/bakalari/teacher";
 
@@ -13,7 +14,7 @@ import getTeacher from "$lib/school/parser/bakalari/teacher";
  * @param data The data attribute of the node
  * @returns The parsed lesson
  */
-function parseNormal(node: Element, data: BakalariData) {
+function parseNormal(node: Element, data: BakalariData): NormalLesson {
     // Get the subject name
     const subject = getSubject(node, data);
 
@@ -27,19 +28,12 @@ function parseNormal(node: Element, data: BakalariData) {
     const topic = data.theme || null;
 
     // The group of the lesson
-    const group = getGroup(data);
+    const groups = getGroups(data);
 
     // Change info
     const change = getChange(node, data);
 
-    return {
-        subject,
-        teacher,
-        room,
-        topic,
-        group,
-        change
-    };
+    return new NormalLesson(subject, teacher, room, groups, topic, change);
 }
 
 export default parseNormal;

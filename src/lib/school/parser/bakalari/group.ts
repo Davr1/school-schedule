@@ -1,12 +1,5 @@
+import type { Group } from "$lib/school/bakalari/lesson";
 import type { BakalariData } from "$lib/school/parser/bakalari/data";
-
-interface Group {
-    /** The group number, null if the whole class is targetted */
-    number: number | null;
-
-    /** The class name, null if the schedule type is class */
-    class: string | null;
-}
 
 /**
  * Get the group number from the data attribute of the lesson
@@ -14,21 +7,26 @@ interface Group {
  * @param data The data attribute of the lesson
  * @returns The group
  */
-function getGroup(data: BakalariData): Group {
+function getGroups(data: BakalariData): Group[] {
     // Parse the group from the data
-    const { group } = data;
+    const groups = data.group.split(", ");
 
-    // Match the group number from the text
-    const number = group.match(/[0-9](?=\.sk)/)?.[0] ?? null;
+    // Return each group (and filter out values that are both null)
+    return groups
+        .map((group) => {
+            // Match the group number from the text
+            const number = group.match(/[0-9](?=\.sk)/)?.[0];
 
-    // Also try to match the class name from the text (sometimes it ain't included tho)
-    const className = group.match(/[A-Z][0-9]\.[A-C]/)?.[0] ?? null;
+            // Also try to match the class name from the text (sometimes it ain't included tho)
+            const className = group.match(/[A-Z][0-9]\.[A-C]/)?.[0] ?? null;
 
-    // Return the group
-    return {
-        number: number ? Number(number) : null,
-        class: className
-    };
+            // Return the group
+            return {
+                number: number ? Number(number) : null,
+                class: className
+            };
+        })
+        .filter((group) => !(group.number === null && group.class === null));
 }
 
-export default getGroup;
+export default getGroups;
