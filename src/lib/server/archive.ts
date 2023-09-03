@@ -8,9 +8,6 @@ export interface Archive {
     response: string;
 }
 
-/** The storage object */
-export type ArchiveStorage = Record<string, Archive>;
-
 /**
  * Retrieve item from the archive
  * @param key The key to retrieve
@@ -18,10 +15,10 @@ export type ArchiveStorage = Record<string, Archive>;
  */
 export async function get(key: string): Promise<Archive | null> {
     // Get the storage
-    const storage = await read<ArchiveStorage>();
+    const storage = await read<Archive>(`cache/${key}.bson`);
 
     // Return the archive
-    return storage[key] ?? null;
+    return storage ?? null;
 }
 
 /**
@@ -30,12 +27,6 @@ export async function get(key: string): Promise<Archive | null> {
  * @param value The value to set
  */
 export async function set(key: string, value: Archive): Promise<void> {
-    // Get the storage
-    const storage = await read<ArchiveStorage>();
-
-    // Set the value
-    storage[key] = value;
-
     // Write the storage
-    await write(storage);
+    await write(value, `cache/${key}.bson`);
 }
