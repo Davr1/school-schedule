@@ -1,16 +1,16 @@
 export const enum LessonType {
     /** Normal lesson */
-    Normal,
+    Normal = "atom",
 
     /** Canceled / removed lesson */
-    Removed,
+    Removed = "removed",
 
     /**
      * Class absence (not a full day event tho)
      *
      * Not too sure what this exactly is, it's not uncommon tho
      */
-    Absence
+    Absence = "absent"
 }
 
 /** A lesson in the schedule (abstract) */

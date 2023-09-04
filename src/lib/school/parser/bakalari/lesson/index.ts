@@ -1,17 +1,10 @@
 import { type AnyNode, isTag } from "domhandler";
 
-import type { Lesson } from "$lib/school/bakalari/lesson";
+import { type Lesson, LessonType } from "$lib/school/bakalari/lesson";
 import getData from "$lib/school/parser/bakalari/data";
 import parseAbsence from "$lib/school/parser/bakalari/lesson/absence";
 import parseNormal from "$lib/school/parser/bakalari/lesson/normal";
 import parseRemoved from "$lib/school/parser/bakalari/lesson/removed";
-
-/** Use LessonType from the lesson module instead, this is only for parsing */
-export const enum InternalLessonType {
-    Normal = "atom",
-    Removed = "removed",
-    Absence = "absent"
-}
 
 /**
  * Parse the lesson from the given node
@@ -27,11 +20,11 @@ function parseLesson(node: AnyNode): Lesson {
     const data = getData(node);
 
     switch (data.type) {
-        case InternalLessonType.Normal:
+        case LessonType.Normal:
             return parseNormal(node, data);
-        case InternalLessonType.Removed:
+        case LessonType.Removed:
             return parseRemoved(data);
-        case InternalLessonType.Absence:
+        case LessonType.Absence:
             return parseAbsence(data);
         default:
             throw new Error(`Unknown lesson type: ${data.type}`);
