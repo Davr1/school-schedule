@@ -1,19 +1,14 @@
 import type Redis from "ioredis";
 
 import type { LessonType, NormalLesson } from "$lib/school/bakalari/lesson";
+import type { FlatLesson } from "$lib/server/store/bakalari";
 import serializeDate from "$lib/server/store/date";
 import storeMetadata, { MetadataType } from "$lib/server/store/metadata";
 
 /** Flattened normal lesson */
-interface FlatLesson {
+interface FlatNormalLesson extends FlatLesson {
     /** Type of the lesson (follows the bakalari type) */
-    type: LessonType;
-
-    /** The date (as a timestamp with just the date [UTC]) */
-    date: number;
-
-    /** The period index (0-9) */
-    period: number;
+    type: LessonType.Normal;
 
     /** Subject abbreviation */
     subject: string;
@@ -23,9 +18,6 @@ interface FlatLesson {
 
     /** The room the lesson is taught in */
     room: string;
-
-    /** Class in the lesson */
-    class: string;
 
     /** The group the lesson targets, will be 0 for the whole class */
     group: number;
@@ -64,7 +56,7 @@ function storeNormal(lesson: NormalLesson, className: string, date: Date, period
     const topic = lesson.topic ?? 0;
 
     // Create the object and store it (don't await just yet, do it at the end)
-    const object: FlatLesson = {
+    const object: FlatNormalLesson = {
         type: lesson.type,
         date: date.getTime(),
         period,

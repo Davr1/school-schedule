@@ -2,8 +2,25 @@ import type { Redis } from "ioredis";
 
 import type Bakalari from "$lib/school/bakalari";
 import { BakalariScheduleType } from "$lib/school/bakalari";
+import type { LessonType } from "$lib/school/bakalari/lesson";
 import serializeDate from "$lib/server/store/date";
 import storeNormal from "$lib/server/store/normal";
+import storeRemoved from "$lib/server/store/removed";
+
+/** Flattened lesson object */
+export interface FlatLesson {
+    /** Type of the lesson (follows the bakalari type) */
+    type: LessonType;
+
+    /** The date (as a timestamp with just the date [UTC]) */
+    date: number;
+
+    /** The period index (0-9) */
+    period: number;
+
+    /** Class in the lesson */
+    class: string;
+}
 
 /**
  * Flatten and store a Bakalari instance in redis
@@ -20,10 +37,6 @@ function storeBakalari(bakalari: Bakalari, redis: Redis) {
         const { date } = day;
         if (!date) throw new Error("Permanent schedules aren't supported");
 
-        const dateString = serializeDate(date);
-
-        const timestamp = date.getTime();
-
         // If there's a full day event, store it (global, not per class. don't think full days are class specific)
         const key = `schedule:bakalari:day:${serializeDate(date)}:${bakalari.value}`;
         if (day.event) promises.push(redis.set(key, day.event));
@@ -34,6 +47,7 @@ function storeBakalari(bakalari: Bakalari, redis: Redis) {
                 // Store all the lessons in this period (await at the end too....)
                 ...period.map(async (lesson) => {
                     if (lesson.isNormal()) return storeNormal(lesson, bakalari.value, date, periodIndex, redis);
+                    else if (lesson.isRemoved()) return storeRemoved(lesson, bakalari.value, date, periodIndex, redis);
                 })
             );
         });
