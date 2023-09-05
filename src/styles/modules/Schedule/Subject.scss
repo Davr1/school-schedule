@@ -45,6 +45,9 @@
     &.floating {
         z-index: 2;
         cursor: default; // i don't use pointer-events: none; because it breaks the close button
+
+        // Disable the transition when the subject is floating
+        transition: none;
     }
 
     // Only apply the hover effect on desktop if there's more than 1 cell

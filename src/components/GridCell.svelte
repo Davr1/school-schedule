@@ -15,12 +15,15 @@
         ? subject.name
         : subject.isStandard()
         ? [
-              `${subject.theme + "\n\n"}${subject.name}`,
-              `${subject.teacher.name}`,
+              subject.theme,
+              "\n", // Spacer
+              subject.name,
+              subject.teacher.name,
               `${subject.change ?? subject.room}${subject.group ? " - " + subject.group : ""}`
           ]
               .filter(Boolean)
               .join("\n")
+              .trim()
         : ""; // idk what you want for empty subjects..
 
     /** Whether the subject info modal / popover is visible */
