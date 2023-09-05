@@ -2,25 +2,8 @@ import type { Redis } from "ioredis";
 
 import type Bakalari from "$lib/school/bakalari";
 import { BakalariScheduleType } from "$lib/school/bakalari";
-import type { LessonType } from "$lib/school/bakalari/lesson";
 import storeEvent from "$lib/server/store/bakalari/event";
-import storeNormal from "$lib/server/store/bakalari/normal";
-import storeRemoved from "$lib/server/store/bakalari/removed";
-
-/** Flattened lesson object */
-export interface FlatLesson {
-    /** Type of the lesson (follows the bakalari type) */
-    type: LessonType;
-
-    /** The date (as a timestamp with just the date [UTC]) */
-    date: number;
-
-    /** The period index (0-9) */
-    period: number;
-
-    /** Class in the lesson */
-    class: string;
-}
+import storeLesson from "$lib/server/store/bakalari/lesson";
 
 /**
  * Flatten and store a Bakalari instance in redis
@@ -37,10 +20,7 @@ function storeBakalari(bakalari: Bakalari, redis: Redis) {
 
         // Loop through all the periods (and lessons) to store them
         const promises: (Promise<unknown> | undefined)[] = day.periods.flatMap((period, periodIndex) =>
-            period.map((lesson) => {
-                if (lesson.isNormal()) return storeNormal(lesson, bakalari.value, date, periodIndex, redis);
-                else if (lesson.isRemoved()) return storeRemoved(lesson, bakalari.value, date, periodIndex, redis);
-            })
+            period.map((lesson) => storeLesson(lesson, bakalari.value, date, periodIndex, redis))
         );
 
         // Store the info about an event (if there is one)

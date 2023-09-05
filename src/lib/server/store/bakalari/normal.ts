@@ -1,8 +1,7 @@
 import type Redis from "ioredis";
 
 import type { LessonType, NormalLesson } from "$lib/school/bakalari/lesson";
-import type { FlatLesson } from "$lib/server/store/bakalari";
-import storeLesson from "$lib/server/store/bakalari/lesson";
+import type { FlatLesson } from "$lib/server/store/bakalari/lesson";
 import storeMetadata, { MetadataType } from "$lib/server/store/bakalari/metadata";
 import serializeDate from "$lib/server/store/date";
 
@@ -70,17 +69,19 @@ function storeNormal(lesson: NormalLesson, className: string, date: Date, period
         change
     };
 
-    return Promise.all([
-        // Run the redis command
-        redis.call("JSON.SET", key, "$", JSON.stringify(object)),
+    // Return both the promise and key as a tuple
+    return [
+        key,
 
-        // Remember the lesson
-        storeLesson(className, date, key, redis),
+        Promise.all([
+            // Run the redis command
+            redis.hset(key, object),
 
-        // Store the metadata
-        storeMetadata(MetadataType.Subject, subject, lesson.subject.name!, redis),
-        storeMetadata(MetadataType.Teacher, teacher, lesson.teacher.name!, redis)
-    ]);
+            // Store the metadata
+            storeMetadata(MetadataType.Subject, subject, lesson.subject.name!, redis),
+            storeMetadata(MetadataType.Teacher, teacher, lesson.teacher.name!, redis)
+        ])
+    ] as const;
 }
 
 export default storeNormal;

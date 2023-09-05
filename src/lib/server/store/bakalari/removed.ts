@@ -1,8 +1,7 @@
 import type Redis from "ioredis";
 
 import type { LessonType, RemovedLesson } from "$lib/school/bakalari/lesson";
-import type { FlatLesson } from "$lib/server/store/bakalari";
-import storeLesson from "$lib/server/store/bakalari/lesson";
+import type { FlatLesson } from "$lib/server/store/bakalari/lesson";
 import serializeDate from "$lib/server/store/date";
 
 /** Flattened removed lesson */
@@ -41,13 +40,8 @@ function storeRemoved(lesson: RemovedLesson, className: string, date: Date, peri
         class: className
     };
 
-    return Promise.all([
-        // Store the lesson
-        redis.call("JSON.SET", key, "$", JSON.stringify(object)),
-
-        // Remember the lesson
-        storeLesson(className, date, key, redis)
-    ]);
+    // Return both the promise and key as a tuple
+    return [key, redis.hset(key, object)] as const;
 }
 
 export default storeRemoved;

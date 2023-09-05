@@ -29,45 +29,33 @@ await redis.call(
     "FT.CREATE",
     "idx:schedule:bakalari:lesson",
     "ON",
-    "JSON",
+    "HASH",
     "PREFIX",
     "1",
     "schedule:bakalari:lesson:",
     "SCHEMA",
 
     // Date
-    "$.date",
-    "AS",
     "date",
     "NUMERIC",
 
     // Period
-    "$.period",
-    "AS",
     "period",
     "NUMERIC",
 
-    // Classes
-    "$.classes.*",
-    "AS",
+    // Class
     "class",
     "TAG",
 
     // Groups
-    "$.groups.*",
-    "AS",
     "group",
     "TAG",
 
     // Teacher
-    "$.teacher",
-    "AS",
     "teacher",
     "TAG",
 
     // Room
-    "$.room",
-    "AS",
     "room",
     "TAG"
 );
