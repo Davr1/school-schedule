@@ -2,9 +2,9 @@ import type Redis from "ioredis";
 
 import type { LessonType, NormalLesson } from "$lib/school/bakalari/lesson";
 import type { FlatLesson } from "$lib/server/store/bakalari";
+import storeLesson from "$lib/server/store/bakalari/lesson";
+import storeMetadata, { MetadataType } from "$lib/server/store/bakalari/metadata";
 import serializeDate from "$lib/server/store/date";
-import storeLesson from "$lib/server/store/lesson";
-import storeMetadata, { MetadataType } from "$lib/server/store/metadata";
 
 /** Flattened normal lesson */
 interface FlatNormalLesson extends FlatLesson {

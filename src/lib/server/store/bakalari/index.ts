@@ -3,9 +3,9 @@ import type { Redis } from "ioredis";
 import type Bakalari from "$lib/school/bakalari";
 import { BakalariScheduleType } from "$lib/school/bakalari";
 import type { LessonType } from "$lib/school/bakalari/lesson";
-import storeEvent from "$lib/server/store/event";
-import storeNormal from "$lib/server/store/normal";
-import storeRemoved from "$lib/server/store/removed";
+import storeEvent from "$lib/server/store/bakalari/event";
+import storeNormal from "$lib/server/store/bakalari/normal";
+import storeRemoved from "$lib/server/store/bakalari/removed";
 
 /** Flattened lesson object */
 export interface FlatLesson {

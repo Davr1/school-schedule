@@ -2,8 +2,8 @@ import type Redis from "ioredis";
 
 import type { LessonType, RemovedLesson } from "$lib/school/bakalari/lesson";
 import type { FlatLesson } from "$lib/server/store/bakalari";
+import storeLesson from "$lib/server/store/bakalari/lesson";
 import serializeDate from "$lib/server/store/date";
-import storeLesson from "$lib/server/store/lesson";
 
 /** Flattened removed lesson */
 interface FlatRemovedLesson extends FlatLesson {
