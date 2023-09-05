@@ -3,6 +3,7 @@ import type Redis from "ioredis";
 import type { LessonType, NormalLesson } from "$lib/school/bakalari/lesson";
 import type { FlatLesson } from "$lib/server/store/bakalari";
 import serializeDate from "$lib/server/store/date";
+import storeLesson from "$lib/server/store/lesson";
 import storeMetadata, { MetadataType } from "$lib/server/store/metadata";
 
 /** Flattened normal lesson */
@@ -39,9 +40,6 @@ interface FlatNormalLesson extends FlatLesson {
  * @param redis The redis instance to store the lesson in
  */
 function storeNormal(lesson: NormalLesson, className: string, date: Date, period: number, redis: Redis) {
-    /** The key to store this lesson under in redis */
-    const key = `schedule:bakalari:lesson:${serializeDate(date)}:${className}:${period}`;
-
     /** Whether there was a change, details are dropped cuz they're useless */
     const change = lesson.change !== null;
 
@@ -51,6 +49,9 @@ function storeNormal(lesson: NormalLesson, className: string, date: Date, period
 
     // Get the group in the lesson, or 0 if there's nothing set
     const group = lesson.groups[0]?.number ?? 0;
+
+    /** The key to store this lesson under in redis */
+    const key = `schedule:bakalari:lesson:${className}:${group}:${serializeDate(date)}:${period}`;
 
     // The topic is either the topic or 0 if there's nothing set
     const topic = lesson.topic ?? 0;
@@ -72,6 +73,9 @@ function storeNormal(lesson: NormalLesson, className: string, date: Date, period
     return Promise.all([
         // Run the redis command
         redis.call("JSON.SET", key, "$", JSON.stringify(object)),
+
+        // Remember the lesson
+        storeLesson(className, date, key, redis),
 
         // Store the metadata
         storeMetadata(MetadataType.Subject, subject, lesson.subject.name!, redis),

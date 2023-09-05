@@ -3,6 +3,7 @@ import type Redis from "ioredis";
 import type { LessonType, RemovedLesson } from "$lib/school/bakalari/lesson";
 import type { FlatLesson } from "$lib/server/store/bakalari";
 import serializeDate from "$lib/server/store/date";
+import storeLesson from "$lib/server/store/lesson";
 
 /** Flattened removed lesson */
 interface FlatRemovedLesson extends FlatLesson {
@@ -30,7 +31,7 @@ interface FlatRemovedLesson extends FlatLesson {
  */
 function storeRemoved(lesson: RemovedLesson, className: string, date: Date, period: number, redis: Redis) {
     /** The key to store this lesson under in redis */
-    const key = `schedule:bakalari:lesson:${serializeDate(date)}:${className}:${period}`;
+    const key = `schedule:bakalari:lesson:${className}:removed:${serializeDate(date)}:${period}`;
 
     // Create the object and store it
     const object: FlatRemovedLesson = {
@@ -40,8 +41,13 @@ function storeRemoved(lesson: RemovedLesson, className: string, date: Date, peri
         class: className
     };
 
-    // Store the lesson
-    return redis.call("JSON.SET", key, "$", JSON.stringify(object));
+    return Promise.all([
+        // Store the lesson
+        redis.call("JSON.SET", key, "$", JSON.stringify(object)),
+
+        // Remember the lesson
+        storeLesson(className, date, key, redis)
+    ]);
 }
 
 export default storeRemoved;
