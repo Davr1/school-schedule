@@ -16,7 +16,7 @@
         : subject.isStandard()
         ? [
               subject.theme,
-              "\n", // Spacer
+              " ", // Spacer
               subject.name,
               subject.teacher.name,
               `${subject.change ?? subject.room}${subject.group ? " - " + subject.group : ""}`

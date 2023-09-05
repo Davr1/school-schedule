@@ -23,7 +23,10 @@
 }
 
 :local(.link) {
-    text-decoration: dotted underline 2px;
+    // Safari doesn't support the shorthand well...
+    text-decoration-style: dotted;
+    text-decoration-line: underline;
+    text-decoration-thickness: 2px;
 
     cursor: pointer;
 

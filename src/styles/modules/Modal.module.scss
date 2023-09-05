@@ -54,14 +54,13 @@
         overflow-y: auto;
     }
 
-    h1,
-    h2 {
-        svg {
-            vertical-align: sub;
-            width: 2rem;
-            height: 2rem;
-            margin-right: 0.3rem;
-        }
+    :is(h1, h2) > svg,
+    // Don't apply to big buttons
+    :is(h1, h2) :not(.big) > svg {
+        vertical-align: sub;
+        width: 2rem;
+        height: 2rem;
+        margin-right: 0.3rem;
     }
 
     p {
@@ -76,17 +75,11 @@
     }
 }
 
-:local(.closeButton) {
-    position: absolute;
-    top: 1.6rem;
-    right: 2rem;
+:local(.title) {
+    display: flex;
 
-    width: 3rem;
-    height: 3rem;
-
-    padding: 0;
-
-    border-radius: 0.4rem;
-
-    z-index: 3;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
 }
