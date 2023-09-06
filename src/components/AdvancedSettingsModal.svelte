@@ -33,9 +33,9 @@
     <p>
         <span>Improves loading speeds, but it could lead to inaccuracies.</span>
     </p>
-    <div class={styles.optionRow}>Show next week on Sunday <Switch bind:value={$config.sundayOverride} /></div>
+    <div class={styles.optionRow}>Show next week on Saturday <Switch bind:value={$config.saturdayOverride} /></div>
     <p>
-        <span>The current schedule will show the next week's schedule on Sundays.</span>
+        <span>The current schedule will show the next week's schedule on Saturday.</span>
     </p>
     <div class={styles.optionRow}>
         <span><UwU height="1em" style="vertical-align: sub;" /> loading screen</span>

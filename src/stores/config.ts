@@ -20,7 +20,7 @@ export interface ScheduleParams {
 
 export interface Config {
     useWeb: boolean;
-    sundayOverride: boolean;
+    saturdayOverride: boolean;
     loadscreen: boolean;
     cache: boolean;
     version: string;
@@ -40,7 +40,7 @@ try {
 
 export const defaultConfig: Config = {
     useWeb: true,
-    sundayOverride: true,
+    saturdayOverride: true,
     loadscreen: true,
     cache: true,
     scheduleParams: {

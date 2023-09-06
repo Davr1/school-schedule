@@ -2,7 +2,7 @@
     import { createEventDispatcher, onDestroy, onMount } from "svelte";
     import type { Unsubscriber } from "svelte/store";
 
-    import { type BakalariSchedule, getBakaSchedule } from "$lib/scraping";
+    import { getBakaSchedule, type BakalariSchedule } from "$lib/scraping";
     import { StandardSubject } from "$lib/subject";
     import { getWebSchedule } from "$lib/utilities";
 
@@ -42,7 +42,8 @@
         let localFetchQueue = $fetchQueue;
 
         fetchProcess: {
-            if ($scheduleParams.weekMode === "Current" && $config.sundayOverride && today === 0) {
+            // Show the next week if it's Saturday (or Sunday) and the user has enabled the option
+            if ($scheduleParams.weekMode === "Current" && $config.saturdayOverride && (today === 0 || today === 6)) {
                 schedule.weekMode = "Next";
             }
 
