@@ -53,7 +53,7 @@ export const defaultConfig: Config = {
 };
 
 const defaultValues: Record<ScheduleMode, Value> = {
-    Class: "P2.B",
+    Class: "P3.B",
     Teacher: "Mašek Petr",
     Room: "104"
 };
