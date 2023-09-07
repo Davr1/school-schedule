@@ -1,11 +1,5 @@
 <script lang="ts">
-    // All of the fonts used in the app (only english and european characters are supported...)
-    import "@fontsource/inter/latin-400.css";
-    import "@fontsource/inter/latin-500.css";
-    import "@fontsource/inter/latin-600.css";
-    import "@fontsource/inter/latin-ext-400.css";
-    import "@fontsource/inter/latin-ext-500.css";
-    import "@fontsource/inter/latin-ext-600.css";
+    import fonts from "$lib/fonts";
     import { onDestroy, onMount } from "svelte";
 
     import { SystemTheme, update } from "$lib/theme";
@@ -43,5 +37,12 @@
         match?.removeEventListener("change", updateMatch);
     });
 </script>
+
+<svelte:head>
+    <!-- Preload the fonts -->
+    {#each fonts as font}
+        <link rel="preload" href={font} as="font" type="font/woff2" crossorigin="anonymous" />
+    {/each}
+</svelte:head>
 
 <slot />
