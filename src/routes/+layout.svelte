@@ -1,5 +1,8 @@
 <script lang="ts">
     // All of the fonts used in the app (only english and european characters are supported...)
+    import "@fontsource/inter/latin-400.css";
+    import "@fontsource/inter/latin-500.css";
+    import "@fontsource/inter/latin-600.css";
     import "@fontsource/inter/latin-ext-400.css";
     import "@fontsource/inter/latin-ext-500.css";
     import "@fontsource/inter/latin-ext-600.css";
