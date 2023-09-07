@@ -10,25 +10,6 @@
         <link rel="icon" href="/logo.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/logo180.png" type="image/png" />
         <title>ŠŠŠVT rozvrh</title>
-        <script>
-            /* Set the appropriate class name */
-            var theme = JSON.parse(localStorage.getItem("theme") || "{}");
-
-            var dark = matchMedia("(prefers-color-scheme: dark)").matches;
-
-            if (theme.active === "system") {
-                theme.active = dark ? "dark" : "light";
-            }
-
-            document.documentElement.classList.remove("original");
-            document.documentElement.classList.add(
-                theme.active,
-
-                theme.primary || "blue",
-                (theme.secondary || "green") + "-2",
-                (theme.background || "zinc") + "-bg"
-            );
-        </script>
         %sveltekit.head%
     </head>
     <body data-sveltekit-preload-data="hover">

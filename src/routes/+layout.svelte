@@ -38,11 +38,30 @@
     });
 </script>
 
+<!-- Preload the fonts and set the appropriate class name -->
 <svelte:head>
-    <!-- Preload the fonts -->
     {#each fonts as font}
         <link rel="preload" href={font} as="font" type="font/woff2" crossorigin="anonymous" />
     {/each}
+
+    <script>
+        var theme = JSON.parse(localStorage.getItem("theme") || "{}");
+
+        var dark = matchMedia("(prefers-color-scheme: dark)").matches;
+
+        if (theme.active === "system") {
+            theme.active = dark ? "dark" : "light";
+        }
+
+        document.documentElement.classList.remove("original");
+        document.documentElement.classList.add(
+            theme.active,
+
+            theme.primary || "blue",
+            (theme.secondary || "green") + "-2",
+            (theme.background || "zinc") + "-bg"
+        );
+    </script>
 </svelte:head>
 
 <slot />
