@@ -26,7 +26,7 @@
     #accent & {
         position: relative;
 
-        > :last-child {
+        span {
             position: absolute;
             display: grid;
 
@@ -35,7 +35,7 @@
 
             color: #fff;
 
-            font-weight: bold;
+            font-weight: 600;
 
             pointer-events: none;
         }
@@ -125,7 +125,7 @@
         // Styles for the label
         & + span {
             color: var(--primary-600);
-            font-weight: bold;
+            font-weight: 600;
 
             // Dark theme has a different color
             :root.dark & {
