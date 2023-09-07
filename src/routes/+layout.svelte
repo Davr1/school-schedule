@@ -1,8 +1,8 @@
 <script lang="ts">
-    // All of the fonts used in the app
-    import "@fontsource/inter/400.css";
-    import "@fontsource/inter/500.css";
-    import "@fontsource/inter/600.css";
+    // All of the fonts used in the app (only english and european characters are supported...)
+    import "@fontsource/inter/latin-ext-400.css";
+    import "@fontsource/inter/latin-ext-500.css";
+    import "@fontsource/inter/latin-ext-600.css";
     import { onDestroy, onMount } from "svelte";
 
     import { SystemTheme, update } from "$lib/theme";
