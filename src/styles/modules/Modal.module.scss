@@ -90,11 +90,11 @@
 
 @keyframes bg {
     from {
-        background: transparent;
+        opacity: 0;
         backdrop-filter: blur(0);
     }
     to {
-        background: #000a;
+        opacity: 1;
         backdrop-filter: blur(5px);
     }
 }
