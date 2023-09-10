@@ -12,6 +12,12 @@ export const enum Week {
     Next = "Next"
 }
 
+export interface FetchBakalariResponse {
+    html: string;
+    res: Response;
+    sessionId: string;
+}
+
 /**
  * Fetch the public schedule from Bakalari.
  *
@@ -23,7 +29,7 @@ export const enum Week {
  * @param sessionId The session ID to use (i'm not sure if this is needed, but a real browser sends this on subsequent requests)
  * @returns The html of the schedule and the response object
  */
-async function fetchBakalari(week: Week, type: ScheduleType, value: string, sessionId?: string) {
+async function fetchBakalari(week: Week, type: ScheduleType, value: string, sessionId?: string): Promise<FetchBakalariResponse> {
     // Cookies to send, will be empty if no session ID is provided
     const cookies: string[] = [];
     if (sessionId) cookies.push(`ASP.NET_SessionId=${sessionId}`);
