@@ -6,6 +6,8 @@
     import { fetchCount } from "$stores/main";
     import { scheduleMetadata, sheduleModes } from "$stores/static";
 
+    import { addRipple } from "$lib/ripple";
+
     import MoreHoriz from "@material-design-icons/svg/filled/more_horiz.svg?component";
     import Refresh from "@material-design-icons/svg/filled/refresh.svg?component";
 
@@ -14,7 +16,6 @@
     import Segmented from "$components/Controls/Segmented.svelte";
     import Dropdown from "$components/Dropdown.svelte";
 
-    import { addRipple } from "$components/Ripple.svelte";
     import controlStyles from "$styles/modules/Controls.module.scss";
     import styles from "$styles/modules/Options.module.scss";
 

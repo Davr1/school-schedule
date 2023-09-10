@@ -9,7 +9,7 @@
     import { getContext } from "svelte";
     import type { Writable } from "svelte/store";
 
-    import Ripple, { addRipple } from "$components/Ripple.svelte";
+    import { addRipple } from "$lib/ripple";
 
     import styles from "$styles/modules/Controls.module.scss";
 
@@ -34,8 +34,6 @@
     if (selected) $value = name;
 </script>
 
-<Ripple>
-    <button class={styles.control} class:active={$value === name} on:click={() => ($value = name)} use:addRipple>
-        <slot>{name}</slot>
-    </button>
-</Ripple>
+<button class={styles.control} class:active={$value === name} on:click={() => ($value = name)} use:addRipple>
+    <slot>{name}</slot>
+</button>

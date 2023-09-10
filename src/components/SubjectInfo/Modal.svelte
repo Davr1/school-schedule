@@ -2,10 +2,10 @@
     import Close from "@material-design-icons/svg/filled/close.svg?component";
 
     import type { Subject } from "$lib/subject";
+    import { addRipple } from "$lib/ripple";
 
     import Modal from "$components/Modal.svelte";
     import Content from "$components/SubjectInfo/Content.svelte";
-    import Ripple, { addRipple } from "$components/Ripple.svelte";
 
     import controlStyles from "$styles/modules/Controls.module.scss";
 
@@ -17,11 +17,9 @@
 </script>
 
 <Modal bind:visible on:hideScreenOverlay>
-    <Ripple>
-        <Content {subject}>
-            <button class={`${controlStyles.button} big`} on:click={() => (visible = false)} slot="close" use:addRipple>
-                <Close />
-            </button>
-        </Content>
-    </Ripple>
+    <Content {subject}>
+        <button class={`${controlStyles.button} big`} on:click={() => (visible = false)} slot="close" use:addRipple>
+            <Close />
+        </button>
+    </Content>
 </Modal>

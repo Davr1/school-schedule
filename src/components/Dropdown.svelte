@@ -1,9 +1,8 @@
 <script lang="ts">
     import { getPosition } from "$lib/utilities";
+    import { addRipple } from "$lib/ripple";
 
     import ExpandMore from "@material-design-icons/svg/filled/expand_more.svg?component";
-
-    import Ripple, { addRipple } from "./Ripple.svelte";
 
     import styles from "$styles/modules/Controls.module.scss";
 
@@ -44,25 +43,21 @@
 </script>
 
 <div class={styles.dropdown} class:visible={isVisible}>
-    <Ripple>
-        <button class={styles.dropdownButton} on:click={handleClick} bind:this={dropdownButton} use:addRipple>
-            {activeOption[genericName]}
-            <ExpandMore />
-        </button>
-    </Ripple>
+    <button class={styles.dropdownButton} on:click={handleClick} bind:this={dropdownButton} use:addRipple>
+        {activeOption[genericName]}
+        <ExpandMore />
+    </button>
     {#if isVisible}
         <div class={styles.options} style:top style:bottom style:transform style:max-height={maxHeight}>
             {#each options as option (option[genericKey])}
-                <Ripple>
-                    <button
-                        class={styles.option}
-                        class:active={activeOption[genericKey] === option[genericKey]}
-                        on:click={() => callback(option)}
-                        use:addRipple
-                    >
-                        {option[genericName]}
-                    </button>
-                </Ripple>
+                <button
+                    class={styles.option}
+                    class:active={activeOption[genericKey] === option[genericKey]}
+                    on:click={() => callback(option)}
+                    use:addRipple
+                >
+                    {option[genericName]}
+                </button>
             {/each}
         </div>
     {/if}
