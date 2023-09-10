@@ -1,0 +1,73 @@
+@property --size {
+    inherits: true;
+    syntax: "<length>";
+    initial-value: 0;
+}
+
+@property --opacity {
+    inherits: true;
+    syntax: "<percentage>";
+    initial-value: 0%;
+}
+
+:local(.ripple) {
+    position: relative;
+    --size: 100vmin;
+    --opacity: 0%;
+    --max-opacity: 20%;
+    --color: rgb(160 160 160 / calc(var(--opacity) * 1.6));
+    @supports (color: color-mix(in srgb, red, blue)) {
+        --color: color-mix(in srgb, var(--app-foreground) var(--opacity), transparent);
+    }
+    --duration: 300ms;
+    animation: var(--duration) fadeout;
+}
+
+:local(.ripple)::after {
+    content: "";
+    background-image: radial-gradient(var(--size) at var(--x) var(--y), var(--color) 50%, transparent);
+    display: block;
+    inset: 0;
+    overflow: hidden;
+    border-radius: inherit;
+    position: absolute;
+    pointer-events: none;
+}
+
+:local(.ripple.active) {
+    animation:
+        var(--duration) ripple ease-out,
+        calc(var(--duration) / 1.5) fadein ease-out;
+    // custom properties are not animatable in firefox so we can't use animation-fill-mode: forwards
+    --opacity: var(--max-opacity);
+}
+
+@keyframes ripple {
+    from {
+        --size: 20px;
+    }
+    to {
+        --size: 100vmin;
+    }
+}
+
+@keyframes fadein {
+    0% {
+        --opacity: calc(var(--max-opacity) * 2 / 4);
+    }
+    50% {
+        --opacity: calc(var(--max-opacity) * 3 / 4);
+    }
+    100% {
+        --opacity: var(--max-opacity);
+    }
+}
+
+@keyframes fadeout {
+    from {
+        --opacity: var(--max-opacity);
+    }
+    to {
+        --opacity: 0%;
+    }
+}

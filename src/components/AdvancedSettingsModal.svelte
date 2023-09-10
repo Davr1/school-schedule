@@ -2,6 +2,8 @@
     import { config } from "$stores/config";
     import Close from "@material-design-icons/svg/filled/close.svg?component";
 
+    import { addRipple } from "$lib/ripple";
+
     import UwU from "$assets/uwu.svg?component";
 
     import Modal from "$components/Modal.svelte";
@@ -20,7 +22,7 @@
     <div class={modalStyles.title}>
         <h1>Advanced settings</h1>
 
-        <button class={`${controlStyles.button} big`} on:click={() => (visible = false)}>
+        <button class={`${controlStyles.button} big`} on:click={() => (visible = false)} use:addRipple>
             <Close />
         </button>
     </div>

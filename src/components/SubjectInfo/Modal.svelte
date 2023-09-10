@@ -2,6 +2,7 @@
     import Close from "@material-design-icons/svg/filled/close.svg?component";
 
     import type { Subject } from "$lib/subject";
+    import { addRipple } from "$lib/ripple";
 
     import Modal from "$components/Modal.svelte";
     import Content from "$components/SubjectInfo/Content.svelte";
@@ -17,7 +18,7 @@
 
 <Modal bind:visible on:hideScreenOverlay>
     <Content {subject}>
-        <button class={`${controlStyles.button} big`} on:click={() => (visible = false)} slot="close">
+        <button class={`${controlStyles.button} big`} on:click={() => (visible = false)} slot="close" use:addRipple>
             <Close />
         </button>
     </Content>

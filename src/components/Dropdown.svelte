@@ -1,5 +1,6 @@
 <script lang="ts">
     import { getPosition } from "$lib/utilities";
+    import { addRipple } from "$lib/ripple";
 
     import ExpandMore from "@material-design-icons/svg/filled/expand_more.svg?component";
 
@@ -42,7 +43,7 @@
 </script>
 
 <div class={styles.dropdown} class:visible={isVisible}>
-    <button class={styles.dropdownButton} on:click={handleClick} bind:this={dropdownButton}>
+    <button class={styles.dropdownButton} on:click={handleClick} bind:this={dropdownButton} use:addRipple>
         {activeOption[genericName]}
         <ExpandMore />
     </button>
@@ -53,6 +54,7 @@
                     class={styles.option}
                     class:active={activeOption[genericKey] === option[genericKey]}
                     on:click={() => callback(option)}
+                    use:addRipple
                 >
                     {option[genericName]}
                 </button>

@@ -1,5 +1,6 @@
 <script lang="ts">
     import type { Subject } from "$lib/subject";
+    import { addRipple } from "$lib/ripple";
 
     import { scheduleParams } from "$stores/config";
 
@@ -42,6 +43,7 @@
         class:floating={visible}
         on:click={() => (visible = !visible)}
         bind:this={cell}
+        use:addRipple
     >
         <SubjectInfo {cell} {subject} bind:visible />
 
@@ -61,6 +63,7 @@
         class:active={subject.abbreviation && subject.name}
         on:click={() => subject.isSpecial() && subject.abbreviation && subject.name && (visible = !visible)}
         bind:this={cell}
+        use:addRipple
     >
         <SubjectInfo {cell} {subject} bind:visible />
 
