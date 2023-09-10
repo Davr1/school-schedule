@@ -26,12 +26,4 @@
     }
 </script>
 
-<script lang="ts">
-    import { beforeUpdate, afterUpdate, onMount, onDestroy } from "svelte";
-    beforeUpdate(console.log);
-    afterUpdate(console.log);
-    onMount(console.log);
-    onDestroy(console.log);
-</script>
-
 <slot />
