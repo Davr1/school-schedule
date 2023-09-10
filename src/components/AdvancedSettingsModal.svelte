@@ -7,6 +7,7 @@
     import Modal from "$components/Modal.svelte";
     import Switch from "$components/Switch.svelte";
     import ThemeEditor from "$components/ThemeEditor.svelte";
+    import Ripple, { addRipple } from "./Ripple.svelte";
 
     import controlStyles from "$styles/modules/Controls.module.scss";
     import modalStyles from "$styles/modules/Modal.module.scss";
@@ -20,9 +21,11 @@
     <div class={modalStyles.title}>
         <h1>Advanced settings</h1>
 
-        <button class={`${controlStyles.button} big`} on:click={() => (visible = false)}>
-            <Close />
-        </button>
+        <Ripple>
+            <button class={`${controlStyles.button} big`} on:click={() => (visible = false)} use:addRipple>
+                <Close />
+            </button>
+        </Ripple>
     </div>
 
     <div class={styles.optionRow}>Use the school's website for substitutions <Switch bind:value={$config.useWeb} /></div>

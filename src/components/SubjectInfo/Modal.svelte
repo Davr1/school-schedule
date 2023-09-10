@@ -5,9 +5,9 @@
 
     import Modal from "$components/Modal.svelte";
     import Content from "$components/SubjectInfo/Content.svelte";
+    import Ripple, { addRipple } from "$components/Ripple.svelte";
 
     import controlStyles from "$styles/modules/Controls.module.scss";
-    import Ripple, { addRipple } from "$components/Ripple.svelte";
 
     /** The subject to show the info for */
     export let subject: Subject;

@@ -4,7 +4,6 @@
     import { scheduleParams } from "$stores/config";
 
     import SubjectInfo from "$components/SubjectInfo/Universal.svelte";
-
     import Ripple, { addRipple } from "./Ripple.svelte";
 
     import styles from "$styles/modules/Schedule.module.scss";

@@ -3,8 +3,9 @@
 
     import ExpandMore from "@material-design-icons/svg/filled/expand_more.svg?component";
 
-    import styles from "$styles/modules/Controls.module.scss";
     import Ripple, { addRipple } from "./Ripple.svelte";
+
+    import styles from "$styles/modules/Controls.module.scss";
 
     type T = $$Generic;
 

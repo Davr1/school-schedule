@@ -9,8 +9,9 @@
     import { getContext } from "svelte";
     import type { Writable } from "svelte/store";
 
-    import styles from "$styles/modules/Controls.module.scss";
     import Ripple, { addRipple } from "$components/Ripple.svelte";
+
+    import styles from "$styles/modules/Controls.module.scss";
 
     /**
      * The name to use, this will be used as the value when selected

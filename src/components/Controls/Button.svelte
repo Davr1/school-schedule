@@ -1,5 +1,6 @@
 <script lang="ts">
     import Ripple, { addRipple, rippleStyle } from "$components/Ripple.svelte";
+
     import styles from "$styles/modules/Controls.module.scss";
 </script>
 
