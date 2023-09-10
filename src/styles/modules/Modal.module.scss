@@ -17,15 +17,19 @@
     box-sizing: border-box;
     overflow: hidden;
 
+    animation: 50ms scale both ease-out;
+
     &.scrollable {
         height: 85vh;
     }
 
     &::backdrop {
         background: #000a;
-        backdrop-filter: blur(5px);
-
         cursor: pointer;
+        animation: 100ms bg forwards ease-out;
+        @media not (pointer: fine) {
+            backdrop-filter: unset !important;
+        }
     }
 
     @media (max-aspect-ratio: 3/4) {
@@ -82,4 +86,24 @@
     justify-content: space-between;
     align-items: center;
     gap: 0.5rem;
+}
+
+@keyframes bg {
+    from {
+        background: transparent;
+        backdrop-filter: blur(0);
+    }
+    to {
+        background: #000a;
+        backdrop-filter: blur(5px);
+    }
+}
+
+@keyframes scale {
+    from {
+        transform: scale(0.97);
+    }
+    to {
+        transform: scale(1);
+    }
 }

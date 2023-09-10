@@ -4,6 +4,7 @@
     import ExpandMore from "@material-design-icons/svg/filled/expand_more.svg?component";
 
     import styles from "$styles/modules/Controls.module.scss";
+    import Ripple, { addRipple } from "./Ripple.svelte";
 
     type T = $$Generic;
 
@@ -42,20 +43,25 @@
 </script>
 
 <div class={styles.dropdown} class:visible={isVisible}>
-    <button class={styles.dropdownButton} on:click={handleClick} bind:this={dropdownButton}>
-        {activeOption[genericName]}
-        <ExpandMore />
-    </button>
+    <Ripple>
+        <button class={styles.dropdownButton} on:click={handleClick} bind:this={dropdownButton} use:addRipple>
+            {activeOption[genericName]}
+            <ExpandMore />
+        </button>
+    </Ripple>
     {#if isVisible}
         <div class={styles.options} style:top style:bottom style:transform style:max-height={maxHeight}>
             {#each options as option (option[genericKey])}
-                <button
-                    class={styles.option}
-                    class:active={activeOption[genericKey] === option[genericKey]}
-                    on:click={() => callback(option)}
-                >
-                    {option[genericName]}
-                </button>
+                <Ripple>
+                    <button
+                        class={styles.option}
+                        class:active={activeOption[genericKey] === option[genericKey]}
+                        on:click={() => callback(option)}
+                        use:addRipple
+                    >
+                        {option[genericName]}
+                    </button>
+                </Ripple>
             {/each}
         </div>
     {/if}

@@ -10,6 +10,7 @@
     import type { Writable } from "svelte/store";
 
     import styles from "$styles/modules/Controls.module.scss";
+    import Ripple, { addRipple } from "$components/Ripple.svelte";
 
     /**
      * The name to use, this will be used as the value when selected
@@ -32,6 +33,8 @@
     if (selected) $value = name;
 </script>
 
-<button class={styles.control} class:active={$value === name} on:click={() => ($value = name)}>
-    <slot>{name}</slot>
-</button>
+<Ripple>
+    <button class={styles.control} class:active={$value === name} on:click={() => ($value = name)} use:addRipple>
+        <slot>{name}</slot>
+    </button>
+</Ripple>

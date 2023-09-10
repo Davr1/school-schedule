@@ -7,6 +7,7 @@
     import Content from "$components/SubjectInfo/Content.svelte";
 
     import controlStyles from "$styles/modules/Controls.module.scss";
+    import Ripple, { addRipple } from "$components/Ripple.svelte";
 
     /** The subject to show the info for */
     export let subject: Subject;
@@ -16,9 +17,11 @@
 </script>
 
 <Modal bind:visible on:hideScreenOverlay>
-    <Content {subject}>
-        <button class={`${controlStyles.button} big`} on:click={() => (visible = false)} slot="close">
-            <Close />
-        </button>
-    </Content>
+    <Ripple>
+        <Content {subject}>
+            <button class={`${controlStyles.button} big`} on:click={() => (visible = false)} slot="close" use:addRipple>
+                <Close />
+            </button>
+        </Content>
+    </Ripple>
 </Modal>

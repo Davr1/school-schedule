@@ -1,4 +1,5 @@
 <script lang="ts">
+    import Ripple, { addRipple, rippleStyle } from "$components/Ripple.svelte";
     import styles from "$styles/modules/Controls.module.scss";
 </script>
 
@@ -11,6 +12,8 @@
     Events will be added as needed cuz svelte sucks at this...
 -->
 
-<button class={styles.button} on:click {...$$props}>
-    <slot />
-</button>
+<Ripple>
+    <button class={`${styles.button} ${rippleStyle}`} on:click {...$$props} use:addRipple>
+        <slot />
+    </button>
+</Ripple>

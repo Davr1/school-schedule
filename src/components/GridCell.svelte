@@ -5,6 +5,8 @@
 
     import SubjectInfo from "$components/SubjectInfo/Universal.svelte";
 
+    import Ripple, { addRipple } from "./Ripple.svelte";
+
     import styles from "$styles/modules/Schedule.module.scss";
 
     let cell: HTMLDivElement, title: string;
@@ -35,39 +37,43 @@
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
-{#if subject.isStandard()}
-    <div
-        class={`${styles.subject} active`}
-        class:changed={subject.change !== null}
-        class:floating={visible}
-        on:click={() => (visible = !visible)}
-        bind:this={cell}
-    >
-        <SubjectInfo {cell} {subject} bind:visible />
+<Ripple>
+    {#if subject.isStandard()}
+        <div
+            class={`${styles.subject} active`}
+            class:changed={subject.change !== null}
+            class:floating={visible}
+            on:click={() => (visible = !visible)}
+            bind:this={cell}
+            use:addRipple
+        >
+            <SubjectInfo {cell} {subject} bind:visible />
 
-        <div class={styles.content} {title}>
-            <div class="top">
-                <div class="left">{subject.group}</div>
-                {#if $scheduleParams.scheduleMode !== "Room"}<div class="right">{subject.room}</div>{/if}
+            <div class={styles.content} {title}>
+                <div class="top">
+                    <div class="left">{subject.group}</div>
+                    {#if $scheduleParams.scheduleMode !== "Room"}<div class="right">{subject.room}</div>{/if}
+                </div>
+                <div class="middle">{subject.abbreviation}</div>
+                {#if $scheduleParams.scheduleMode !== "Teacher"}<div class="bottom">{subject.teacher.abbreviation.split(",")[0]}</div>{/if}
             </div>
-            <div class="middle">{subject.abbreviation}</div>
-            {#if $scheduleParams.scheduleMode !== "Teacher"}<div class="bottom">{subject.teacher.abbreviation.split(",")[0]}</div>{/if}
         </div>
-    </div>
-{:else if subject.isSpecial()}
-    <div
-        class={`${styles.subject} special`}
-        class:floating={visible}
-        class:active={subject.abbreviation && subject.name}
-        on:click={() => subject.isSpecial() && subject.abbreviation && subject.name && (visible = !visible)}
-        bind:this={cell}
-    >
-        <SubjectInfo {cell} {subject} bind:visible />
+    {:else if subject.isSpecial()}
+        <div
+            class={`${styles.subject} special`}
+            class:floating={visible}
+            class:active={subject.abbreviation && subject.name}
+            on:click={() => subject.isSpecial() && subject.abbreviation && subject.name && (visible = !visible)}
+            bind:this={cell}
+            use:addRipple
+        >
+            <SubjectInfo {cell} {subject} bind:visible />
 
-        <div class={styles.content} {title}>
-            <div class="middle">{subject.abbreviation || subject.name}</div>
+            <div class={styles.content} {title}>
+                <div class="middle">{subject.abbreviation || subject.name}</div>
+            </div>
         </div>
-    </div>
-{:else if subject.isEmpty() && subject.change}
-    <div class={`${styles.subject} special`} bind:this={cell} />
-{/if}
+    {:else if subject.isEmpty() && subject.change}
+        <div class={`${styles.subject} special`} bind:this={cell} />
+    {/if}
+</Ripple>
