@@ -19,7 +19,7 @@
     @supports (color: color-mix(in srgb, red, blue)) {
         --color: color-mix(in srgb, var(--app-foreground) var(--opacity), transparent);
     }
-    --duration: 200ms;
+    --duration: 300ms;
     animation: var(--duration) fadeout;
 }
 
@@ -37,7 +37,7 @@
 :local(.ripple.active) {
     animation:
         var(--duration) ripple ease-out,
-        var(--duration) fadein ease-out;
+        calc(var(--duration) / 1.5) fadein ease-out;
     // custom properties are not animatable in firefox so we can't use animation-fill-mode: forwards
     --opacity: var(--max-opacity);
 }
@@ -55,10 +55,10 @@
     0% {
         --opacity: calc(var(--max-opacity) * 2 / 4);
     }
-    40% {
+    50% {
         --opacity: calc(var(--max-opacity) * 3 / 4);
     }
-    80% {
+    100% {
         --opacity: var(--max-opacity);
     }
 }

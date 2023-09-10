@@ -6,13 +6,13 @@
 
     export function addRipple(element: HTMLElement) {
         if (!browser) return;
-        element.classList.add(rippleStyle);
 
         element.ontouchstart = (event: TouchEvent) => {
             const { clientX, clientY } = event.targetTouches[0];
 
             if (document.elementsFromPoint(clientX, clientY).indexOf(element) === -1) return;
 
+            element.classList.add(rippleStyle);
             element.classList.toggle(styles.active, true);
 
             const { x, y } = element.getBoundingClientRect();
