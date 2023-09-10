@@ -10,11 +10,12 @@
     import Refresh from "@material-design-icons/svg/filled/refresh.svg?component";
 
     import AdvancedSettingsModal from "$components/AdvancedSettingsModal.svelte";
-    import Button from "$components/Controls/Button.svelte";
     import Control from "$components/Controls/Control.svelte";
     import Segmented from "$components/Controls/Segmented.svelte";
     import Dropdown from "$components/Dropdown.svelte";
 
+    import { addRipple } from "$components/Ripple.svelte";
+    import controlStyles from "$styles/modules/Controls.module.scss";
     import styles from "$styles/modules/Options.module.scss";
 
     /** Whether the advanced settings modal is visible, false by default */
@@ -77,13 +78,15 @@
         <Control name="Current" />
         <Control name="Next" />
 
-        <Button on:click={() => (advancedSettingsModal = true)}><MoreHoriz /></Button>
+        <button class={controlStyles.button} on:click={() => (advancedSettingsModal = true)} use:addRipple>
+            <MoreHoriz />
+        </button>
     </Segmented>
 
-    <Button id="reloadButton" on:click={() => updateScheduleParams()}>
+    <button id="reloadButton" class={controlStyles.button} on:click={() => updateScheduleParams()} use:addRipple>
         <Refresh />
         <span id="info">{$fetchCount} / {maxFetchCount} fetched</span>
-    </Button>
+    </button>
 </nav>
 
 <AdvancedSettingsModal bind:visible={advancedSettingsModal} />
