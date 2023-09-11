@@ -20,9 +20,6 @@ export interface FetchBakalariResponse {
 
 /**
  * Fetch the public schedule from Bakalari.
- *
- * Note: To use a proxy, set the `HTTP_PROXY` and `HTTPS_PROXY` environment variables.
- * (here, only `HTTPS_PROXY` is needed)
  * @param week Week (Permanent, Actual, Next)
  * @param type Type (Class, Teacher, Room)
  * @param value Value of the schedule type (room, class or teacher id)
@@ -40,12 +37,8 @@ async function fetchBakalari(week: Week, type: ScheduleType, value: string, sess
             // Firefox headers
             ...headers,
 
-            ...// If there are cookies, send them
-            (cookies.length > 0
-                ? {
-                      Cookie: cookies.join("; ")
-                  }
-                : {})
+            // If there are cookies, send them
+            ...(cookies.length > 0 ? { Cookie: cookies.join("; ") } : {})
         }
     });
 
