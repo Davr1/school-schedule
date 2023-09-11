@@ -5,7 +5,7 @@
  * @param args Arguments to log
  */
 function log(...args: unknown[]) {
-    if (process.env.LOG) console.log(...args);
+    if (process.env.LOG?.toLowerCase() === "true") console.log(...args);
 }
 
 export default log;
