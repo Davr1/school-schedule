@@ -14,8 +14,7 @@ RUN bun install
 COPY . .
 
 # Bundle the project (log by default, can be disabled via the LOG build argument)
-ARG LOG=true
-RUN bun build src/scheduler.ts --outfile scheduler.js --define "process.env.LOG"=${LOG} --minify
+RUN bun build src/scheduler.ts --outfile scheduler.js --minify
 
 FROM base as scheduler
 
@@ -25,9 +24,12 @@ COPY --from=build /app/scheduler.js .
 # Set the timezone to Europe/Prague
 ENV TZ=Europe/Prague
 
-# Proxy build argument
+# Proxy and log build arguments
 ARG HTTPS_PROXY
 ENV HTTPS_PROXY=$HTTPS_PROXY
+
+ARG LOG=true
+ENV LOG=$LOG
 
 # Run the scheduler.js file
 CMD ["bun", "run", "scheduler.js"]
