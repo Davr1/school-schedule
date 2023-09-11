@@ -1,4 +1,5 @@
 import headers from "@/headers";
+import log from "@/log";
 
 export const enum ScheduleType {
     Class = "Class",
@@ -27,6 +28,8 @@ export interface FetchBakalariResponse {
  * @returns The html of the schedule and the response object
  */
 async function fetchBakalari(week: Week, type: ScheduleType, value: string, sessionId?: string): Promise<FetchBakalariResponse> {
+    log(`Fetching ${type} ${value} for week ${week} with session Id: ${sessionId ?? "none"}`);
+
     // Cookies to send, will be empty if no session ID is provided
     const cookies: string[] = [];
     if (sessionId) cookies.push(`ASP.NET_SessionId=${sessionId}`);

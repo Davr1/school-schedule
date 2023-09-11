@@ -14,7 +14,7 @@ async function scheduleAllClasses() {
     log("Scheduling task: AllClasses");
 
     // Skip Saturdays because there's no school. (Sundays are fetched anyway for archival)
-    const task = new Cron("15 23 19 * * 0-5", { name: "AllClasses", timezone: "Europe/Prague" }, async () => {
+    const task = new Cron("0 30 23 * * 0-5", { name: "AllClasses", timezone: "Europe/Prague" }, async () => {
         // Log the run time and the next run time
         log(`Running task "AllClasses" at ${new Date().toLocaleString()}`);
         log(` - Next run time for task "AllClasses": ${task.nextRun()?.toLocaleString()}`);

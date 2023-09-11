@@ -1,3 +1,4 @@
+import log from "@/log";
 import { mkdir } from "fs/promises";
 
 /**
@@ -13,6 +14,8 @@ export async function save(text: string, name: string) {
 
     // Save the file.
     await Bun.write(`./cache/${dateText}/${name}.html`, text);
+
+    log(`Saved ${name}.html`);
 }
 
 export default save;
