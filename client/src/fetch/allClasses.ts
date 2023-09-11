@@ -1,4 +1,4 @@
-import fetchBakalari, { FetchBakalariResponse, ScheduleType, Week } from "@/fetch/bakalari";
+import fetchBakalari, { type FetchBakalariResponse, ScheduleType, Week } from "@/fetch/bakalari";
 
 /**
  * All the classes to fetch.
