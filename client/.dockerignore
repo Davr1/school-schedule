@@ -1,3 +1,4 @@
-node_modules/
+# Due to some strange bug, I can't install during the build process so node_modules will be copied from the host
+# node_modules/
 README.md
 dist/

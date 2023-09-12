@@ -1,8 +1,7 @@
-FROM oven/bun:1.0 as base
+# Build stage (uses Bun to build the project)
+FROM oven/bun:1.0.1 as build
 
 WORKDIR /app
-
-FROM base as build
 
 # Copy the package json and bun.lockb to download the dependencies
 COPY package.json .
@@ -13,13 +12,16 @@ RUN bun install
 # Copy all of the files from the client directory into the image
 COPY . .
 
-# Bundle the project (log by default, can be disabled via the LOG build argument)
-RUN bun build src/scheduler.ts --outfile scheduler.js --minify
+# Bundle the project into an executable file
+RUN bun build src/index.ts --outfile scheduler --minify --compile
 
-FROM base as scheduler
+# Runner stage (Bun is no longer needed so I'm gonna use a smaller image)
+FROM debian:bullseye-slim as run
 
-# Copy the scheduler.js file from the build stage to the image
-COPY --from=build /app/scheduler.js .
+WORKDIR /app
+
+# Copy the scheduler executable from the build stage to the image
+COPY --from=build /app/scheduler .
 
 # Set the timezone to Europe/Prague
 ENV TZ=Europe/Prague
@@ -31,5 +33,5 @@ ENV HTTPS_PROXY=$HTTPS_PROXY
 ARG LOG=true
 ENV LOG=$LOG
 
-# Run the scheduler.js file
-CMD ["bun", "run", "scheduler.js"]
+# Run the scheduler file
+CMD ["./scheduler"]
