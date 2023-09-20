@@ -134,23 +134,21 @@
             </div>
         {/each}
     </div>
-    {#each scheduleData as day}
-        <div class={styles.row}>
+    <div class={styles.grid}>
+        {#each scheduleData as day}
             <div class={styles.day}>
                 <span>{day.date[0]}</span>
 
                 <span>{day.date[1]}</span>
             </div>
 
-            <div class={styles.container}>
-                {#each day.subjects as cell}
-                    <div class={styles.cell}>
-                        {#each cell.sort( (a, b) => (!a.isStandard() || !b.isStandard() ? 0 : a.group.localeCompare(b.group)) ) as subject (subject.id)}
-                            <GridCell {subject} on:modalOpen />
-                        {/each}
-                    </div>
-                {/each}
-            </div>
-        </div>
-    {/each}
+            {#each day.subjects as cell}
+                <div class={styles.cell}>
+                    {#each cell.sort( (a, b) => (!a.isStandard() || !b.isStandard() ? 0 : a.group.localeCompare(b.group)) ) as subject (subject.id)}
+                        <GridCell {subject} on:modalOpen />
+                    {/each}
+                </div>
+            {/each}
+        {/each}
+    </div>
 </main>
