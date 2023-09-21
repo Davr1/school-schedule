@@ -39,6 +39,10 @@
     <p>
         <span>The current schedule will show the next week's schedule on Saturday.</span>
     </p>
+    <div class={styles.optionRow}>Merge subjects <Switch bind:value={$config.mergeSubjects} /></div>
+    <p>
+        <span>Merges adjacent subjects to reduce screen clutter.</span>
+    </p>
     <div class={styles.optionRow}>
         <span><UwU height="1em" style="vertical-align: sub;" /> loading screen</span>
         <Switch bind:value={$config.loadscreen} />

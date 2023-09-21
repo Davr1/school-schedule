@@ -2,8 +2,8 @@
     import { createEventDispatcher, onDestroy, onMount } from "svelte";
     import type { Unsubscriber } from "svelte/store";
 
-    import { getBakaSchedule, type BakalariSchedule } from "$lib/scraping";
-    import { StandardSubject } from "$lib/subject";
+    import { getBakaSchedule, type BakalariSchedule, type BakalariDay } from "$lib/scraping";
+    import { StandardSubject, Subject } from "$lib/subject";
     import { getWebSchedule } from "$lib/utilities";
 
     import { config, scheduleParams, type ScheduleParams } from "$stores/config";
@@ -122,6 +122,43 @@
             }
         }
     }
+
+    type Grid = GridRow[];
+
+    interface GridRow {
+        date: readonly [string, string];
+        subjects: GridCell[][];
+    }
+
+    interface GridCell {
+        subject: Subject;
+        row: number;
+        column: number;
+        width: number;
+        height: number;
+        id: symbol;
+    }
+
+    function createGrid(schedule: BakalariSchedule) {
+        let grid: Grid = schedule.map(({ date, subjects }, i) => ({
+            date,
+            subjects: subjects.map((s, j) =>
+                s
+                    .slice(0, 2)
+                    .sort((a, b) => (a.isStandard() && b.isStandard() && parseInt(a.group) - parseInt(b.group)) || 0)
+                    .map((group, k) => ({
+                        subject: group,
+                        row: i * 2 + k,
+                        column: j,
+                        width: 1,
+                        height: group.isStandard() && Number.isNaN(parseInt(group.group)) ? 2 : 1,
+                        id: group.id
+                    }))
+            )
+        }));
+
+        return grid;
+    }
 </script>
 
 <main class={styles.view}>
@@ -135,7 +172,7 @@
         {/each}
     </div>
     <div class={styles.grid}>
-        {#each scheduleData as day, i}
+        {#each createGrid(scheduleData) as day, i}
             <div class={styles.day} style:grid-row={`${1 + i * 2} / span 2`}>
                 <span>{day.date[0]}</span>
 
@@ -145,10 +182,10 @@
             {#each day.subjects as cell, j}
                 {#if cell.length > 0}
                     {#each cell as subject (subject.id)}
-                        <GridCell {subject} row={i} column={j} on:modalOpen />
+                        <GridCell {...subject} on:modalOpen />
                     {/each}
                 {:else}
-                    <div class={styles.cell} style={`--row: ${1 + i * 2}; --column: ${j + 2};`}></div>
+                    <div class={styles.cell} style={`--row: ${i * 2}; --column: ${j}; --width: 1; --height: 2;`}></div>
                 {/if}
             {/each}
         {/each}

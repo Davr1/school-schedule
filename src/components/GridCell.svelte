@@ -14,9 +14,8 @@
 
     export let row: number;
     export let column: number;
-
-    let gridRow = 2 + row * 2 - (subject.isStandard() && parseInt(subject.group) ? parseInt(subject.group) % 2 : 1);
-    let gridColumn = column + 2;
+    export let height: number;
+    export let width: number;
 
     title = subject.isSpecial()
         ? subject.name
@@ -47,8 +46,7 @@
         class={`${styles.subject} ${styles.cell} active`}
         class:changed={subject.change !== null}
         class:floating={visible}
-        class:combined={!subject.group}
-        style={`--row: ${gridRow}; --column: ${gridColumn};`}
+        style={`--row: ${row}; --column: ${column}; --width: ${width}; --height: ${height}`}
         on:click={() => (visible = !visible)}
         bind:this={cell}
         use:addRipple
@@ -69,8 +67,7 @@
         class={`${styles.subject} ${styles.cell} special`}
         class:floating={visible}
         class:active={subject.abbreviation && subject.name}
-        class:combined={true}
-        style={`--row: ${gridRow}; --column: ${gridColumn};`}
+        style={`--row: ${row}; --column: ${column}; --width: ${width}; --height: ${height}`}
         on:click={() => subject.isSpecial() && subject.abbreviation && subject.name && (visible = !visible)}
         bind:this={cell}
         use:addRipple
@@ -84,8 +81,7 @@
 {:else if subject.isEmpty() && subject.change}
     <div
         class={`${styles.subject} ${styles.cell} special`}
-        class:combined={true}
-        style={`--row: ${gridRow}; --column: ${gridColumn};`}
+        style={`--row: ${row}; --column: ${column}; --width: ${width}; --height: ${height}`}
         bind:this={cell}
     />
 {/if}

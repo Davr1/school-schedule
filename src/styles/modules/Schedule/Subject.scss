@@ -1,10 +1,9 @@
 @use "../../transitions.scss";
 
 :local(.cell) {
-    grid-column: var(--column);
-    grid-row: var(--row) / span 2;
+    grid-area: calc(var(--row) + 1) / calc(var(--column) + 2) / span var(--height) / span var(--width);
 
-    min-height: 13.5vh;
+    min-height: 6.4vh;
 
     @media (max-aspect-ratio: 1/2) {
         min-width: 9vh;
@@ -30,11 +29,6 @@
     box-shadow: 0 0.0625rem 0.25rem -0.125rem #000;
 
     @include transitions.all((background-color, transform), ease-out, 200ms);
-
-    &:not(.combined) {
-        grid-row: var(--row);
-        min-height: 0;
-    }
 
     &.changed {
         --subject-hover: var(--hover-accent-primary);
