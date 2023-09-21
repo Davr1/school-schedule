@@ -62,9 +62,8 @@ export async function getBakaSchedule(params: ScheduleParams): Promise<BakalariS
                             default:
                                 subjectInstance = new StandardSubject({
                                     subject: detail.subjecttext.split("|")[0].trim(),
-                                    subjectAbbr: $(group).find(".middle")?.text(),
-                                    teacher: detail.teacher,
-                                    teacherAbbr: $(group).find(".bottom>span")?.text() ?? "",
+                                    abbreviation: $(group).find(".middle")?.text(),
+                                    teacher: { name: detail.teacher, abbreviation: $(group).find(".bottom>span")?.text() ?? "" },
                                     room: detail.room,
                                     group: detail.group,
                                     theme: detail.theme,

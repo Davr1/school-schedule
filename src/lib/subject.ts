@@ -100,11 +100,10 @@ export interface TeacherInfo {
 
 export interface StandardSubjectProps extends SubjectProps {
     subject: string;
-    subjectAbbr: string;
+    abbreviation: string;
     cls: string;
     group: string;
-    teacher: string;
-    teacherAbbr: string;
+    teacher: TeacherInfo;
     room: string;
     theme: string;
 }
@@ -142,10 +141,10 @@ export class StandardSubject extends Subject {
         super(params);
 
         this.name = params.subject ?? "";
-        this.abbreviation = params.subjectAbbr ?? "";
+        this.abbreviation = params.abbreviation ?? "";
         this.className = params.cls ?? "";
         this.group = params.group ?? "";
-        this.teacher = { name: params.teacher ?? "", abbreviation: params.teacherAbbr ?? "" };
+        this.teacher = params.teacher ?? { name: "", abbreviation: "" };
         this.room = params.room ?? "";
         this.theme = params.theme ?? "";
     }

@@ -95,8 +95,8 @@ export async function getWebSchedule(date: Date) {
                         new StandardSubject({
                             room: cell.$("[href*='/room/']")?.text,
                             group,
-                            subjectAbbr: cell.$("strong")?.text,
-                            teacherAbbr: cell.$("[href*='/teacher/']")?.text,
+                            abbreviation: cell.$("strong")?.text,
+                            teacher: { name: "", abbreviation: cell.$("[href*='/teacher/']")?.text },
                             changed: true
                         })
                     );
@@ -120,8 +120,8 @@ export async function getWebSchedule(date: Date) {
                         new StandardSubject({
                             room: alternativeGroup.$("[href*='/room/']")?.text,
                             group: group2,
-                            subjectAbbr: alternativeGroup.$("strong")?.text,
-                            teacherAbbr: alternativeGroup.$("[href*='/teacher/']")?.text,
+                            abbreviation: alternativeGroup.$("strong")?.text,
+                            teacher: { name: "", abbreviation: alternativeGroup.$("[href*='/teacher/']")?.text },
                             changed: true
                         })
                     );

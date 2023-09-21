@@ -3,7 +3,7 @@
 :local(.cell) {
     grid-area: calc(var(--row) + 1) / calc(var(--column) + 2) / span var(--height) / span var(--width);
 
-    min-height: 6.4vh;
+    min-height: calc(6.4vh * var(--height) + 0.5rem * (var(--height) - 1));
 
     @media (max-aspect-ratio: 1/2) {
         min-width: 9vh;

@@ -104,10 +104,9 @@
                             // create a new subject (ig? don't ask me. i only rewrote the original but with type safety)
                             const temp = new StandardSubject({
                                 subject: name,
-                                subjectAbbr: s.abbreviation || foundSubject.abbreviation,
+                                abbreviation: s.abbreviation || foundSubject.abbreviation,
                                 theme,
-                                teacher: teacher.name, // ugh, the compatibility.....
-                                teacherAbbr: teacher.abbreviation, // whyy
+                                teacher,
                                 group: s.group || foundSubject.group,
                                 room: s.room || foundSubject.room
                             });
@@ -148,14 +147,53 @@
                     .sort((a, b) => (a.isStandard() && b.isStandard() && parseInt(a.group) - parseInt(b.group)) || 0)
                     .map((group, k) => ({
                         subject: group,
-                        row: i * 2 + k,
+                        // odd groups are placed on the top, even groups on the bottom. If there are two groups per cell, order them by group number
+                        row: i * 2 + ((s.length === 1 && group.isStandard() && (parseInt(group.group) + 1) % 2) || k),
                         column: j,
                         width: 1,
-                        height: group.isStandard() && Number.isNaN(parseInt(group.group)) ? 2 : 1,
+                        height: group.isStandard() && parseInt(group.group) ? 1 : 2,
                         id: group.id
                     }))
             )
         }));
+
+        if ($config.mergeSubjects) {
+            grid.forEach(({ subjects }) => {
+                subjects.slice(0, -1).forEach((currentCell, i) => {
+                    for (let j = 0; j < currentCell.length; j++) {
+                        const groupCell = currentCell[j];
+                        const { subject } = groupCell;
+                        if (!subject.isStandard()) continue;
+
+                        let offset = 0;
+                        while (++offset) {
+                            const nextCell = subjects[i + offset];
+                            let mergableGroupIdx = nextCell.findIndex(
+                                (c) =>
+                                    c.subject.isStandard() &&
+                                    c.subject.group === subject.group &&
+                                    c.subject.abbreviation === subject.abbreviation &&
+                                    c.subject.room === subject.room &&
+                                    c.subject.teacher.abbreviation === subject.teacher.abbreviation &&
+                                    c.subject.change === subject.change
+                            );
+                            if (mergableGroupIdx === -1) break;
+                            // remove duplicate subject
+                            let mergableSubject = nextCell.splice(mergableGroupIdx, 1)[0].subject as StandardSubject;
+                            groupCell.width++;
+                            // prevent overlaps
+                            if (nextCell.length === 1 && nextCell[0].row === groupCell.row) {
+                                nextCell[0].row = groupCell.row % 2 ? groupCell.row - 1 : groupCell.row + 1;
+                            }
+                            groupCell.subject = new StandardSubject({
+                                ...subject,
+                                theme: [subject.theme, mergableSubject.theme].filter(Boolean).join("; ")
+                            });
+                        }
+                    }
+                });
+            });
+        }
 
         return grid;
     }
