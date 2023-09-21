@@ -135,19 +135,21 @@
         {/each}
     </div>
     <div class={styles.grid}>
-        {#each scheduleData as day}
-            <div class={styles.day}>
+        {#each scheduleData as day, i}
+            <div class={styles.day} style:grid-row={`${1 + i * 2} / span 2`}>
                 <span>{day.date[0]}</span>
 
                 <span>{day.date[1]}</span>
             </div>
 
-            {#each day.subjects as cell}
-                <div class={styles.cell}>
-                    {#each cell.sort( (a, b) => (!a.isStandard() || !b.isStandard() ? 0 : a.group.localeCompare(b.group)) ) as subject (subject.id)}
-                        <GridCell {subject} on:modalOpen />
+            {#each day.subjects as cell, j}
+                {#if cell.length > 0}
+                    {#each cell as subject (subject.id)}
+                        <GridCell {subject} row={i} column={j} on:modalOpen />
                     {/each}
-                </div>
+                {:else}
+                    <div class={styles.cell} style={`--row: ${1 + i * 2}; --column: ${j + 2};`}></div>
+                {/if}
             {/each}
         {/each}
     </div>

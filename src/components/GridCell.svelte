@@ -12,6 +12,12 @@
 
     export let subject: Subject;
 
+    export let row: number;
+    export let column: number;
+
+    let gridRow = 2 + row * 2 - (subject.isStandard() && parseInt(subject.group) ? parseInt(subject.group) % 2 : 1);
+    let gridColumn = column + 2;
+
     title = subject.isSpecial()
         ? subject.name
         : subject.isStandard()
@@ -38,9 +44,11 @@
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 {#if subject.isStandard()}
     <div
-        class={`${styles.subject} active`}
+        class={`${styles.subject} ${styles.cell} active`}
         class:changed={subject.change !== null}
         class:floating={visible}
+        class:combined={!subject.group}
+        style={`--row: ${gridRow}; --column: ${gridColumn};`}
         on:click={() => (visible = !visible)}
         bind:this={cell}
         use:addRipple
@@ -58,9 +66,11 @@
     </div>
 {:else if subject.isSpecial()}
     <div
-        class={`${styles.subject} special`}
+        class={`${styles.subject} ${styles.cell} special`}
         class:floating={visible}
         class:active={subject.abbreviation && subject.name}
+        class:combined={true}
+        style={`--row: ${gridRow}; --column: ${gridColumn};`}
         on:click={() => subject.isSpecial() && subject.abbreviation && subject.name && (visible = !visible)}
         bind:this={cell}
         use:addRipple
@@ -72,5 +82,10 @@
         </div>
     </div>
 {:else if subject.isEmpty() && subject.change}
-    <div class={`${styles.subject} special`} bind:this={cell} />
+    <div
+        class={`${styles.subject} ${styles.cell} special`}
+        class:combined={true}
+        style={`--row: ${gridRow}; --column: ${gridColumn};`}
+        bind:this={cell}
+    />
 {/if}
