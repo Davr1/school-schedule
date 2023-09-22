@@ -2,9 +2,9 @@
     import { createEventDispatcher, onDestroy, onMount } from "svelte";
     import type { Unsubscriber } from "svelte/store";
 
-    import { getBakaSchedule, type BakalariSchedule, type BakalariDay } from "$lib/scraping";
+    import { getBakaSchedule, type BakalariSchedule } from "$lib/scraping";
     import { StandardSubject, Subject } from "$lib/subject";
-    import { getWebSchedule } from "$lib/utilities";
+    import { getWebSchedule, isMergable, joinText } from "$lib/utilities";
 
     import { config, scheduleParams, type ScheduleParams } from "$stores/config";
     import { fetchCount, fetchQueue } from "$stores/main";
@@ -75,7 +75,7 @@
 
                 for (let [i, subject] of response.find((e) => e.cls.slice(1) === schedule.value.slice(1))?.subjects.entries() ?? []) {
                     subject?.forEach((s) => {
-                        const found = day.subjects[i].findIndex((a) => a.isStandard() && s.isStandard() && a.group === s.group);
+                        const found = day.subjects[i].findIndex((a) => a.isStandard() && s.isStandard() && a.groups[0] === s.groups[0]);
 
                         if (found !== -1) {
                             const foundSubject = day.subjects[i][found]; // this is repeated a lot..
@@ -107,7 +107,7 @@
                                 abbreviation: s.abbreviation || foundSubject.abbreviation,
                                 theme,
                                 teacher,
-                                group: s.group || foundSubject.group,
+                                groups: [s.groups[0] || foundSubject.groups[0]],
                                 room: s.room || foundSubject.room
                             });
 
@@ -141,17 +141,17 @@
     function createGrid(schedule: BakalariSchedule) {
         let grid: Grid = schedule.map(({ date, subjects }, i) => ({
             date,
-            subjects: subjects.map((s, j) =>
-                s
+            subjects: subjects.map((subject, j) =>
+                subject
                     .slice(0, 2)
-                    .sort((a, b) => (a.isStandard() && b.isStandard() && parseInt(a.group) - parseInt(b.group)) || 0)
+                    .sort((a, b) => (a.isStandard() && b.isStandard() && parseInt(a.groups[0]) - parseInt(b.groups[0])) || 0)
                     .map((group, k) => ({
                         subject: group,
                         // odd groups are placed on the top, even groups on the bottom. If there are two groups per cell, order them by group number
-                        row: i * 2 + ((s.length === 1 && group.isStandard() && (parseInt(group.group) + 1) % 2) || k),
+                        row: i * 2 + ((subject.length === 1 && group.isStandard() && (parseInt(group.groups[0]) + 1) % 2) || k),
                         column: j,
                         width: 1,
-                        height: group.isStandard() && parseInt(group.group) ? 1 : 2,
+                        height: group.isStandard() && parseInt(group.groups[0]) ? 1 : 2,
                         id: group.id
                     }))
             )
@@ -159,24 +159,31 @@
 
         if ($config.mergeSubjects) {
             grid.forEach(({ subjects }) => {
-                subjects.slice(0, -1).forEach((currentCell, i) => {
-                    for (let j = 0; j < currentCell.length; j++) {
-                        const groupCell = currentCell[j];
+                subjects.forEach((currentCell) => {
+                    const [first, second] = currentCell;
+                    if (!first?.subject.isStandard() || !second?.subject.isStandard()) return;
+                    if (isMergable(first.subject, second.subject, 0)) {
+                        currentCell.pop();
+                        first.height = 2;
+                        first.subject = new StandardSubject({
+                            ...first.subject,
+                            changed: Boolean(first.subject.change || second.subject.change),
+                            changeInfo: joinText("\n", first.subject.change, second.subject.change),
+                            theme: joinText("; ", first.subject.theme, second.subject.theme),
+                            groups: [...first.subject.groups, ...second.subject.groups]
+                        });
+                    }
+                });
+
+                subjects.forEach((currentCell, i) => {
+                    currentCell.forEach((groupCell) => {
                         const { subject } = groupCell;
-                        if (!subject.isStandard()) continue;
+                        if (!subject.isStandard()) return;
 
                         let offset = 0;
-                        while (++offset) {
+                        while (++offset + i < subjects.length) {
                             const nextCell = subjects[i + offset];
-                            let mergableGroupIdx = nextCell.findIndex(
-                                (c) =>
-                                    c.subject.isStandard() &&
-                                    c.subject.group === subject.group &&
-                                    c.subject.abbreviation === subject.abbreviation &&
-                                    c.subject.room === subject.room &&
-                                    c.subject.teacher.abbreviation === subject.teacher.abbreviation &&
-                                    c.subject.change === subject.change
-                            );
+                            let mergableGroupIdx = nextCell.findIndex((group) => isMergable(group.subject as StandardSubject, subject));
                             if (mergableGroupIdx === -1) break;
                             // remove duplicate subject
                             let mergableSubject = nextCell.splice(mergableGroupIdx, 1)[0].subject as StandardSubject;
@@ -187,10 +194,12 @@
                             }
                             groupCell.subject = new StandardSubject({
                                 ...subject,
-                                theme: [subject.theme, mergableSubject.theme].filter(Boolean).join("; ")
+                                changed: Boolean(subject.change || mergableSubject.change),
+                                changeInfo: joinText("\n", subject.change, mergableSubject.change),
+                                theme: joinText("; ", subject.theme, mergableSubject.theme)
                             });
                         }
-                    }
+                    });
                 });
             });
         }

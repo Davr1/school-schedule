@@ -65,7 +65,7 @@ export async function getBakaSchedule(params: ScheduleParams): Promise<BakalariS
                                     abbreviation: $(group).find(".middle")?.text(),
                                     teacher: { name: detail.teacher, abbreviation: $(group).find(".bottom>span")?.text() ?? "" },
                                     room: detail.room,
-                                    group: detail.group,
+                                    groups: [detail.group],
                                     theme: detail.theme,
                                     changed: $(group).hasClass("pink"),
                                     changeInfo: detail.changeinfo

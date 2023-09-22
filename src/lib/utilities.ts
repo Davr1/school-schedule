@@ -1,5 +1,6 @@
 import { fetchWebSchedule } from "$lib/data";
 import { EmptySubject, StandardSubject } from "$lib/subject";
+import type { Subject } from "$lib/subject";
 
 import type { Value } from "$stores/config";
 import { scheduleMetadata } from "$stores/static";
@@ -94,7 +95,7 @@ export async function getWebSchedule(date: Date) {
                     subject.push(
                         new StandardSubject({
                             room: cell.$("[href*='/room/']")?.text,
-                            group,
+                            groups: [group],
                             abbreviation: cell.$("strong")?.text,
                             teacher: { name: "", abbreviation: cell.$("[href*='/teacher/']")?.text },
                             changed: true
@@ -119,7 +120,7 @@ export async function getWebSchedule(date: Date) {
                     subject.push(
                         new StandardSubject({
                             room: alternativeGroup.$("[href*='/room/']")?.text,
-                            group: group2,
+                            groups: [group2],
                             abbreviation: alternativeGroup.$("strong")?.text,
                             teacher: { name: "", abbreviation: alternativeGroup.$("[href*='/teacher/']")?.text },
                             changed: true
@@ -172,4 +173,21 @@ export function isValidMetadata(value: string): value is Value {
         scheduleMetadata.rooms.find((roomMetadata) => roomMetadata.name === value) !== undefined ||
         scheduleMetadata.teachers.find((teacherMetadata) => teacherMetadata.name === value || teacherMetadata.abbr === value) !== undefined
     );
+}
+
+export function isMergable(a: Subject, b: Subject, axis: 0 | 1 = 1): boolean {
+    return (
+        a.isStandard() &&
+        b.isStandard() &&
+        a.abbreviation === b.abbreviation &&
+        a.room === b.room &&
+        a.teacher.abbreviation === b.teacher.abbreviation &&
+        // ignore groups when merging vertically
+        (axis === 0 || a.groups.every((g) => b.groups.includes(g))) &&
+        Boolean((!a.change && !b.change) || (a.change && b.change))
+    );
+}
+
+export function joinText(separator: string, ...args: (string | null)[]): string {
+    return Array.from(new Set(args.filter(Boolean))).join(separator);
 }

@@ -51,9 +51,9 @@
                 </span>
             {/if}
 
-            {#if subject.group}
+            {#if subject.groups.length}
                 /
-                {#each subject.group.split(", ") as singleGroup}
+                {#each subject.groups.map((g) => g.split(", ")).flat() as singleGroup}
                     {#if isValidMetadata(singleGroup.trim().split(" ")[0])}
                         <!-- svelte-ignore a11y-click-events-have-key-events -->
                         <!-- svelte-ignore a11y-no-static-element-interactions -->
@@ -69,6 +69,7 @@
                     {:else}
                         {singleGroup}
                     {/if}
+                    &ensp;
                 {/each}
             {/if}
         </span>

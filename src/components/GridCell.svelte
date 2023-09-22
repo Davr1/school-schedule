@@ -2,6 +2,8 @@
     import type { Subject } from "$lib/subject";
     import { addRipple } from "$lib/ripple";
 
+    import { joinText } from "$lib/utilities";
+
     import { scheduleParams } from "$stores/config";
 
     import SubjectInfo from "$components/SubjectInfo/Universal.svelte";
@@ -25,7 +27,7 @@
               " ", // Spacer
               subject.name,
               subject.teacher.name,
-              `${subject.change ?? subject.room}${subject.group ? " - " + subject.group : ""}`
+              `${subject.change ?? subject.room}${subject.groups?.length ? " - " + joinText(" + ", ...subject.groups) : ""}`
           ]
               .filter(Boolean)
               .join("\n")
@@ -55,7 +57,7 @@
 
         <div class={styles.content} {title}>
             <div class="top">
-                <div class="left">{subject.group}</div>
+                <div class="left">{joinText(" + ", ...subject.groups)}</div>
                 {#if $scheduleParams.scheduleMode !== "Room"}<div class="right">{subject.room}</div>{/if}
             </div>
             <div class="middle">{subject.abbreviation}</div>

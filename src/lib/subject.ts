@@ -102,7 +102,7 @@ export interface StandardSubjectProps extends SubjectProps {
     subject: string;
     abbreviation: string;
     cls: string;
-    group: string;
+    groups: string[];
     teacher: TeacherInfo;
     room: string;
     theme: string;
@@ -125,8 +125,8 @@ export class StandardSubject extends Subject {
      */
     readonly className: string;
 
-    /** The group the subject is for */
-    readonly group: string;
+    /** The groups the subject is for */
+    readonly groups: string[];
 
     /** The teacher */
     readonly teacher: TeacherInfo;
@@ -143,7 +143,7 @@ export class StandardSubject extends Subject {
         this.name = params.subject ?? "";
         this.abbreviation = params.abbreviation ?? "";
         this.className = params.cls ?? "";
-        this.group = params.group ?? "";
+        this.groups = params.groups ?? [];
         this.teacher = params.teacher ?? { name: "", abbreviation: "" };
         this.room = params.room ?? "";
         this.theme = params.theme ?? "";
