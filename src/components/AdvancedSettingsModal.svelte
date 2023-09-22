@@ -41,7 +41,7 @@
     </p>
     <div class={styles.optionRow}>Merge subjects <Switch bind:value={$config.mergeSubjects} /></div>
     <p>
-        <span>Merges adjacent subjects to reduce screen clutter.</span>
+        <span>Merges adjacent groups and subjects to reduce screen clutter.</span>
     </p>
     <div class={styles.optionRow}>
         <span><UwU height="1em" style="vertical-align: sub;" /> loading screen</span>
