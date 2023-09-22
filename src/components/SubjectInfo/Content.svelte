@@ -24,11 +24,13 @@
     {#each subject.theme
         .split("; ")
         .map((t) => t.trim())
-        .filter(Boolean) as theme}
+        .filter(Boolean) as theme, i}
         <h2 class={modalStyles.title}>
             <span><TextSnippet /> {theme}</span>
 
-            <slot name="close" />
+            {#if i === 0}
+                <slot name="close" />
+            {/if}
         </h2>
     {/each}
 {/if}
