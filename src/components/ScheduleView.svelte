@@ -106,9 +106,12 @@
                                 subject: name,
                                 abbreviation: s.abbreviation || foundSubject.abbreviation,
                                 theme,
-                                teacher,
-                                groups: [s.groups[0] || foundSubject.groups[0]],
-                                room: s.room || foundSubject.room
+                                teacher: teacher.name, // ugh, the compatibility.....
+                                teacherAbbr: teacher.abbreviation, // whyy
+                                group: s.group || foundSubject.group,
+                                room: s.room || foundSubject.room,
+                                changed: s.change !== null,
+                                changeInfo: s.change ?? undefined
                             });
 
                             day.subjects[i][found] = temp;
