@@ -171,8 +171,7 @@
                     first.height = 2;
                     first.subject = new StandardSubject({
                         ...first.subject,
-                        changed: Boolean(first.subject.change || second.subject.change),
-                        changeInfo: joinText("\n", first.subject.change, second.subject.change),
+                        change: Boolean(first.subject.change || second.subject.change),
                         theme: joinText("; ", first.subject.theme, second.subject.theme),
                         groups: [...first.subject.groups, ...second.subject.groups]
                     });
@@ -199,8 +198,7 @@
                         }
                         groupCell.subject = new StandardSubject({
                             ...subject,
-                            changed: Boolean(subject.change || mergableSubject.change),
-                            changeInfo: joinText("\n", subject.change, mergableSubject.change),
+                            change: Boolean(subject.change || mergableSubject.change),
                             theme: joinText("; ", subject.theme, mergableSubject.theme)
                         });
                     }

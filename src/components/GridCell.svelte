@@ -46,7 +46,7 @@
 {#if subject.isStandard()}
     <div
         class={`${styles.subject} ${styles.cell} active`}
-        class:changed={subject.change !== null}
+        class:changed={subject.change}
         class:floating={visible}
         style={`--row: ${row}; --column: ${column}; --width: ${width}; --height: ${height}`}
         on:click={() => (visible = !visible)}

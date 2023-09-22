@@ -48,15 +48,14 @@ export async function getBakaSchedule(params: ScheduleParams): Promise<BakalariS
                         switch (detail.type) {
                             case "removed":
                                 subjectInstance = new EmptySubject({
-                                    changed: true,
-                                    changeInfo: detail.removedinfo
+                                    change: true
                                 });
                                 break;
                             case "absent":
                                 subjectInstance = new SpecialSubject({
                                     special: detail.InfoAbsentName,
                                     specialAbbr: detail.absentinfo,
-                                    changeInfo: detail.removedinfo
+                                    change: true
                                 });
                                 break;
                             default:
@@ -67,8 +66,7 @@ export async function getBakaSchedule(params: ScheduleParams): Promise<BakalariS
                                     room: detail.room,
                                     groups: [detail.group],
                                     theme: detail.theme,
-                                    changed: $(group).hasClass("pink"),
-                                    changeInfo: detail.changeinfo
+                                    change: $(group).hasClass("pink")
                                 });
                         }
 

@@ -1,6 +1,5 @@
 import { fetchWebSchedule } from "$lib/data";
 import { EmptySubject, StandardSubject } from "$lib/subject";
-import type { Subject } from "$lib/subject";
 
 import type { Value } from "$stores/config";
 import { scheduleMetadata } from "$stores/static";
@@ -98,13 +97,13 @@ export async function getWebSchedule(date: Date) {
                             groups: [group],
                             abbreviation: cell.$("strong")?.text,
                             teacher: { name: "", abbreviation: cell.$("[href*='/teacher/']")?.text },
-                            changed: true
+                            change: true
                         })
                     );
                 } else {
                     subject.push(
                         new EmptySubject({
-                            changed: true
+                            change: true
                         })
                     );
                 }
@@ -123,7 +122,7 @@ export async function getWebSchedule(date: Date) {
                             groups: [group2],
                             abbreviation: alternativeGroup.$("strong")?.text,
                             teacher: { name: "", abbreviation: alternativeGroup.$("[href*='/teacher/']")?.text },
-                            changed: true
+                            change: true
                         })
                     );
                 }

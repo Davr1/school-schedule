@@ -4,11 +4,8 @@ export enum SubjectType {
     Special = 2
 }
 
-// Props are compatible with the old format
-// But the classes are not..
 export interface SubjectProps {
-    changed: boolean;
-    changeInfo: string;
+    change: boolean;
 }
 
 /** A subject in the schedule (abstract) */
@@ -19,14 +16,11 @@ export abstract class Subject {
     /** Id of the subject, used internally */
     readonly id = Symbol();
 
-    /** Info about a possible change, null if there is no change */
-    readonly change: string | null;
+    /** Whether there is a change in the schedule or not */
+    readonly change: boolean;
 
-    // Reason why this is Partial:
-    // https://discord.com/channels/@me/1115648324821843999/1123651985242079393
-    constructor({ changed, changeInfo }: Partial<SubjectProps>) {
-        if (changed) this.change = changeInfo ?? "";
-        else this.change = null;
+    constructor({ change }: Partial<SubjectProps>) {
+        this.change = change ?? false;
     }
 
     // Type guards (aka type predicates. basically just a function that returns a boolean and narrows the type)
@@ -58,7 +52,7 @@ export class EmptySubject extends Subject {
 export interface SpecialSubjectProps extends Required<SubjectProps> {
     special: string;
     specialAbbr: string;
-    changed: true;
+    change: true;
 }
 
 /**
@@ -75,17 +69,11 @@ export class SpecialSubject extends Subject {
     /** The special subject's abbreviation */
     readonly abbreviation: string;
 
-    /** Information about the change */
-    readonly change: string;
-
     constructor({ special, specialAbbr, ...params }: Partial<SpecialSubjectProps>) {
         super(params);
 
         this.name = special ?? "";
         this.abbreviation = specialAbbr ?? "";
-
-        // This differs from the Subject constructor because the change is required here
-        this.change = params.changeInfo ?? "";
     }
 }
 
