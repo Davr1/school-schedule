@@ -175,10 +175,8 @@ export function isValidMetadata(value: string): value is Value {
     );
 }
 
-export function isMergable(a: Subject, b: Subject, ignoreGroups: boolean = false): boolean {
+export function isMergable(a: StandardSubject, b: StandardSubject, ignoreGroups: boolean = false): boolean {
     return (
-        a.isStandard() &&
-        b.isStandard() &&
         a.abbreviation === b.abbreviation &&
         a.room === b.room &&
         a.teacher.abbreviation === b.teacher.abbreviation &&
