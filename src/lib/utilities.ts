@@ -175,7 +175,7 @@ export function isValidMetadata(value: string): value is Value {
     );
 }
 
-export function isMergable(a: Subject, b: Subject, axis: 0 | 1 = 1): boolean {
+export function isMergable(a: Subject, b: Subject, ignoreGroups: boolean = false): boolean {
     return (
         a.isStandard() &&
         b.isStandard() &&
@@ -183,7 +183,7 @@ export function isMergable(a: Subject, b: Subject, axis: 0 | 1 = 1): boolean {
         a.room === b.room &&
         a.teacher.abbreviation === b.teacher.abbreviation &&
         // ignore groups when merging vertically
-        (axis === 0 || a.groups.every((g) => b.groups.includes(g))) &&
+        (ignoreGroups || a.groups.every((g) => b.groups.includes(g))) &&
         Boolean((!a.change && !b.change) || (a.change && b.change))
     );
 }

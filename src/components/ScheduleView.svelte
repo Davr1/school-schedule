@@ -145,64 +145,68 @@
                 subject
                     .slice(0, 2)
                     .sort((a, b) => (a.isStandard() && b.isStandard() && parseInt(a.groups[0]) - parseInt(b.groups[0])) || 0)
-                    .map((group, k) => ({
-                        subject: group,
+                    .map((group, k): GridCell => {
                         // odd groups are placed on the top, even groups on the bottom. If there are two groups per cell, order them by group number
-                        row: i * 2 + ((subject.length === 1 && group.isStandard() && (parseInt(group.groups[0]) + 1) % 2) || k),
-                        column: j,
-                        width: 1,
-                        height: group.isStandard() && parseInt(group.groups[0]) ? 1 : 2,
-                        id: group.id
-                    }))
+                        let half = 0;
+                        let height = 2;
+                        if (group.isStandard()) {
+                            const groupN = group.groups[0].match(/(\d+)\.sk/)?.[1];
+                            half = (subject.length === 1 && (parseInt(groupN || "1") + 1) % 2) || k;
+                            if (subject.length > 1 || groupN) height = 1;
+                        }
+                        return { subject: group, row: i * 2 + half, column: j, width: 1, height, id: group.id };
+                    })
             )
         }));
 
-        if ($config.mergeSubjects) {
-            grid.forEach(({ subjects }) => {
-                subjects.forEach((currentCell) => {
-                    const [first, second] = currentCell;
-                    if (!first?.subject.isStandard() || !second?.subject.isStandard()) return;
-                    if (isMergable(first.subject, second.subject, 0)) {
-                        currentCell.pop();
-                        first.height = 2;
-                        first.subject = new StandardSubject({
-                            ...first.subject,
-                            changed: Boolean(first.subject.change || second.subject.change),
-                            changeInfo: joinText("\n", first.subject.change, second.subject.change),
-                            theme: joinText("; ", first.subject.theme, second.subject.theme),
-                            groups: [...first.subject.groups, ...second.subject.groups]
+        if (!$config.mergeSubjects) return grid;
+
+        grid.forEach(({ subjects }) => {
+            // first merge subjects vertically in the same cell
+            subjects.forEach((currentCell) => {
+                const [first, second] = currentCell;
+                if (!first?.subject.isStandard() || !second?.subject.isStandard()) return;
+                if (isMergable(first.subject, second.subject, true)) {
+                    currentCell.pop();
+                    first.height = 2;
+                    first.subject = new StandardSubject({
+                        ...first.subject,
+                        changed: Boolean(first.subject.change || second.subject.change),
+                        changeInfo: joinText("\n", first.subject.change, second.subject.change),
+                        theme: joinText("; ", first.subject.theme, second.subject.theme),
+                        groups: [...first.subject.groups, ...second.subject.groups]
+                    });
+                }
+            });
+            // then merge adjacent subjects with similar metadata
+
+            subjects.forEach((currentCell, i) => {
+                currentCell.forEach((groupCell) => {
+                    const { subject } = groupCell;
+                    if (!subject.isStandard()) return;
+
+                    let offset = 0;
+                    while (++offset + i < subjects.length) {
+                        const nextCell = subjects[i + offset];
+                        let mergableGroupIdx = nextCell.findIndex((group) => isMergable(group.subject as StandardSubject, subject));
+                        if (mergableGroupIdx === -1) break;
+                        // remove duplicate subject
+                        let mergableSubject = nextCell.splice(mergableGroupIdx, 1)[0].subject as StandardSubject;
+                        groupCell.width++;
+                        // prevent overlaps
+                        if (nextCell.length === 1 && nextCell[0].row === groupCell.row) {
+                            nextCell[0].row = groupCell.row % 2 ? groupCell.row - 1 : groupCell.row + 1;
+                        }
+                        groupCell.subject = new StandardSubject({
+                            ...subject,
+                            changed: Boolean(subject.change || mergableSubject.change),
+                            changeInfo: joinText("\n", subject.change, mergableSubject.change),
+                            theme: joinText("; ", subject.theme, mergableSubject.theme)
                         });
                     }
                 });
-
-                subjects.forEach((currentCell, i) => {
-                    currentCell.forEach((groupCell) => {
-                        const { subject } = groupCell;
-                        if (!subject.isStandard()) return;
-
-                        let offset = 0;
-                        while (++offset + i < subjects.length) {
-                            const nextCell = subjects[i + offset];
-                            let mergableGroupIdx = nextCell.findIndex((group) => isMergable(group.subject as StandardSubject, subject));
-                            if (mergableGroupIdx === -1) break;
-                            // remove duplicate subject
-                            let mergableSubject = nextCell.splice(mergableGroupIdx, 1)[0].subject as StandardSubject;
-                            groupCell.width++;
-                            // prevent overlaps
-                            if (nextCell.length === 1 && nextCell[0].row === groupCell.row) {
-                                nextCell[0].row = groupCell.row % 2 ? groupCell.row - 1 : groupCell.row + 1;
-                            }
-                            groupCell.subject = new StandardSubject({
-                                ...subject,
-                                changed: Boolean(subject.change || mergableSubject.change),
-                                changeInfo: joinText("\n", subject.change, mergableSubject.change),
-                                theme: joinText("; ", subject.theme, mergableSubject.theme)
-                            });
-                        }
-                    });
-                });
             });
-        }
+        });
 
         return grid;
     }
