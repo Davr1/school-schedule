@@ -183,8 +183,7 @@ export function isMergable(a: Subject, b: Subject, ignoreGroups: boolean = false
         a.room === b.room &&
         a.teacher.abbreviation === b.teacher.abbreviation &&
         // ignore groups when merging vertically
-        (ignoreGroups || a.groups.every((g) => b.groups.includes(g))) &&
-        Boolean((!a.change && !b.change) || (a.change && b.change))
+        (ignoreGroups || a.groups.every((g) => b.groups.includes(g)))
     );
 }
 

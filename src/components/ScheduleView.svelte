@@ -178,8 +178,8 @@
                     });
                 }
             });
-            // then merge adjacent subjects with similar metadata
 
+            // then merge adjacent subjects with similar metadata
             subjects.forEach((currentCell, i) => {
                 currentCell.forEach((groupCell) => {
                     const { subject } = groupCell;
