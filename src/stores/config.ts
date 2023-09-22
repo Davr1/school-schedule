@@ -44,7 +44,7 @@ export const defaultConfig: Config = {
     saturdayOverride: true,
     loadscreen: true,
     cache: true,
-    mergeSubjects: false,
+    mergeSubjects: true,
     scheduleParams: {
         scheduleMode: "Class",
         weekMode: "Current",

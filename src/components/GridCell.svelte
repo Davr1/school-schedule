@@ -27,7 +27,8 @@
               " ", // Spacer
               subject.name,
               subject.teacher.name,
-              `${subject.change ?? subject.room}${subject.groups?.length ? " - " + joinText(" + ", ...subject.groups) : ""}`
+              subject.room,
+              joinText(" + ", ...subject.groups)
           ]
               .filter(Boolean)
               .join("\n")
