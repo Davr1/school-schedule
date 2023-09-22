@@ -49,10 +49,10 @@
                 >
                     {subject.room}
                 </span>
+                /
             {/if}
 
             {#if subject.groups.length}
-                /
                 {#each subject.groups.map((g) => g.split(", ")).flat() as singleGroup}
                     {#if isValidMetadata(singleGroup.trim().split(" ")[0])}
                         <!-- svelte-ignore a11y-click-events-have-key-events -->
