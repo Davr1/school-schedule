@@ -109,7 +109,9 @@
                                 teacher: teacher.name, // ugh, the compatibility.....
                                 teacherAbbr: teacher.abbreviation, // whyy
                                 group: s.group || foundSubject.group,
-                                room: s.room || foundSubject.room
+                                room: s.room || foundSubject.room,
+                                changed: s.change !== null,
+                                changeInfo: s.change ?? undefined
                             });
 
                             day.subjects[i][found] = temp;
