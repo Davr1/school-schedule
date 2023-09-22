@@ -94,16 +94,16 @@ export async function getWebSchedule(date: Date) {
                     subject.push(
                         new StandardSubject({
                             room: cell.$("[href*='/room/']")?.text,
-                            group,
-                            subjectAbbr: cell.$("strong")?.text,
-                            teacherAbbr: cell.$("[href*='/teacher/']")?.text,
-                            changed: true
+                            groups: [group],
+                            abbreviation: cell.$("strong")?.text,
+                            teacher: { name: "", abbreviation: cell.$("[href*='/teacher/']")?.text },
+                            change: true
                         })
                     );
                 } else {
                     subject.push(
                         new EmptySubject({
-                            changed: true
+                            change: true
                         })
                     );
                 }
@@ -119,10 +119,10 @@ export async function getWebSchedule(date: Date) {
                     subject.push(
                         new StandardSubject({
                             room: alternativeGroup.$("[href*='/room/']")?.text,
-                            group: group2,
-                            subjectAbbr: alternativeGroup.$("strong")?.text,
-                            teacherAbbr: alternativeGroup.$("[href*='/teacher/']")?.text,
-                            changed: true
+                            groups: [group2],
+                            abbreviation: alternativeGroup.$("strong")?.text,
+                            teacher: { name: "", abbreviation: alternativeGroup.$("[href*='/teacher/']")?.text },
+                            change: true
                         })
                     );
                 }
@@ -172,4 +172,18 @@ export function isValidMetadata(value: string): value is Value {
         scheduleMetadata.rooms.find((roomMetadata) => roomMetadata.name === value) !== undefined ||
         scheduleMetadata.teachers.find((teacherMetadata) => teacherMetadata.name === value || teacherMetadata.abbr === value) !== undefined
     );
+}
+
+export function isMergable(a: StandardSubject, b: StandardSubject, ignoreGroups: boolean = false): boolean {
+    return (
+        a.abbreviation === b.abbreviation &&
+        a.room === b.room &&
+        a.teacher.abbreviation === b.teacher.abbreviation &&
+        // ignore groups when merging vertically
+        (ignoreGroups || a.groups.every((g) => b.groups.includes(g)))
+    );
+}
+
+export function joinText(separator: string, ...args: (string | null)[]): string {
+    return Array.from(new Set(args.filter(Boolean))).join(separator);
 }

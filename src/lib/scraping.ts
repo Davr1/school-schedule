@@ -48,28 +48,25 @@ export async function getBakaSchedule(params: ScheduleParams): Promise<BakalariS
                         switch (detail.type) {
                             case "removed":
                                 subjectInstance = new EmptySubject({
-                                    changed: true,
-                                    changeInfo: detail.removedinfo
+                                    change: true
                                 });
                                 break;
                             case "absent":
                                 subjectInstance = new SpecialSubject({
                                     special: detail.InfoAbsentName,
                                     specialAbbr: detail.absentinfo,
-                                    changeInfo: detail.removedinfo
+                                    change: true
                                 });
                                 break;
                             default:
                                 subjectInstance = new StandardSubject({
                                     subject: detail.subjecttext.split("|")[0].trim(),
-                                    subjectAbbr: $(group).find(".middle")?.text(),
-                                    teacher: detail.teacher,
-                                    teacherAbbr: $(group).find(".bottom>span")?.text() ?? "",
+                                    abbreviation: $(group).find(".middle")?.text(),
+                                    teacher: { name: detail.teacher, abbreviation: $(group).find(".bottom>span")?.text() ?? "" },
                                     room: detail.room,
-                                    group: detail.group,
+                                    groups: [detail.group],
                                     theme: detail.theme,
-                                    changed: $(group).hasClass("pink"),
-                                    changeInfo: detail.changeinfo
+                                    change: $(group).hasClass("pink")
                                 });
                         }
 

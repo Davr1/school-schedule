@@ -4,11 +4,8 @@ export enum SubjectType {
     Special = 2
 }
 
-// Props are compatible with the old format
-// But the classes are not..
 export interface SubjectProps {
-    changed: boolean;
-    changeInfo: string;
+    change: boolean;
 }
 
 /** A subject in the schedule (abstract) */
@@ -19,14 +16,11 @@ export abstract class Subject {
     /** Id of the subject, used internally */
     readonly id = Symbol();
 
-    /** Info about a possible change, null if there is no change */
-    readonly change: string | null;
+    /** Whether there is a change in the schedule or not */
+    readonly change: boolean;
 
-    // Reason why this is Partial:
-    // https://discord.com/channels/@me/1115648324821843999/1123651985242079393
-    constructor({ changed, changeInfo }: Partial<SubjectProps>) {
-        if (changed) this.change = changeInfo ?? "";
-        else this.change = null;
+    constructor({ change }: Partial<SubjectProps>) {
+        this.change = change ?? false;
     }
 
     // Type guards (aka type predicates. basically just a function that returns a boolean and narrows the type)
@@ -58,7 +52,7 @@ export class EmptySubject extends Subject {
 export interface SpecialSubjectProps extends Required<SubjectProps> {
     special: string;
     specialAbbr: string;
-    changed: true;
+    change: true;
 }
 
 /**
@@ -75,17 +69,11 @@ export class SpecialSubject extends Subject {
     /** The special subject's abbreviation */
     readonly abbreviation: string;
 
-    /** Information about the change */
-    readonly change: string;
-
     constructor({ special, specialAbbr, ...params }: Partial<SpecialSubjectProps>) {
         super(params);
 
         this.name = special ?? "";
         this.abbreviation = specialAbbr ?? "";
-
-        // This differs from the Subject constructor because the change is required here
-        this.change = params.changeInfo ?? "";
     }
 }
 
@@ -100,11 +88,10 @@ export interface TeacherInfo {
 
 export interface StandardSubjectProps extends SubjectProps {
     subject: string;
-    subjectAbbr: string;
+    abbreviation: string;
     cls: string;
-    group: string;
-    teacher: string;
-    teacherAbbr: string;
+    groups: string[];
+    teacher: TeacherInfo;
     room: string;
     theme: string;
 }
@@ -126,8 +113,8 @@ export class StandardSubject extends Subject {
      */
     readonly className: string;
 
-    /** The group the subject is for */
-    readonly group: string;
+    /** The groups the subject is for */
+    readonly groups: string[];
 
     /** The teacher */
     readonly teacher: TeacherInfo;
@@ -142,10 +129,10 @@ export class StandardSubject extends Subject {
         super(params);
 
         this.name = params.subject ?? "";
-        this.abbreviation = params.subjectAbbr ?? "";
+        this.abbreviation = params.abbreviation ?? "";
         this.className = params.cls ?? "";
-        this.group = params.group ?? "";
-        this.teacher = { name: params.teacher ?? "", abbreviation: params.teacherAbbr ?? "" };
+        this.groups = params.groups ?? [];
+        this.teacher = params.teacher ?? { name: "", abbreviation: "" };
         this.room = params.room ?? "";
         this.theme = params.theme ?? "";
     }

@@ -21,11 +21,18 @@
         <slot name="close" />
     </h1>
 {:else if subject.isStandard() && subject.theme}
-    <h2 class={modalStyles.title}>
-        <span><TextSnippet /> {subject.theme}</span>
+    {#each subject.theme
+        .split("; ")
+        .map((t) => t.trim())
+        .filter(Boolean) as theme, i}
+        <h2 class={modalStyles.title}>
+            <span><TextSnippet /> {theme}</span>
 
-        <slot name="close" />
-    </h2>
+            {#if i === 0}
+                <slot name="close" />
+            {/if}
+        </h2>
+    {/each}
 {/if}
 
 {#if subject.isStandard()}
@@ -49,28 +56,30 @@
                 >
                     {subject.room}
                 </span>
+                {#if subject.groups.filter(Boolean).length > 0}/{/if}
             {/if}
 
-            {#if subject.group}
-                /
-                {#each subject.group.split(", ") as singleGroup}
-                    {#if isValidMetadata(singleGroup.trim().split(" ")[0])}
-                        <!-- svelte-ignore a11y-click-events-have-key-events -->
-                        <!-- svelte-ignore a11y-no-static-element-interactions -->
-                        <span
-                            class={styles.link}
-                            on:click={() => {
-                                const group = singleGroup.trim().split(" ")[0];
-                                if (isValidMetadata(group)) updateScheduleParams({ value: group, scheduleMode: "Class" });
-                            }}
-                        >
-                            {singleGroup}
-                        </span>
-                    {:else}
+            {#each subject.groups
+                .map((g) => g.split(", "))
+                .flat()
+                .filter(Boolean) as singleGroup}
+                {#if isValidMetadata(singleGroup.trim().split(" ")[0])}
+                    <!-- svelte-ignore a11y-click-events-have-key-events -->
+                    <!-- svelte-ignore a11y-no-static-element-interactions -->
+                    <span
+                        class={styles.link}
+                        on:click={() => {
+                            const group = singleGroup.trim().split(" ")[0];
+                            if (isValidMetadata(group)) updateScheduleParams({ value: group, scheduleMode: "Class" });
+                        }}
+                    >
                         {singleGroup}
-                    {/if}
-                {/each}
-            {/if}
+                    </span>
+                {:else}
+                    {singleGroup}
+                {/if}
+                &ensp;
+            {/each}
         </span>
 
         <!-- Only show the close button if it's not already shown by the thing at the top -->
