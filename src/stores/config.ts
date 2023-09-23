@@ -22,7 +22,6 @@ export interface Config {
     useWeb: boolean;
     saturdayOverride: boolean;
     loadscreen: boolean;
-    cache: boolean;
     mergeSubjects: boolean;
     version: string;
 
@@ -43,7 +42,6 @@ export const defaultConfig: Config = {
     useWeb: true,
     saturdayOverride: true,
     loadscreen: true,
-    cache: true,
     mergeSubjects: true,
     scheduleParams: {
         scheduleMode: "Class",
