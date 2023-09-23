@@ -4,7 +4,7 @@
 
     import { getBakaSchedule, type BakalariSchedule } from "$lib/scraping";
     import { StandardSubject, Subject } from "$lib/subject";
-    import { getWebSchedule, isMergable, joinText } from "$lib/utilities";
+    import { getWebSchedule, isMergable, joinText, parseGroup } from "$lib/utilities";
 
     import { config, scheduleParams, type ScheduleParams } from "$stores/config";
     import { fetchCount, fetchQueue } from "$stores/main";
@@ -145,14 +145,14 @@
             subjects: subjects.map((subject, j) =>
                 subject
                     .slice(0, 2)
-                    .sort((a, b) => (a.isStandard() && b.isStandard() && parseInt(a.groups[0]) - parseInt(b.groups[0])) || 0)
+                    .sort((a, b) => (a.isStandard() && b.isStandard() && parseGroup(a.groups[0]) - parseGroup(b.groups[0])) || 0)
                     .map((group, k): GridCell => {
                         // odd groups are placed on the top, even groups on the bottom. If there are two groups per cell, order them by group number
                         let half = 0;
                         let height = 2;
                         if (group.isStandard()) {
-                            const groupN = group.groups[0].match(/(\d+)\.sk/)?.[1];
-                            half = (subject.length === 1 && (parseInt(groupN || "1") + 1) % 2) || k;
+                            const groupN = parseGroup(group.groups[0]);
+                            half = (subject.length === 1 && ((groupN || 1) + 1) % 2) || k;
                             if (subject.length > 1 || groupN) height = 1;
                         }
                         return { subject: group, row: i * 2 + half, column: j, width: 1, height, id: group.id };
@@ -174,7 +174,7 @@
                         ...first.subject,
                         subject: first.subject.name,
                         cls: first.subject.className,
-                        change: Boolean(first.subject.change || second.subject.change),
+                        change: first.subject.change || second.subject.change,
                         theme: joinText("; ", first.subject.theme, second.subject.theme),
                         groups: [...first.subject.groups, ...second.subject.groups]
                     });
@@ -190,7 +190,9 @@
                     let offset = 0;
                     while (++offset + i < subjects.length) {
                         const nextCell = subjects[i + offset];
-                        let mergableGroupIdx = nextCell.findIndex((group) => isMergable(group.subject as StandardSubject, subject));
+                        let mergableGroupIdx = nextCell.findIndex(
+                            (group) => group.subject.isStandard() && isMergable(group.subject, subject)
+                        );
                         if (mergableGroupIdx === -1) break;
                         // remove duplicate subject
                         let mergableSubject = nextCell.splice(mergableGroupIdx, 1)[0].subject as StandardSubject;
@@ -203,7 +205,7 @@
                             ...subject,
                             subject: subject.name,
                             cls: subject.className,
-                            change: Boolean(subject.change || mergableSubject.change),
+                            change: subject.change || mergableSubject.change,
                             theme: joinText("; ", subject.theme, mergableSubject.theme)
                         });
                     }

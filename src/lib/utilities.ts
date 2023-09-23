@@ -187,3 +187,7 @@ export function isMergable(a: StandardSubject, b: StandardSubject, ignoreGroups:
 export function joinText(separator: string, ...args: (string | null)[]): string {
     return Array.from(new Set(args.filter(Boolean))).join(separator);
 }
+
+export function parseGroup(group: string): number {
+    return parseInt(group.match(/(\d+)\.sk/)?.[1] ?? "");
+}
