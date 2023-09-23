@@ -24,7 +24,7 @@
 
     // Register the subscriber on mount
     onMount(() => {
-        scheduleParams.subscribe((data) => updateSchedule(data));
+        scheduleParamsSubscriber = scheduleParams.subscribe((data) => updateSchedule(data));
     });
 
     // On unmount, unsubscribe
