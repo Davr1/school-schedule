@@ -17,15 +17,19 @@
     box-sizing: border-box;
     overflow: hidden;
 
+    animation: 50ms scale both ease-out;
+
     &.scrollable {
         height: 85vh;
     }
 
     &::backdrop {
         background: #000a;
-        backdrop-filter: blur(5px);
-
         cursor: pointer;
+        animation: 100ms bg forwards ease-out;
+        @media not (pointer: fine) {
+            backdrop-filter: unset !important;
+        }
     }
 
     @media (max-aspect-ratio: 3/4) {
@@ -54,14 +58,13 @@
         overflow-y: auto;
     }
 
-    h1,
-    h2 {
-        svg {
-            vertical-align: sub;
-            width: 2rem;
-            height: 2rem;
-            margin-right: 0.3rem;
-        }
+    :is(h1, h2) > svg,
+    // Don't apply to big buttons
+    :is(h1, h2) :not(.big) > svg {
+        vertical-align: sub;
+        width: 2rem;
+        height: 2rem;
+        margin-right: 0.3rem;
     }
 
     p {
@@ -76,17 +79,31 @@
     }
 }
 
-:local(.closeButton) {
-    position: absolute;
-    top: 1.6rem;
-    right: 2rem;
+:local(.title) {
+    display: flex;
 
-    width: 3rem;
-    height: 3rem;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+}
 
-    padding: 0;
+@keyframes bg {
+    from {
+        opacity: 0;
+        backdrop-filter: blur(0);
+    }
+    to {
+        opacity: 1;
+        backdrop-filter: blur(5px);
+    }
+}
 
-    border-radius: 0.4rem;
-
-    z-index: 3;
+@keyframes scale {
+    from {
+        transform: scale(0.97);
+    }
+    to {
+        transform: scale(1);
+    }
 }

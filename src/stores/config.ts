@@ -20,9 +20,9 @@ export interface ScheduleParams {
 
 export interface Config {
     useWeb: boolean;
-    sundayOverride: boolean;
+    saturdayOverride: boolean;
     loadscreen: boolean;
-    cache: boolean;
+    mergeSubjects: boolean;
     version: string;
 
     scheduleParams: ScheduleParams;
@@ -39,21 +39,21 @@ try {
 }
 
 export const defaultConfig: Config = {
-    useWeb: false,
-    sundayOverride: true,
+    useWeb: true,
+    saturdayOverride: true,
     loadscreen: true,
-    cache: true,
+    mergeSubjects: true,
     scheduleParams: {
         scheduleMode: "Class",
         weekMode: "Current",
-        value: "P2.B"
+        value: "P3.B"
     },
 
     version
 };
 
 const defaultValues: Record<ScheduleMode, Value> = {
-    Class: "P2.B",
+    Class: "P3.B",
     Teacher: "Mašek Petr",
     Room: "104"
 };

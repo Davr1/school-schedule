@@ -1,11 +1,24 @@
 @use "../../transitions.scss";
 
+:local(.cell) {
+    grid-area: calc(var(--row) + 1) / calc(var(--column) + 2) / span var(--height) / span var(--width);
+
+    min-height: calc(6.4vh * var(--height) + 0.5rem * (var(--height) - 1));
+
+    @media (max-aspect-ratio: 1/2) {
+        min-width: 9vh;
+    }
+
+    @media (min-aspect-ratio: 2/5) and (max-aspect-ratio: 3/2) {
+        min-width: 11vh;
+    }
+}
+
 :local(.subject) {
     position: relative;
     display: flex;
 
     width: 100%;
-    min-height: 0;
 
     flex-direction: column;
     flex: 1 1 auto;
@@ -16,14 +29,6 @@
     box-shadow: 0 0.0625rem 0.25rem -0.125rem #000;
 
     @include transitions.all((background-color, transform), ease-out, 200ms);
-
-    &:only-child {
-        min-height: 13.5vh;
-    }
-
-    &:not(:last-of-type) {
-        margin-bottom: 0.6rem;
-    }
 
     &.changed {
         --subject-hover: var(--hover-accent-primary);
@@ -37,19 +42,22 @@
         color: #fff;
     }
 
-    &.floating {
-        z-index: 2;
-        cursor: default; // i don't use pointer-events: none; because it breaks the close button
-    }
-
     // I added this so there's no pointer on removed subjects (cuz you can't click them anyway)
     &.active {
         cursor: pointer;
     }
 
+    &.floating {
+        z-index: 2;
+        cursor: default; // i don't use pointer-events: none; because it breaks the close button
+
+        // Disable the transition when the subject is floating
+        transition: none;
+    }
+
     // Only apply the hover effect on desktop if there's more than 1 cell
     @media (pointer: fine) {
-        :local(.cell):not(:only-child) > &.active:is(:hover, .floating) {
+        :not(:only-child) > &.active:hover:not(.floating) {
             // Use the --subject-hover variable when it's defined, fallback to the default hover color
             background-color: var(--subject-hover, var(--element-background));
 

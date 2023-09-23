@@ -5,6 +5,7 @@
 
     width: 3.4rem;
     height: 2rem;
+    flex-shrink: 0; // Don't shrink inside flex containers
 
     background-color: var(--element-background);
 

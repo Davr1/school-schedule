@@ -4,12 +4,12 @@
     "version": "2.1.0",
     "type": "module",
     "scripts": {
-        "dev": "vite dev",
-        "build": "vite build",
+        "dev": "pnpm prebuild && vite dev",
+        "build": "pnpm prebuild && vite build",
         "preview": "vite preview",
         "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
         "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-        "prepare": "vite-node scripts/colors.ts"
+        "prebuild": "vite-node scripts/colors.ts"
     },
     "devDependencies": {
         "@poppanator/sveltekit-svg": "^4.0.0",
@@ -19,17 +19,19 @@
         "@types/node": "^20.3.3",
         "prettier": "^3.0.2",
         "prettier-plugin-svelte": "^3.0.3",
+        "sass": "^1.66.1",
         "svelte": "^4.0.1",
         "svelte-check": "^3.4.4",
         "svelte-preprocess": "^5.0.4",
-        "svelte-preprocess-sass": "^2.0.1",
         "tslib": "^2.6.0",
         "typescript": "^5.1.6",
         "vite": "^4.3.9",
         "vite-node": "^0.34.3"
     },
     "dependencies": {
+        "@fontsource/inter": "^5.0.8",
         "@material-design-icons/svg": "^0.14.9",
+        "autoprefixer": "^10.4.15",
         "axios": "^1.4.0",
         "bson": "^5.3.0",
         "cheerio": "^1.0.0-rc.12",

@@ -1,10 +1,9 @@
 <script lang="ts">
-    import { createEventDispatcher, onDestroy, onMount } from "svelte";
-    import type { Unsubscriber } from "svelte/store";
+    import { createEventDispatcher } from "svelte";
 
-    import { type BakalariSchedule, getBakaSchedule } from "$lib/scraping";
-    import { StandardSubject } from "$lib/subject";
-    import { getWebSchedule } from "$lib/utilities";
+    import { getBakaSchedule, type BakalariSchedule } from "$lib/scraping";
+    import { StandardSubject, Subject } from "$lib/subject";
+    import { getWebSchedule, isMergable, joinText, parseGroup } from "$lib/utilities";
 
     import { config, scheduleParams, type ScheduleParams } from "$stores/config";
     import { fetchCount, fetchQueue } from "$stores/main";
@@ -13,24 +12,18 @@
     import GridCell from "$components/GridCell.svelte";
 
     import styles from "$styles/modules/Schedule.module.scss";
+    import { browser } from "$app/environment";
 
     const dispatch = createEventDispatcher<{ loadingFinished: null }>();
 
     let scheduleData: BakalariSchedule = [];
 
-    let scheduleParamsSubscriber: Unsubscriber;
-
     let today = new Date().getDay();
 
-    // Register the subscriber on mount
-    onMount(() => {
-        scheduleParams.subscribe((data) => updateSchedule(data));
-    });
-
-    // On unmount, unsubscribe
-    onDestroy(() => {
-        scheduleParamsSubscriber?.();
-    });
+    let saturdayOverride: boolean, useWeb: boolean;
+    $: (saturdayOverride = $config.saturdayOverride), (useWeb = $config.useWeb);
+    // svelte magic - this line runs when any of the variables change, including the scheduleParams store itself
+    $: browser && (saturdayOverride, useWeb, updateSchedule($scheduleParams));
 
     async function updateSchedule(schedule: ScheduleParams) {
         schedule = structuredClone(schedule);
@@ -42,7 +35,8 @@
         let localFetchQueue = $fetchQueue;
 
         fetchProcess: {
-            if ($scheduleParams.weekMode === "Current" && $config.sundayOverride && today === 0) {
+            // Show the next week if it's Saturday (or Sunday) and the user has enabled the option
+            if ($scheduleParams.weekMode === "Current" && $config.saturdayOverride && (today === 0 || today === 6)) {
                 schedule.weekMode = "Next";
             }
 
@@ -74,7 +68,7 @@
 
                 for (let [i, subject] of response.find((e) => e.cls.slice(1) === schedule.value.slice(1))?.subjects.entries() ?? []) {
                     subject?.forEach((s) => {
-                        const found = day.subjects[i].findIndex((a) => a.isStandard() && s.isStandard() && a.group === s.group);
+                        const found = day.subjects[i].findIndex((a) => a.isStandard() && s.isStandard() && a.groups[0] === s.groups[0]);
 
                         if (found !== -1) {
                             const foundSubject = day.subjects[i][found]; // this is repeated a lot..
@@ -103,12 +97,12 @@
                             // create a new subject (ig? don't ask me. i only rewrote the original but with type safety)
                             const temp = new StandardSubject({
                                 subject: name,
-                                subjectAbbr: s.abbreviation || foundSubject.abbreviation,
+                                abbreviation: s.abbreviation || foundSubject.abbreviation,
                                 theme,
-                                teacher: teacher.name, // ugh, the compatibility.....
-                                teacherAbbr: teacher.abbreviation, // whyy
-                                group: s.group || foundSubject.group,
-                                room: s.room || foundSubject.room
+                                teacher,
+                                groups: [s.groups[0] || foundSubject.groups[0]],
+                                room: s.room || foundSubject.room,
+                                change: s.change
                             });
 
                             day.subjects[i][found] = temp;
@@ -120,6 +114,99 @@
                 scheduleData = scheduleData;
             }
         }
+    }
+
+    type Grid = GridRow[];
+
+    interface GridRow {
+        date: readonly [string, string];
+        subjects: GridCell[][];
+    }
+
+    interface GridCell {
+        subject: Subject;
+        row: number;
+        column: number;
+        width: number;
+        height: number;
+        id: symbol;
+    }
+
+    function createGrid(schedule: BakalariSchedule) {
+        let grid: Grid = schedule.map(({ date, subjects }, i) => ({
+            date,
+            subjects: subjects.map((subject, j) =>
+                subject
+                    .slice(0, 2)
+                    .sort((a, b) => (a.isStandard() && b.isStandard() && parseGroup(a.groups[0]) - parseGroup(b.groups[0])) || 0)
+                    .map((group, k): GridCell => {
+                        // odd groups are placed on the top, even groups on the bottom. If there are two groups per cell, order them by group number
+                        let half = 0;
+                        let height = 2;
+                        if (group.isStandard()) {
+                            const groupN = parseGroup(group.groups[0]);
+                            half = (subject.length === 1 && ((groupN || 1) + 1) % 2) || k;
+                            if (subject.length > 1 || groupN) height = 1;
+                        }
+                        return { subject: group, row: i * 2 + half, column: j, width: 1, height, id: group.id };
+                    })
+            )
+        }));
+
+        if (!$config.mergeSubjects) return grid;
+
+        grid.forEach(({ subjects }) => {
+            // first merge subjects vertically in the same cell
+            subjects.forEach((currentCell) => {
+                const [first, second] = currentCell;
+                if (!first?.subject.isStandard() || !second?.subject.isStandard()) return;
+                if (isMergable(first.subject, second.subject, true)) {
+                    currentCell.pop();
+                    first.height = 2;
+                    first.subject = new StandardSubject({
+                        ...first.subject,
+                        subject: first.subject.name,
+                        cls: first.subject.className,
+                        change: first.subject.change || second.subject.change,
+                        theme: joinText("; ", first.subject.theme, second.subject.theme),
+                        groups: [...first.subject.groups, ...second.subject.groups]
+                    });
+                }
+            });
+
+            // then merge adjacent subjects with similar metadata
+            subjects.forEach((currentCell, i) => {
+                currentCell.forEach((groupCell) => {
+                    const { subject } = groupCell;
+                    if (!subject.isStandard()) return;
+
+                    let offset = 0;
+                    while (++offset + i < subjects.length) {
+                        const nextCell = subjects[i + offset];
+                        let mergableGroupIdx = nextCell.findIndex(
+                            (group) => group.subject.isStandard() && isMergable(group.subject, subject)
+                        );
+                        if (mergableGroupIdx === -1) break;
+                        // remove duplicate subject
+                        let mergableSubject = nextCell.splice(mergableGroupIdx, 1)[0].subject as StandardSubject;
+                        groupCell.width++;
+                        // prevent overlaps
+                        if (nextCell.length === 1 && nextCell[0].row === groupCell.row) {
+                            nextCell[0].row = groupCell.row % 2 ? groupCell.row - 1 : groupCell.row + 1;
+                        }
+                        groupCell.subject = new StandardSubject({
+                            ...subject,
+                            subject: subject.name,
+                            cls: subject.className,
+                            change: subject.change || mergableSubject.change,
+                            theme: joinText("; ", subject.theme, mergableSubject.theme)
+                        });
+                    }
+                });
+            });
+        });
+
+        return grid;
     }
 </script>
 
@@ -133,23 +220,25 @@
             </div>
         {/each}
     </div>
-    {#each scheduleData as day}
-        <div class={styles.row}>
-            <div class={styles.day}>
-                <span>{day.date[0]}</span>
+    {#key $config.mergeSubjects}
+        <div class={styles.grid}>
+            {#each createGrid(scheduleData) as day, i}
+                <div class={styles.day} style:grid-row={`${1 + i * 2} / span 2`}>
+                    <span>{day.date[0]}</span>
 
-                <span>{day.date[1]}</span>
-            </div>
+                    <span>{day.date[1]}</span>
+                </div>
 
-            <div class={styles.container}>
-                {#each day.subjects as cell}
-                    <div class={styles.cell}>
-                        {#each cell.sort( (a, b) => (!a.isStandard() || !b.isStandard() ? 0 : a.group.localeCompare(b.group)) ) as subject (subject.id)}
-                            <GridCell {subject} on:modalOpen />
+                {#each day.subjects as cell, j}
+                    {#if cell.length > 0}
+                        {#each cell as subject (subject.id)}
+                            <GridCell {...subject} on:modalOpen />
                         {/each}
-                    </div>
+                    {:else}
+                        <div class={styles.cell} style={`--row: ${i * 2}; --column: ${j}; --width: 1; --height: 2;`}></div>
+                    {/if}
                 {/each}
-            </div>
+            {/each}
         </div>
-    {/each}
+    {/key}
 </main>

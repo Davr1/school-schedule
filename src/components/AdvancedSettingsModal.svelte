@@ -1,5 +1,8 @@
 <script lang="ts">
     import { config } from "$stores/config";
+    import Close from "@material-design-icons/svg/filled/close.svg?component";
+
+    import { addRipple } from "$lib/ripple";
 
     import UwU from "$assets/uwu.svg?component";
 
@@ -7,6 +10,8 @@
     import Switch from "$components/Switch.svelte";
     import ThemeEditor from "$components/ThemeEditor.svelte";
 
+    import controlStyles from "$styles/modules/Controls.module.scss";
+    import modalStyles from "$styles/modules/Modal.module.scss";
     import styles from "$styles/modules/Settings.module.scss";
 
     /** Whether the AdvancedSettingsModal is visible */
@@ -14,18 +19,25 @@
 </script>
 
 <Modal bind:visible scrollable>
-    <h1>Advanced settings</h1>
+    <div class={modalStyles.title}>
+        <h1>Advanced settings</h1>
+
+        <button class={`${controlStyles.button} big`} on:click={() => (visible = false)} use:addRipple>
+            <Close />
+        </button>
+    </div>
+
     <div class={styles.optionRow}>Use the school's website for substitutions <Switch bind:value={$config.useWeb} /></div>
     <p>
         <span>Substituted classes taken from the school's website will be merged with the full schedule.</span>
     </p>
-    <div class={styles.optionRow}>Cache server responses <Switch bind:value={$config.cache} /></div>
+    <div class={styles.optionRow}>Show next week on Saturday <Switch bind:value={$config.saturdayOverride} /></div>
     <p>
-        <span>Improves loading speeds, but it could lead to inaccuracies.</span>
+        <span>The current schedule will show the next week's schedule on Saturday.</span>
     </p>
-    <div class={styles.optionRow}>Show next week on Sunday <Switch bind:value={$config.sundayOverride} /></div>
+    <div class={styles.optionRow}>Merge subjects <Switch bind:value={$config.mergeSubjects} /></div>
     <p>
-        <span>The current schedule will show the next week's schedule on Sundays.</span>
+        <span>Merges adjacent groups and subjects to reduce screen clutter.</span>
     </p>
     <div class={styles.optionRow}>
         <span><UwU height="1em" style="vertical-align: sub;" /> loading screen</span>

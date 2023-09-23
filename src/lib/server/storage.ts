@@ -46,7 +46,7 @@ export async function deserialize<T extends Document>(buffer: Buffer): Promise<T
  * @param file The file to read (defaults to data.bson)
  * @returns The deserialized data
  */
-export async function read<T extends Document = Document>(file: string = "data.bson"): Promise<T> {
+export async function read<T extends Document = Document>(file: string = "cache/data.bson"): Promise<T> {
     // Read the file or create it if it doesn't exist
     let buffer: Buffer;
     try {
@@ -67,7 +67,7 @@ export async function read<T extends Document = Document>(file: string = "data.b
  * @param data The data to serialize
  * @param file The file to write (defaults to data.bson)
  */
-export async function write<T extends Document = Document>(data: T, file: string = "data.bson"): Promise<void> {
+export async function write<T extends Document = Document>(data: T, file: string = "cache/data.bson"): Promise<void> {
     // Serialize the BSON
     const buffer = await serialize(data);
 

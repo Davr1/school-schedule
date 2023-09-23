@@ -9,8 +9,9 @@
     align-items: center;
     gap: 0.5rem;
 
-    // min-width: 2.75rem; // Broken for some reason...
+    min-width: 2.75rem;
     min-height: 2.75rem;
+    flex-shrink: 0; // Don't shrink the button when it's inside a flex container
 
     padding: 0.25rem 0.5rem;
 
@@ -36,9 +37,17 @@
 
     box-sizing: border-box;
 
-    &:hover {
-        background-color: var(--element-background);
-        color: var(--active-foreground);
+    @media (pointer: fine) {
+        &:hover {
+            background-color: var(--element-background);
+            color: var(--active-foreground);
+        }
+    }
+
+    // Bigger button style (used for example by the modal close button)
+    &.big {
+        height: 3rem;
+        min-width: 3rem;
     }
 
     // Active style (used by dropdowns and segmented controls)

@@ -1,9 +1,23 @@
 import svg from "@poppanator/sveltekit-svg";
 import { sveltekit } from "@sveltejs/kit/vite";
+import autoprefixer from "autoprefixer";
 import { defineConfig } from "vite";
 
 // https://vitejs.dev/config/
 export default defineConfig({
+    server: {
+        // In dev mode, by default, the proxy and cache of the production server will be used.
+        // Can be disabled by setting the environment variable LOCAL_PROXY to true
+        proxy:
+            process.env.LOCAL_PROXY === "true"
+                ? {}
+                : {
+                      "/sssvt": {
+                          target: "https://rozvrh.icy.cx",
+                          changeOrigin: true
+                      }
+                  }
+    },
     plugins: [
         sveltekit(),
         svg({
@@ -35,6 +49,10 @@ export default defineConfig({
             // By default, all class names in your components will be passed through to the final bundle.
             // for the hashed class names, add a :local modifier to the class name (e.g. :local(.foo) { ... })
             scopeBehaviour: "global"
+        },
+
+        postcss: {
+            plugins: [autoprefixer()]
         }
     }
 });

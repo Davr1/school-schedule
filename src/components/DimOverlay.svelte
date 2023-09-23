@@ -1,7 +1,7 @@
 <script lang="ts">
     import { createEventDispatcher, onDestroy, onMount } from "svelte";
 
-    import styles from "$styles/modules/dimOverlay.module.scss";
+    import styles from "$styles/modules/DimOverlay.module.scss";
 
     /** Whether the overlay is shown or not */
     export let dimmed: boolean;
