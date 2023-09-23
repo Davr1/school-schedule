@@ -172,6 +172,8 @@
                     first.height = 2;
                     first.subject = new StandardSubject({
                         ...first.subject,
+                        subject: first.subject.name,
+                        cls: first.subject.className,
                         change: Boolean(first.subject.change || second.subject.change),
                         theme: joinText("; ", first.subject.theme, second.subject.theme),
                         groups: [...first.subject.groups, ...second.subject.groups]
@@ -199,6 +201,8 @@
                         }
                         groupCell.subject = new StandardSubject({
                             ...subject,
+                            subject: subject.name,
+                            cls: subject.className,
                             change: Boolean(subject.change || mergableSubject.change),
                             theme: joinText("; ", subject.theme, mergableSubject.theme)
                         });
