@@ -1,6 +1,5 @@
 <script lang="ts">
-    import { createEventDispatcher, onDestroy, onMount } from "svelte";
-    import type { Unsubscriber } from "svelte/store";
+    import { createEventDispatcher } from "svelte";
 
     import { getBakaSchedule, type BakalariSchedule } from "$lib/scraping";
     import { StandardSubject, Subject } from "$lib/subject";
@@ -13,24 +12,18 @@
     import GridCell from "$components/GridCell.svelte";
 
     import styles from "$styles/modules/Schedule.module.scss";
+    import { browser } from "$app/environment";
 
     const dispatch = createEventDispatcher<{ loadingFinished: null }>();
 
     let scheduleData: BakalariSchedule = [];
 
-    let scheduleParamsSubscriber: Unsubscriber;
-
     let today = new Date().getDay();
 
-    // Register the subscriber on mount
-    onMount(() => {
-        scheduleParams.subscribe((data) => updateSchedule(data));
-    });
-
-    // On unmount, unsubscribe
-    onDestroy(() => {
-        scheduleParamsSubscriber?.();
-    });
+    let saturdayOverride: boolean, useWeb: boolean;
+    $: (saturdayOverride = $config.saturdayOverride), (useWeb = $config.useWeb);
+    // svelte magic - this line runs when any of the variables change, including the scheduleParams store itself
+    $: browser && (saturdayOverride, useWeb, updateSchedule($scheduleParams));
 
     async function updateSchedule(schedule: ScheduleParams) {
         schedule = structuredClone(schedule);
@@ -227,23 +220,25 @@
             </div>
         {/each}
     </div>
-    <div class={styles.grid}>
-        {#each createGrid(scheduleData) as day, i}
-            <div class={styles.day} style:grid-row={`${1 + i * 2} / span 2`}>
-                <span>{day.date[0]}</span>
+    {#key $config.mergeSubjects}
+        <div class={styles.grid}>
+            {#each createGrid(scheduleData) as day, i}
+                <div class={styles.day} style:grid-row={`${1 + i * 2} / span 2`}>
+                    <span>{day.date[0]}</span>
 
-                <span>{day.date[1]}</span>
-            </div>
+                    <span>{day.date[1]}</span>
+                </div>
 
-            {#each day.subjects as cell, j}
-                {#if cell.length > 0}
-                    {#each cell as subject (subject.id)}
-                        <GridCell {...subject} on:modalOpen />
-                    {/each}
-                {:else}
-                    <div class={styles.cell} style={`--row: ${i * 2}; --column: ${j}; --width: 1; --height: 2;`}></div>
-                {/if}
+                {#each day.subjects as cell, j}
+                    {#if cell.length > 0}
+                        {#each cell as subject (subject.id)}
+                            <GridCell {...subject} on:modalOpen />
+                        {/each}
+                    {:else}
+                        <div class={styles.cell} style={`--row: ${i * 2}; --column: ${j}; --width: 1; --height: 2;`}></div>
+                    {/if}
+                {/each}
             {/each}
-        {/each}
-    </div>
+        </div>
+    {/key}
 </main>

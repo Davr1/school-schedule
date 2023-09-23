@@ -31,10 +31,6 @@
     <p>
         <span>Substituted classes taken from the school's website will be merged with the full schedule.</span>
     </p>
-    <div class={styles.optionRow}>Cache server responses <Switch bind:value={$config.cache} /></div>
-    <p>
-        <span>Improves loading speeds, but it could lead to inaccuracies.</span>
-    </p>
     <div class={styles.optionRow}>Show next week on Saturday <Switch bind:value={$config.saturdayOverride} /></div>
     <p>
         <span>The current schedule will show the next week's schedule on Saturday.</span>
