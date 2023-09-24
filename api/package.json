@@ -1,0 +1,18 @@
+{
+    "name": "api",
+    "module": "src/index.ts",
+    "type": "module",
+    "devDependencies": {
+        "bun-types": "latest"
+    },
+    "peerDependencies": {
+        "typescript": "^5.0.0"
+    },
+    "dependencies": {
+        "croner": "^7.0.1",
+        "css-select": "^5.1.0",
+        "domhandler": "^5.0.3",
+        "domutils": "^3.1.0",
+        "htmlparser2": "^9.0.0"
+    }
+}
