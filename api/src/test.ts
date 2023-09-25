@@ -3,9 +3,11 @@ import { readdir } from "fs/promises";
 
 import saveBakalari from "@/database/bakalari/save";
 import client, { db } from "@/database/mongo";
+import setup from "@/database/setup";
 import parseBakalari from "@/parser/bakalari";
 
 await db.dropDatabase();
+await setup();
 
 async function checkDir(dir: string = "../cache/") {
     const files = await readdir(dir);
