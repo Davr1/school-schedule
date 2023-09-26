@@ -5,11 +5,7 @@ export const enum LessonType {
     /** Canceled / removed lesson */
     Removed = "removed",
 
-    /**
-     * Class absence (not a full day event tho)
-     *
-     * Not too sure what this exactly is, it's not uncommon tho
-     */
+    /** Absence / Event */
     Absence = "absent"
 }
 
@@ -99,7 +95,7 @@ export class RemovedLesson extends Lesson {
     }
 }
 
-/** A class absence */
+/** Lesson absence */
 export class AbsenceLesson extends Lesson {
     readonly type = LessonType.Absence;
 
