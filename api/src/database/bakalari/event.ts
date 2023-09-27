@@ -1,19 +1,11 @@
 import type Bakalari from "@/classes/bakalari";
-import { db } from "@/database/mongo";
-
-interface Event {
-    event: string;
-    date: Date;
-    classes: string[];
-}
+import { events } from "@/database/mongo";
 
 /**
  * Store all full day events into the database for a given schedule
  * @param schedule The schedule
  */
 async function storeEvents(schedule: Bakalari) {
-    const events = db.collection<Event>("event");
-
     for (const { event, date } of Object.values(schedule.days)) {
         if (!date) continue; // Obv skip permanent schedules
 

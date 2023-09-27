@@ -2,12 +2,13 @@ import { statSync } from "fs";
 import { readdir } from "fs/promises";
 
 import saveBakalari from "@/database/bakalari/save";
-import client, { db } from "@/database/mongo";
-import setup from "@/database/setup";
+import client, { db } from "@/database/mongo/client";
 import parseBakalari from "@/parser/bakalari";
 
-await db.dropDatabase();
-await setup();
+// Remove all documents from all collections
+for (const collection of await db.collections()) {
+    await collection.deleteMany({});
+}
 
 async function checkDir(dir: string = "../cache/") {
     const files = await readdir(dir);
