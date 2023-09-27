@@ -9,6 +9,7 @@ async function saveBakalari(schedule: Bakalari) {
     // 1. Cache - Applies to all types
     await cache.insertOne({
         ...schedule,
+        date: schedule.date, // This is a getter so it won't get stored automatically
         parseDate: new Date()
     });
 

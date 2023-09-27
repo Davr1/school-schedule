@@ -29,6 +29,17 @@ class Bakalari {
         this.value = value;
         this.days = days;
     }
+
+    /** Get the first day of the week (a Sunday), will be null if the schedule is permanent */
+    get date(): Date | null {
+        const firstDay = Object.values(this.days)[0];
+        if (!firstDay.date) return null;
+
+        const sunday = new Date(firstDay.date);
+        sunday.setDate(sunday.getDate() - firstDay.day);
+
+        return sunday;
+    }
 }
 
 export default Bakalari;
