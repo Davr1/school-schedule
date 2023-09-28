@@ -13,7 +13,7 @@ function parseAbsence(data: BakalariData): AbsenceLesson {
     const abbreviation = data.absentinfo!;
     const change = data.removedinfo!;
 
-    return new AbsenceLesson({ name, abbreviation }, change);
+    return new AbsenceLesson({ absence: { name, abbreviation }, change });
 }
 
 export default parseAbsence;

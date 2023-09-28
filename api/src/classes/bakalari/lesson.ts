@@ -14,15 +14,7 @@ export abstract class Lesson {
     /** The type of the lesson */
     abstract readonly type: LessonType;
 
-    /** Info about a possible change, null if there is no change */
-    readonly change: string | null;
-
-    constructor(change: string | null) {
-        this.change = change;
-    }
-
-    // Type guards (aka type predicates. basically just a function that returns a boolean and narrows the type)
-    // See: https://www.typescriptlang.org/docs/handbook/2/narrowing.html#using-type-predicates
+    // Type guards
 
     /** Check if the lesson is normal */
     isNormal(): this is NormalLesson {
@@ -53,61 +45,84 @@ export interface Group {
     class: string | null;
 }
 
-/** A normal lesson */
-export class NormalLesson extends Lesson {
-    readonly type = LessonType.Normal;
+interface NormalLessonAttributes {
+    /** Information about the subject */
+    subject: Info;
 
-    /** The subject info */
-    readonly subject: Info;
-
-    /** The teacher */
-    readonly teacher: Info;
+    /** Information about the teacher */
+    teacher: Info;
 
     /** The room the lesson is taught in */
-    readonly room: string;
+    room: string;
 
     /** The groups the lesson targets */
-    readonly groups: Group[];
+    groups: Group[];
 
     /** The topic (or theme. idk). will be null if the teacher din't write anything */
-    readonly topic: string | null;
+    topic: string | null;
 
-    constructor(subject: Info, teacher: Info, room: string, groups: Group[], topic: string | null, change: string | null) {
-        super(change);
+    /** Info about a possible change, null if there is no change */
+    change: string | null;
+}
+
+/** A normal lesson */
+export class NormalLesson extends Lesson implements NormalLessonAttributes {
+    readonly type = LessonType.Normal;
+
+    // Attributes (JSDoc is located in the interface above)
+    readonly subject: Info;
+    readonly teacher: Info;
+    readonly room: string;
+    readonly groups: Group[];
+    readonly topic: string | null;
+    readonly change: string | null;
+
+    constructor({ subject, teacher, room, groups, topic, change }: NormalLessonAttributes) {
+        super();
 
         this.subject = subject;
         this.teacher = teacher;
         this.room = room;
         this.topic = topic;
         this.groups = groups;
+        this.change = change;
     }
+}
+
+interface RemovedLessonAttributes {
+    /** Info about the lesson that got removed */
+    change: string;
 }
 
 /** A removed lesson */
-export class RemovedLesson extends Lesson {
+export class RemovedLesson extends Lesson implements RemovedLessonAttributes {
     readonly type = LessonType.Removed;
 
-    /** Info about the removal */
-    declare readonly change: string;
+    readonly change: string;
 
-    constructor(change: string) {
-        super(change);
+    constructor({ change }: RemovedLessonAttributes) {
+        super();
+
+        this.change = change;
     }
 }
 
+interface AbsenceLessonAttributes extends RemovedLessonAttributes {
+    /** Info about the absence */
+    absence: Info;
+}
+
 /** Lesson absence */
-export class AbsenceLesson extends Lesson {
+export class AbsenceLesson extends Lesson implements AbsenceLessonAttributes {
     readonly type = LessonType.Absence;
 
-    /** Info about the change */
-    declare readonly change: string;
-
-    /** Info about the absence */
+    readonly change: string;
     readonly absence: Info;
 
-    constructor(absence: Info, change: string) {
-        super(change);
+    constructor({ absence, change }: AbsenceLessonAttributes) {
+        super();
 
         this.absence = absence;
+        this.change = change;
     }
 }
