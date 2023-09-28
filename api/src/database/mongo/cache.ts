@@ -1,10 +1,12 @@
-import type Bakalari from "@/classes/bakalari";
+import type { BakalariScheduleType } from "@/classes/bakalari";
+import type BakalariDay from "@/classes/bakalari/day.ts";
 import { db } from "@/database/mongo/client";
 
 /** Cache collection schema */
-interface Cache extends Bakalari {
+interface Cache extends BakalariDay {
     parseDate: Date;
-    date: Date | null;
+    type: BakalariScheduleType;
+    value: string;
 }
 
 /** Cache collection */

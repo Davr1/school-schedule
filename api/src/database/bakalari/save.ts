@@ -4,12 +4,15 @@ import storeEvents from "@/database/bakalari/event";
 import { cache } from "@/database/mongo";
 
 async function saveBakalari(schedule: Bakalari) {
-    // 1. Cache - Applies to all types
-    await cache.insertOne({
-        ...schedule,
-        date: schedule.date, // This is a getter so it won't get stored automatically
-        parseDate: new Date()
-    });
+    // 1. Cache days - Applies to all types
+    await cache.insertMany(
+        Object.values(schedule.days).map((day) => ({
+            ...day,
+            parseDate: new Date(),
+            type: schedule.type,
+            value: schedule.value
+        }))
+    );
 
     // 2. Store - Only for class schedules
     if (schedule.type !== BakalariScheduleType.Class) return;
