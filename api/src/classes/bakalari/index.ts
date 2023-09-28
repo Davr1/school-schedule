@@ -13,7 +13,7 @@ export const enum BakalariScheduleType {
  *
  * If you want to parse the schedule from HTML, use the `parseBakalari` function from `@/parser/bakalari`
  */
-class Bakalari {
+class Bakalari<Day extends BakalariDay = BakalariDay> {
     /** Type of the schedule (Class, Teacher, Room) */
     readonly type: BakalariScheduleType;
 
@@ -21,10 +21,10 @@ class Bakalari {
     readonly value: string;
 
     /** Map of the days of the week to the lessons for that day */
-    readonly days: Record<SchoolDay, BakalariDay>;
+    readonly days: Record<SchoolDay, Day>;
 
     /** Create a new Bakalari schedule */
-    constructor(type: BakalariScheduleType, value: string, days: Record<SchoolDay, BakalariDay>) {
+    constructor(type: BakalariScheduleType, value: string, days: Record<SchoolDay, Day>) {
         this.type = type;
         this.value = value;
         this.days = days;
