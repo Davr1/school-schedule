@@ -59,10 +59,7 @@
                 {#if subject.groups.filter(Boolean).length > 0}/{/if}
             {/if}
 
-            {#each subject.groups
-                .map((g) => g.split(", "))
-                .flat()
-                .filter(Boolean) as singleGroup}
+            {#each subject.groups.filter(Boolean) as singleGroup}
                 {#if isValidMetadata(singleGroup.trim().split(" ")[0])}
                     <!-- svelte-ignore a11y-click-events-have-key-events -->
                     <!-- svelte-ignore a11y-no-static-element-interactions -->

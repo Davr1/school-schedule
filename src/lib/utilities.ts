@@ -94,7 +94,7 @@ export async function getWebSchedule(date: Date) {
                     subject.push(
                         new StandardSubject({
                             room: cell.$("[href*='/room/']")?.text,
-                            groups: [group],
+                            groups: group.split(",").map((s: string) => s.trim()),
                             abbreviation: cell.$("strong")?.text,
                             teacher: { name: "", abbreviation: cell.$("[href*='/teacher/']")?.text },
                             change: true
@@ -119,7 +119,7 @@ export async function getWebSchedule(date: Date) {
                     subject.push(
                         new StandardSubject({
                             room: alternativeGroup.$("[href*='/room/']")?.text,
-                            groups: [group2],
+                            groups: group2.split(",").map((s: string) => s.trim()),
                             abbreviation: alternativeGroup.$("strong")?.text,
                             teacher: { name: "", abbreviation: alternativeGroup.$("[href*='/teacher/']")?.text },
                             change: true

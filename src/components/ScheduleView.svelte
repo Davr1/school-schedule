@@ -143,7 +143,7 @@
                         // odd groups are placed on the top, even groups on the bottom. If there are two groups per cell, order them by group number
                         let half = 0;
                         let height = 2;
-                        if (group.isStandard()) {
+                        if (group.isStandard() && group.groups.length === 1) {
                             const groupN = parseGroup(group.groups[0]);
                             half = (subject.length === 1 && ((groupN || 1) + 1) % 2) || k;
                             if (subject.length > 1 || groupN) height = 1;
