@@ -33,6 +33,11 @@ async function scheduleAllClasses() {
         }
     });
 
+    // If the file is run directly and the env variable "NOW" is set to true, run the task immediately.
+    if (import.meta.main && process.env.NOW === "true") {
+        await task.trigger();
+    }
+
     // Log the next run time
     log(`Next run time for task "AllClasses": ${task.nextRun()?.toLocaleString()}`);
 }
@@ -40,4 +45,4 @@ async function scheduleAllClasses() {
 export default scheduleAllClasses;
 
 // If this file was run directly, schedule the task.
-if (import.meta.main) scheduleAllClasses();
+if (import.meta.main) void scheduleAllClasses();
