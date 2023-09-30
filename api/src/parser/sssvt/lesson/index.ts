@@ -1,10 +1,10 @@
 import type { AnyNode } from "domhandler";
 import { textContent } from "domutils";
 
-import getGroup from "@/parser/sssvt/group";
-import getRoom from "@/parser/sssvt/room";
-import getSubject from "@/parser/sssvt/subject";
-import getTeacher from "@/parser/sssvt/teacher";
+import parseGroup from "@/parser/sssvt/lesson/group";
+import parseRoom from "@/parser/sssvt/lesson/room";
+import parseSubject from "@/parser/sssvt/lesson/subject";
+import parseTeacher from "@/parser/sssvt/lesson/teacher";
 
 export interface CancelledLesson {
     subject: null;
@@ -26,27 +26,23 @@ export type ChangedGroupedLesson = ChangedLesson & { group: number };
  *
  * @param lesson The lesson to parse
  */
-function lesson(lesson: AnyNode): ChangedLesson | undefined {
+function parseLesson(lesson: AnyNode): ChangedLesson | undefined {
     // Check if the lesson has any text inside, if not, return
     if (!textContent(lesson).trim()) return;
 
-    // Get the group this lesson is for
-    const group = getGroup(lesson);
-
-    // Get the subject abbreviation
-    const subject = getSubject(lesson);
+    // Get the group number and subject abbreviation
+    const group = parseGroup(lesson);
+    const subject = parseSubject(lesson);
 
     // If there's no subject, it means that the lesson is cancelled
     // Note: Only check for null because the value can be an empty string
     if (subject === null) return { subject, group };
 
-    // Find the room the lesson is in
-    const room = getRoom(lesson);
-
-    // Get the teacher abbreviation
-    const teacher = getTeacher(lesson);
+    // Get the room number and teacher abbreviation
+    const room = parseRoom(lesson);
+    const teacher = parseTeacher(lesson);
 
     return { subject, group, room, teacher };
 }
 
-export default lesson;
+export default parseLesson;

@@ -1,30 +1,22 @@
 import type { Period } from "@/parser/sssvt/period";
 
 /**
- * SSSVT subsitution schedule
+ * SSSVT substitution schedule
  *
- * Note: This only contains info about the subsitutions for a given day
- *
- * You won't be able to get the whole schedule from this. But you can patch the static schedule with this.
- *
- * If you want to parse the schedule from HTML, use the `parseSSSVT` function from `@/parser/sssvt`
+ * Note: This only contains info about the substitutions for a given day
  */
 class SSSVT {
-    /** The date of the schedule in the following format: YYYY-MM-DD */
-    readonly date: string;
+    constructor(
+        /** The date of the schedule */
+        readonly date: Date,
 
-    /** All of the classes in the school with their substitutions for the day */
-    readonly classes: Record<string, Period[]>;
+        /** All the classes in the school with their substitutions for the day */
+        readonly classes: Record<string, Period[]>
+    ) {}
 
-    /**
-     * Create a new SSSVT schedule
-     *
-     * @param date The date of the schedule
-     * @param classes The classes with their substitutions
-     */
-    constructor(date: string, classes: Record<string, Period[]>) {
-        this.date = date;
-        this.classes = classes;
+    /** Create a new substitution schedule from an object of the same structure */
+    static fromObject(object: SSSVT): SSSVT {
+        return new SSSVT(object.date, object.classes);
     }
 }
 

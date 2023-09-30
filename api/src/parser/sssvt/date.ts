@@ -2,20 +2,21 @@ import { selectOne } from "css-select";
 import { type AnyNode, isTag } from "domhandler";
 
 /**
- * Get the date from a sub schedule page
+ * Parse the date from a substitution schedule page
  *
  * @param dom The dom to parse
  */
-function getDate(dom: AnyNode[]) {
-    // The date can be found in the title of the link to today's schedule
-    // The link is the first <a> tag after the <strong> tag with the day
-    const date = selectOne("#dny strong + a", dom);
+function parseDate(dom: AnyNode[]) {
+    // The date can be found in the title of the link to today's schedule,
+    // which is the first <a> tag after the <strong> tag that shows the day
+    const dateNode = selectOne("#dny strong + a", dom);
 
-    // If there's no date (or it's not a tag), return null
-    if (!date || !isTag(date)) return null;
+    // If there's no date node (or it's not a tag), throw an error
+    if (!dateNode || !isTag(dateNode)) throw new Error("Couldn't find the date node");
 
-    // The date is in the title attribute
-    return date.attribs.title;
+    // Parse the "title" attribute as a Date object
+    // (it's in the format "YYYY-MM-DD", so it can be parsed as is)
+    return new Date(dateNode.attribs.title);
 }
 
-export default getDate;
+export default parseDate;
