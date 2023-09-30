@@ -1,5 +1,5 @@
 {
-    "name": "api",
+    "name": "@school-schedule/api",
     "module": "src/index.ts",
     "type": "module",
     "devDependencies": {
