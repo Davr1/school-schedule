@@ -16,11 +16,11 @@ async function parseBakalari(html: string): Promise<Bakalari> {
     // Get the type and value of the schedule
     const { type, value } = getValue(scheduleDom);
 
-    // Parse the schedule
-    const schedule = parse(scheduleDom);
+    // Parse the schedule days
+    const days = parse(scheduleDom);
 
     // Return the parsed data as a Bakalari class
-    return new Bakalari(type, value, schedule);
+    return new Bakalari(type, value, days);
 }
 
 export default parseBakalari;

@@ -1,42 +1,27 @@
 import type { Lesson } from "@/classes/bakalari/lesson";
 
-/** Days of the week... */
-export const enum Day {
-    Sunday,
-    Monday,
-    Tuesday,
-    Wednesday,
-    Thursday,
-    Friday,
-    Saturday
-}
-
-/** School days */
-export type SchoolDay = Day.Monday | Day.Tuesday | Day.Wednesday | Day.Thursday | Day.Friday;
-
 /** Possible lessons in a period */
-export type Period = readonly [] | readonly [Lesson] | readonly [Lesson, Lesson];
+export type BakalariPeriod = readonly [] | readonly [Lesson] | readonly [Lesson, Lesson];
 
 /** Bakalari schedule day */
 class BakalariDay {
-    /** The day of the week */
-    readonly day: SchoolDay;
+    constructor(
+        /** The day of the week */
+        readonly day: number,
 
-    /** The date of the day, can be null if the schedule is permanent */
-    readonly date: Date | null;
+        /** The date of the day, can be null if the schedule is permanent */
+        readonly date: Date | null,
 
-    /** The periods of the day */
-    readonly periods: Period[];
+        /** The periods of the day */
+        readonly periods: BakalariPeriod[],
 
-    /** Possible full day event */
-    readonly event: string | null;
+        /** Possible full day event */
+        readonly event: string | null = null
+    ) {}
 
-    /** Create a new Bakalari day */
-    constructor(day: SchoolDay, date: Date | null, periods: Period[], event: string | null = null) {
-        this.day = day;
-        this.date = date;
-        this.periods = periods;
-        this.event = event;
+    /** Create a new BakalariDay from an object of the same structure */
+    static fromObject(object: BakalariDay): BakalariDay {
+        return new BakalariDay(object.day, object.date, object.periods, object.event);
     }
 }
 

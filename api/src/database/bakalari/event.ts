@@ -6,7 +6,7 @@ import { events } from "@/database/mongo";
  * @param schedule The schedule
  */
 async function storeEvents(schedule: Bakalari) {
-    for (const { event, date } of Object.values(schedule.days)) {
+    for (const { event, date } of schedule.days) {
         if (!date) continue; // Obv skip permanent schedules
 
         // Remove the class from any non-matching events

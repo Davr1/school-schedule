@@ -1,42 +1,39 @@
 import type BakalariDay from "@/classes/bakalari/day";
-import type { SchoolDay } from "@/classes/bakalari/day";
 
 /** Type of the schedule */
-export const enum BakalariScheduleType {
+export const enum BakalariType {
     Class = "class",
     Teacher = "teacher",
     Room = "room"
 }
 
-/**
- * Bakalari schedule
- *
- * If you want to parse the schedule from HTML, use the `parseBakalari` function from `@/parser/bakalari`
- */
-class Bakalari<Day extends BakalariDay = BakalariDay> {
-    /** Type of the schedule (Class, Teacher, Room) */
-    readonly type: BakalariScheduleType;
+/** Bakalari schedule */
+class Bakalari {
+    constructor(
+        /** Type of the schedule (Class, Teacher, Room) */
+        readonly type: BakalariType,
 
-    /** Value of the schedule (Class name, teacher's name or room number) */
-    readonly value: string;
+        /** Value of the schedule (class name, teacher's name or room number) */
+        readonly value: string,
 
-    /** Map of the days of the week to the lessons for that day */
-    readonly days: Record<SchoolDay, Day>;
+        /** Array of days in the schedule, might not always be 5! */
+        readonly days: BakalariDay[]
+    ) {}
 
-    /** Create a new Bakalari schedule */
-    constructor(type: BakalariScheduleType, value: string, days: Record<SchoolDay, Day>) {
-        this.type = type;
-        this.value = value;
-        this.days = days;
+    /** Create a new Bakalari schedule from an object of the same structure */
+    static fromObject(object: Omit<Bakalari, "date">): Bakalari {
+        return new Bakalari(object.type, object.value, object.days);
     }
 
     /** Get the first day of the week (a Sunday), will be null if the schedule is permanent */
     get date(): Date | null {
-        const firstDay = Object.values(this.days)[0];
-        if (!firstDay.date) return null;
+        // Get a day from the array (doesn't really matter which one)
+        const day = this.days[0];
+        if (!day?.date) return null;
 
-        const sunday = new Date(firstDay.date);
-        sunday.setDate(sunday.getDate() - firstDay.day);
+        // Get the sunday of the week (the first day of the week)
+        const sunday = new Date(day.date);
+        sunday.setDate(sunday.getDate() - day.day);
 
         return sunday;
     }

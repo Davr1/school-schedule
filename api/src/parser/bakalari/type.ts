@@ -2,14 +2,14 @@ import { selectOne } from "css-select";
 import type { AnyNode } from "domhandler";
 import { textContent } from "domutils";
 
-import { BakalariScheduleType } from "@/classes/bakalari";
+import { BakalariType } from "@/classes/bakalari";
 
 interface ValueAndType {
     /** The value of the schedule (class name, teacher name or room name) */
     value: string;
 
     /** The type of the schedule (class, teacher or room) */
-    type: BakalariScheduleType;
+    type: BakalariType;
 }
 
 /**
@@ -28,9 +28,9 @@ function getValue(dom: AnyNode[]): ValueAndType {
     const roomNode = selectOne("#selectedRoom > option[selected]", selects);
 
     // Return the value of the selected option
-    if (classNode !== null) return { type: BakalariScheduleType.Class, value: textContent(classNode).trim() };
-    if (teacherNode) return { type: BakalariScheduleType.Teacher, value: textContent(teacherNode).trim() };
-    if (roomNode) return { type: BakalariScheduleType.Room, value: textContent(roomNode).trim() };
+    if (classNode !== null) return { type: BakalariType.Class, value: textContent(classNode).trim() };
+    if (teacherNode) return { type: BakalariType.Teacher, value: textContent(teacherNode).trim() };
+    if (roomNode) return { type: BakalariType.Room, value: textContent(roomNode).trim() };
 
     // Throw an error if none of the dropdowns have a pre-selected value
     throw new Error("Invalid schedule type");
