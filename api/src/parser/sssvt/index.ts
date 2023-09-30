@@ -1,10 +1,10 @@
 import selectAll from "css-select";
 import { hasChildren, textContent } from "domutils";
 
-import SSSVT from "@/classes/sssvt";
+import SSSVT, { type Period } from "@/classes/sssvt";
 import dom from "@/parser/dom";
 import parseDate from "@/parser/sssvt/date";
-import parsePeriod, { type Period } from "@/parser/sssvt/period";
+import parsePeriod from "@/parser/sssvt/period";
 
 /**
  * Parse the data from the school substitution schedule

@@ -8,10 +8,12 @@ import { textContent } from "domutils";
  * @param lesson The lesson to find the room for
  * @returns The room as string (can't be a number cuz some rooms have letters in them)
  */
-function parseRoom(lesson: AnyNode): string | null {
-    // Get the room number from the <a> tag with an href attribute, if there's none, return null
+function parseRoom(lesson: AnyNode): string {
+    // Get the room number from the <a> tag with an href attribute
     const link = selectOne("[href*='/room/']", lesson);
-    if (!link) return null;
+
+    // If there's no link, throw an error
+    if (!link) throw new Error(`Couldn't find the room link in lesson: ${textContent(lesson)}`);
 
     // The room is in the text content of the link
     return textContent(link).trim();

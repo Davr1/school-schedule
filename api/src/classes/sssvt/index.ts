@@ -1,4 +1,6 @@
-import type { Period } from "@/parser/sssvt/period";
+import type { LessonChange } from "@/classes/sssvt/change";
+
+export type Period = readonly [] | readonly [LessonChange] | readonly [LessonChange, LessonChange];
 
 /**
  * SSSVT substitution schedule
