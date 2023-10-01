@@ -15,7 +15,7 @@ RUN bun install
 COPY . .
 
 # Bundle the project into an executable file
-RUN bun build src/scheduler/scheduler.ts --outfile scheduler.js --target bun
+RUN bun build src/scheduler/index.ts --outfile scheduler.js --target bun
 
 # Runner stage
 FROM base as run
