@@ -2,24 +2,17 @@ import { selectOne } from "css-select";
 import type { AnyNode } from "domhandler";
 import { textContent } from "domutils";
 
-import type { BakalariData } from "@/parser/bakalari/data";
-
-interface Subject {
-    /** Abbreviation of the subject */
-    abbreviation: string;
-
-    /** Full name of the subject */
-    name: string;
-}
+import type { Info } from "@/classes/bakalari/lesson";
+import type { BakalariData } from "@/parser/bakalari/lesson/data";
 
 /**
- * Get the subject name for the given lesson
+ * Parse the subject name and abbreviation for the given lesson
  *
  * @param lesson The lesson to get the subject name from
  * @param data The data attribute of the lesson
  * @returns The subject name
  */
-function getSubject(lesson: AnyNode, data: BakalariData): Subject {
+function parseSubject(lesson: AnyNode, data: BakalariData): Info {
     // Get the subject abbreviation from the lesson
     const abbreviationNode = selectOne(".middle", lesson)!;
     const abbreviation = textContent(abbreviationNode).trim();
@@ -31,4 +24,4 @@ function getSubject(lesson: AnyNode, data: BakalariData): Subject {
     return { abbreviation, name };
 }
 
-export default getSubject;
+export default parseSubject;

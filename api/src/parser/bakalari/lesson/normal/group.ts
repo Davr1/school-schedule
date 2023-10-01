@@ -1,13 +1,13 @@
 import type { Group } from "@/classes/bakalari/lesson";
-import type { BakalariData } from "@/parser/bakalari/data";
+import type { BakalariData } from "@/parser/bakalari/lesson/data";
 
 /**
- * Get the group number from the data attribute of the lesson
+ * Parse the group number from the data attribute of the lesson
  *
  * @param data The data attribute of the lesson
- * @returns The group
+ * @returns The group(s)
  */
-function getGroups(data: BakalariData): Group[] {
+function parseGroups(data: BakalariData): Group[] {
     // Parse the group from the data
     const groups = data.group.split(",");
 
@@ -29,4 +29,4 @@ function getGroups(data: BakalariData): Group[] {
         .filter((group) => !(group.number === null && group.class === null));
 }
 
-export default getGroups;
+export default parseGroups;

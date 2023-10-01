@@ -21,12 +21,12 @@ export interface BakalariData {
 }
 
 /**
- * Get the data attribute of the lesson
+ * Parse the data attribute of the lesson
  *
  * @param node The node to get the data attribute from
  * @returns The data attribute
  */
-function getData(node: Element) {
+function parseData(node: Element) {
     // Get the data attribute
     const data = node.attribs["data-detail"] as string;
 
@@ -34,4 +34,4 @@ function getData(node: Element) {
     return JSON.parse(data) as BakalariData;
 }
 
-export default getData;
+export default parseData;

@@ -1,8 +1,8 @@
 import { type AnyNode, isTag } from "domhandler";
 
 import { type Lesson, LessonType } from "@/classes/bakalari/lesson";
-import getData from "@/parser/bakalari/data";
 import parseAbsence from "@/parser/bakalari/lesson/absence";
+import parseData from "@/parser/bakalari/lesson/data";
 import parseNormal from "@/parser/bakalari/lesson/normal";
 import parseRemoved from "@/parser/bakalari/lesson/removed";
 
@@ -17,7 +17,7 @@ function parseLesson(node: AnyNode): Lesson {
     if (!isTag(node)) throw new Error("Node is not an element");
 
     // Get the data attribute from the node
-    const data = getData(node);
+    const data = parseData(node);
 
     switch (data.type) {
         case LessonType.Normal:

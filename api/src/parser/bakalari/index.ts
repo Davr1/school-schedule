@@ -2,8 +2,8 @@ import selectAll from "css-select";
 
 import type { BakalariPeriod } from "@/classes/bakalari/day";
 import BakalariDay from "@/classes/bakalari/day";
-import getDay from "@/parser/bakalari/day";
-import getEvent from "@/parser/bakalari/event";
+import parseDate from "@/parser/bakalari/date";
+import parseEvent from "@/parser/bakalari/event";
 import parseLesson from "@/parser/bakalari/lesson";
 import dom from "@/parser/dom";
 
@@ -21,11 +21,11 @@ async function parseBakalari(html: string): Promise<BakalariDay[]> {
     // Parse each day and return the parsed data
     return dayNodes.map((node, index) => {
         // Get the date and the day of the week
-        const date = getDay(node);
+        const date = parseDate(node);
         const day = date?.getDay() ?? index + 1;
 
         // If there's a full day event, return that instead (there won't be any lessons)
-        const event = getEvent(node);
+        const event = parseEvent(node);
         if (event !== null) return new BakalariDay(day, date, [], event);
 
         // Get each period node, and parse it

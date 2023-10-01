@@ -3,12 +3,12 @@ import type { AnyNode } from "domhandler";
 import { textContent } from "domutils";
 
 /**
- * Get the day from a row
+ * Parse the day info from a row
  *
- * @param row The row to parse
- * @returns The day (from the enum)
+ * @param node The row to parse
+ * @returns The date of the day, or null if it's a permanent schedule
  */
-function getDay(node: AnyNode): Date | null {
+function parseDate(node: AnyNode): Date | null {
     const dayNode = selectOne(".bk-day-date", node)!;
     const text = textContent(dayNode);
 
@@ -33,4 +33,4 @@ function getDay(node: AnyNode): Date | null {
     return new Date(Date.UTC(year, month - 1, day));
 }
 
-export default getDay;
+export default parseDate;

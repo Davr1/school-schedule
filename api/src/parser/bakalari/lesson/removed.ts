@@ -1,5 +1,5 @@
 import { RemovedLesson } from "@/classes/bakalari/lesson";
-import type { BakalariData } from "@/parser/bakalari/data";
+import type { BakalariData } from "@/parser/bakalari/lesson/data";
 
 /**
  * Parse a removed lesson from a node

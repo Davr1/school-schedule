@@ -3,7 +3,7 @@ import { mkdir } from "node:fs/promises";
 import { Bakalari, BakalariType } from "@/classes";
 import saveBakalari from "@/database/bakalari/save.ts";
 import log from "@/log";
-import parseBakalari from "@/parser/bakalari/parse";
+import parseBakalari from "@/parser/bakalari";
 
 /**
  * Save the request to a cache

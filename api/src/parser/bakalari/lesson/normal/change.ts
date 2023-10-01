@@ -1,15 +1,15 @@
 import type { Element } from "domhandler";
 
-import type { BakalariData } from "@/parser/bakalari/data";
+import type { BakalariData } from "@/parser/bakalari/lesson/data";
 
 /**
- * Get info about a potential change
+ * Parse info about a potential change
  *
  * @param node The node to get the data from
  * @param data The data attribute of the node
  * @returns The change info or null if there is none
  */
-function getChange(node: Element, data: BakalariData): string | null {
+function parseChange(node: Element, data: BakalariData): string | null {
     // Check if there is a change (the element has the class "pink")
     const changed = node.attribs.class?.includes("pink");
 
@@ -20,4 +20,4 @@ function getChange(node: Element, data: BakalariData): string | null {
     return data.changeinfo;
 }
 
-export default getChange;
+export default parseChange;

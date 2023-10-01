@@ -33,8 +33,8 @@ export abstract class Lesson {
 }
 
 export interface Info {
-    name: string | null;
-    abbreviation: string | null;
+    name: string;
+    abbreviation: string;
 }
 
 export interface Group {
@@ -50,7 +50,7 @@ interface NormalLessonAttributes {
     subject: Info;
 
     /** Information about the teacher */
-    teacher: Info;
+    teacher: Info | null;
 
     /** The room the lesson is taught in */
     room: string;
@@ -71,7 +71,7 @@ export class NormalLesson extends Lesson implements NormalLessonAttributes {
 
     // Attributes (JSDoc is located in the interface above)
     readonly subject: Info;
-    readonly teacher: Info;
+    readonly teacher: Info | null;
     readonly room: string;
     readonly groups: Group[];
     readonly topic: string | null;

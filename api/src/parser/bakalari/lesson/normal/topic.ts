@@ -1,16 +1,16 @@
 import { selectOne } from "css-select";
 import type { AnyNode } from "domhandler";
 
-import type { BakalariData } from "@/parser/bakalari/data";
+import type { BakalariData } from "@/parser/bakalari/lesson/data";
 
 /**
- * Get the topic of the lesson
+ * Parse the topic of the lesson
  *
  * @param node The lesson node to parse
  * @param data Data of the lesson
  * @returns The topic or null if the teacher didn't write one down
  */
-function getTopic(node: AnyNode, data: BakalariData): string | null {
+function parseTopic(node: AnyNode, data: BakalariData): string | null {
     // Make sure the teacher wrote down the topic and absences first (aka, the "zapsano" class is there)
     const foundNode = selectOne(".zapsano", node);
 
@@ -21,4 +21,4 @@ function getTopic(node: AnyNode, data: BakalariData): string | null {
     return data.theme;
 }
 
-export default getTopic;
+export default parseTopic;
