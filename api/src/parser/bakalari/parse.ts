@@ -1,21 +1,22 @@
 import selectAll from "css-select";
-import type { AnyNode } from "domhandler";
 
 import type { BakalariPeriod } from "@/classes/bakalari/day";
 import BakalariDay from "@/classes/bakalari/day";
 import getDay from "@/parser/bakalari/day";
 import getEvent from "@/parser/bakalari/event";
 import parseLesson from "@/parser/bakalari/lesson";
+import dom from "@/parser/dom";
 
 /**
- * Parse the timetable from the given DOM
+ * Parse the timetable from the given html
  *
- * @param dom The DOM to parse
- * @returns The parsed timetable
+ * @param html The html to parse
+ * @returns The parsed days from the timetable
  */
-function parse(dom: AnyNode[]): BakalariDay[] {
-    // Select all the day row nodes
-    const dayNodes = selectAll(".bk-timetable-row", dom);
+async function parseBakalari(html: string): Promise<BakalariDay[]> {
+    // Parse the html into a dom, and select all the day row nodes
+    const scheduleDom = await dom(html);
+    const dayNodes = selectAll(".bk-timetable-row", scheduleDom);
 
     // Parse each day and return the parsed data
     return dayNodes.map((node, index) => {
@@ -23,16 +24,12 @@ function parse(dom: AnyNode[]): BakalariDay[] {
         const date = getDay(node);
         const day = date?.getDay() ?? index + 1;
 
-        // Check if there's a full day event
+        // If there's a full day event, return that instead (there won't be any lessons)
         const event = getEvent(node);
-
-        // If there is, then return the event
         if (event !== null) return new BakalariDay(day, date, [], event);
 
-        // Get each period node
+        // Get each period node, and parse it
         const periodNodes = selectAll(".bk-timetable-cell", node);
-
-        // Parse each period
         const periods = periodNodes.map((node) => {
             // Get all the lessons in the period
             const lessons = selectAll(".day-item-hover", node);
@@ -46,4 +43,4 @@ function parse(dom: AnyNode[]): BakalariDay[] {
     });
 }
 
-export default parse;
+export default parseBakalari;
