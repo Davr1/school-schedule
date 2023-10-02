@@ -2,9 +2,9 @@ import type BakalariDay from "@/classes/bakalari/day";
 
 /** Type of the schedule */
 export const enum BakalariType {
-    Class = "class",
-    Teacher = "teacher",
-    Room = "room"
+    Class = "Class",
+    Teacher = "Teacher",
+    Room = "Room"
 }
 
 /** Bakalari schedule */
@@ -13,7 +13,7 @@ class Bakalari {
         /** Type of the schedule (Class, Teacher, Room) */
         readonly type: BakalariType,
 
-        /** Value of the schedule (class name, teacher's name or room number) */
+        /** Value of the schedule (class, teacher, or room id) */
         readonly value: string,
 
         /** Array of days in the schedule, might not always be 5! */

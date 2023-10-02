@@ -1,11 +1,6 @@
+import type { BakalariType } from "@/classes";
 import headers from "@/loader/headers";
 import log from "@/log";
-
-export const enum ScheduleType {
-    Class = "Class",
-    Teacher = "Teacher",
-    Room = "Room"
-}
 
 export const enum Week {
     Permanent = "Permanent",
@@ -27,7 +22,7 @@ export interface FetchBakalariResponse {
  * @param sessionId The session ID to use (i'm not sure if this is needed, but a real browser sends this on subsequent requests)
  * @returns The html of the schedule and the response object
  */
-async function fetchBakalari(week: Week, type: ScheduleType, value: string, sessionId?: string): Promise<FetchBakalariResponse> {
+async function fetchBakalari(week: Week, type: BakalariType, value: string, sessionId?: string): Promise<FetchBakalariResponse> {
     log(`Fetching ${type} ${value} for week ${week} with session Id: ${sessionId ?? "none"}`);
 
     // Cookies to send, will be empty if no session ID is provided

@@ -6,7 +6,7 @@ import { cache, client } from "@/database/mongo";
 /**
  * Get a Bakalari schedule from the database
  * @param type Type of the schedule (Class, Teacher, Room)
- * @param value Value of the schedule (Class name, teacher's name or room number)
+ * @param value Value of the schedule (Class, teacher or room id)
  * @param date A day in the week of the schedule or null for a permanent schedule
  */
 async function getBakalari(type: BakalariType, value: string, date: Date | null) {
