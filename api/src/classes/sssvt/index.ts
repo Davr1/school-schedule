@@ -1,6 +1,7 @@
 import type { LessonChange } from "@/classes/sssvt/change";
 
 export type Period = readonly [] | readonly [LessonChange] | readonly [LessonChange, LessonChange];
+export type Class = Period[];
 
 /**
  * SSSVT substitution schedule
@@ -13,7 +14,7 @@ class SSSVT {
         readonly date: Date,
 
         /** All the classes in the school with their substitutions for the day */
-        readonly classes: Record<string, Period[]>
+        readonly classes: Record<string, Class>
     ) {}
 
     /** Create a new substitution schedule from an object of the same structure */

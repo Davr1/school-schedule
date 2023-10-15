@@ -1,7 +1,7 @@
 import { statSync } from "fs";
 import { readdir } from "fs/promises";
 
-import { Bakalari, BakalariType } from "@/classes";
+import { BakalariType } from "@/classes";
 import saveBakalari from "@/database/bakalari/save";
 import client, { db } from "@/database/mongo/client";
 import parseBakalari from "@/parser/bakalari";
@@ -19,14 +19,12 @@ async function checkDir(dir: string = "../cache/") {
         else {
             if (!file.endsWith(".html")) continue;
 
+            const value = file.split(".")[0];
+
             const contents = await Bun.file(`${dir}/${file}`).text();
-            const parsed = await parseBakalari(contents);
+            const parsed = await parseBakalari(BakalariType.Class, value, contents);
 
-            // I don't have the ids stored anywhere, so I'm just using a random one.
-            // It's for the "test" anyway so it doesn't really matter.
-            const schedule = new Bakalari(BakalariType.Class, "P3.B", parsed);
-
-            await saveBakalari(schedule);
+            await saveBakalari(parsed);
         }
     }
 }

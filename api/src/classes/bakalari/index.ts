@@ -1,4 +1,4 @@
-import type BakalariDay from "@/classes/bakalari/day";
+import type { BakalariLesson } from "@/classes/bakalari/lesson";
 
 /** Type of the schedule */
 export const enum BakalariType {
@@ -6,6 +6,9 @@ export const enum BakalariType {
     Teacher = "Teacher",
     Room = "Room"
 }
+
+/** Possible lessons in a period */
+export type BakalariPeriod = readonly [] | readonly [BakalariLesson] | readonly [BakalariLesson, BakalariLesson];
 
 /** Bakalari schedule */
 class Bakalari {
@@ -16,26 +19,23 @@ class Bakalari {
         /** Value of the schedule (class, teacher, or room id) */
         readonly value: string,
 
-        /** Array of days in the schedule, might not always be 5! */
-        readonly days: BakalariDay[]
+        /**
+         * The date of the day
+         *
+         * For permanent schedules this will be the day index (a number between 0 and 6)
+         */
+        readonly date: Date | number,
+
+        /** The periods of the day */
+        readonly periods: BakalariPeriod[],
+
+        /** Possible full day event */
+        readonly event: string | null = null
     ) {}
 
     /** Create a new Bakalari schedule from an object of the same structure */
-    static fromObject(object: Omit<Bakalari, "date">): Bakalari {
-        return new Bakalari(object.type, object.value, object.days);
-    }
-
-    /** Get the first day of the week (a Sunday), will be null if the schedule is permanent */
-    get date(): Date | null {
-        // Get a day from the array (doesn't really matter which one)
-        const day = this.days[0];
-        if (!day?.date) return null;
-
-        // Get the sunday of the week (the first day of the week)
-        const sunday = new Date(day.date);
-        sunday.setDate(sunday.getDate() - day.day);
-
-        return sunday;
+    static fromObject(object: Bakalari) {
+        return new this(object.type, object.value, object.date, object.periods, object.event);
     }
 }
 

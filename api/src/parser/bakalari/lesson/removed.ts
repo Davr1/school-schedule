@@ -9,7 +9,7 @@ import type { BakalariData } from "@/parser/bakalari/lesson/data";
  */
 function parseRemoved(data: BakalariData): RemovedLesson {
     // Just return the info about the removal...
-    return new RemovedLesson({ change: data.removedinfo! });
+    return new RemovedLesson(data.removedinfo!);
 }
 
 export default parseRemoved;

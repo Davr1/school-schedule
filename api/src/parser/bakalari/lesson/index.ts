@@ -1,6 +1,6 @@
 import { type AnyNode, isTag } from "domhandler";
 
-import { type Lesson, LessonType } from "@/classes/bakalari/lesson";
+import { type BakalariLesson, BakalariLessonType } from "@/classes/bakalari/lesson";
 import parseAbsence from "@/parser/bakalari/lesson/absence";
 import parseData from "@/parser/bakalari/lesson/data";
 import parseNormal from "@/parser/bakalari/lesson/normal";
@@ -12,7 +12,7 @@ import parseRemoved from "@/parser/bakalari/lesson/removed";
  * @param node The node to parse
  * @returns The parsed lesson
  */
-function parseLesson(node: AnyNode): Lesson {
+function parseLesson(node: AnyNode): BakalariLesson {
     // Make sure the node is an element
     if (!isTag(node)) throw new Error("Node is not an element");
 
@@ -20,11 +20,11 @@ function parseLesson(node: AnyNode): Lesson {
     const data = parseData(node);
 
     switch (data.type) {
-        case LessonType.Normal:
+        case BakalariLessonType.Normal:
             return parseNormal(node, data);
-        case LessonType.Removed:
+        case BakalariLessonType.Removed:
             return parseRemoved(data);
-        case LessonType.Absence:
+        case BakalariLessonType.Absence:
             return parseAbsence(data);
         default:
             throw new Error(`Unknown lesson type: ${data.type}`);

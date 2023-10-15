@@ -1,4 +1,4 @@
-export const enum LessonType {
+export const enum BakalariLessonType {
     /** Normal lesson */
     Normal = "atom",
 
@@ -9,26 +9,36 @@ export const enum LessonType {
     Absence = "absent"
 }
 
+/** @private Object of a similar structure to a BakalariLesson */
+type BakalariLessonLike<T extends BakalariLesson = BakalariLesson> = Omit<T, "type" | "isNormal" | "isRemoved" | "isAbsence"> & {
+    type?: T["type"];
+};
+
 /** A lesson in the schedule (abstract) */
-export abstract class Lesson {
+export abstract class BakalariLesson {
     /** The type of the lesson */
-    abstract readonly type: LessonType;
+    abstract readonly type: BakalariLessonType;
+
+    constructor(
+        /** Change info description */
+        readonly change: string | null = null
+    ) {}
 
     // Type guards
 
     /** Check if the lesson is normal */
     isNormal(): this is NormalLesson {
-        return this.type === LessonType.Normal;
+        return this.type === BakalariLessonType.Normal;
     }
 
     /** Check if the lesson was removed */
     isRemoved(): this is RemovedLesson {
-        return this.type === LessonType.Removed;
+        return this.type === BakalariLessonType.Removed;
     }
 
     /** Check if the class is absent */
     isAbsence(): this is AbsenceLesson {
-        return this.type === LessonType.Absence;
+        return this.type === BakalariLessonType.Absence;
     }
 }
 
@@ -45,84 +55,66 @@ export interface Group {
     class: string | null;
 }
 
-interface NormalLessonAttributes {
-    /** Information about the subject */
-    subject: Info;
-
-    /** Information about the teacher */
-    teacher: Info | null;
-
-    /** The room the lesson is taught in */
-    room: string;
-
-    /** The groups the lesson targets */
-    groups: Group[];
-
-    /** The topic (or theme. idk). will be null if the teacher din't write anything */
-    topic: string | null;
-
-    /** Info about a possible change, null if there is no change */
-    change: string | null;
-}
-
 /** A normal lesson */
-export class NormalLesson extends Lesson implements NormalLessonAttributes {
-    readonly type = LessonType.Normal;
+export class NormalLesson extends BakalariLesson {
+    readonly type = BakalariLessonType.Normal;
 
-    // Attributes (JSDoc is located in the interface above)
-    readonly subject: Info;
-    readonly teacher: Info | null;
-    readonly room: string;
-    readonly groups: Group[];
-    readonly topic: string | null;
-    readonly change: string | null;
+    constructor(
+        /** Information about the subject */
+        readonly subject: Info,
 
-    constructor({ subject, teacher, room, groups, topic, change }: NormalLessonAttributes) {
-        super();
+        /** Information about the teacher */
+        readonly teacher: Info | null,
 
-        this.subject = subject;
-        this.teacher = teacher;
-        this.room = room;
-        this.topic = topic;
-        this.groups = groups;
-        this.change = change;
+        /** The room the lesson is taught in */
+        readonly room: string,
+
+        /** The groups the lesson targets */
+        readonly groups: Group[],
+
+        /** The topic (or theme. idk). will be null if the teacher din't write anything */
+        readonly topic: string | null = null,
+
+        change: string | null = null
+    ) {
+        super(change);
     }
-}
 
-interface RemovedLessonAttributes {
-    /** Info about the lesson that got removed */
-    change: string;
+    /** Create a new NormalLesson from an object of the same structure */
+    static fromObject(object: BakalariLessonLike<NormalLesson>): NormalLesson {
+        return new this(object.subject, object.teacher, object.room, object.groups, object.topic, object.change);
+    }
 }
 
 /** A removed lesson */
-export class RemovedLesson extends Lesson implements RemovedLessonAttributes {
-    readonly type = LessonType.Removed;
+export class RemovedLesson extends BakalariLesson {
+    readonly type = BakalariLessonType.Removed;
 
-    readonly change: string;
-
-    constructor({ change }: RemovedLessonAttributes) {
+    constructor(readonly change: string) {
         super();
+    }
 
-        this.change = change;
+    /** Create a new RemovedLesson from an object of the same structure */
+    static fromObject(object: BakalariLessonLike<RemovedLesson>): RemovedLesson {
+        return new this(object.change);
     }
 }
 
-interface AbsenceLessonAttributes extends RemovedLessonAttributes {
-    /** Info about the absence */
-    absence: Info;
-}
-
 /** Lesson absence */
-export class AbsenceLesson extends Lesson implements AbsenceLessonAttributes {
-    readonly type = LessonType.Absence;
+export class AbsenceLesson extends BakalariLesson {
+    override readonly type = BakalariLessonType.Absence;
 
-    readonly change: string;
-    readonly absence: Info;
+    constructor(
+        readonly change: string,
 
-    constructor({ absence, change }: AbsenceLessonAttributes) {
+        /** Info about the absence */
+        readonly absence: Info
+    ) {
         super();
+    }
 
-        this.absence = absence;
-        this.change = change;
+    /** Create a new AbsenceLesson from an object of the same structure */
+    static fromObject(object: BakalariLessonLike<AbsenceLesson>): AbsenceLesson {
+        return new this(object.change, object.absence);
     }
 }

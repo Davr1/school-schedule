@@ -24,7 +24,7 @@ function parseNormal(node: Element, data: BakalariData): NormalLesson {
     const topic = parseTopic(node, data);
     const change = parseChange(node, data);
 
-    return new NormalLesson({ subject, teacher, room, groups, topic, change });
+    return new NormalLesson(subject, teacher, room, groups, topic, change);
 }
 
 export default parseNormal;
