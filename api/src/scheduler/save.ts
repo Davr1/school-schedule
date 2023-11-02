@@ -1,6 +1,6 @@
 import { mkdir } from "node:fs/promises";
 
-import { BakalariType } from "@/classes";
+import { ScheduleType } from "@/classes";
 import saveBakalari from "@/database/bakalari/save.ts";
 import log from "@/log";
 import parseBakalari from "@/parser/bakalari";
@@ -21,7 +21,7 @@ export async function save(text: string, name: string) {
 
     // Try parsing the file and saving it to the database.
     try {
-        const schedules = await parseBakalari(BakalariType.Class, name, text);
+        const schedules = await parseBakalari(ScheduleType.Class, name, text);
 
         await saveBakalari(schedules);
     } catch (error) {

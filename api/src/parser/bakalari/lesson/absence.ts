@@ -1,4 +1,4 @@
-import { AbsenceLesson } from "@/classes/bakalari/lesson";
+import { AbsenceLesson } from "@/classes/bakalari";
 import type { BakalariData } from "@/parser/bakalari/lesson/data";
 
 /**

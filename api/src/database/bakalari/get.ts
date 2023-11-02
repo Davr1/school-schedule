@@ -1,7 +1,7 @@
 import type { Filter } from "mongodb";
 
-import Bakalari from "@/classes/bakalari";
-import { AbsenceLesson, BakalariLessonType, NormalLesson, RemovedLesson } from "@/classes/bakalari/lesson";
+import { AbsenceLesson, BakalariLesson, BakalariLessonType, NormalLesson, RemovedLesson } from "@/classes/bakalari";
+import Schedule from "@/classes/schedule";
 import { cache } from "@/database/mongo";
 import type { Cache } from "@/database/mongo/cache";
 
@@ -10,13 +10,13 @@ import type { Cache } from "@/database/mongo/cache";
  *
  * @param filter The filter to use
  */
-async function getBakalari(filter: Filter<Cache>): Promise<Bakalari[]> {
+async function getBakalari(filter: Filter<Cache>): Promise<Schedule<BakalariLesson>[]> {
     // Get all the days from the database that match the type, value and date
     const days = await cache.find(filter).toArray();
 
     // Set the correct prototypes for the days and lessons
     days.forEach((day) => {
-        Object.setPrototypeOf(day, Bakalari.prototype);
+        Object.setPrototypeOf(day, Schedule.prototype);
 
         day.periods.forEach((period) =>
             period.forEach((lesson) => {

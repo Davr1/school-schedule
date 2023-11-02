@@ -1,4 +1,4 @@
-import { BakalariType } from "@/classes";
+import { ScheduleType } from "@/classes";
 import fetchBakalari, { type FetchBakalariResponse, Week } from "@/loader/bakalari";
 
 /**
@@ -42,7 +42,7 @@ async function fetchAllClasses(week: Week, sessionId?: string): Promise<FetchAll
     const schedules: FetchAllClassesResponse = {};
     for (const id of shuffled) {
         // Fetch the schedule and add it to the object.
-        const res = await fetchBakalari(week, BakalariType.Class, id, lastSessionId);
+        const res = await fetchBakalari(week, ScheduleType.Class, id, lastSessionId);
         schedules[id] = res;
 
         // Update the session ID.

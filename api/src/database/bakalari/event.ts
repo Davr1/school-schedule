@@ -1,19 +1,19 @@
-import type Bakalari from "@/classes/bakalari";
-import { BakalariType } from "@/classes/bakalari";
+import type Schedule from "@/classes/schedule";
+import { ScheduleType } from "@/classes/schedule";
 import { events } from "@/database/mongo";
 
 /**
  * Store full day event(s) into the database for a given schedule
  * @param schedule The schedule(s) to store
  */
-async function storeEvent(schedules: Bakalari | Bakalari[]) {
+async function storeEvent<T>(schedules: Schedule<T> | Schedule<T>[]) {
     // Convert to an array if it isn't already
     if (!Array.isArray(schedules)) schedules = [schedules];
 
     // Loop through each schedule
     for (const { date, event, type, value } of schedules) {
         // Don't bother if the date is a number (permanent schedule) or if it isn't a class schedule
-        if (typeof date === "number" || type !== BakalariType.Class) continue;
+        if (typeof date === "number" || type !== ScheduleType.Class) continue;
 
         // Remove the class from any non-matching events
         await events.updateMany(

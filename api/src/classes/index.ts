@@ -1,7 +1,9 @@
+// Schedule classes
+export { default as Schedule, ScheduleType, type SchedulePeriod } from "@/classes/schedule";
+
 // Bakalari classes
-export { default as Bakalari, BakalariType, type BakalariPeriod } from "@/classes/bakalari";
-export { AbsenceLesson, BakalariLesson, BakalariLessonType, NormalLesson, RemovedLesson } from "@/classes/bakalari/lesson";
+export { AbsenceLesson, BakalariLesson, BakalariLessonType, NormalLesson, RemovedLesson } from "@/classes/bakalari";
 
 // SSSVT classes
-export { default as SSSVT, type Period } from "@/classes/sssvt";
+export { default as SSSVT } from "@/classes/sssvt";
 export * from "@/classes/sssvt/change";

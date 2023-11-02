@@ -1,4 +1,4 @@
-import { RemovedLesson } from "@/classes/bakalari/lesson";
+import { RemovedLesson } from "@/classes/bakalari";
 import type { BakalariData } from "@/parser/bakalari/lesson/data";
 
 /**

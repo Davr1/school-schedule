@@ -2,7 +2,7 @@ import { selectOne } from "css-select";
 import type { AnyNode } from "domhandler";
 import { textContent } from "domutils";
 
-import type { Info } from "@/classes/bakalari/lesson";
+import type { Info } from "@/classes/bakalari";
 import type { BakalariData } from "@/parser/bakalari/lesson/data";
 
 /**

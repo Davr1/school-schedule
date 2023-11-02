@@ -1,6 +1,6 @@
 import { type AnyNode, isTag } from "domhandler";
 
-import { type BakalariLesson, BakalariLessonType } from "@/classes/bakalari/lesson";
+import { type BakalariLesson, BakalariLessonType } from "@/classes/bakalari";
 import parseAbsence from "@/parser/bakalari/lesson/absence";
 import parseData from "@/parser/bakalari/lesson/data";
 import parseNormal from "@/parser/bakalari/lesson/normal";

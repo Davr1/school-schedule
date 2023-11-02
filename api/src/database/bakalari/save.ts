@@ -1,8 +1,9 @@
-import type Bakalari from "@/classes/bakalari";
+import type { BakalariLesson } from "@/classes/bakalari";
+import type Schedule from "@/classes/schedule";
 import storeEvent from "@/database/bakalari/event";
 import { cache } from "@/database/mongo";
 
-async function saveBakalari(schedules: Bakalari | Bakalari[]) {
+async function saveBakalari(schedules: Schedule<BakalariLesson> | Schedule<BakalariLesson>[]) {
     // Convert to an array if it isn't already
     if (!Array.isArray(schedules)) schedules = [schedules];
 

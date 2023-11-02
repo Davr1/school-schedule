@@ -1,7 +1,7 @@
 import selectAll from "css-select";
 import { hasChildren, textContent } from "domutils";
 
-import SSSVT, { type Class } from "@/classes/sssvt";
+import SSSVT, { type SSSVTClass } from "@/classes/sssvt";
 import dom from "@/parser/dom";
 import parseDate from "@/parser/sssvt/date";
 import parsePeriod from "@/parser/sssvt/period";
@@ -20,7 +20,7 @@ async function parseSSSVT(html: string): Promise<SSSVT> {
     const date = parseDate(scheduleDom);
 
     // Get all the classes from the table and parse them into an object (skips odd rows and the header)
-    const classes = {} as Record<string, Class>;
+    const classes = {} as Record<string, SSSVTClass>;
     for (const node of selectAll(".table-responsive tr:nth-child(2n)", scheduleDom)) {
         // For type safety, make sure this node has children and that there's a row after it
         if (!hasChildren(node) || !node.next) continue;

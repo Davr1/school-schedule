@@ -1,6 +1,7 @@
 import { type AnyNode, isTag } from "domhandler";
 
-import type { Period } from "@/classes/sssvt";
+import type { SchedulePeriod } from "@/classes/schedule";
+import type { LessonChange } from "@/classes/sssvt/change";
 import parseLesson from "@/parser/sssvt/lesson";
 
 /**
@@ -10,7 +11,7 @@ import parseLesson from "@/parser/sssvt/lesson";
  * @param lessonNode The 1st lesson to parse
  * @param split The lessons from the other group
  */
-function parsePeriod(lessonNode: AnyNode, split: AnyNode[]): Period {
+function parsePeriod(lessonNode: AnyNode, split: AnyNode[]): SchedulePeriod<LessonChange> {
     // Get the 1st lesson from the period, and return if there's no lesson (also check if it's a tag for type safety)
     const lesson1 = parseLesson(lessonNode);
     if (!lesson1 || !isTag(lessonNode)) return [];

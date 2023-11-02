@@ -1,4 +1,4 @@
-import type { Group } from "@/classes/bakalari/lesson";
+import type { Group } from "@/classes/bakalari";
 import type { BakalariData } from "@/parser/bakalari/lesson/data";
 
 /**

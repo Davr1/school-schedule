@@ -1,6 +1,6 @@
 import type { Element } from "domhandler";
 
-import type { BakalariLessonType } from "@/classes/bakalari/lesson";
+import type { BakalariLessonType } from "@/classes/bakalari";
 
 export interface BakalariData {
     type: BakalariLessonType;

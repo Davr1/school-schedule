@@ -1,7 +1,7 @@
 import { statSync } from "fs";
 import { readdir } from "fs/promises";
 
-import { BakalariType } from "@/classes";
+import { ScheduleType } from "@/classes";
 import saveBakalari from "@/database/bakalari/save";
 import client, { db } from "@/database/mongo/client";
 import parseBakalari from "@/parser/bakalari";
@@ -22,7 +22,7 @@ async function checkDir(dir: string = "../cache/") {
             const value = file.split(".")[0];
 
             const contents = await Bun.file(`${dir}/${file}`).text();
-            const parsed = await parseBakalari(BakalariType.Class, value, contents);
+            const parsed = await parseBakalari(ScheduleType.Class, value, contents);
 
             await saveBakalari(parsed);
         }

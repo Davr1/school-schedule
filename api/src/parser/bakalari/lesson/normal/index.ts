@@ -1,6 +1,6 @@
 import type { Element } from "domhandler";
 
-import { NormalLesson } from "@/classes/bakalari/lesson";
+import { NormalLesson } from "@/classes/bakalari";
 import type { BakalariData } from "@/parser/bakalari/lesson/data";
 import parseChange from "@/parser/bakalari/lesson/normal/change";
 import parseGroups from "@/parser/bakalari/lesson/normal/group";
