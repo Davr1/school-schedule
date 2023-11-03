@@ -13,9 +13,9 @@ export interface BakalariDay {
 
 export type BakalariSchedule = BakalariDay[];
 
-export async function getBakaSchedule(params: ScheduleParams): Promise<BakalariSchedule> {
+export async function getBakaSchedule(params: ScheduleParams, cache?: boolean): Promise<BakalariSchedule> {
     const newParams = toBakaParams(params);
-    const response = await fetchBaka(newParams);
+    const response = await fetchBaka(newParams, cache);
 
     const $ = load(response);
 

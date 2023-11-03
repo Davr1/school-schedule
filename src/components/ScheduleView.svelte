@@ -1,18 +1,18 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
 
+    import { browser } from "$app/environment";
     import { getBakaSchedule, type BakalariSchedule } from "$lib/scraping";
     import { StandardSubject, Subject } from "$lib/subject";
     import { getWebSchedule, isMergable, joinText, parseGroup } from "$lib/utilities";
 
     import { config, scheduleParams, type ScheduleParams } from "$stores/config";
-    import { fetchCount, fetchQueue } from "$stores/main";
+    import { cache, fetchCount, fetchQueue } from "$stores/main";
     import { hours, scheduleMetadata } from "$stores/static";
 
     import GridCell from "$components/GridCell.svelte";
 
     import styles from "$styles/modules/Schedule.module.scss";
-    import { browser } from "$app/environment";
 
     const dispatch = createEventDispatcher<{ loadingFinished: null }>();
 
@@ -40,7 +40,7 @@
                 schedule.weekMode = "Next";
             }
 
-            scheduleData = await getBakaSchedule(schedule);
+            scheduleData = await getBakaSchedule(schedule, $cache);
             dispatch("loadingFinished");
             if (localFetchQueue !== $fetchQueue) break fetchProcess;
             fetchCount.update((v) => (v += 1));

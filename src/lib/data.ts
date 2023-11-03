@@ -7,8 +7,11 @@ import { type BakalariParams, urls } from "$stores/static";
  * @param data The parameters to fetch the schedule with
  * @returns The schedule as html text (UTF-8)
  */
-export async function fetchBaka(data: BakalariParams) {
-    const url = `${urls.baka}/Timetable/Public/${data.weekMode}/${data.scheduleMode}/${data.value}`;
+export async function fetchBaka(data: BakalariParams, cache?: boolean) {
+    const url =
+        cache && data.scheduleMode === "Class" && data.weekMode !== "Permanent"
+            ? `/bakalari/${data.value}`
+            : `${urls.baka}/Timetable/Public/${data.weekMode}/${data.scheduleMode}/${data.value}`;
 
     const response = await fetch(url);
 
