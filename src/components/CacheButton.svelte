@@ -10,9 +10,14 @@
 
     let className = "";
     export { className as class };
+
+    function toggleCache() {
+        $cache = !$cache;
+        updateScheduleParams($cache ? {} : { scheduleMode: "Class" });
+    }
 </script>
 
-<button class={`${controlStyles.button} ${className}`} on:click={() => (($cache = !$cache), updateScheduleParams())}>
+<button class={`${controlStyles.button} ${className}`} on:click={toggleCache}>
     {#if $cache}
         <Refresh />
     {:else}
