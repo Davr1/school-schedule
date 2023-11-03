@@ -1,10 +1,13 @@
 <script lang="ts">
-    import { config } from "$stores/config";
-    import Close from "@material-design-icons/svg/filled/close.svg?component";
+    import { config, updateScheduleParams } from "$stores/config";
 
     import { addRipple } from "$lib/ripple";
 
+    import { cache } from "$stores/main";
+
     import UwU from "$assets/uwu.svg?component";
+    import Close from "@material-design-icons/svg/filled/close.svg?component";
+    import History from "@material-design-icons/svg/filled/history.svg?component";
 
     import Modal from "$components/Modal.svelte";
     import Switch from "$components/Switch.svelte";
@@ -44,6 +47,17 @@
         <Switch bind:value={$config.loadscreen} />
     </div>
     <p><span>What's this?</span></p>
+
+    <button class={`${controlStyles.button} ${modalStyles.button}`} on:click={() => (($cache = !$cache), updateScheduleParams())}>
+        <History />
+
+        Load schedule from
+        {#if $cache}
+            Bakalari
+        {:else}
+            cache
+        {/if}
+    </button>
 
     <ThemeEditor {visible} />
 </Modal>

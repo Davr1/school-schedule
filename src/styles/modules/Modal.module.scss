@@ -43,6 +43,9 @@
 }
 
 :local(.content) {
+    display: flex;
+    flex-direction: column;
+
     padding: 0.5rem 2.3rem;
 
     scrollbar-width: thin;
@@ -86,6 +89,12 @@
     justify-content: space-between;
     align-items: center;
     gap: 0.5rem;
+}
+
+:local(.button) {
+    align-self: flex-end;
+
+    margin: 0.5rem 0;
 }
 
 @keyframes bg {
