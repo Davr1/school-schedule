@@ -1,14 +1,12 @@
 <script lang="ts">
-    import { updateScheduleParams } from "$stores/config";
-    import { cache } from "$stores/main";
+    import { onMount } from "svelte";
 
     import Loading from "$assets/loading.svg?component";
     import UwU from "$assets/uwu.svg?component";
-    import History from "@material-design-icons/svg/filled/history.svg?component";
 
-    import controlStyles from "$styles/modules/Controls.module.scss";
+    import CacheButton from "$components/CacheButton.svelte";
+
     import styles from "$styles/modules/LoadScreen.module.scss";
-    import { onMount } from "svelte";
 
     let show = false;
 
@@ -24,10 +22,6 @@
     <UwU height="3rem" />
 
     {#if show}
-        <button class={`${controlStyles.button} ${styles.button}`} on:click={() => (($cache = true), updateScheduleParams())}>
-            <History />
-
-            Load schedule from cache
-        </button>
+        <CacheButton class={styles.button} />
     {/if}
 </div>

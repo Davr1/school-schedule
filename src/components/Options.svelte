@@ -3,7 +3,7 @@
     import { writable } from "svelte/store";
 
     import { config, scheduleParams, updateScheduleParams, type ScheduleMode, type WeekMode } from "$stores/config";
-    import { fetchCount } from "$stores/main";
+    import { cache, fetchCount } from "$stores/main";
     import { scheduleMetadata, sheduleModes } from "$stores/static";
 
     import { addRipple } from "$lib/ripple";
@@ -16,6 +16,7 @@
     import Segmented from "$components/Controls/Segmented.svelte";
     import Dropdown from "$components/Dropdown.svelte";
 
+    import CacheButton from "$components/CacheButton.svelte";
     import controlStyles from "$styles/modules/Controls.module.scss";
     import styles from "$styles/modules/Options.module.scss";
 
@@ -71,23 +72,36 @@
 </script>
 
 <nav class={styles.options}>
-    <Dropdown {...modeDropdown} />
+    {#if !$cache}
+        <Dropdown {...modeDropdown} />
+    {/if}
+
     <Dropdown {...valuesDropdown} />
 
-    <Segmented bind:selection={scheduleMode} id="weekButtons">
-        <Control name="Permanent" />
-        <Control name="Current" />
-        <Control name="Next" />
+    {#if $cache}
+        <CacheButton class={styles.cache} />
 
         <button class={controlStyles.button} on:click={() => (advancedSettingsModal = true)} use:addRipple>
             <MoreHoriz />
         </button>
-    </Segmented>
+    {:else}
+        <Segmented bind:selection={scheduleMode} id="weekButtons">
+            <Control name="Permanent" />
+            <Control name="Current" />
+            <Control name="Next" />
 
-    <button id="reloadButton" class={controlStyles.button} on:click={() => updateScheduleParams()} use:addRipple>
-        <Refresh />
-        <span id="info">{$fetchCount} / {maxFetchCount} fetched</span>
-    </button>
+            <button class={controlStyles.button} on:click={() => (advancedSettingsModal = true)} use:addRipple>
+                <MoreHoriz />
+            </button>
+        </Segmented>
+    {/if}
+
+    {#if !$cache}
+        <button id="reloadButton" class={controlStyles.button} on:click={() => updateScheduleParams()} use:addRipple>
+            <Refresh />
+            <span id="info">{$fetchCount} / {maxFetchCount} fetched</span>
+        </button>
+    {/if}
 </nav>
 
 <AdvancedSettingsModal bind:visible={advancedSettingsModal} />
