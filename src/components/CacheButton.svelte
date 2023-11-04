@@ -13,7 +13,7 @@
 
     function toggleCache() {
         $cache = !$cache;
-        updateScheduleParams($cache ? {} : { scheduleMode: "Class" });
+        updateScheduleParams($cache ? { scheduleMode: "Class" } : undefined);
     }
 </script>
 
