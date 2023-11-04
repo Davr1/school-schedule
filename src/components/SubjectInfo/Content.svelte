@@ -3,6 +3,7 @@
     import { isValidMetadata } from "$lib/utilities";
 
     import { scheduleParams, updateScheduleParams } from "$stores/config";
+    import { cache } from "$stores/main";
 
     import Info from "@material-design-icons/svg/filled/info.svg?component";
     import Person from "@material-design-icons/svg/filled/person.svg?component";
@@ -47,9 +48,10 @@
             {#if $scheduleParams.scheduleMode !== "Room"}
                 <span
                     class={styles.link}
+                    class:enabled={!$cache}
                     on:click={() => {
                         // This is nasty. Consider refactoring..
-                        if (!subject.isStandard()) return;
+                        if (!subject.isStandard() || $cache) return;
 
                         if (isValidMetadata(subject.room)) updateScheduleParams({ value: subject.room, scheduleMode: "Room" });
                     }}
@@ -65,7 +67,10 @@
                     <!-- svelte-ignore a11y-no-static-element-interactions -->
                     <span
                         class={styles.link}
+                        class:enabled={!$cache}
                         on:click={() => {
+                            if ($cache) return;
+
                             const group = singleGroup.trim().split(" ")[0];
                             if (isValidMetadata(group)) updateScheduleParams({ value: group, scheduleMode: "Class" });
                         }}
@@ -91,8 +96,9 @@
             <!-- svelte-ignore a11y-no-static-element-interactions -->
             <span
                 class={styles.link}
+                class:enabled={!$cache}
                 on:click={() => {
-                    if (!subject.isStandard()) return;
+                    if (!subject.isStandard() || $cache) return;
 
                     const teacher = subject.teacher.abbreviation.split(",")[0];
                     if (isValidMetadata(teacher)) updateScheduleParams({ value: teacher, scheduleMode: "Teacher" });

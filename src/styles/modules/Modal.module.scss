@@ -88,6 +88,10 @@
     gap: 0.5rem;
 }
 
+:local(.button) {
+    margin: 0.5rem 0;
+}
+
 @keyframes bg {
     from {
         opacity: 0;

@@ -12,3 +12,19 @@
 
     z-index: 3;
 }
+
+:local(.button) {
+    position: absolute;
+
+    bottom: 0;
+
+    margin: 1rem auto;
+
+    animation: loadscreen-cache-button 0.25s ease-in-out;
+
+    @keyframes loadscreen-cache-button {
+        from {
+            opacity: 0;
+        }
+    }
+}

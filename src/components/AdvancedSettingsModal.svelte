@@ -1,11 +1,12 @@
 <script lang="ts">
     import { config } from "$stores/config";
-    import Close from "@material-design-icons/svg/filled/close.svg?component";
 
     import { addRipple } from "$lib/ripple";
 
     import UwU from "$assets/uwu.svg?component";
+    import Close from "@material-design-icons/svg/filled/close.svg?component";
 
+    import CacheButton from "$components/CacheButton.svelte";
     import Modal from "$components/Modal.svelte";
     import Switch from "$components/Switch.svelte";
     import ThemeEditor from "$components/ThemeEditor.svelte";
@@ -44,6 +45,8 @@
         <Switch bind:value={$config.loadscreen} />
     </div>
     <p><span>What's this?</span></p>
+
+    <CacheButton class={modalStyles.button} />
 
     <ThemeEditor {visible} />
 </Modal>
