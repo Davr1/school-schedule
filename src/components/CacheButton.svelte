@@ -1,6 +1,7 @@
 <script lang="ts">
-    import { updateScheduleParams } from "$stores/config";
+    import { addRipple } from "$lib/ripple";
 
+    import { updateScheduleParams } from "$stores/config";
     import { cache } from "$stores/main";
 
     import History from "@material-design-icons/svg/filled/history.svg?component";
@@ -17,7 +18,7 @@
     }
 </script>
 
-<button class={`${controlStyles.button} ${className}`} on:click={toggleCache}>
+<button class={`${controlStyles.button} ${className}`} on:click={toggleCache} use:addRipple>
     {#if $cache}
         <Refresh />
     {:else}
