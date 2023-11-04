@@ -71,20 +71,14 @@
     scheduleMode.subscribe((weekMode) => updateScheduleParams({ weekMode }));
 </script>
 
-<nav class={styles.options}>
+<nav class={styles.options} class:cache={$cache}>
     {#if !$cache}
         <Dropdown {...modeDropdown} />
     {/if}
 
     <Dropdown {...valuesDropdown} />
 
-    {#if $cache}
-        <CacheButton class={styles.cache} />
-
-        <button class={controlStyles.button} on:click={() => (advancedSettingsModal = true)} use:addRipple>
-            <MoreHoriz />
-        </button>
-    {:else}
+    {#if !$cache}
         <Segmented bind:selection={scheduleMode} id="weekButtons">
             <Control name="Permanent" />
             <Control name="Current" />
@@ -94,12 +88,16 @@
                 <MoreHoriz />
             </button>
         </Segmented>
-    {/if}
 
-    {#if !$cache}
         <button id="reloadButton" class={controlStyles.button} on:click={() => updateScheduleParams()} use:addRipple>
             <Refresh />
             <span id="info">{$fetchCount} / {maxFetchCount} fetched</span>
+        </button>
+    {:else}
+        <CacheButton class={styles.cache} />
+
+        <button class={controlStyles.button} on:click={() => (advancedSettingsModal = true)} use:addRipple>
+            <MoreHoriz />
         </button>
     {/if}
 </nav>
