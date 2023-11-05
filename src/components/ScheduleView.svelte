@@ -232,7 +232,10 @@
                 {#each day.subjects as cell, j}
                     {#if cell.length > 0}
                         {#each cell as subject (subject.id)}
-                            <GridCell {...subject} on:modalOpen />
+                            <!-- Omit id from the subject before passing it to the GridCell component to avoid a warning -->
+                            {@const { id, ...cell } = subject}
+
+                            <GridCell {...cell} on:modalOpen />
                         {/each}
                     {:else}
                         <div class={styles.cell} style={`--row: ${i * 2}; --column: ${j}; --width: 1; --height: 2;`}></div>
