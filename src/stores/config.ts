@@ -58,7 +58,7 @@ const defaultValues: Record<ScheduleMode, Value> = {
     Room: "104"
 };
 
-const possibleValues = {
+export const possibleValues = {
     Class: scheduleMetadata.classes.map((c) => c.name),
     Teacher: scheduleMetadata.teachers.map((t) => t.name),
     Room: scheduleMetadata.rooms.map((r) => r.name)

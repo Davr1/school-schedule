@@ -1,7 +1,7 @@
 <script lang="ts">
-    import { config, scheduleParams } from "$stores/config";
+    import { config, possibleValues, scheduleParams } from "$stores/config";
     import { cache, fetchCount } from "$stores/main";
-    import { scheduleMetadata, scheduleModes } from "$stores/static";
+    import { scheduleModes } from "$stores/static";
 
     import MoreHoriz from "@material-design-icons/svg/filled/more_horiz.svg?component";
     import Refresh from "@material-design-icons/svg/filled/refresh.svg?component";
@@ -24,21 +24,6 @@
     } else {
         maxFetchCount = 6;
     }
-
-    let values: string[];
-    $: switch ($scheduleParams.scheduleMode) {
-        case "Class":
-            values = scheduleMetadata.classes.map((c) => c.name);
-            break;
-
-        case "Teacher":
-            values = scheduleMetadata.teachers.map((c) => c.name);
-            break;
-
-        case "Room":
-            values = scheduleMetadata.rooms.map((c) => c.name);
-            break;
-    }
 </script>
 
 <nav class={styles.options} class:cache={$cache}>
@@ -51,7 +36,7 @@
     {/if}
 
     <Dropdown bind:selection={$scheduleParams.value}>
-        {#each values as value}
+        {#each possibleValues[$scheduleParams.scheduleMode] as value}
             <Control name={value} />
         {/each}
     </Dropdown>
