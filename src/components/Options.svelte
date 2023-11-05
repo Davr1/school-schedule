@@ -3,18 +3,16 @@
     import { cache, fetchCount } from "$stores/main";
     import { scheduleMetadata, scheduleModes } from "$stores/static";
 
-    import { addRipple } from "$lib/ripple";
-
     import MoreHoriz from "@material-design-icons/svg/filled/more_horiz.svg?component";
     import Refresh from "@material-design-icons/svg/filled/refresh.svg?component";
 
     import AdvancedSettingsModal from "$components/AdvancedSettingsModal.svelte";
+    import CacheButton from "$components/CacheButton.svelte";
+    import Button from "$components/Controls/Button.svelte";
     import Control from "$components/Controls/Control.svelte";
     import Dropdown from "$components/Controls/Dropdown.svelte";
     import Segmented from "$components/Controls/Segmented.svelte";
 
-    import CacheButton from "$components/CacheButton.svelte";
-    import controlStyles from "$styles/modules/Controls.module.scss";
     import styles from "$styles/modules/Options.module.scss";
 
     /** Whether the advanced settings modal is visible, false by default */
@@ -64,21 +62,21 @@
             <Control name="Current" />
             <Control name="Next" />
 
-            <button class={controlStyles.button} on:click={() => (advancedSettingsModal = true)} use:addRipple>
+            <Button on:click={() => (advancedSettingsModal = true)}>
                 <MoreHoriz />
-            </button>
+            </Button>
         </Segmented>
 
-        <button id="reloadButton" class={controlStyles.button} on:click={() => scheduleParams.update((_) => _)} use:addRipple>
+        <Button on:click={() => scheduleParams.update((_) => _)}>
             <Refresh />
             <span id="info">{$fetchCount} / {maxFetchCount} fetched</span>
-        </button>
+        </Button>
     {:else}
         <CacheButton class={styles.cache} />
 
-        <button class={controlStyles.button} on:click={() => (advancedSettingsModal = true)} use:addRipple>
+        <Button on:click={() => (advancedSettingsModal = true)}>
             <MoreHoriz />
-        </button>
+        </Button>
     {/if}
 </nav>
 

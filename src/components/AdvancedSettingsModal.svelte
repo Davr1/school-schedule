@@ -1,17 +1,15 @@
 <script lang="ts">
     import { config } from "$stores/config";
 
-    import { addRipple } from "$lib/ripple";
-
     import UwU from "$assets/uwu.svg?component";
     import Close from "@material-design-icons/svg/filled/close.svg?component";
 
     import CacheButton from "$components/CacheButton.svelte";
+    import Button from "$components/Controls/Button.svelte";
     import Modal from "$components/Modal.svelte";
     import Switch from "$components/Switch.svelte";
     import ThemeEditor from "$components/ThemeEditor.svelte";
 
-    import controlStyles from "$styles/modules/Controls.module.scss";
     import modalStyles from "$styles/modules/Modal.module.scss";
     import styles from "$styles/modules/Settings.module.scss";
 
@@ -23,9 +21,9 @@
     <div class={modalStyles.title}>
         <h1>Advanced settings</h1>
 
-        <button class={`${controlStyles.button} big`} on:click={() => (visible = false)} use:addRipple>
+        <Button class="big" on:click={() => (visible = false)}>
             <Close />
-        </button>
+        </Button>
     </div>
 
     <div class={styles.optionRow}>Use the school's website for substitutions <Switch bind:value={$config.useWeb} /></div>

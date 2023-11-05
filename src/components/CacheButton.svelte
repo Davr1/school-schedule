@@ -1,13 +1,10 @@
 <script lang="ts">
-    import { addRipple } from "$lib/ripple";
-
     import { scheduleParams } from "$stores/config";
     import { cache } from "$stores/main";
 
+    import Button from "$components/Controls/Button.svelte";
     import History from "@material-design-icons/svg/filled/history.svg?component";
     import Refresh from "@material-design-icons/svg/filled/refresh.svg?component";
-
-    import controlStyles from "$styles/modules/Controls.module.scss";
 
     let className = "";
     export { className as class };
@@ -20,7 +17,7 @@
     }
 </script>
 
-<button class={`${controlStyles.button} ${className}`} on:click={toggleCache} use:addRipple>
+<Button class={className} on:click={toggleCache}>
     {#if $cache}
         <Refresh />
     {:else}
@@ -33,4 +30,4 @@
     {:else}
         cache
     {/if}
-</button>
+</Button>
