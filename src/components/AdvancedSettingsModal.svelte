@@ -6,8 +6,8 @@
 
     import CacheButton from "$components/CacheButton.svelte";
     import Button from "$components/Controls/Button.svelte";
+    import Switch from "$components/Controls/Switch.svelte";
     import Modal from "$components/Modal.svelte";
-    import Switch from "$components/Switch.svelte";
     import ThemeEditor from "$components/ThemeEditor.svelte";
 
     import modalStyles from "$styles/modules/Modal.module.scss";
