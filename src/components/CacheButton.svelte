@@ -1,7 +1,7 @@
 <script lang="ts">
     import { addRipple } from "$lib/ripple";
 
-    import { updateScheduleParams } from "$stores/config";
+    import { scheduleParams } from "$stores/config";
     import { cache } from "$stores/main";
 
     import History from "@material-design-icons/svg/filled/history.svg?component";
@@ -14,7 +14,9 @@
 
     function toggleCache() {
         $cache = !$cache;
-        updateScheduleParams($cache ? { scheduleMode: "Class" } : undefined);
+
+        if ($cache) $scheduleParams.scheduleMode = "Class";
+        else scheduleParams.update((_) => _);
     }
 </script>
 

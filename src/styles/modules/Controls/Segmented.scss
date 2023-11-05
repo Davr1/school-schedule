@@ -32,10 +32,10 @@
             box-shadow: none;
         }
     }
-}
 
-:local(.control) {
-    @extend :local(.button);
+    :local(.control) {
+        @extend :local(.button);
 
-    flex: 1;
+        flex: 1;
+    }
 }

@@ -2,7 +2,7 @@
     import type { Subject } from "$lib/subject";
     import { isValidMetadata } from "$lib/utilities";
 
-    import { scheduleParams, updateScheduleParams } from "$stores/config";
+    import { scheduleParams } from "$stores/config";
     import { cache } from "$stores/main";
 
     import Info from "@material-design-icons/svg/filled/info.svg?component";
@@ -53,7 +53,10 @@
                         // This is nasty. Consider refactoring..
                         if (!subject.isStandard() || $cache) return;
 
-                        if (isValidMetadata(subject.room)) updateScheduleParams({ value: subject.room, scheduleMode: "Room" });
+                        if (isValidMetadata(subject.room)) {
+                            $scheduleParams.scheduleMode = "Room";
+                            $scheduleParams.value = subject.room;
+                        }
                     }}
                 >
                     {subject.room}
@@ -72,7 +75,10 @@
                             if ($cache) return;
 
                             const group = singleGroup.trim().split(" ")[0];
-                            if (isValidMetadata(group)) updateScheduleParams({ value: group, scheduleMode: "Class" });
+                            if (isValidMetadata(group)) {
+                                $scheduleParams.scheduleMode = "Class";
+                                $scheduleParams.value = group;
+                            }
                         }}
                     >
                         {singleGroup}
@@ -101,7 +107,10 @@
                     if (!subject.isStandard() || $cache) return;
 
                     const teacher = subject.teacher.abbreviation.split(",")[0];
-                    if (isValidMetadata(teacher)) updateScheduleParams({ value: teacher, scheduleMode: "Teacher" });
+                    if (isValidMetadata(teacher)) {
+                        $scheduleParams.scheduleMode = "Teacher";
+                        $scheduleParams.value = teacher;
+                    }
                 }}
             >
                 {subject.teacher.name.split(",")[0]}

@@ -1,4 +1,4 @@
-import { get, writable } from "svelte/store";
+import { get, writable, type Writable } from "svelte/store";
 
 import { browser, version } from "$app/environment";
 
@@ -65,7 +65,7 @@ const possibleValues = {
 };
 
 export const config = writable({ ...defaultConfig, ...localConfig });
-export const scheduleParams = writable(get(config).scheduleParams);
+export const scheduleParams = createScheduleParamsStore(get(config).scheduleParams);
 
 config.subscribe((value) => {
     value.scheduleParams = get(scheduleParams);
@@ -76,36 +76,50 @@ config.subscribe((value) => {
 });
 
 /**
- * Updates the schedule params with the new values
- * @param newParams New schedule params. If a value is ommited, it won't be changed
+ * Create a new schedule params store
  */
-export function updateScheduleParams(newParams: Partial<ScheduleParams> = {}) {
-    // Retrieve the old params because we don't want to overwrite them
-    let oldParams = get(scheduleParams);
+function createScheduleParamsStore(baseParams: ScheduleParams): Writable<ScheduleParams> {
+    const { subscribe, set, update } = writable(baseParams);
 
-    // Combine the old and new params
-    let params: ScheduleParams = { ...oldParams, ...newParams };
+    function normalizeParams(params: ScheduleParams) {
+        // replace abbreviation with full name
+        if (params.scheduleMode === "Teacher") {
+            // For future @iCyuba reading this. look at this message: https://discord.com/channels/@me/1115648324821843999/1122616953769566319
+            let teacher = scheduleMetadata.teachers.find((t) => t.abbr === params.value);
 
-    // replace abbreviation with full name
-    if (newParams.scheduleMode === "Teacher") {
-        // For future @iCyuba reading this. look at this message: https://discord.com/channels/@me/1115648324821843999/1122616953769566319
-        let teacher = scheduleMetadata.teachers.find((t) => t.abbr === newParams.value);
+            if (teacher) params.value = teacher.name;
+        }
 
-        if (teacher) params.value = teacher.name;
+        // If the new value is not in the possible values, set it to the default one
+        // The constant values doesn't really work here so I'm asserting it as a string array
+        const possibleValuesForMode = possibleValues[params.scheduleMode] as string[];
+        if (!possibleValuesForMode.includes(params.value)) {
+            params.value = defaultValues[params.scheduleMode];
+        }
     }
 
-    // If the new value is not in the possible values, set it to the default one
-    // The constant values doesn't really work here so I'm asserting it as a string array
-    const possibleValuesForMode = possibleValues[params.scheduleMode] as string[];
-    if (!possibleValuesForMode.includes(params.value)) {
-        params.value = defaultValues[params.scheduleMode];
-    }
+    return {
+        subscribe,
 
-    console.log(params);
-    scheduleParams.set(params);
-    // TODO: Change this cuz wtf
-    // Correct me if I'm wrong, but you're doing this because you want to call the
-    // subscriber on line 72 (and 73) and rewrite the config with the new schedule params..
-    // Why not just keep them separate? @Davr1
-    config.update((a) => a);
+        set(params) {
+            normalizeParams(params);
+
+            // Run the config's subscribers
+            config.update((a) => a);
+
+            return set(params);
+        },
+
+        update(updater) {
+            return update((params) => {
+                const newParams = updater(params);
+                normalizeParams(newParams);
+
+                // Run the config's subscribers
+                config.update((a) => a);
+
+                return newParams;
+            });
+        }
+    };
 }
