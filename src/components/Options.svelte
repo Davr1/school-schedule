@@ -1,7 +1,5 @@
 <script lang="ts">
-    import { writable } from "svelte/store";
-
-    import { config, scheduleParams, type WeekMode } from "$stores/config";
+    import { config, scheduleParams } from "$stores/config";
     import { cache, fetchCount } from "$stores/main";
     import { scheduleMetadata, scheduleModes } from "$stores/static";
 
@@ -43,10 +41,6 @@
             values = scheduleMetadata.rooms.map((c) => c.name);
             break;
     }
-
-    // NOTE: Consider changing this. This is kinda dumb....
-    let scheduleMode = writable<WeekMode>($scheduleParams.weekMode);
-    scheduleMode.subscribe((weekMode) => ($scheduleParams.weekMode = weekMode));
 </script>
 
 <nav class={styles.options} class:cache={$cache}>
@@ -65,7 +59,7 @@
     </Dropdown>
 
     {#if !$cache}
-        <Segmented bind:selection={scheduleMode} id="weekButtons">
+        <Segmented bind:selection={$scheduleParams.weekMode} id="weekButtons">
             <Control name="Permanent" />
             <Control name="Current" />
             <Control name="Next" />
