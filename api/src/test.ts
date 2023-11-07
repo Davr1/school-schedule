@@ -4,12 +4,14 @@ import { readdir } from "fs/promises";
 import { ScheduleType } from "@/classes";
 import saveBakalari from "@/database/bakalari/save";
 import client, { db } from "@/database/mongo/client";
-import parseBakalari from "@/parser/bakalari";
+import { BakalariParser } from "@/parser";
 
 // Remove all documents from all collections
 for (const collection of await db.collections()) {
     await collection.deleteMany({});
 }
+
+const bakalariParser = new BakalariParser();
 
 async function checkDir(dir: string = "../cache/") {
     const files = await readdir(dir);
@@ -22,7 +24,7 @@ async function checkDir(dir: string = "../cache/") {
             const value = file.split(".")[0];
 
             const contents = await Bun.file(`${dir}/${file}`).text();
-            const parsed = await parseBakalari(ScheduleType.Class, value, contents);
+            const parsed = await bakalariParser.parse(ScheduleType.Class, value, contents);
 
             await saveBakalari(parsed);
         }
