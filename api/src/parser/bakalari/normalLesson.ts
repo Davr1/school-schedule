@@ -2,12 +2,12 @@ import { selectOne } from "css-select";
 import type { AnyNode, Element } from "domhandler";
 import { textContent } from "domutils";
 
-import { NormalLesson } from "@/classes";
-import type { Group, Info } from "@/classes/bakalari";
+import { DetailHandler, NormalLesson, SubjectDetails, TeacherDetails } from "@/classes";
+import type { Group } from "@/classes/bakalari";
 import type { BakalariData } from "@/parser/bakalari/lesson";
 
 class BakalariNormalLessonParser {
-    // constructor(private details: DetailHandler) {}
+    constructor(private details: DetailHandler) {}
 
     /**
      * Parse a normal lesson from a node
@@ -29,7 +29,7 @@ class BakalariNormalLessonParser {
     }
 
     /** Parse the subject name and abbreviation for the given lesson */
-    private subject(lesson: AnyNode, data: BakalariData): Info {
+    private subject(lesson: AnyNode, data: BakalariData): SubjectDetails {
         // Get the subject abbreviation from the lesson
         const abbreviationNode = selectOne(".middle", lesson)!;
         const abbreviation = textContent(abbreviationNode).trim();
@@ -38,11 +38,20 @@ class BakalariNormalLessonParser {
         const { subjecttext } = data;
         const name = subjecttext.match(/^.*?(?= \|)/)?.[0] ?? abbreviation;
 
-        return { abbreviation, name };
+        // Find the subject in the details
+        const subject = this.details.getDetailByAbbreviation(
+            abbreviation,
+            () => new SubjectDetails(this.details.getNewId(), name, abbreviation)
+        );
+
+        // Patch the name if it's null
+        if (subject.name === null) subject.name = name;
+
+        return subject;
     }
 
     /** Parse the teacher's name and abbreviation from a lesson */
-    private teacher(lesson: AnyNode, data: BakalariData): Info | null {
+    private teacher(lesson: AnyNode, data: BakalariData): TeacherDetails | null {
         // Parse the full name from the data (make sure there's only one value)
         const name = data.teacher?.split(",")[0].trim() ?? null;
 
@@ -53,7 +62,16 @@ class BakalariNormalLessonParser {
         const abbreviationNode = selectOne(".bottom > span", lesson)!;
         const abbreviation = textContent(abbreviationNode).trim();
 
-        return { abbreviation, name };
+        // Find the teacher in the details
+        const teacher = this.details.getDetailByAbbreviation(
+            abbreviation,
+            () => new TeacherDetails(this.details.getNewId(), name, abbreviation)
+        );
+
+        // Patch the name if it's null
+        if (teacher.name === null) teacher.name = name;
+
+        return teacher;
     }
 
     /** Parse the group number from the data attribute of the lesson */

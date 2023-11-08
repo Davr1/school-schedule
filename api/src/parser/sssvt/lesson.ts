@@ -2,10 +2,10 @@ import { selectOne } from "css-select";
 import type { AnyNode } from "domhandler";
 import { textContent } from "domutils";
 
-import { LessonCancellation, type LessonChange, LessonSubstitution } from "@/classes";
+import { DetailHandler, LessonCancellation, type LessonChange, LessonSubstitution, SubjectDetails } from "@/classes";
 
 class SSSVTLessonParser {
-    // constructor(private details: DetailHandler) {}
+    constructor(private details: DetailHandler) {}
 
     /**
      * Parse data about a lesson substitution
@@ -18,7 +18,16 @@ class SSSVTLessonParser {
 
         // Get the group number and subject abbreviation
         const group = this.group(lesson) ?? null;
-        const subject = this.subject(lesson) ?? null;
+        const subjectAbbreviation = this.subject(lesson) ?? null;
+
+        // Find the subject in the details
+        const subject =
+            subjectAbbreviation &&
+            (this.details.getDetailByAbbreviation(
+                subjectAbbreviation,
+                () => new SubjectDetails(this.details.getNewId(), null, subjectAbbreviation)
+            ) ??
+                null);
 
         // If there's no subject, it means that the lesson is cancelled
         // Note: Only check for null because the value can be an empty string
@@ -26,7 +35,16 @@ class SSSVTLessonParser {
 
         // Get the room number and teacher abbreviation
         const room = this.room(lesson) ?? null;
-        const teacher = this.teacher(lesson) ?? null;
+        const teacherAbbreviation = this.teacher(lesson) ?? null;
+
+        // Find the teacher in the details
+        const teacher =
+            teacherAbbreviation !== null
+                ? this.details.getDetailByAbbreviation(
+                      teacherAbbreviation,
+                      () => new SubjectDetails(this.details.getNewId(), null, teacherAbbreviation)
+                  )
+                : null;
 
         // If there's no room, throw an error
         if (!room) throw new Error(`Couldn't find the room in lesson: ${textContent(lesson)}`);

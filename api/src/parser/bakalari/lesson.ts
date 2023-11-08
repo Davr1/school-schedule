@@ -1,6 +1,6 @@
 import { type AnyNode, isTag } from "domhandler";
 
-import { AbsenceLesson, type BakalariLesson, BakalariLessonType, RemovedLesson } from "@/classes";
+import { AbsenceLesson, type BakalariLesson, BakalariLessonType, DetailHandler, RemovedLesson } from "@/classes";
 import BakalariNormalLessonParser from "@/parser/bakalari/normalLesson";
 
 export interface BakalariData {
@@ -24,8 +24,8 @@ export interface BakalariData {
 class BakalariLessonParser {
     private normalLessonParser: BakalariNormalLessonParser;
 
-    constructor(/* private details: DetailHandler */) {
-        this.normalLessonParser = new BakalariNormalLessonParser(/* details */);
+    constructor(details: DetailHandler) {
+        this.normalLessonParser = new BakalariNormalLessonParser(details);
     }
 
     /**

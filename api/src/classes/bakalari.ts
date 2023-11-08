@@ -1,3 +1,5 @@
+import type { SubjectDetails, TeacherDetails } from "@/classes";
+
 export const enum BakalariLessonType {
     /** Normal lesson */
     Normal = "atom",
@@ -61,10 +63,10 @@ export class NormalLesson extends BakalariLesson {
 
     constructor(
         /** Information about the subject */
-        readonly subject: Info,
+        readonly subject: SubjectDetails,
 
         /** Information about the teacher */
-        readonly teacher: Info | null,
+        readonly teacher: TeacherDetails | null,
 
         /** The room the lesson is taught in */
         readonly room: string,

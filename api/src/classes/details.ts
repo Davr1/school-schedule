@@ -1,59 +1,48 @@
-export abstract class Details<T = string> {
-    constructor(private _id: T) {}
+import type { ObjectId } from "bson";
 
-    /**
-     * Detail id
-     */
-    get id(): T {
-        return this._id;
-    }
+export type IdType = number | string | ObjectId;
+
+export abstract class Details {
+    constructor(public id: IdType) {}
 
     toJSON() {
-        return this._id;
+        return this.id;
     }
 
     toBSON() {
-        return this._id;
+        return this.id;
     }
 }
 
-export class TeacherDetails<T = string> extends Details<T> {
+export class TeacherDetails extends Details {
     // In the future, more details may be added here
 
     constructor(
-        id: T,
-        readonly name: string,
+        id: IdType,
+        public name: string | null,
         readonly abbreviation: string
     ) {
         super(id);
     }
 }
 
-export class SubjectDetails<T = string> extends Details<T> {
+export class SubjectDetails extends Details {
     constructor(
-        id: T,
-        readonly name: string,
+        id: IdType,
+        public name: string | null,
         readonly abbreviation: string
     ) {
         super(id);
     }
 }
 
-export class DetailHandler<T = string> {
-    private _details: Details<T>[] = [];
-
-    /**
-     * Add a detail to this handler.
-     * @param detail Detail to add.
-     */
-    addDetail(detail: Details<T>) {
-        this._details.push(detail);
-    }
+export class DetailHandler {
+    private _details: Details[] = [];
 
     /**
      * All details in this handler.
      */
-    get details(): Details<T>[] {
+    get details(): Details[] {
         return [...this._details];
     }
 
@@ -62,18 +51,20 @@ export class DetailHandler<T = string> {
      * @param id Detail id.
      * @returns Detail with the given id or `undefined` if not found.
      */
-    getDetail(id: T): Details<T> | undefined {
+    getDetail(id: IdType): Details | undefined {
         return this._details.find((detail) => detail.id === id);
     }
 
     /**
      * Get a detail by its abbreviation.
      * @param abbreviation Detail abbreviation.
+     * @param defaultDetail Callback to create a new detail if it doesn't exist.
      * @returns Detail with the given abbreviation or `undefined` if not found.
-     * @throws If there are multiple details with the same abbreviation. They should be unique.
      */
-    getDetailByAbbreviation(abbreviation: string): Details<T> | undefined {
-        const details = this._details.filter((detail) => {
+    getDetailByAbbreviation(abbreviation: string): Details | undefined;
+    getDetailByAbbreviation<T = Details>(abbreviation: string, defaultDetail: () => T): T;
+    getDetailByAbbreviation(abbreviation: string, defaultDetail?: () => Details): Details | undefined {
+        const detail = this._details.find((detail) => {
             if (detail instanceof TeacherDetails || detail instanceof SubjectDetails) {
                 return detail.abbreviation === abbreviation;
             }
@@ -81,10 +72,29 @@ export class DetailHandler<T = string> {
             return false;
         });
 
-        if (details.length > 1) {
-            throw new Error(`Multiple details with the abbreviation "${abbreviation}"`);
+        if (!detail && defaultDetail) {
+            const detail = defaultDetail();
+
+            this.addDetail(detail);
+            return detail;
         }
 
-        return details[0];
+        return detail;
+    }
+
+    /**
+     * Get a new id for a detail.
+     * @returns A new id.
+     */
+    getNewId(): IdType {
+        return this._details.length;
+    }
+
+    /**
+     * Add a detail to this handler.
+     * @param detail Detail to add.
+     */
+    addDetail(detail: Details) {
+        this._details.push(detail);
     }
 }

@@ -2,17 +2,15 @@ import selectAll, { selectOne } from "css-select";
 import type { AnyNode } from "domhandler";
 import { textContent } from "domutils";
 
-import type { BakalariLesson } from "@/classes/bakalari";
-import type { SchedulePeriod, ScheduleType } from "@/classes/schedule";
-import Schedule from "@/classes/schedule";
+import { type BakalariLesson, type DetailHandler, Schedule, type SchedulePeriod, type ScheduleType } from "@/classes";
 import BakalariLessonParser from "@/parser/bakalari/lesson";
 import dom from "@/parser/dom";
 
 class BakalariParser {
     private lessonParser: BakalariLessonParser;
 
-    constructor(/* private details: DetailHandler */) {
-        this.lessonParser = new BakalariLessonParser(/* details */);
+    constructor(details: DetailHandler) {
+        this.lessonParser = new BakalariLessonParser(details);
     }
 
     /**

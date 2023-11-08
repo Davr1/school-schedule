@@ -1,9 +1,11 @@
+import type { SubjectDetails, TeacherDetails } from "@/classes/details";
+
 export const enum LessonChangeType {
     /** The lesson was cancelled */
-    Cancellation,
+    Cancellation = "cancelled",
 
     /** The lesson was substituted for a different one */
-    Substitution
+    Substitution = "substituted"
 }
 
 /**
@@ -51,14 +53,14 @@ export class LessonSubstitution extends LessonChange {
     constructor(
         group: number | null,
 
-        /** The subject (abbreviation) of the substitution */
-        readonly subject: string,
+        /** The new subject */
+        readonly subject: "" | SubjectDetails,
 
         /** The room the lesson is taught in */
         readonly room: string,
 
-        /** The teacher's abbreviation (can be null in rare cases) */
-        readonly teacher: string | null
+        /** The teacher's details (can be null in rare cases) */
+        readonly teacher: TeacherDetails | null
     ) {
         super(group);
     }

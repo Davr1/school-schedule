@@ -2,15 +2,15 @@ import selectAll, { selectOne } from "css-select";
 import type { AnyNode } from "domhandler";
 import { hasChildren, isTag, textContent } from "domutils";
 
-import { LessonChange, type SchedulePeriod, SSSVT, type SSSVTClass } from "@/classes";
+import { DetailHandler, LessonChange, type SchedulePeriod, SSSVT, type SSSVTClass } from "@/classes";
 import dom from "@/parser/dom";
 import SSSVTLessonParser from "@/parser/sssvt/lesson";
 
 class SSSVTParser {
     private lessonParser: SSSVTLessonParser;
 
-    constructor(/* private details: DetailHandler */) {
-        this.lessonParser = new SSSVTLessonParser(/* details */);
+    constructor(details: DetailHandler) {
+        this.lessonParser = new SSSVTLessonParser(details);
     }
 
     /**

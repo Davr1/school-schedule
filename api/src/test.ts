@@ -1,7 +1,7 @@
 import { statSync } from "fs";
 import { readdir } from "fs/promises";
 
-import { ScheduleType } from "@/classes";
+import { DetailHandler, ScheduleType } from "@/classes";
 import saveBakalari from "@/database/bakalari/save";
 import client, { db } from "@/database/mongo/client";
 import { BakalariParser } from "@/parser";
@@ -11,7 +11,8 @@ for (const collection of await db.collections()) {
     await collection.deleteMany({});
 }
 
-const bakalariParser = new BakalariParser();
+const details = new DetailHandler();
+const bakalariParser = new BakalariParser(details);
 
 async function checkDir(dir: string = "../cache/") {
     const files = await readdir(dir);
