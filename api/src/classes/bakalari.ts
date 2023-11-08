@@ -44,11 +44,6 @@ export abstract class BakalariLesson {
     }
 }
 
-export interface Info {
-    name: string;
-    abbreviation: string;
-}
-
 export interface Group {
     /** The group number, null if the whole class is targetted */
     number: number | null;
@@ -107,16 +102,19 @@ export class AbsenceLesson extends BakalariLesson {
     override readonly type = BakalariLessonType.Absence;
 
     constructor(
-        readonly change: string,
+        /** Absence info ig?, irl it's just "Absc" */
+        readonly info: string,
 
-        /** Info about the absence */
-        readonly absence: Info
+        /** The name of the absence */
+        readonly name: string | null,
+
+        change: string | null = null
     ) {
-        super();
+        super(change);
     }
 
     /** Create a new AbsenceLesson from an object of the same structure */
     static fromObject(object: BakalariLessonLike<AbsenceLesson>): AbsenceLesson {
-        return new this(object.change, object.absence);
+        return new this(object.info, object.name, object.change);
     }
 }

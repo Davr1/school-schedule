@@ -55,19 +55,17 @@ class BakalariLessonParser {
     }
 
     /** Parse a removed lesson from a node */
-    private removed(data: BakalariData): RemovedLesson {
+    private removed(data: BakalariData): RemovedLesson | AbsenceLesson {
+        // If there's absence info, return AbsenceLesson instead
+        if (data.absentinfo) return this.absence(data);
+
         // Just return the info about the removal...
         return new RemovedLesson(data.removedinfo!);
     }
 
     /** Parse an absence from a node */
     private absence(data: BakalariData): AbsenceLesson {
-        // Get the fields
-        const name = data.InfoAbsentName!;
-        const abbreviation = data.absentinfo!;
-        const change = data.removedinfo!;
-
-        return new AbsenceLesson(change, { name, abbreviation });
+        return new AbsenceLesson(data.absentinfo!, data.InfoAbsentName, data.removedinfo || null);
     }
 }
 

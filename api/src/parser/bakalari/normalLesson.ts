@@ -3,7 +3,7 @@ import type { AnyNode, Element } from "domhandler";
 import { textContent } from "domutils";
 
 import { DetailHandler, NormalLesson, SubjectDetails, TeacherDetails } from "@/classes";
-import type { Group } from "@/classes/bakalari";
+import { AbsenceLesson, type Group } from "@/classes/bakalari";
 import type { BakalariData } from "@/parser/bakalari/lesson";
 
 class BakalariNormalLessonParser {
@@ -16,10 +16,16 @@ class BakalariNormalLessonParser {
      * @param data The data attribute of the node
      * @returns The parsed lesson
      */
-    parse(node: Element, data: BakalariData): NormalLesson {
+    parse(node: Element, data: BakalariData): NormalLesson | AbsenceLesson {
+        // Check if this is in reality an absence lesson (the format is different)
+        if (data.hasAbsent) {
+            const [info, name] = data.absentInfoText.split("|").map((text) => text.trim());
+            return new AbsenceLesson(info, name, data.changeinfo);
+        }
+
         // Parse all the fields from the node and data
         const subject = this.subject(node, data);
-        const teacher = this.teacher(node, data);
+        const teacher = this.teacher(node, data) ?? null;
         const { room } = data;
         const groups = this.groups(data);
         const topic = this.topic(node, data);
@@ -51,12 +57,10 @@ class BakalariNormalLessonParser {
     }
 
     /** Parse the teacher's name and abbreviation from a lesson */
-    private teacher(lesson: AnyNode, data: BakalariData): TeacherDetails | null {
+    private teacher(lesson: AnyNode, data: BakalariData): TeacherDetails | undefined {
         // Parse the full name from the data (make sure there's only one value)
-        const name = data.teacher?.split(",")[0].trim() ?? null;
-
-        // If name is null, the abbreviation will be null too, so just return null here
-        if (name === null) return null;
+        const name = data.teacher?.split(",")[0].trim();
+        if (!name) return;
 
         // Get the abbreviation from the node
         const abbreviationNode = selectOne(".bottom > span", lesson)!;
@@ -82,16 +86,14 @@ class BakalariNormalLessonParser {
         // Return each group (and filter out values that are both null)
         return groups
             .map((group) => {
-                // Match the group number from the text
+                // Match the group number and class name from the text
                 const number = group.match(/[0-9](?=\.sk)/)?.[0];
-
-                // Also try to match the class name from the text (sometimes it ain't included tho)
-                const className = group.match(/[A-Z][0-9]\.[A-C]/)?.[0] ?? null;
+                const className = group.match(/[A-Z][0-9]\.[A-C]/)?.[0];
 
                 // Return the group
                 return {
                     number: number ? Number(number) : null,
-                    class: className
+                    class: className ?? null
                 };
             })
             .filter((group) => !(group.number === null && group.class === null));
@@ -107,15 +109,12 @@ class BakalariNormalLessonParser {
     }
 
     /** Parse info about a potential change */
-    private change(node: Element, data: BakalariData): string | null {
+    private change(node: Element, data: BakalariData): string | undefined {
         // Check if there is a change (the element has the class "pink")
         const changed = node.attribs.class?.includes("pink");
 
-        // Return null if there is no change
-        if (!changed) return null;
-
         // Return the change info
-        return data.changeinfo;
+        if (changed) return data.changeinfo;
     }
 }
 
