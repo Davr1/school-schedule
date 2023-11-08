@@ -1,15 +1,8 @@
 import { statSync } from "fs";
 import { readdir } from "fs/promises";
 
-import { DetailHandler, ScheduleType } from "@/classes";
-import saveBakalari from "@/database/bakalari/save";
-import client, { db } from "@/database/mongo/client";
+import { DetailHandler, Details, ScheduleType } from "@/classes";
 import { BakalariParser } from "@/parser";
-
-// Remove all documents from all collections
-for (const collection of await db.collections()) {
-    await collection.deleteMany({});
-}
 
 const details = new DetailHandler();
 const bakalariParser = new BakalariParser(details);
@@ -22,16 +15,17 @@ async function checkDir(dir: string = "../cache/") {
         else {
             if (!file.endsWith(".html")) continue;
 
-            const value = file.split(".")[0];
+            const id = file.split(".")[0];
+            const detail = details.getDetail(id, () => new Details(id));
 
             const contents = await Bun.file(`${dir}/${file}`).text();
-            const parsed = await bakalariParser.parse(ScheduleType.Class, value, contents);
+            const parsed = await bakalariParser.parse(ScheduleType.Class, detail, contents);
 
-            await saveBakalari(parsed);
+            console.log(parsed);
         }
     }
 }
 
 await checkDir();
 
-await client.close();
+console.log(details.details);

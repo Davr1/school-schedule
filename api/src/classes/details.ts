@@ -2,7 +2,7 @@ import type { ObjectId } from "bson";
 
 export type IdType = number | string | ObjectId;
 
-export abstract class Details {
+export class Details {
     constructor(public id: IdType) {}
 
     toJSON() {
@@ -49,21 +49,31 @@ export class DetailHandler {
     /**
      * Get a detail by its id.
      * @param id Detail id.
+     * @param defaultDetail A default detail (or callback) to add and return if the detail doesn't exist.
      * @returns Detail with the given id or `undefined` if not found.
      */
-    getDetail(id: IdType): Details | undefined {
-        return this._details.find((detail) => detail.id === id);
+    getDetail<T extends Details = Details>(id: IdType, defaultDetail: T | (() => T)): T;
+    getDetail<T extends Details = Details>(id: IdType, defaultDetail?: T | (() => T)): T | undefined {
+        const detail = this._details.find((detail) => detail.id === id);
+
+        if (!detail && defaultDetail) {
+            const detail = typeof defaultDetail === "function" ? defaultDetail() : defaultDetail;
+
+            this.addDetail(detail);
+            return detail;
+        }
+
+        return detail as T;
     }
 
     /**
      * Get a detail by its abbreviation.
      * @param abbreviation Detail abbreviation.
-     * @param defaultDetail Callback to create a new detail if it doesn't exist.
+     * @param defaultDetail A default detail (or callback) to add and return if the detail doesn't exist.
      * @returns Detail with the given abbreviation or `undefined` if not found.
      */
-    getDetailByAbbreviation(abbreviation: string): Details | undefined;
-    getDetailByAbbreviation<T = Details>(abbreviation: string, defaultDetail: () => T): T;
-    getDetailByAbbreviation(abbreviation: string, defaultDetail?: () => Details): Details | undefined {
+    getDetailByAbbreviation<T extends Details = Details>(abbreviation: string, defaultDetail: T | (() => T)): T;
+    getDetailByAbbreviation<T extends Details = Details>(abbreviation: string, defaultDetail?: T | (() => T)): T | undefined {
         const detail = this._details.find((detail) => {
             if (detail instanceof TeacherDetails || detail instanceof SubjectDetails) {
                 return detail.abbreviation === abbreviation;
@@ -73,13 +83,13 @@ export class DetailHandler {
         });
 
         if (!detail && defaultDetail) {
-            const detail = defaultDetail();
+            const detail = typeof defaultDetail === "function" ? defaultDetail() : defaultDetail;
 
             this.addDetail(detail);
             return detail;
         }
 
-        return detail;
+        return detail as T;
     }
 
     /**
