@@ -1,7 +1,6 @@
-import type { BakalariLesson } from "@/classes/bakalari";
+import type { Details } from "@/classes/details";
 import Lesson from "@/classes/schedule/lesson";
 import type { SSSVTClass } from "@/classes/sssvt";
-import type { LessonChange } from "@/classes/sssvt/change";
 
 /** Type of the schedule */
 export const enum ScheduleType {
@@ -10,17 +9,17 @@ export const enum ScheduleType {
     Room = "Room"
 }
 
-/** Possible lessons in a period */
-export type SchedulePeriod<LessonType> = readonly [] | readonly [LessonType] | readonly [LessonType, LessonType];
+/** Possible lessons in a period, will usually just be between 0 and 2 */
+export type Period = Lesson[];
 
 /** Schedule for a day */
-class Schedule<LessonType = Lesson> {
+class Schedule {
     constructor(
         /** Type of the schedule (Class, Teacher, Room) */
         readonly type: ScheduleType,
 
-        /** Value of the schedule (class, teacher, or room id) */
-        readonly value: string,
+        /** Details of the schedule, should match the type */
+        readonly details: Details,
 
         /**
          * The date of the day
@@ -30,44 +29,47 @@ class Schedule<LessonType = Lesson> {
         readonly date: Date | number,
 
         /** The periods of the day */
-        readonly periods: SchedulePeriod<LessonType>[],
+        readonly periods: Period[],
 
         /** Possible full day event */
         readonly event: string | null = null
     ) {}
 
     /** Create a new Schedule from an object of the same structure */
-    static fromObject<T>(object: Schedule<T>) {
-        return new this(object.type, object.value, object.date, object.periods, object.event);
+    static fromObject(object: Schedule) {
+        return new this(object.type, object.details, object.date, object.periods, object.event);
     }
 
-    /** Merge a Bakalari Schedule with SSSVT class substitutions */
-    static merge(bakalari: Schedule<BakalariLesson>, sssvt: SSSVTClass) {
-        const periods = bakalari.periods.map((period, index) => {
+    /** Add the SSSVT changes to the schedule */
+    merge(sssvt: SSSVTClass) {
+        this.periods.forEach((period, index) => {
+            // Get the SSSVT equivalent of the period
             const sssvtPeriod = sssvt[index] ?? [];
 
             // Match the lessons by group
-            const findMatch = (bk?: BakalariLesson, s?: LessonChange) =>
-                bk?.isNormal() ? sssvtPeriod.find((s) => !s.group || s.group === bk.groups[0]?.number) : s;
-            const sssvtLesson1 = findMatch(period[0], sssvtPeriod[0]);
-            const sssvtLesson2 = findMatch(period[1], sssvtPeriod[1]);
+            period.forEach((lesson, index) => {
+                // If the bakalari lesson is empty, remove it completely from the schedule
+                const { bakalari } = lesson;
+                if (!bakalari) return void period.splice(index, 1);
 
-            // Make the rest separate lessons
-            const rest = sssvtPeriod.filter((s) => s !== sssvtLesson1 && s !== sssvtLesson2);
+                // Find the matching SSSVT lesson
+                const sssvtLesson = bakalari?.isNormal()
+                    ? sssvtPeriod.find((s) => !s.group || s.group === bakalari.groups[0]?.number)
+                    : sssvtPeriod[index];
 
-            // Create the new lessons
-            const lessons = [
-                new Lesson(period[0] ?? null, sssvtLesson1 ?? null),
-                new Lesson(period[1] ?? null, sssvtLesson2 ?? null),
-                ...rest.map((s) => new Lesson(null, s))
-            ].filter((l) => !l.empty);
+                // Set the SSSVT lesson
+                lesson.sssvt = sssvtLesson ?? null;
+            });
 
-            // Return the new period (ts is dumb here, so as unknown as ...)
-            return lessons as unknown as SchedulePeriod<Lesson>;
+            // Find the SSSVT lessons that don't have a matching bakalari lesson
+            sssvtPeriod.forEach((lesson) => {
+                // Try to find this inside the merged lessons
+                const mergedLesson = period.find((l) => l.sssvt === lesson);
+
+                // If there's no merged lesson, add it
+                if (!mergedLesson) period.push(new Lesson(null, lesson));
+            });
         });
-
-        // Return the new schedule
-        return new Schedule(bakalari.type, bakalari.value, bakalari.date, periods, bakalari.event);
     }
 }
 

@@ -12,7 +12,7 @@ class Lesson {
         public bakalari: BakalariLesson | null,
 
         /** The SSSVT lesson */
-        public sssvt: LessonChange | null
+        public sssvt: LessonChange | null = null
     ) {}
 }
 

@@ -1,5 +1,6 @@
 // Schedule classes
-export { default as Schedule, ScheduleType, type SchedulePeriod } from "@/classes/schedule";
+export { default as Schedule, ScheduleType, type Period } from "@/classes/schedule";
+export { default as Lesson } from "@/classes/schedule/lesson";
 
 // Bakalari classes
 export { AbsenceLesson, BakalariLesson, BakalariLessonType, NormalLesson, RemovedLesson } from "@/classes/bakalari";

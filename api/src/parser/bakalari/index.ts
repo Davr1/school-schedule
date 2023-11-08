@@ -2,7 +2,7 @@ import selectAll, { selectOne } from "css-select";
 import type { AnyNode } from "domhandler";
 import { textContent } from "domutils";
 
-import { type BakalariLesson, type DetailHandler, Schedule, type SchedulePeriod, type ScheduleType } from "@/classes";
+import { type DetailHandler, Details, Lesson, Schedule, type ScheduleType } from "@/classes";
 import BakalariLessonParser from "@/parser/bakalari/lesson";
 import dom from "@/parser/dom";
 
@@ -19,7 +19,7 @@ class BakalariParser {
      * @param html The html to parse
      * @returns The parsed days from the timetable
      */
-    async parse(type: ScheduleType, value: string, html: string): Promise<Schedule<BakalariLesson>[]> {
+    async parse(type: ScheduleType, value: Details, html: string): Promise<Schedule[]> {
         // Parse the html into a dom, and select all the day row nodes
         const scheduleDom = await dom(html);
         const dayNodes = selectAll(".bk-timetable-row", scheduleDom);
@@ -39,9 +39,8 @@ class BakalariParser {
                 // Get all the lessons in the period
                 const lessons = selectAll(".day-item-hover", node);
 
-                // Parse each lesson (and cast to Period)
-                // Note: (...) => parse(...) is required to not lose "this", I could use .bind but eh...
-                return lessons.map((lesson) => this.lessonParser.parse(lesson)) as unknown as SchedulePeriod<BakalariLesson>;
+                // Parse each lesson, then wrap the BakalariLesson in a Lesson class
+                return lessons.map(this.lessonParser.parse, this.lessonParser).map((lesson) => new Lesson(lesson));
             });
 
             // Return the parsed day

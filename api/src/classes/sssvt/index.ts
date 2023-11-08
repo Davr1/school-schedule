@@ -1,7 +1,7 @@
-import type { SchedulePeriod } from "@/classes/schedule";
 import type { LessonChange } from "@/classes/sssvt/change";
 
-export type SSSVTClass = SchedulePeriod<LessonChange>[];
+/** A class in the SSSVT schedule. Each class has a list of lessons for each period */
+export type SSSVTClass = LessonChange[][];
 
 /**
  * SSSVT substitution schedule

@@ -2,7 +2,7 @@ import selectAll, { selectOne } from "css-select";
 import type { AnyNode } from "domhandler";
 import { hasChildren, isTag, textContent } from "domutils";
 
-import { DetailHandler, LessonChange, type SchedulePeriod, SSSVT, type SSSVTClass } from "@/classes";
+import { DetailHandler, LessonChange, SSSVT, type SSSVTClass } from "@/classes";
 import dom from "@/parser/dom";
 import SSSVTLessonParser from "@/parser/sssvt/lesson";
 
@@ -62,25 +62,22 @@ class SSSVTParser {
     }
 
     /** Parse data for the given period */
-    private period(lessonNode: AnyNode, split: AnyNode[]): SchedulePeriod<LessonChange> {
+    private period(lessonNode: AnyNode, split: AnyNode[]): LessonChange[] {
         // Get the 1st lesson from the period, and return if there's no lesson (also check if it's a tag for type safety)
         const lesson1 = this.lessonParser.parse(lessonNode);
         if (!lesson1 || !isTag(lessonNode)) return [];
 
         // Check if there's a 2nd lesson, if not, return just the 1st lesson
         const has2ndLesson = lessonNode.attribs.rowspan === "1";
-        if (!has2ndLesson) return [lesson1] as const;
+        if (!has2ndLesson) return [lesson1];
 
         // Get the node for the 2nd lesson and parse it
         // (it's not gonna be on the same index, so I have to shift the array)
         const lesson2Node = split.shift();
         const lesson2 = lesson2Node && this.lessonParser.parse(lesson2Node);
 
-        // If there's no lesson, return
-        if (!lesson2) return [lesson1] as const;
-
-        // Return both lessons
-        return [lesson1, lesson2] as const;
+        // Return both lessons (filter out undefined, in case the 2nd lesson doesn't exist)
+        return [lesson1, lesson2].filter(Boolean) as LessonChange[];
     }
 }
 
