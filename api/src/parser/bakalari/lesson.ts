@@ -62,7 +62,7 @@ class BakalariLessonParser {
     }
 
     /** Parse a normal lesson from a node */
-    normal(node: Element, data: BakalariData): NormalLesson | AbsenceLesson {
+    private normal(node: Element, data: BakalariData): NormalLesson | AbsenceLesson {
         // Check if this is in reality an absence lesson (the format is different)
         if (data.hasAbsent) {
             const [info, name] = data.absentInfoText.split("|").map((text) => text.trim());
