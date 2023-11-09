@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#21262E">
+    <meta property="og:title" content="ŠŠŠVT rozvrh">
+    <meta content="https://gist.githack.com/Davr1/db0ae9ae88cbb94bac5ec23c1a5da326/raw/icon160.png" property="og:image">
+    <link rel="icon" href="https://gist.githack.com/Davr1/db0ae9ae88cbb94bac5ec23c1a5da326/raw/icon96.png"
+        type="image/png">
+    <link rel="icon" href="https://gist.githack.com/Davr1/db0ae9ae88cbb94bac5ec23c1a5da326/raw/icon.svg"
+        type="image/svg+xml">
+    <link rel="apple-touch-icon" href="https://gist.githack.com/Davr1/db0ae9ae88cbb94bac5ec23c1a5da326/raw/icon180.png"
+        type="image/png">
+    <link rel="stylesheet" type="text/css" href="https://rsms.me/inter/inter.css">
+    <title>ŠŠŠVT rozvrh</title>
+    <script>
+        const url = new URL(window.location.href);
+        const params = url.searchParams;
+
+        let main, counter, navigation, permanentButton, currentButton, nextButton, reloadButton, classButton, classSelect, cls;
+
+        const classes = {
+            'P1.A': 'UG',
+            'P1.B': 'UI',
+            'T1.C': 'UJ',
+            'P2.A': 'UD',
+            'P2.B': 'UE',
+            'T2.C': 'UF',
+            'P3.A': 'UA',
+            'P3.B': 'UB',
+            'T3.C': 'UC',
+            'G4.A': 'U7',
+            'P4.B': 'U8',
+            'T4.C': 'U9'
+        }
+
+        window.addEventListener('load', () => {
+            setup();
+        });
+
+        function fetchBaka(type, cls) {
+            return fetch(`https://is.sssvt.cz/IS/Timetable/Public/${type}/Class/${cls}`)
+                .then(
+                    (response) => {
+                        if (response.ok) {
+                            counter.innerHTML = parseInt(counter.innerHTML) + 1;
+                            return response.text();
+                        }
+                    },
+                    (err) => {
+                        throw new Error('We did a fucky wucky! >~< The baka servers are unweachable.');
+                    }
+                );
+        }
+
+        function fetchCORSless(url, charset = 'utf-8') {
+            return fetch(`https://api.allorigins.win/get?charset=${charset}&url=${encodeURIComponent('https://' + url)}`)
+                .then(
+                    (response) => {
+                        if (response.ok) {
+                            counter.innerHTML = parseInt(counter.innerHTML) + 1;
+                            return response.json();
+                        }
+                    },
+                    (err) => {
+                        throw new Error(`Couldn\'t fetch ${url} ヽ(\`⌒´メ)ノ`);
+                    }
+                );
+        }
+
+        function findElementWithText(DOM, selector, text) {
+            for (const element of DOM.querySelectorAll(selector)) {
+                if (element.textContent.includes(text)) return element;
+            }
+        }
+
+        // epically copied from bobbyhadz.com/blog/javascript-get-monday-of-current-week
+        function getDayOfCurrentWeek(day = 0) {
+            const today = new Date();
+            const first = today.getDate() - today.getDay() + 1;
+
+            const monday = new Date(today.setDate(first + day));
+            return monday;
+        }
+
+        function updateURL() {
+            if (url.search !== '') {
+                window.history.pushState(null, '', url.pathname.split('/').pop() + '?' + params.toString());
+            } else {
+                window.history.pushState(null, '', url.pathname.split('/').pop());
+            }
+        }
+
+        function replaceCell(originalCell, newCellArray) {
+            if (newCellArray.length === 0) return;
+            const temp = originalCell.cloneNode(true);
+            originalCell.innerHTML = '';
+
+            for (let i = 0; i < newCellArray.length; i++) {
+                const newCell = newCellArray[i].childNodes;
+                if (newCell.length === 1) {
+                    originalCell.innerHTML += '<div class="day-item-hover pink"></div>';
+                    continue;
+                }
+                let group, subject, classroom, teacher;
+                if (newCell[1].textContent.includes('sk')) {
+                    group = newCell[1].textContent.match(/\d+\.?sk/)[0];
+                    subject = newCell[0].textContent !== "" ? newCell[0].textContent : findElementWithText(temp, '.left>div', group).parentElement.parentElement.nextElementSibling.innerText;
+                    classroom = newCell[5].textContent;
+                    teacher = newCell[3].textContent;
+                } else {
+                    group = '';
+                    subject = newCell[0].textContent;
+                    classroom = newCell[4].textContent;
+                    teacher = newCell[2].textContent;
+                }
+                originalCell.innerHTML += `
+        <div class="day-item-hover pink multi">
+            <div class="day-flex">
+                <div class="top clearfix">
+                    <div class="left roll-vertical top-hide">
+                        <div>${group}</div>
+                    </div>
+                    <div class="right top-hide">
+                        <div class="first">${classroom}</div>
+                    </div>
+                </div>
+                <div class="middle">${subject}</div>
+                <div class="bottom"><span>${teacher}</span></div>
+            </div>
+        </div>`;
+                if (newCell[1].textContent.includes('sk') && newCellArray.length < temp.children.length) {
+                    const siblings = Array.from(temp.children)
+                        .filter(child => child != findElementWithText(temp, '.left>div', group).parentElement.parentElement.parentElement.parentElement);
+                    originalCell.appendChild(...siblings);
+                }
+            }
+        }
+
+        async function setup() {
+            main = document.querySelector('main');
+            counter = document.getElementById('counter');
+            navigation = document.querySelector('nav');
+
+            permanentButton = document.getElementById('permanent');
+            currentButton = document.getElementById('current');
+            nextButton = document.getElementById('next');
+            reloadButton = document.getElementById('reload');
+            classButton = document.getElementById('classButton');
+            classSelect = document.getElementById('classSelect');
+
+            cls = params.get('cls') ?? 'P2.B';
+            classButton.prepend(cls);
+
+            currentButton.addEventListener('click', () => {
+                params.delete('next');
+                params.delete('permanent');
+                updateURL();
+                constructScheduleDOM();
+            })
+
+            nextButton.addEventListener('click', () => {
+                params.set('next', '');
+                params.delete('permanent');
+                updateURL();
+                constructScheduleDOM();
+            })
+
+            permanentButton.addEventListener('click', () => {
+                params.set('permanent', '');
+                params.delete('next');
+                updateURL();
+                constructScheduleDOM();
+            })
+
+            reloadButton.addEventListener('click', () => {
+                updateURL();
+                constructScheduleDOM();
+            })
+
+            classButton.addEventListener('click', () => {
+                if (classSelect.style.display === 'none') {
+                    classSelect.removeAttribute('style');
+                    classButton.children[0].style.transform = 'rotate(-180deg)';
+
+                    setTimeout(() => {
+                        const handleDropdownClicks = () => {
+                            document.removeEventListener('click', handleDropdownClicks);
+                            classSelect.style.display = 'none';
+                            classButton.children[0].style.transform = 'rotate(0deg)';
+                        }
+
+                        document.addEventListener('click', handleDropdownClicks);
+                    }, 0);
+                }
+            })
+
+            Object.keys(classes).forEach(option => {
+                let temp = document.createElement('button');
+                temp.classList.add('option');
+                temp.innerText = option;
+                if (option === cls) temp.classList.add('active');
+
+                temp.addEventListener('click', () => {
+                    classSelect.style.display = 'none';
+                    classButton.children[0].style.transform = 'rotate(0deg)';
+
+                    Array.from(classSelect.children).forEach(child => child.classList.remove('active'));
+                    temp.classList.add('active');
+
+                    params.set('cls', option);
+                    updateURL();
+                    constructScheduleDOM();
+                })
+
+                classSelect.append(temp);
+            })
+
+            constructScheduleDOM();
+        }
+
+        async function constructScheduleDOM() {
+            counter.innerHTML = 0;
+
+            cls = params.get('cls') ?? 'P2.B';
+            classButton.childNodes[0].textContent = cls;
+
+            let week;
+            if (params.has('next')) {
+                permanentButton.classList.remove('active');
+                currentButton.classList.remove('active');
+                nextButton.classList.add('active');
+                reloadButton.classList.remove('disabled');
+
+                week = 'Next';
+            } else if (params.has('permanent')) {
+                permanentButton.classList.add('active');
+                currentButton.classList.remove('active');
+                nextButton.classList.remove('active');
+                reloadButton.classList.add('disabled');
+
+                week = 'Permanent';
+            } else {
+                permanentButton.classList.remove('active');
+                currentButton.classList.add('active');
+                nextButton.classList.remove('active');
+                reloadButton.classList.remove('disabled');
+
+                if (new Date().getDay() === 0) {
+                    week = 'Next';
+                } else {
+                    week = 'Actual';
+                }
+            }
+
+            const baka = await fetchBaka(week, classes[cls]);
+            const bakaDOM = new DOMParser().parseFromString(baka, 'text/html');
+
+            main.innerHTML = bakaDOM.getElementById('main').innerHTML;
+            navigation.removeAttribute('style');
+
+            if (week == 'Permanent') return;
+
+            for (let i = 0; i < 5; i++) {
+                const date = (week == 'Actual') ? getDayOfCurrentWeek(i) : getDayOfCurrentWeek(i + 7);
+                const formattedDate = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+
+                const daySchedule = await fetchCORSless(`www.sssvt.cz/main.php?p=IS&pp=suplak&datum=${formattedDate}`, 'windows-1250');
+                const dayScheduleDOM = new DOMParser().parseFromString(daySchedule.contents, 'text/html');
+
+                let firstRow = findElementWithText(dayScheduleDOM, '.rozvrh th:first-child', cls);
+                if (!firstRow) continue;
+                const secondRow = Array.from(firstRow.parentElement.nextElementSibling.children);
+                firstRow = Array.from(firstRow.parentElement.children);
+
+                for (let index = 2; index < firstRow.length - 1; index++) {
+                    if (firstRow[index].getAttribute('class') === '') {
+                        const cell = main.children[i + 1].children[1].children[index - 2].children[0];
+
+                        const cellArray = [firstRow[index]];
+                        if (firstRow[index].getAttribute('rowspan') === '1') {
+                            cellArray.push(secondRow.shift());
+                        }
+                        replaceCell(cell, cellArray);
+                    }
+                }
+            }
+            console.log('%c\u0d9e', 'color:red;font-size:20rem');
+        }
+    </script>
+    <style>
+        :root {
+            --main-background: #21262E;
+            --element-background: #434C56;
+            --dimmed-background: #31383F;
+            --accent: #1F6FEB;
+            --alt-accent: #2DAC45;
+            --text: #C9D1D9;
+            --text-active: #FFFFFF;
+        }
+
+        @media (max-aspect-ratio: 1/2) {
+
+            html,
+            body {
+                font-size: 1.3vh !important;
+            }
+
+            .bk-timetable-cell {
+                min-width: 9vh !important;
+            }
+        }
+
+        @media (max-aspect-ratio: 3/4) {
+            #weekButtons {
+                width: 100%;
+                max-height: 2.7rem;
+                grid-column: 1/3;
+            }
+
+            #weekButtons button {
+                width: 100% !important;
+                font-size: 1.1rem;
+            }
+
+            #dropdown {
+                order: 1;
+                width: 10rem !important;
+            }
+
+            #reload {
+                order: 2;
+                width: 100%;
+                max-height: 2.7rem;
+            }
+
+            main {
+                height: auto !important;
+            }
+
+            nav {
+                display: grid !important;
+                grid-template-columns: 10rem 1fr;
+                grid-template-rows: 1fr 1fr;
+                width: 90% !important;
+                height: 5.6rem !important;
+                place-items: center;
+            }
+
+            #info {
+                font-size: 1.1rem;
+            }
+        }
+
+        @media (min-aspect-ratio: 2/5) and (max-aspect-ratio: 3/2) {
+
+            html,
+            body {
+                font-size: 1.4vh !important;
+            }
+
+            main {
+                height: auto !important;
+            }
+
+            .bk-timetable-cell {
+                min-width: 11vh !important;
+            }
+        }
+
+        @media (min-aspect-ratio: 3/1) {
+
+            html,
+            body {
+                font-size: 1.7vh !important;
+            }
+
+            main {
+                max-width: 200vh;
+            }
+        }
+
+        @media (pointer: fine) {
+            .day-item-hover:hover {
+                box-shadow: 1px 1px 5px 3px #0005;
+                transform: scale(1.02);
+                filter: brightness(1.02);
+            }
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            font-size: 1.7vh;
+            font-family: 'Inter var', Inter, sans-serif;
+            font-feature-settings: "tnum";
+            font-weight: 300;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            background: var(--main-background);
+            color: var(--text);
+            cursor: default;
+        }
+
+        main {
+            height: 100%;
+            width: 100%;
+            overflow: auto;
+            display: grid;
+            grid-template-rows: 3.4rem repeat(5, 1fr);
+            grid-auto-flow: column;
+            scrollbar-width: thin;
+            scrollbar-color: dark;
+        }
+
+        ::-webkit-scrollbar {
+            height: 8px;
+            width: 8px;
+            background: #1D2128;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #373E47;
+            border-radius: 4px;
+        }
+
+        .bk-timetable-row {
+            display: flex;
+            flex: 1;
+        }
+
+        .bk-cell-wrapper {
+            flex: 1;
+            display: inline-grid;
+            grid-auto-columns: 1fr;
+            grid-auto-flow: column;
+        }
+
+        .bk-timetable-cell {
+            left: unset !important;
+            margin: 0.3rem;
+            position: relative;
+            width: unset !important;
+            min-width: 0;
+            transition: ease-out 100ms;
+        }
+
+        .day-item {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .day-item-hover {
+            height: 100%;
+            border-radius: 0.3rem;
+            min-height: 0;
+            background: var(--element-background);
+            box-shadow: 1px 1px 3px 2px #0002;
+            transition: ease-out 200ms;
+        }
+
+        .day-item-hover:only-child {
+            min-height: 13.5vh;
+        }
+
+        .multi:not(:last-of-type) {
+            margin-bottom: 0.6rem;
+        }
+
+        .day-item-hover.pink,
+        #reload.pink {
+            background: var(--accent);
+            color: var(--text-active);
+        }
+
+        .day-item-hover.green {
+            background: var(--alt-accent);
+            color: var(--text-active);
+        }
+
+        .bk-timetable-day {
+            flex: 0 0 1rem;
+        }
+
+        .bk-day-wrapper {
+            display: inline-block;
+            writing-mode: vertical-rl;
+            flex: 1;
+            width: 1rem;
+        }
+
+        .absence {
+            display: none;
+        }
+
+        .day-flex {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+            padding: 0.2rem;
+            box-sizing: border-box;
+        }
+
+        .top {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .middle {
+            font-size: 1.45rem;
+            font-weight: 500;
+            text-align: center;
+            margin: auto;
+            line-height: 0;
+        }
+
+        .bottom {
+            text-align: center;
+        }
+
+        .day-name {
+            padding: 0.4rem 0 0.4rem 0.2rem;
+        }
+
+        .bk-timetable-hours {
+            position: relative;
+            display: flex;
+            flex-direction: row;
+            padding-left: 1.2rem;
+        }
+
+        .bk-hour-wrapper {
+            left: unset !important;
+            width: unset !important;
+            position: relative !important;
+            flex: 1 1 0;
+            margin: 0.3rem;
+            text-align: center;
+        }
+
+        .bk-hour-wrapper .num {
+            font-weight: 500;
+            font-size: 1.4rem;
+        }
+
+        nav {
+            position: relative;
+            height: 2.6rem;
+            margin: 0.4rem 0;
+            width: 100%;
+            flex: 0 0 auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 300;
+        }
+
+        nav * {
+            font-family: inherit;
+            font-feature-settings: "tnum";
+        }
+
+        #weekButtons {
+            display: flex;
+            background: var(--dimmed-background);
+            padding: 0.2rem;
+            border-radius: 0.4rem;
+            height: 100%;
+            box-sizing: border-box;
+        }
+
+        button {
+            background: inherit;
+            border: unset;
+            color: var(--text);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: ease-out 100ms;
+        }
+
+        #classButton {
+            padding: 0 0.5rem 0 0.7rem;
+            background: var(--dimmed-background);
+            border-radius: 0.4rem;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #weekButtons>button {
+            position: relative;
+            width: 11.7rem;
+            border-radius: 0.3rem;
+        }
+
+        #weekButtons>button:not(.active)+button:not(.active)::before {
+            content: '';
+            position: absolute;
+            top: 0.1rem;
+            left: -1px;
+            bottom: 0.1rem;
+            border-left: 1px solid #0003;
+        }
+
+        button:hover {
+            filter: brightness(1.1);
+        }
+
+        button.active {
+            background: var(--element-background);
+            color: var(--text-active);
+        }
+
+        button.disabled {
+            pointer-events: none;
+            filter: opacity(0.4);
+        }
+
+        #weekButtons {
+            display: flex;
+            background: var(--dimmed-background);
+            padding: 0.2rem;
+            border-radius: 0.4rem;
+            height: 100%;
+            box-sizing: border-box;
+            gap: 1px;
+        }
+
+        #reload {
+            background: var(--dimmed-background);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            border-radius: 0.4rem;
+            gap: 0.5rem;
+            padding: 0 0.8rem 0 0.5rem;
+            white-space: nowrap;
+        }
+
+        #weekButtons,
+        #reload,
+        #classButton {
+            box-shadow: 0 1px 3px 2px #0001;
+        }
+
+        #reload>svg,
+        #classButton>svg {
+            width: 1.8rem;
+            height: 1.8rem;
+        }
+
+        #dropdown {
+            width: 7rem;
+            height: 100%;
+            position: relative;
+        }
+
+        #classSelect {
+            position: absolute;
+            left: 0;
+            bottom: -0.4rem;
+            transform: translateY(100%);
+            z-index: 2;
+            background: var(--dimmed-background);
+            border-radius: 0.6rem;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            width: 10rem;
+            gap: 1px;
+            padding: 0.2rem;
+            box-shadow: 0 1px 3px 2px #0005;
+            scrollbar-width: thin;
+            scrollbar-color: dark;
+        }
+
+        .option {
+            position: relative;
+            width: 100%;
+            text-align: left;
+            height: 2.6rem;
+            padding: 0 0.7rem;
+            border-radius: 0.4rem;
+            flex: 0 0 auto;
+        }
+
+        svg {
+            transition: ease-out 150ms;
+        }
+    </style>
+</head>
+
+<!-- :flushed: našel jsi mě -->
+
+<body>
+    <nav style="display:none">
+        <div id="dropdown">
+            <button id="classButton">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M0 0h24v24H0z" fill="none" />
+                    <path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z" />
+                </svg>
+            </button>
+            <div id="classSelect" style="display:none"></div>
+        </div>
+        <div id="weekButtons">
+            <button id="permanent">Permanent</button>
+            <button id="current">Current</button>
+            <button id="next">Next</button>
+        </div>
+        <button id="reload">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M0 0h24v24H0z" fill="none" />
+                <path
+                    d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z" />
+            </svg>
+            <span id="info"><span id="counter">0</span> / 6 fetched</span>
+        </button>
+    </nav>
+    <main>načítání uwu</main>
+
+</html>
