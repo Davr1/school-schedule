@@ -1,9 +1,9 @@
 <script lang="ts">
     import theme, { AccentColor, BackgroundColor, Theme } from "$stores/theme";
 
-    import RoundSelect from "$components/Themes/RoundSelect.svelte";
+    import RoundSelect from "$components/Controls/RoundSelect.svelte";
+    import themeStyles from "$styles/modules/Controls/RoundSelect.module.scss";
     import styles from "$styles/modules/Settings.module.scss";
-    import themeStyles from "$styles/modules/Themes.module.scss";
     import { writable } from "svelte/store";
 
     const colors = [...Object.entries(BackgroundColor), ...Object.entries(AccentColor)];
