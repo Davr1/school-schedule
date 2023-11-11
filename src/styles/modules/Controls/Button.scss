@@ -55,6 +55,12 @@
         background-color: var(--active-background);
     }
 
+    // Floating style (used for the close button in modals)
+    &.floating {
+        float: right;
+        margin-top: 1rem;
+    }
+
     // Icons inside buttons
     svg {
         width: 1.8rem;

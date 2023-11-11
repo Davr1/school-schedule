@@ -1,23 +1,18 @@
 <script lang="ts">
-    import type { ComponentProps } from "svelte";
-    import { writable } from "svelte/store";
-
-    import { config, scheduleParams, updateScheduleParams, type ScheduleMode, type WeekMode } from "$stores/config";
+    import { config, possibleValues, scheduleParams } from "$stores/config";
     import { cache, fetchCount } from "$stores/main";
-    import { scheduleMetadata, sheduleModes } from "$stores/static";
-
-    import { addRipple } from "$lib/ripple";
+    import { scheduleModes } from "$stores/static";
 
     import MoreHoriz from "@material-design-icons/svg/filled/more_horiz.svg?component";
     import Refresh from "@material-design-icons/svg/filled/refresh.svg?component";
 
     import AdvancedSettingsModal from "$components/AdvancedSettingsModal.svelte";
-    import Control from "$components/Controls/Control.svelte";
-    import Segmented from "$components/Controls/Segmented.svelte";
-    import Dropdown from "$components/Dropdown.svelte";
-
     import CacheButton from "$components/CacheButton.svelte";
-    import controlStyles from "$styles/modules/Controls.module.scss";
+    import Button from "$components/Controls/Button.svelte";
+    import Control from "$components/Controls/Control.svelte";
+    import Dropdown from "$components/Controls/Dropdown.svelte";
+    import Segmented from "$components/Controls/Segmented.svelte";
+
     import styles from "$styles/modules/Options.module.scss";
 
     /** Whether the advanced settings modal is visible, false by default */
@@ -29,76 +24,44 @@
     } else {
         maxFetchCount = 6;
     }
-
-    type ValuesDropdown = (typeof scheduleMetadata)[keyof typeof scheduleMetadata][number];
-    function getDropdownValues(mode: ScheduleMode): ComponentProps<Dropdown<ValuesDropdown>> {
-        let options = {
-            Class: scheduleMetadata.classes,
-            Teacher: scheduleMetadata.teachers,
-            Room: scheduleMetadata.rooms
-        }[mode] as readonly ValuesDropdown[];
-
-        return {
-            options,
-            activeOption: options.find((v) => v.name === $scheduleParams.value)!,
-            callback: (val) => {
-                updateScheduleParams({ value: val.name });
-                valuesDropdown.activeOption = options.find((v) => v.name === $scheduleParams.value)!;
-            },
-            genericName: "name",
-            genericKey: "id"
-        };
-    }
-
-    type ModeDropdown = { mode: (typeof sheduleModes)[number] };
-    let modeDropdown: ComponentProps<Dropdown<ModeDropdown>>;
-    $: modeDropdown = {
-        options: sheduleModes.map((m) => ({ mode: m })),
-        activeOption: { mode: $scheduleParams.scheduleMode },
-        callback: (val) => {
-            updateScheduleParams({ scheduleMode: val.mode });
-            modeDropdown.activeOption = { mode: $scheduleParams.scheduleMode };
-        },
-        genericName: "mode",
-        genericKey: "mode"
-    };
-
-    let valuesDropdown: ComponentProps<Dropdown<ValuesDropdown>>;
-    $: valuesDropdown = getDropdownValues($scheduleParams.scheduleMode);
-
-    // NOTE: Consider changing this. This is kinda dumb....
-    let scheduleMode = writable<WeekMode>($scheduleParams.weekMode);
-    scheduleMode.subscribe((weekMode) => updateScheduleParams({ weekMode }));
 </script>
 
 <nav class={styles.options} class:cache={$cache}>
     {#if !$cache}
-        <Dropdown {...modeDropdown} />
+        <Dropdown bind:selection={$scheduleParams.scheduleMode}>
+            {#each scheduleModes as mode}
+                <Control name={mode} />
+            {/each}
+        </Dropdown>
     {/if}
 
-    <Dropdown {...valuesDropdown} />
+    <Dropdown bind:selection={$scheduleParams.value}>
+        {#each possibleValues[$scheduleParams.scheduleMode] as value}
+            <Control name={value} />
+        {/each}
+    </Dropdown>
 
     {#if !$cache}
-        <Segmented bind:selection={scheduleMode} id="weekButtons">
+        <Segmented bind:selection={$scheduleParams.weekMode} id="weekButtons">
             <Control name="Permanent" />
             <Control name="Current" />
             <Control name="Next" />
 
-            <button class={controlStyles.button} on:click={() => (advancedSettingsModal = true)} use:addRipple>
+            <Button on:click={() => (advancedSettingsModal = true)}>
                 <MoreHoriz />
-            </button>
+            </Button>
         </Segmented>
 
-        <button id="reloadButton" class={controlStyles.button} on:click={() => updateScheduleParams()} use:addRipple>
+        <Button on:click={() => scheduleParams.update((_) => _)}>
             <Refresh />
             <span id="info">{$fetchCount} / {maxFetchCount} fetched</span>
-        </button>
+        </Button>
     {:else}
         <CacheButton class={styles.cache} />
 
-        <button class={controlStyles.button} on:click={() => (advancedSettingsModal = true)} use:addRipple>
+        <Button on:click={() => (advancedSettingsModal = true)}>
             <MoreHoriz />
-        </button>
+        </Button>
     {/if}
 </nav>
 

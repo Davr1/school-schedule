@@ -1,10 +1,9 @@
 <script lang="ts">
     import theme, { AccentColor, BackgroundColor, Theme } from "$stores/theme";
 
-    import RoundSelect from "$components/Themes/RoundSelect.svelte";
+    import RoundSelect from "$components/Controls/RoundSelect.svelte";
+    import themeStyles from "$styles/modules/Controls/RoundSelect.module.scss";
     import styles from "$styles/modules/Settings.module.scss";
-    import themeStyles from "$styles/modules/Themes.module.scss";
-    import { writable } from "svelte/store";
 
     const colors = [...Object.entries(BackgroundColor), ...Object.entries(AccentColor)];
 
@@ -12,12 +11,8 @@
         Primary = "1",
         Secondary = "2"
     }
-    const accent = writable(AccentSelection.Primary);
 
-    export let visible: boolean;
-
-    // On close, reset accent to primary.
-    $: if (!visible) $accent = AccentSelection.Primary;
+    let accent = AccentSelection.Primary;
 </script>
 
 <!--
@@ -31,7 +26,7 @@
 
 <p>Note: The original theme doesn't support custom accent colors</p>
 
-<RoundSelect options={Object.entries(Theme)} bind:selected={$theme.active} id="theme" />
+<RoundSelect options={Object.entries(Theme)} bind:selection={$theme.active} id="theme" />
 
 <!-- Don't render the color accents if the theme doesn't support them -->
 {#if $theme.active !== Theme.Original}
@@ -50,7 +45,7 @@
                 ["1", AccentSelection.Primary, $theme.primary],
                 ["2", AccentSelection.Secondary, $theme.secondary]
             ]}
-            bind:selected={$accent}
+            bind:selection={accent}
             id="accent"
             small
         />
@@ -59,8 +54,8 @@
     <p>
         Currently selecting the
         <!-- apply the accent class depending on the selection, this is to show the currently selected color -->
-        <span class={`${$accent === AccentSelection.Primary ? $theme.primary : $theme.secondary} ${themeStyles.accentLabel}`}>
-            {$accent === AccentSelection.Primary ? "primary" : "secondary"}
+        <span class={`${accent === AccentSelection.Primary ? $theme.primary : $theme.secondary} ${themeStyles.accentLabel}`}>
+            {accent === AccentSelection.Primary ? "primary" : "secondary"}
         </span>
         accent.
 
@@ -69,10 +64,10 @@
         Tap the option above to switch between them.
     </p>
 
-    {#if $accent === AccentSelection.Primary}
-        <RoundSelect options={colors} bind:selected={$theme.primary} id="primary" small />
+    {#if accent === AccentSelection.Primary}
+        <RoundSelect options={colors} bind:selection={$theme.primary} id="primary" small />
     {:else}
-        <RoundSelect options={colors} bind:selected={$theme.secondary} id="secondary" small />
+        <RoundSelect options={colors} bind:selection={$theme.secondary} id="secondary" small />
     {/if}
 
     <!--    
@@ -87,7 +82,7 @@
 
     <p>If you're unsure, go with Zinc...</p>
 
-    <RoundSelect options={Object.entries(BackgroundColor)} bind:selected={$theme.background} id="background" />
+    <RoundSelect options={Object.entries(BackgroundColor)} bind:selection={$theme.background} id="background" />
 {/if}
 
 <!-- for spacing -->

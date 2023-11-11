@@ -15,6 +15,10 @@ export default defineConfig({
                       "/sssvt": {
                           target: "https://rozvrh.icy.cx",
                           changeOrigin: true
+                      },
+                      "/bakalari": {
+                          target: "https://rozvrh.icy.cx",
+                          changeOrigin: true
                       }
                   }
     },
@@ -54,5 +58,8 @@ export default defineConfig({
         postcss: {
             plugins: [autoprefixer()]
         }
+    },
+    build: {
+        sourcemap: true
     }
 });
