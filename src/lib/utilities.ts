@@ -1,7 +1,7 @@
 import { fetchWebSchedule } from "$lib/data";
 import { EmptySubject, StandardSubject } from "$lib/subject";
 
-import type { ScheduleParams, uncheckedParams } from "$stores/config";
+import type { ScheduleParams, UncheckedParams } from "$stores/config";
 import { scheduleMetadata, weekModes } from "$stores/static";
 
 // TODO: Remove this
@@ -166,7 +166,7 @@ export function getPosition(element: HTMLElement) {
     };
 }
 
-export function isValidMetadata(params: uncheckedParams): params is ScheduleParams {
+export function isValidMetadata(params: UncheckedParams): params is ScheduleParams {
     if (params.weekMode === undefined || !weekModes.includes(params.weekMode as any)) return false;
 
     if (params.value === undefined) return false;

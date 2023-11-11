@@ -1,13 +1,13 @@
 <script lang="ts">
     import styles from "$styles/modules/Schedule.module.scss";
     import { isValidMetadata } from "$lib/utilities";
-    import { scheduleParams, type ScheduleParams, type uncheckedParams } from "$stores/config";
+    import { scheduleParams, type ScheduleParams, type UncheckedParams } from "$stores/config";
     import { cache } from "$stores/main";
 
-    export let params: Partial<uncheckedParams>;
+    export let params: Partial<UncheckedParams>;
     export let text: string = "";
 
-    let fullParams: uncheckedParams = { ...$scheduleParams, ...params };
+    let fullParams: UncheckedParams = { ...$scheduleParams, ...params };
 
     let enabled = !$cache && isValidMetadata(fullParams);
 

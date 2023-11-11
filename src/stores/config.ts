@@ -18,7 +18,7 @@ export interface ScheduleParams {
     value: Value;
 }
 
-export interface uncheckedParams {
+export interface UncheckedParams {
     scheduleMode: string | undefined;
     weekMode: string | undefined;
     value: string | undefined;
