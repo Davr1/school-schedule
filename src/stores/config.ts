@@ -18,6 +18,12 @@ export interface ScheduleParams {
     value: Value;
 }
 
+export interface uncheckedParams {
+    scheduleMode: string | undefined;
+    weekMode: string | undefined;
+    value: string | undefined;
+}
+
 export interface Config {
     useWeb: boolean;
     saturdayOverride: boolean;

@@ -1,7 +1,9 @@
 import { fetchWebSchedule } from "$lib/data";
 import { EmptySubject, StandardSubject } from "$lib/subject";
 
-import type { Value } from "$stores/config";
+import type { ScheduleParams } from "$stores/config";
+import type { uncheckedParams } from "$stores/config";
+import { weekModes } from "$stores/static";
 import { scheduleMetadata } from "$stores/static";
 
 // TODO: Remove this
@@ -166,12 +168,24 @@ export function getPosition(element: HTMLElement) {
     };
 }
 
-export function isValidMetadata(value: string): value is Value {
-    return (
-        scheduleMetadata.classes.find((classMetadata) => classMetadata.name === value) !== undefined ||
-        scheduleMetadata.rooms.find((roomMetadata) => roomMetadata.name === value) !== undefined ||
-        scheduleMetadata.teachers.find((teacherMetadata) => teacherMetadata.name === value || teacherMetadata.abbr === value) !== undefined
-    );
+export function isValidMetadata(params: uncheckedParams): params is ScheduleParams {
+    if (params.weekMode === undefined || !weekModes.includes(params.weekMode as any)) return false;
+
+    if (params.value === undefined) return false;
+
+    switch (params.scheduleMode) {
+        case "Class":
+            return scheduleMetadata.classes.find((classMetadata) => classMetadata.name === params.value) !== undefined;
+        case "Teacher":
+            return (
+                scheduleMetadata.teachers.find(
+                    (teacherMetadata) => teacherMetadata.name === params.value || teacherMetadata.abbr === params.value
+                ) !== undefined
+            );
+        case "Room":
+            return scheduleMetadata.rooms.find((roomMetadata) => roomMetadata.name === params.value) !== undefined;
+    }
+    return false;
 }
 
 export function isMergable(a: StandardSubject, b: StandardSubject, ignoreGroups: boolean = false): boolean {

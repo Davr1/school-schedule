@@ -2,10 +2,8 @@
     import { config } from "$stores/config";
 
     import UwU from "$assets/uwu.svg?component";
-    import Close from "@material-design-icons/svg/filled/close.svg?component";
 
     import CacheButton from "$components/CacheButton.svelte";
-    import Button from "$components/Controls/Button.svelte";
     import Switch from "$components/Controls/Switch.svelte";
     import Modal from "$components/Modal.svelte";
     import ThemeEditor from "$components/ThemeEditor.svelte";
@@ -18,13 +16,7 @@
 </script>
 
 <Modal bind:visible scrollable>
-    <div class={modalStyles.title}>
-        <h1>Advanced settings</h1>
-
-        <Button class="big" on:click={() => (visible = false)}>
-            <Close />
-        </Button>
-    </div>
+    <h1>Advanced settings</h1>
 
     <div class={styles.optionRow}>Use the school's website for substitutions <Switch bind:value={$config.useWeb} /></div>
     <p>
@@ -46,5 +38,5 @@
 
     <CacheButton class={modalStyles.button} />
 
-    <ThemeEditor {visible} />
+    <ThemeEditor />
 </Modal>

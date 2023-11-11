@@ -1,120 +1,49 @@
 <script lang="ts">
     import type { Subject } from "$lib/subject";
-    import { isValidMetadata } from "$lib/utilities";
 
     import { scheduleParams } from "$stores/config";
-    import { cache } from "$stores/main";
 
     import Info from "@material-design-icons/svg/filled/info.svg?component";
     import Person from "@material-design-icons/svg/filled/person.svg?component";
     import TextSnippet from "@material-design-icons/svg/filled/text_snippet.svg?component";
-
-    import modalStyles from "$styles/modules/Modal.module.scss";
-    import styles from "$styles/modules/Schedule.module.scss";
+    import ContentRow from "./ContentRow.svelte";
+    import Link from "./Link.svelte";
 
     export let subject: Subject;
 </script>
 
+<slot name="close" />
 {#if subject.isSpecial()}
-    <h1 class={modalStyles.title}>
-        <span><TextSnippet /> {subject.name}</span>
-
-        <slot name="close" />
-    </h1>
+    <ContentRow><TextSnippet slot="icon" /> {subject.name}</ContentRow>
 {:else if subject.isStandard() && subject.theme}
     {#each subject.theme
         .split("; ")
         .map((t) => t.trim())
         .filter(Boolean) as theme, i}
-        <h2 class={modalStyles.title}>
-            <span><TextSnippet /> {theme}</span>
-
-            {#if i === 0}
-                <slot name="close" />
-            {/if}
-        </h2>
+        <ContentRow><TextSnippet slot="icon" /> {theme}</ContentRow>
     {/each}
 {/if}
 
 {#if subject.isStandard()}
-    <h2 class={modalStyles.title}>
-        <span>
-            <Info />
+    <ContentRow>
+        <Info slot="icon" />
 
-            {subject.name.split("|")[0]}
+        {subject.name.split("|")[0]}
 
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <!-- svelte-ignore a11y-no-static-element-interactions -->
-            {#if $scheduleParams.scheduleMode !== "Room"}
-                <span
-                    class={styles.link}
-                    class:enabled={!$cache}
-                    on:click={() => {
-                        // This is nasty. Consider refactoring..
-                        if (!subject.isStandard() || $cache) return;
-
-                        if (isValidMetadata(subject.room)) {
-                            $scheduleParams.scheduleMode = "Room";
-                            $scheduleParams.value = subject.room;
-                        }
-                    }}
-                >
-                    {subject.room}
-                </span>
-                {#if subject.groups.filter(Boolean).length > 0}/{/if}
-            {/if}
-
-            {#each subject.groups.filter(Boolean) as singleGroup}
-                {#if isValidMetadata(singleGroup.trim().split(" ")[0])}
-                    <!-- svelte-ignore a11y-click-events-have-key-events -->
-                    <!-- svelte-ignore a11y-no-static-element-interactions -->
-                    <span
-                        class={styles.link}
-                        class:enabled={!$cache}
-                        on:click={() => {
-                            if ($cache) return;
-
-                            const group = singleGroup.trim().split(" ")[0];
-                            if (isValidMetadata(group)) {
-                                $scheduleParams.scheduleMode = "Class";
-                                $scheduleParams.value = group;
-                            }
-                        }}
-                    >
-                        {singleGroup}
-                    </span>
-                {:else}
-                    {singleGroup}
-                {/if}
-                &ensp;
-            {/each}
-        </span>
-
-        <!-- Only show the close button if it's not already shown by the thing at the top -->
-        {#if !subject.theme}
-            <slot name="close" />
+        {#if $scheduleParams.scheduleMode !== "Room"}
+            <Link params={{ scheduleMode: "Room", value: subject.room }} />
+            {#if subject.groups.filter(Boolean).length > 0}/{/if}
         {/if}
-    </h2>
-    {#if $scheduleParams.scheduleMode !== "Teacher" && subject.teacher.name}
-        <h2>
-            <Person />
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <!-- svelte-ignore a11y-no-static-element-interactions -->
-            <span
-                class={styles.link}
-                class:enabled={!$cache}
-                on:click={() => {
-                    if (!subject.isStandard() || $cache) return;
 
-                    const teacher = subject.teacher.abbreviation.split(",")[0];
-                    if (isValidMetadata(teacher)) {
-                        $scheduleParams.scheduleMode = "Teacher";
-                        $scheduleParams.value = teacher;
-                    }
-                }}
-            >
-                {subject.teacher.name.split(",")[0]}
-            </span>
-        </h2>
+        {#each subject.groups.filter(Boolean) as singleGroup}
+            <Link text={singleGroup} params={{ scheduleMode: "Class", value: singleGroup.trim().split(" ")[0] }} />
+            &ensp;
+        {/each}
+    </ContentRow>
+    {#if $scheduleParams.scheduleMode !== "Teacher" && subject.teacher.name}
+        <ContentRow>
+            <Person slot="icon" />
+            <Link text={subject.teacher.name} params={{ scheduleMode: "Teacher", value: subject.teacher.abbreviation.split(",")[0] }} />
+        </ContentRow>
     {/if}
 {/if}

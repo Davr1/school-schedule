@@ -75,17 +75,8 @@
     }
 
     @media (max-aspect-ratio: 3/4) {
-        padding: 0.8rem 2.6rem 0;
+        padding-top: 0.8rem;
     }
-}
-
-:local(.title) {
-    display: flex;
-
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    gap: 0.5rem;
 }
 
 :local(.button) {

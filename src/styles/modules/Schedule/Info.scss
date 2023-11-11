@@ -23,19 +23,12 @@
 }
 
 :local(.link) {
-    // Spacing between links
-    & + & {
-        margin-left: 0.5rem;
-    }
+    // Safari doesn't support the shorthand well...
+    text-decoration-style: dotted;
+    text-decoration-line: underline;
+    text-decoration-thickness: 2px;
 
-    &.enabled {
-        // Safari doesn't support the shorthand well...
-        text-decoration-style: dotted;
-        text-decoration-line: underline;
-        text-decoration-thickness: 2px;
+    white-space: nowrap;
 
-        white-space: nowrap;
-
-        cursor: pointer;
-    }
+    cursor: pointer;
 }
