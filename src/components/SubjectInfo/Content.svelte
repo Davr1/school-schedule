@@ -6,8 +6,9 @@
     import Info from "@material-design-icons/svg/filled/info.svg?component";
     import Person from "@material-design-icons/svg/filled/person.svg?component";
     import TextSnippet from "@material-design-icons/svg/filled/text_snippet.svg?component";
-    import ContentRow from "./ContentRow.svelte";
-    import Link from "./Link.svelte";
+
+    import ContentRow from "$components/SubjectInfo/ContentRow.svelte";
+    import Link from "$components/SubjectInfo/Link.svelte";
 
     export let subject: Subject;
 </script>

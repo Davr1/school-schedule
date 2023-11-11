@@ -1,10 +1,8 @@
 import { fetchWebSchedule } from "$lib/data";
 import { EmptySubject, StandardSubject } from "$lib/subject";
 
-import type { ScheduleParams } from "$stores/config";
-import type { uncheckedParams } from "$stores/config";
-import { weekModes } from "$stores/static";
-import { scheduleMetadata } from "$stores/static";
+import type { ScheduleParams, uncheckedParams } from "$stores/config";
+import { scheduleMetadata, weekModes } from "$stores/static";
 
 // TODO: Remove this
 function createElement(el: any) {
