@@ -1,7 +1,7 @@
 import { fetchWebSchedule } from "$lib/data";
 import { EmptySubject, StandardSubject } from "$lib/subject";
 
-import type { ScheduleParams, UncheckedParams } from "$stores/config";
+import { type ClassValue, possibleValues, type RoomValue, type ScheduleParams, type UncheckedParams, type WeekMode } from "$stores/config";
 import { scheduleMetadata, weekModes } from "$stores/static";
 
 // TODO: Remove this
@@ -167,13 +167,12 @@ export function getPosition(element: HTMLElement) {
 }
 
 export function isValidMetadata(params: UncheckedParams): params is ScheduleParams {
-    if (params.weekMode === undefined || !weekModes.includes(params.weekMode as any)) return false;
-
-    if (params.value === undefined) return false;
+    if (!params.weekMode || !weekModes.includes(params.weekMode as WeekMode)) return false;
+    if (!params.value) return false;
 
     switch (params.scheduleMode) {
         case "Class":
-            return scheduleMetadata.classes.find((classMetadata) => classMetadata.name === params.value) !== undefined;
+            return possibleValues.Class.includes(params.value as ClassValue);
         case "Teacher":
             return (
                 scheduleMetadata.teachers.find(
@@ -181,7 +180,7 @@ export function isValidMetadata(params: UncheckedParams): params is SchedulePara
                 ) !== undefined
             );
         case "Room":
-            return scheduleMetadata.rooms.find((roomMetadata) => roomMetadata.name === params.value) !== undefined;
+            return possibleValues.Room.includes(params.value as RoomValue);
     }
     return false;
 }

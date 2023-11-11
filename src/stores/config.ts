@@ -6,11 +6,11 @@ import { scheduleMetadata } from "$stores/static";
 
 export type ScheduleMode = "Class" | "Teacher" | "Room";
 export type WeekMode = "Permanent" | "Current" | "Next";
-export type Value =
-    | (typeof scheduleMetadata.classes)[number]["name"]
-    | (typeof scheduleMetadata.teachers)[number]["name"]
-    | (typeof scheduleMetadata.teachers)[number]["abbr"]
-    | (typeof scheduleMetadata.rooms)[number]["name"];
+
+export type ClassValue = (typeof scheduleMetadata.classes)[number]["name"];
+export type TeacherValue = (typeof scheduleMetadata.teachers)[number]["name"] | (typeof scheduleMetadata.teachers)[number]["abbr"];
+export type RoomValue = (typeof scheduleMetadata.rooms)[number]["name"];
+export type Value = ClassValue | TeacherValue | RoomValue;
 
 export interface ScheduleParams {
     scheduleMode: ScheduleMode;
@@ -18,11 +18,7 @@ export interface ScheduleParams {
     value: Value;
 }
 
-export interface UncheckedParams {
-    scheduleMode: string | undefined;
-    weekMode: string | undefined;
-    value: string | undefined;
-}
+export type UncheckedParams = { [K in keyof ScheduleParams]?: string };
 
 export interface Config {
     useWeb: boolean;
