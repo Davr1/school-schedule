@@ -1,0 +1,28 @@
+{
+    "name": "ŠŠŠVT rozvrh",
+    "start_url": "/",
+    "display": "standalone",
+    "icons": [
+        {
+            "src": "/logo.svg",
+            "type": "image/svg+xml",
+            "sizes": "16x16"
+        },
+
+        {
+            "src": "/logo96.png",
+            "type": "image/png",
+            "sizes": "96x96"
+        },
+        {
+            "src": "/logo160.png",
+            "type": "image/png",
+            "sizes": "160x160"
+        },
+        {
+            "src": "/logo180.png",
+            "type": "image/png",
+            "sizes": "180x180"
+        }
+    ]
+}
