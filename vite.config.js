@@ -54,5 +54,8 @@ export default defineConfig({
         postcss: {
             plugins: [autoprefixer()]
         }
+    },
+    build: {
+        sourcemap: true
     }
 });
