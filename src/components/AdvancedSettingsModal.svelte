@@ -38,5 +38,8 @@
 
     <CacheButton class={modalStyles.button} />
 
-    <ThemeEditor />
+    <!-- This is here to reset the primary / secondary selection on every open -->
+    {#key visible}
+        <ThemeEditor />
+    {/key}
 </Modal>

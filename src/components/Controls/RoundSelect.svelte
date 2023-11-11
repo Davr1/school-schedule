@@ -13,7 +13,7 @@
     export let options: readonly (readonly [string, T] | readonly [string, T, string])[] = [];
 
     /** The currently selected option, you should bind this to a store */
-    export let selected: T;
+    export let selection: T;
 
     /**
      * The id of the select, this must be unique
@@ -35,7 +35,7 @@
         {@const className = option[2] || value}
 
         <label class={`${styles.option} ${className}`}>
-            <input class={styles.radio} class:small type="radio" name={id} bind:group={selected} {value} />
+            <input class={styles.radio} class:small type="radio" name={id} bind:group={selection} {value} />
 
             <span>{label}</span>
         </label>
