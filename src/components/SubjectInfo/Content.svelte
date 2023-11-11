@@ -12,7 +12,6 @@
     export let subject: Subject;
 </script>
 
-<slot name="close" />
 {#if subject.isSpecial()}
     <ContentRow><TextSnippet slot="icon" /> {subject.name}</ContentRow>
 {:else if subject.isStandard() && subject.theme}
