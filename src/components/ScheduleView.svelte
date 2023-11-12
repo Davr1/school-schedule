@@ -46,7 +46,8 @@
             if (localFetchQueue !== $fetchQueue) break fetchProcess;
             fetchCount.update((v) => (v += 1));
 
-            if ($scheduleParams.weekMode === "Permanent" || $scheduleParams.scheduleMode !== "Class" || $config.useWeb === false) return;
+            if ($scheduleParams.weekMode === "Permanent" || $scheduleParams.scheduleMode !== "Class" || $config.useWeb === false)
+                break fetchProcess;
 
             let alternativeSchedule: ReturnType<typeof getWebSchedule>[] = [];
 
