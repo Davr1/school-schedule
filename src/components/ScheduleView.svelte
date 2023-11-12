@@ -14,7 +14,7 @@
 
     import styles from "$styles/modules/Schedule.module.scss";
 
-    const dispatch = createEventDispatcher<{ loadingFinished: null }>();
+    const dispatch = createEventDispatcher<{ state: "fetching" | "rendered" | "finished" }>();
 
     let scheduleData: BakalariSchedule = [];
 
@@ -35,13 +35,14 @@
         let localFetchQueue = $fetchQueue;
 
         fetchProcess: {
+            dispatch("state", "fetching");
             // Show the next week if it's Saturday (or Sunday) and the user has enabled the option
             if ($scheduleParams.weekMode === "Current" && $config.saturdayOverride && (today === 0 || today === 6)) {
                 schedule.weekMode = "Next";
             }
 
             scheduleData = await getBakaSchedule(schedule, $cache);
-            dispatch("loadingFinished");
+            dispatch("state", "rendered");
             if (localFetchQueue !== $fetchQueue) break fetchProcess;
             fetchCount.update((v) => (v += 1));
 
@@ -114,6 +115,7 @@
                 scheduleData = scheduleData;
             }
         }
+        dispatch("state", "finished");
     }
 
     type Grid = GridRow[];
