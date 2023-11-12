@@ -4,7 +4,7 @@
     import { browser } from "$app/environment";
 
     import Icon, { type Colors } from "$components/Icon/Icon.svelte";
-    import theme from "$stores/theme";
+    import theme, { Theme } from "$stores/theme";
 
     export let loading: boolean;
     let frame: number;
@@ -45,6 +45,15 @@
             FG: style.getPropertyValue("--icon-fg"),
             Accent: style.getPropertyValue("--accent-primary")
         };
+
+        // Update the other icons to match
+        document.querySelectorAll("link[rel$='icon']").forEach((node) => {
+            if (node instanceof HTMLLinkElement)
+                node.href = node.href.replace(
+                    /\w+-\w+$/,
+                    $theme.active === Theme.Original ? "original-original" : `${$theme.background}-${$theme.primary}`
+                );
+        });
     }
 
     let SVG: SVGSVGElement;

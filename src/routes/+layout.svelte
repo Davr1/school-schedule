@@ -61,6 +61,13 @@
             (theme.secondary || "green") + "-2",
             (theme.background || "zinc") + "-bg"
         );
+
+        document.querySelectorAll("link[rel$='icon']").forEach((node) => {
+            node.href = node.href.replace(
+                /zinc-blue$/,
+                theme.active === "original" ? "original-original" : theme.background + "-" + theme.primary
+            );
+        });
     </script>
 </svelte:head>
 
