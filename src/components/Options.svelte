@@ -54,7 +54,7 @@
 
         <Button on:click={() => scheduleParams.update((_) => _)}>
             <Refresh />
-            <span id="info">{$fetchCount > maxFetchCount ? maxFetchCount : fetchCount} / {maxFetchCount} fetched</span>
+            <span id="info">{Math.min($fetchCount, maxFetchCount)} / {maxFetchCount} fetched</span>
         </Button>
     {:else}
         <CacheButton class={styles.cache} />
