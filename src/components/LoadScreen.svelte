@@ -2,9 +2,9 @@
     import { onMount } from "svelte";
 
     import Loading from "$assets/loading.svg?component";
-    import Icon from "./Icon.svelte";
 
     import CacheButton from "$components/CacheButton.svelte";
+    import Favicon from "$components/Icon/Favicon.svelte";
 
     import styles from "$styles/modules/LoadScreen.module.scss";
 
@@ -23,7 +23,7 @@
 </script>
 
 <div class={styles.overlay} class:hidden={!visible}>
-    <Icon {loading} size={10} />
+    <Favicon {loading} />
     <Loading height="4rem" />
 
     {#if show}
