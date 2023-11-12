@@ -4,17 +4,12 @@
     import LoadScreen from "$components/LoadScreen.svelte";
     import Options from "$components/Options.svelte";
     import ScheduleView from "$components/ScheduleView.svelte";
-    import Favicon from "$components/Favicon.svelte";
 
     let isLoadScreenVisible = $config.loadscreen;
     let loading: boolean;
 </script>
 
-<div hidden><Favicon {loading} /></div>
-
-{#if isLoadScreenVisible}
-    <LoadScreen />
-{/if}
+<LoadScreen visible={isLoadScreenVisible} {loading} />
 
 <Options />
 <ScheduleView

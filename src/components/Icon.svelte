@@ -9,6 +9,8 @@
     export let loading: boolean;
     let frame: number;
 
+    export let size: number;
+
     // reset to the first frame when the loading state changes
     // the animation actually starts playing at the fourth frame
     $: loading, (frame = 0);
@@ -38,8 +40,8 @@
     async function update() {
         SVGColors = darkMode
             ? {
-                  BG: colors[$theme.background][900],
-                  FG: colors[$theme.background][700],
+                  BG: colors[$theme.background][800],
+                  FG: colors[$theme.background][600],
                   Accent: colors[$theme.primary][500]
               }
             : {
@@ -60,7 +62,7 @@
     $: $theme, frame, loading, update();
 </script>
 
-<svg width="100%" height="100%" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" bind:this={SVG} class:loading>
+<svg width={`${size}vh`} height={`${size}vh`} viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" bind:this={SVG} class:loading>
     <rect width="16" height="16" rx="1.5" fill={SVGColors.BG} />
     {#if loading && frame > 3}
         {@const [s1, s2, s3] = [squares[frame % 6], squares[(frame + 1) % 6], squares[(frame + 2) % 6]]}

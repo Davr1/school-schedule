@@ -1,8 +1,6 @@
 <script lang="ts">
     import { config } from "$stores/config";
 
-    import UwU from "$assets/uwu.svg?component";
-
     import CacheButton from "$components/CacheButton.svelte";
     import Switch from "$components/Controls/Switch.svelte";
     import Modal from "$components/Modal.svelte";
@@ -31,10 +29,9 @@
         <span>Merges adjacent groups and subjects to reduce screen clutter.</span>
     </p>
     <div class={styles.optionRow}>
-        <span><UwU height="1em" style="vertical-align: sub;" /> loading screen</span>
+        <span>Loading screen</span>
         <Switch bind:value={$config.loadscreen} />
     </div>
-    <p><span>What's this?</span></p>
 
     <CacheButton class={modalStyles.button} />
 

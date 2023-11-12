@@ -2,12 +2,17 @@
     import { onMount } from "svelte";
 
     import Loading from "$assets/loading.svg?component";
-    import UwU from "$assets/uwu.svg?component";
+    import Icon from "./Icon.svelte";
 
     import CacheButton from "$components/CacheButton.svelte";
 
     import styles from "$styles/modules/LoadScreen.module.scss";
 
+    // whether the load screen is visible in the browser
+    export let visible: boolean;
+    // whether the app is loading something in the background (this affects the state of the favicon)
+    export let loading: boolean;
+    // whether the cache button is visible
     let show = false;
 
     onMount(() => {
@@ -17,9 +22,9 @@
     });
 </script>
 
-<div class={styles.overlay}>
-    <Loading height="3rem" />
-    <UwU height="3rem" />
+<div class={styles.overlay} class:hidden={!visible}>
+    <Icon {loading} size={10} />
+    <Loading height="4rem" />
 
     {#if show}
         <CacheButton class={styles.button} />
