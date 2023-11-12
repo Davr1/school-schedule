@@ -10,7 +10,7 @@
     let loading: boolean;
 </script>
 
-<div><Favicon {loading} /></div>
+<div hidden><Favicon {loading} /></div>
 
 {#if isLoadScreenVisible}
     <LoadScreen />
