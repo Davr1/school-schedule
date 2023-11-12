@@ -17,8 +17,8 @@
     /** The frame to render, leave empty to render the full icon */
     export let frame: number | undefined | null = undefined;
 
-    /** Should the icon have rounded corners */
-    export let rounded: boolean = true;
+    /** The radius of the rounded corner */
+    export let rounding: number = 1.5;
 
     /** The colors to use for the icon */
     export let colors: Colors = {
@@ -41,7 +41,7 @@
 </script>
 
 <svg bind:this={SVG} width={size} height={size} viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
-    <rect width="16" height="16" rx={rounded ? "1.5" : null} fill={colors.BG} />
+    <rect width="16" height="16" rx={rounding} fill={colors.BG} />
     {#if frame !== undefined && frame !== null}
         {@const [s1, s2, s3] = [squares[frame % 6], squares[(frame + 1) % 6], squares[(frame + 2) % 6]]}
         <rect x={s1[0]} y={s1[1]} width="4" height="4" rx="0.7" fill={colors.FG} />
