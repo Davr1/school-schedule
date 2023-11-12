@@ -14,9 +14,6 @@
     --active-background: #fff;
     --active-foreground: var(--background-950);
 
-    --accent-primary: var(--primary-500);
-    --accent-secondary: var(--secondary-500);
-
     --hover-accent-primary: var(--primary-600);
     --hover-accent-secondary: var(--secondary-600);
 }
@@ -33,13 +30,19 @@
     --active-background: var(--background-500);
     --active-foreground: var(--background-50);
 
-    --accent-primary: var(--primary-500);
-    --accent-secondary: var(--secondary-500);
-
     --hover-accent-primary: var(--primary-400);
     --hover-accent-secondary: var(--secondary-400);
 
     color-scheme: dark;
+}
+
+:root.light,
+:root.dark {
+    --icon-bg: var(--background-800);
+    --icon-fg: var(--background-600);
+
+    --accent-primary: var(--primary-500);
+    --accent-secondary: var(--secondary-500);
 }
 
 :root.original {
@@ -54,6 +57,9 @@
     --active-background: #434c56;
     --active-foreground: #fff;
 
+    --icon-bg: #{color.mix(#fff, #21262e, 5%)}; // brightness(1.05) of app-background
+    --icon-fg: #{color.mix(#fff, #434c56, 5%)}; // brightness(1.05) of active-background
+
     --accent-primary: #1f6feb;
     --accent-secondary: #2dac45;
 
@@ -67,7 +73,7 @@
 // This is used in the theme switcher
 $backgrounds: ("slate", "gray", "zinc", "neutral", "stone");
 
-$background-shades: ("50", "100", "200", "400", "500", "600", "700", "900", "950");
+$background-shades: ("50", "100", "200", "400", "500", "600", "700", "800", "900", "950");
 $accent-shades: ("400", "500", "600");
 
 @each $color, $shades in $colors {
