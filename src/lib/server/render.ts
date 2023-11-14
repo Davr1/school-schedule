@@ -3,17 +3,17 @@ import type { ComponentProps, ComponentType, SvelteComponent } from "svelte";
 
 // Declare the global `puppeteer` variable
 declare global {
-    var _puppeteer: Promise<Browser>;
+    var _puppeteer: Browser;
 }
-
-/** Headless chromium */
-export const chromium = globalThis._puppeteer ?? puppeteer.launch({ headless: "new" });
-globalThis._puppeteer = chromium; // this is to avoid multiple instances of chromium being launched when in dev
 
 /** Render HTML as a png, using headless chromium */
 export async function renderHTML(html: string, width: number, height: number): Promise<Buffer> {
-    const browser = await chromium;
-    const page = await browser.newPage();
+    // Initialize puppeteer if it hasn't been initialized yet
+    if (!globalThis._puppeteer) {
+        globalThis._puppeteer = await puppeteer.launch({ headless: "new" });
+    }
+
+    const page = await globalThis._puppeteer.newPage();
 
     // Set the HTML
     await page.setContent(html);
