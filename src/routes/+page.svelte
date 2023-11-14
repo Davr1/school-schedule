@@ -6,15 +6,15 @@
     import ScheduleView from "$components/ScheduleView.svelte";
 
     let isLoadScreenVisible = $config.loadscreen;
+    let loading: boolean = true;
 </script>
 
-{#if isLoadScreenVisible}
-    <LoadScreen />
-{/if}
+<LoadScreen visible={isLoadScreenVisible} {loading} />
 
 <Options />
 <ScheduleView
-    on:loadingFinished={() => {
-        isLoadScreenVisible = false;
+    on:state={({ detail }) => {
+        loading = detail !== "finished";
+        if (detail === "rendered") isLoadScreenVisible = false;
     }}
 />

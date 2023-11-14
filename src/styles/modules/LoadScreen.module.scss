@@ -11,6 +11,10 @@
     background: var(--app-background);
 
     z-index: 3;
+
+    &.hidden {
+        display: none;
+    }
 }
 
 :local(.button) {
