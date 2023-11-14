@@ -10,7 +10,7 @@ declare global {
 export async function renderHTML(html: string, width: number, height: number): Promise<Buffer> {
     // Initialize puppeteer if it hasn't been initialized yet
     if (!globalThis._puppeteer) {
-        globalThis._puppeteer = await puppeteer.launch({ headless: "new" });
+        globalThis._puppeteer = await puppeteer.launch({ headless: "new", args: ["--no-sandbox"] });
     }
 
     const page = await globalThis._puppeteer.newPage();
