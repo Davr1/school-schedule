@@ -4,8 +4,10 @@ import { renderComponent, renderHTML } from "$lib/server/render";
 import Icon from "$components/Icon/Icon.svelte";
 
 export async function GET({ params }) {
-    const { background, accent, rounding } = params;
+    const { background, accent } = params;
     const size = Number(params.size);
+    const padding = params.padding ? Number(params.padding) : undefined;
+    const rounding = params.rounding ? Number(params.rounding) : undefined;
 
     const colors = getIconColors(background, accent);
     if (!colors)
@@ -15,9 +17,9 @@ export async function GET({ params }) {
         });
 
     const svg = renderComponent(Icon, {
-        size,
-        colors,
-        rounding: rounding !== undefined ? Number(rounding) : undefined
+        padding,
+        rounding,
+        colors
     });
 
     return new Response(await renderHTML(svg, size, size), {

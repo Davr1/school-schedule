@@ -12,7 +12,10 @@
 
 <script lang="ts">
     /** Size of the icon */
-    export let size: string | number;
+    export let size: string | number = "100%";
+
+    /** The padding around the icon */
+    export let padding: number = 1;
 
     /** The frame to render, leave empty to render the full icon */
     export let frame: number | undefined | null = undefined;
@@ -30,28 +33,33 @@
     /** SVG element */
     export let SVG: SVGSVGElement | undefined = undefined;
 
-    const squares: [x: number, y: number, fill: keyof Colors][] = [
-        [1, 1, "Accent"],
-        [6, 1, "FG"],
-        [11, 6, "FG"],
-        [6, 11, "Accent"],
-        [1, 11, "FG"],
-        [1, 6, "FG"]
+    // Viewbox
+    $: vb = 14 + 2 * padding;
+
+    // Square generation
+    $: square = (x: number, y: number, color: keyof Colors) => ({ x: x + padding, y: y + padding, color });
+    $: squares = [
+        square(0, 0, "Accent"),
+        square(5, 0, "FG"),
+        square(10, 5, "FG"),
+        square(5, 10, "Accent"),
+        square(0, 10, "FG"),
+        square(0, 5, "FG")
     ];
 </script>
 
-<svg bind:this={SVG} width={size} height={size} viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
-    <rect width="16" height="16" rx={rounding} fill={colors.BG} />
+<svg bind:this={SVG} width={size} height={size} viewBox={`0 0 ${vb} ${vb}`} xmlns="http://www.w3.org/2000/svg">
+    <rect width={vb} height={vb} rx={rounding} fill={colors.BG} />
     {#if frame !== undefined && frame !== null}
         {@const [s1, s2, s3] = [squares[frame % 6], squares[(frame + 1) % 6], squares[(frame + 2) % 6]]}
-        <rect x={s1[0]} y={s1[1]} width="4" height="4" rx="0.7" fill={colors.FG} />
-        <rect x={s2[0]} y={s2[1]} width="4" height="4" rx="0.7" fill={colors.FG} />
-        <rect x={s3[0]} y={s3[1]} width="4" height="4" rx="0.7" fill={colors.Accent} />
+        <rect x={s1.x} y={s1.y} width="4" height="4" rx="0.7" fill={colors.FG} />
+        <rect x={s2.x} y={s2.y} width="4" height="4" rx="0.7" fill={colors.FG} />
+        <rect x={s3.x} y={s3.y} width="4" height="4" rx="0.7" fill={colors.Accent} />
     {:else}
-        {#each squares as [x, y, color]}
+        {#each squares as { x, y, color }}
             <rect {x} {y} width="4" height="4" rx="0.7" fill={colors[color]} />
         {/each}
-        <rect x="6" y="6" width="4" height="1.7" rx="0.6" fill={colors.Accent} />
-        <rect x="6" y="8.3" width="4" height="1.7" rx="0.6" fill={colors.FG} />
+        <rect x={5 + padding} y={5 + padding} width="4" height="1.7" rx="0.6" fill={colors.Accent} />
+        <rect x={5 + padding} y={7.3 + padding} width="4" height="1.7" rx="0.6" fill={colors.FG} />
     {/if}
 </svg>
