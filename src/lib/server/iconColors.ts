@@ -17,3 +17,13 @@ export function getIconColors(background: string, accent: string): Colors | unde
         Accent: acc?.[500] ?? "#1f6feb"
     };
 }
+
+// I don't want to write this 2 times so I'm doing this...
+export class InvalidColorResponse extends Response {
+    constructor() {
+        super("Invalid colors", {
+            status: 400,
+            headers: { "Content-Type": "text/plain" }
+        });
+    }
+}

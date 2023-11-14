@@ -45,7 +45,12 @@
     {/each}
 
     <script>
-        var theme = JSON.parse(localStorage.getItem("theme") || "{}");
+        var theme = JSON.parse(localStorage.getItem("theme")) || {
+            active: "system",
+            primary: "blue",
+            secondary: "green",
+            background: "zinc"
+        };
 
         var dark = matchMedia("(prefers-color-scheme: dark)").matches;
 
@@ -53,7 +58,7 @@
             theme.active = dark ? "dark" : "light";
         }
 
-        document.documentElement.classList.remove("original");
+        document.documentElement.classList.toggle("original", theme.active === "original");
         document.documentElement.classList.add(
             theme.active,
 
