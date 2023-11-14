@@ -87,7 +87,7 @@
                                 theme = "";
                             }
 
-                            let teacher = s.teacher || foundSubject.teacher;
+                            let teacher = foundSubject.teacher || s.teacher;
                             if (foundSubject.teacher.abbreviation !== s.teacher.abbreviation) {
                                 let teacherName =
                                     scheduleMetadata.teachers.find((o) => o.abbr === s.teacher.abbreviation)?.name ??
