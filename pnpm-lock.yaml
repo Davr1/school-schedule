@@ -102,6 +102,9 @@ importers:
       domutils:
         specifier: ^3.1.0
         version: 3.1.0
+      hono:
+        specifier: ^3.10.1
+        version: 3.10.1
       htmlparser2:
         specifier: ^9.0.0
         version: 9.0.0
@@ -114,7 +117,7 @@ importers:
     devDependencies:
       bun-types:
         specifier: latest
-        version: 1.0.3
+        version: 1.0.12
 
 packages:
 
@@ -852,8 +855,8 @@ packages:
     engines: {node: '>=6'}
     dev: true
 
-  /bun-types@1.0.3:
-    resolution: {integrity: sha512-XlyKVdYCHa7K5PHYGcwOVOrGE/bMnLS51y7zFA3ZAAXyiQ6dTaNXNCWTTufgII/6ruN770uhAXphQmzvU/r2fQ==}
+  /bun-types@1.0.12:
+    resolution: {integrity: sha512-jGXEQ9pkp1kwdgYY6X6SPP5V4kxEGGZQaZMEKUVeJ7T1/XFyrAwL4AeaM4lSvjYqwsPXIDdKCFgw5M1KLoK4qw==}
     dev: true
 
   /busboy@1.6.0:
@@ -1279,6 +1282,11 @@ packages:
     engines: {node: '>= 0.4.0'}
     dependencies:
       function-bind: 1.1.1
+
+  /hono@3.10.1:
+    resolution: {integrity: sha512-4jPKCmYWLAoCMpmvOU+xNOQYdcNftip7sM/IsO8EPyGAtjk9fGNyUchG6huSzLrY449WDNGFPetVs5doepNnlA==}
+    engines: {node: '>=16.0.0'}
+    dev: false
 
   /htmlparser2@8.0.2:
     resolution: {integrity: sha512-GYdjWKDkbRLkZ5geuHs5NY1puJ+PXwP7+fHPRz06Eirsb9ugf6d8kkXav6ADhcODhFFPMIXyxkxSuMf3D6NCFA==}
