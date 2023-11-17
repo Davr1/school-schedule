@@ -52,6 +52,7 @@ export class DetailHandler {
      * @param defaultDetail A default detail (or callback) to add and return if the detail doesn't exist.
      * @returns Detail with the given id or `undefined` if not found.
      */
+    getDetail<T extends Details = Details>(id: IdType): T;
     getDetail<T extends Details = Details>(id: IdType, defaultDetail: T | (() => T)): T;
     getDetail<T extends Details = Details>(id: IdType, defaultDetail?: T | (() => T)): T | undefined {
         const detail = this._details.find((detail) => detail.id === id);
@@ -72,6 +73,7 @@ export class DetailHandler {
      * @param defaultDetail A default detail (or callback) to add and return if the detail doesn't exist.
      * @returns Detail with the given abbreviation or `undefined` if not found.
      */
+    getDetailByAbbreviation<T extends Details = Details>(abbreviation: string): T;
     getDetailByAbbreviation<T extends Details = Details>(abbreviation: string, defaultDetail: T | (() => T)): T;
     getDetailByAbbreviation<T extends Details = Details>(abbreviation: string, defaultDetail?: T | (() => T)): T | undefined {
         const detail = this._details.find((detail) => {
