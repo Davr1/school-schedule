@@ -1,7 +1,7 @@
 import { statSync } from "fs";
 import { readdir } from "fs/promises";
 
-import { DetailHandler, Details, DetailsType, ScheduleType } from "@/classes";
+import { DetailHandler } from "@/classes";
 import { BakalariParser } from "@/parser";
 
 const details = new DetailHandler();
@@ -16,10 +16,11 @@ async function checkDir(dir: string = "../cache/") {
             if (!file.endsWith(".html")) continue;
 
             const id = file.split(".")[0];
-            const detail = details.getDetail(id, () => new Details(DetailsType.Other, id, null));
+            const detail = details.get(id);
+            if (!detail) continue;
 
             const contents = await Bun.file(`${dir}/${file}`).text();
-            const parsed = await bakalariParser.parse(ScheduleType.Class, detail, contents);
+            const parsed = await bakalariParser.parse(detail, contents);
 
             console.log(parsed);
         }

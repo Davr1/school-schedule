@@ -1,4 +1,4 @@
-import type { DetailHandler, Details, TeacherDetails } from "@/classes/details";
+import type { Detail, DetailHandler, TeacherDetail } from "@/classes/details";
 
 /** The type of a bakalari lesson */
 export const enum BakalariLessonType {
@@ -15,9 +15,17 @@ export const enum BakalariLessonType {
 /** BakalariLesson seralized to JSON */
 export type BakalariLessonJSON<T extends BakalariLesson = AnyBakalariLesson> = Omit<
     T,
-    "isNormal" | "isRemoved" | "isAbsence" | "subject" | "teacher" | "toJSON"
+    "isNormal" | "isRemoved" | "isAbsence" | "subject" | "teacher" | "room" | "groups" | "toJSON"
 > &
-    (T extends NormalLesson ? { subject: string; teacher: string | null } : {});
+    (T extends NormalLesson
+        ? // Special properties for NormalLesson
+          {
+              subject: string;
+              teacher: string | null;
+              room: string;
+              groups: { number: number | null; class: string | null }[];
+          }
+        : {});
 
 /** Any Bakalari lesson */
 export type AnyBakalariLesson = NormalLesson | RemovedLesson | AbsenceLesson;
@@ -68,8 +76,8 @@ export interface Group {
     /** The group number, null if the whole class is targetted */
     number: number | null;
 
-    /** The class name, null if the schedule type is class */
-    class: string | null;
+    /** The class, null if the schedule type is class */
+    class: Detail | null;
 }
 
 /** A normal lesson */
@@ -78,13 +86,13 @@ export class NormalLesson extends BakalariLesson {
 
     constructor(
         /** Information about the subject */
-        readonly subject: Details,
+        readonly subject: Detail,
 
         /** Information about the teacher */
-        readonly teacher: TeacherDetails | null,
+        readonly teacher: TeacherDetail | null,
 
         /** The room the lesson is taught in */
-        readonly room: string,
+        readonly room: Detail,
 
         /** The groups the lesson targets */
         readonly groups: Group[],
@@ -102,20 +110,31 @@ export class NormalLesson extends BakalariLesson {
         return {
             ...this,
             subject: this.subject.toString(),
-            teacher: this.teacher?.toString() ?? null
+            teacher: this.teacher?.toString() ?? null,
+            room: this.room.toString(),
+            groups: this.groups.map((group) => ({ number: group.number, class: group.class?.toString() ?? null }))
         };
     }
 
-    static fromJSON(object: BakalariLessonJSON<NormalLesson>, handler: DetailHandler) {
-        // Get the subject details
-        const subject = handler.getDetail(object.subject);
-        const teacher = object.teacher ? handler.getDetail<TeacherDetails>(object.teacher) : null;
+    static fromJSON(json: BakalariLessonJSON<NormalLesson>, handler: DetailHandler) {
+        // Get the details
+        const subject = handler.get(json.subject);
+        const teacher = json.teacher ? handler.get<TeacherDetail>(json.teacher) : null;
+        const room = handler.get(json.room);
+
+        const groups = json.groups.map((group) => {
+            const detail = group.class ? handler.get(group.class) : null;
+            if (detail === undefined) throw new Error(`Class with id ${group.class} not found`);
+
+            return { number: group.number, class: detail };
+        });
 
         // Check if the details exist
-        if (!subject) throw new Error(`Subject with id ${object.subject} not found`);
-        if (teacher === undefined) throw new Error(`Teacher with id ${object.teacher} not found`);
+        if (!subject) throw new Error(`Subject with id ${json.subject} not found`);
+        if (teacher === undefined) throw new Error(`Teacher with id ${json.teacher} not found`);
+        if (room === undefined) throw new Error(`Room with id ${json.room} not found`);
 
-        return new NormalLesson(subject, teacher, object.room, object.groups, object.topic, object.change);
+        return new NormalLesson(subject, teacher, room, groups, json.topic, json.change);
     }
 }
 

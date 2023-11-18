@@ -1,5 +1,5 @@
 // Schedule classes
-export { default as Schedule, ScheduleType, type Period, type ScheduleJSON } from "@/classes/schedule";
+export { default as Schedule, type Period, type ScheduleJSON } from "@/classes/schedule";
 export { default as Lesson } from "@/classes/schedule/lesson";
 
 // Bakalari classes
@@ -26,4 +26,4 @@ export {
 } from "@/classes/sssvt/change";
 
 // Detail classes
-export { DetailHandler, Details, DetailsType, TeacherDetails, type AnyDetails, type DetailsJSON } from "@/classes/details";
+export { Detail, DetailHandler, DetailType, TeacherDetail, type AnyDetail, type DetailJSON } from "@/classes/details";

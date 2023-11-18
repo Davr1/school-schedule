@@ -6,13 +6,13 @@ import {
     AbsenceLesson,
     type AnyBakalariLesson,
     BakalariLessonType,
+    Detail,
     DetailHandler,
-    Details,
-    DetailsType,
+    DetailType,
     type Group,
     NormalLesson,
     RemovedLesson,
-    TeacherDetails
+    TeacherDetail
 } from "@/classes";
 
 interface BakalariData {
@@ -75,7 +75,10 @@ class BakalariLessonParser {
         const groups = this.groups(data);
         const change = this.change(node, data);
 
-        return new NormalLesson(subject, teacher, data.room, groups, data.theme || null, change);
+        // Get the room from the handler, or create a new one
+        const room = this.details.getByName(data.room, () => new Detail(DetailType.Room, data.room, data.room));
+
+        return new NormalLesson(subject, teacher, room, groups, data.theme || null, change);
     }
 
     /** Parse a removed lesson from a node */
@@ -93,7 +96,7 @@ class BakalariLessonParser {
     }
 
     /** Parse the subject name and abbreviation for the given lesson */
-    private subject(lesson: AnyNode, data: BakalariData): Details {
+    private subject(lesson: AnyNode, data: BakalariData): Detail {
         // Get the subject abbreviation from the lesson
         const abbreviationNode = selectOne(".middle", lesson)!;
         const abbreviation = textContent(abbreviationNode).trim();
@@ -101,8 +104,8 @@ class BakalariLessonParser {
         // Parse the full name from the data
         const name = data.subjecttext.split("|")[0]?.trim() ?? abbreviation;
 
-        // Find the subject in the details
-        const subject = this.details.getDetail(abbreviation, () => new Details(DetailsType.Subject, abbreviation, name));
+        // Find the subject detail
+        const subject = this.details.get(abbreviation, () => new Detail(DetailType.Subject, abbreviation, name));
 
         // Patch the name if it's null
         if (subject.name === null) subject.name = name;
@@ -111,7 +114,7 @@ class BakalariLessonParser {
     }
 
     /** Parse the teacher's name and abbreviation from a lesson */
-    private teacher(lesson: AnyNode, data: BakalariData): TeacherDetails | undefined {
+    private teacher(lesson: AnyNode, data: BakalariData): TeacherDetail | undefined {
         // Parse the full name from the data (make sure there's only one value)
         const name = data.teacher?.split(",")[0]?.trim();
         if (!name) return;
@@ -120,11 +123,8 @@ class BakalariLessonParser {
         const abbreviationNode = selectOne(".bottom > span", lesson)!;
         const abbreviation = textContent(abbreviationNode).trim();
 
-        // Find the teacher in the details
-        const teacher = this.details.getDetailByAbbreviation(
-            abbreviation,
-            () => new TeacherDetails(this.details.getNewId(), name, abbreviation)
-        );
+        // Find the teacher detail
+        const teacher = this.details.getByAbbreviation(abbreviation, () => new TeacherDetail(abbreviation, name, abbreviation));
 
         // Patch the name if it's null
         if (teacher.name === null) teacher.name = name;
@@ -144,10 +144,15 @@ class BakalariLessonParser {
                 const number = group.match(/[0-9](?=\.sk)/)?.[0];
                 const className = group.match(/[A-Z][0-9]\.[A-C]/)?.[0];
 
+                // Get the class detail from the details handler, or create a new one
+                const classDetails = className
+                    ? this.details.getByName(className, () => new Detail(DetailType.Class, className, className))
+                    : null;
+
                 // Return the group
                 return {
                     number: number ? Number(number) : null,
-                    class: className ?? null
+                    class: classDetails
                 };
             })
             .filter((group) => !(group.number === null && group.class === null));

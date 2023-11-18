@@ -2,7 +2,7 @@ import selectAll, { selectOne } from "css-select";
 import type { AnyNode } from "domhandler";
 import { textContent } from "domutils";
 
-import { type DetailHandler, Details, Lesson, Schedule, type ScheduleType } from "@/classes";
+import { Detail, type DetailHandler, Lesson, Schedule } from "@/classes";
 import BakalariLessonParser from "@/parser/bakalari/lesson";
 import dom from "@/parser/dom";
 
@@ -16,10 +16,11 @@ class BakalariParser {
     /**
      * Parse the timetable from the given html
      *
+     * @param detail The detail of the schedule
      * @param html The html to parse
      * @returns The parsed days from the timetable
      */
-    async parse(type: ScheduleType, value: Details, html: string): Promise<Schedule[]> {
+    async parse(detail: Detail, html: string): Promise<Schedule[]> {
         // Parse the html into a dom, and select all the day row nodes
         const scheduleDom = await dom(html);
         const dayNodes = selectAll(".bk-timetable-row", scheduleDom);
@@ -31,7 +32,7 @@ class BakalariParser {
 
             // If there's a full day event, return that instead (there won't be any lessons)
             const event = this.event(node);
-            if (event !== undefined) return new Schedule(type, value, date, [], event);
+            if (event !== undefined) return new Schedule(detail, date, [], event);
 
             // Get each period node, and parse it
             const periodNodes = selectAll(".bk-timetable-cell", node);
@@ -44,7 +45,7 @@ class BakalariParser {
             });
 
             // Return the parsed day
-            return new Schedule(type, value, date, periods);
+            return new Schedule(detail, date, periods);
         });
     }
 

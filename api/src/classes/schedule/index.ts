@@ -1,20 +1,13 @@
-import type { DetailHandler, Details } from "@/classes/details";
+import type { Detail, DetailHandler } from "@/classes/details";
 import Lesson, { type LessonJSON } from "@/classes/schedule/lesson";
 import type { SSSVTClass } from "@/classes/sssvt";
-
-/** Type of the schedule */
-export const enum ScheduleType {
-    Class = "Class",
-    Teacher = "Teacher",
-    Room = "Room"
-}
 
 /** Possible lessons in a period, will usually just be between 0 and 2 */
 export type Period = Lesson[];
 
 /** Schedule serialized to JSON */
-export type ScheduleJSON = Omit<Schedule, "toJSON" | "merge" | "details" | "date" | "periods"> & {
-    details: string;
+export type ScheduleJSON = Omit<Schedule, "toJSON" | "merge" | "detail" | "date" | "periods"> & {
+    detail: string;
     date: string | number;
     periods: LessonJSON[][];
 };
@@ -22,11 +15,8 @@ export type ScheduleJSON = Omit<Schedule, "toJSON" | "merge" | "details" | "date
 /** Schedule for a day */
 class Schedule {
     constructor(
-        /** Type of the schedule (Class, Teacher, Room) */
-        readonly type: ScheduleType,
-
-        /** Details of the schedule, should match the type */
-        readonly details: Details,
+        /** Schedule detail */
+        readonly detail: Detail,
 
         /**
          * The date of the day
@@ -44,17 +34,17 @@ class Schedule {
 
     /** Serialize the schedule to JSON */
     toJSON(): ScheduleJSON {
-        const details = this.details.toString();
+        const detail = this.detail.toString();
         const date = this.date instanceof Date ? this.date.toISOString() : this.date;
 
-        return { ...this, details, date };
+        return { ...this, detail, date };
     }
 
     /** Deserialize the schedule from JSON */
     static fromJSON(json: ScheduleJSON, handler: DetailHandler) {
-        // Find the details by id
-        const details = handler.getDetail(json.details);
-        if (!details) throw new Error("Details not found");
+        // Find the detail by id
+        const detail = handler.get(json.detail);
+        if (!detail) throw new Error("Detail not found");
 
         // Parse the date
         const date = typeof json.date === "string" ? new Date(json.date) : json.date;
@@ -62,7 +52,7 @@ class Schedule {
         // Parse each lesson in the periods
         const periods = json.periods.map((period) => period.map((lesson) => Lesson.fromJSON(lesson, handler)));
 
-        return new Schedule(json.type, details, date, periods, json.event);
+        return new Schedule(detail, date, periods, json.event);
     }
 
     /** Add the SSSVT changes to the schedule */

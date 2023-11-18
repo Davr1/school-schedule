@@ -2,15 +2,7 @@ import { selectOne } from "css-select";
 import type { AnyNode } from "domhandler";
 import { textContent } from "domutils";
 
-import {
-    type AnyLessonChange,
-    DetailHandler,
-    Details,
-    DetailsType,
-    LessonCancellation,
-    LessonSubstitution,
-    TeacherDetails
-} from "@/classes";
+import { type AnyLessonChange, Detail, DetailHandler, DetailType, LessonCancellation, LessonSubstitution, TeacherDetail } from "@/classes";
 
 class SSSVTLessonParser {
     constructor(private details: DetailHandler) {}
@@ -28,32 +20,32 @@ class SSSVTLessonParser {
         const group = this.group(lesson) ?? null;
         const subjectAbbreviation = this.subject(lesson) ?? null;
 
-        // Find the subject in the details
-        const subject =
-            subjectAbbreviation &&
-            (this.details.getDetail(subjectAbbreviation, () => new Details(DetailsType.Subject, subjectAbbreviation, null)) ?? null);
-
         // If there's no subject, it means that the lesson is cancelled
         // Note: Only check for null because the value can be an empty string
-        if (subject === null) return new LessonCancellation(group);
+        if (subjectAbbreviation === null) return new LessonCancellation(group);
+
+        // Find the subject detail (or add it if it doesn't exist)
+        const subject = subjectAbbreviation
+            ? this.details.get(subjectAbbreviation, () => new Detail(DetailType.Subject, subjectAbbreviation, null))
+            : null;
 
         // Get the room number and teacher abbreviation
         const room = this.room(lesson) ?? null;
         const teacherAbbreviation = this.teacher(lesson) ?? null;
 
-        // Find the teacher in the details
+        // Find the teacher detail (or add it if it doesn't exist)
         const teacher =
             teacherAbbreviation !== null
-                ? this.details.getDetailByAbbreviation(
+                ? this.details.getByAbbreviation<TeacherDetail>(
                       teacherAbbreviation,
-                      () => new TeacherDetails(this.details.getNewId(), null, teacherAbbreviation)
+                      () => new TeacherDetail(teacherAbbreviation, null, teacherAbbreviation)
                   )
                 : null;
 
         // If there's no room, throw an error
         if (!room) throw new Error(`Couldn't find the room in lesson: ${textContent(lesson)}`);
 
-        return new LessonSubstitution(group, subject, room, teacher);
+        return new LessonSubstitution(group, subject, teacher, room);
     }
 
     /** Parse the group number from the given lesson node */
@@ -76,12 +68,18 @@ class SSSVTLessonParser {
     }
 
     /** Parse the room for the given lesson */
-    private room(lesson: AnyNode): string | undefined {
+    private room(lesson: AnyNode): Detail | undefined {
         // Get the room number from the <a> tag with an href attribute
         const link = selectOne("[href*='/room/']", lesson);
+        if (!link) return;
 
-        // The room is in the text content of the link
-        if (link) return textContent(link).trim();
+        // The room name is in the text content of the link
+        const name = textContent(link).trim();
+
+        // Find the room detail (or add it if it doesn't exist)
+        const room = this.details.getByName(name, () => new Detail(DetailType.Room, name, name));
+
+        return room;
     }
 
     /** Parse the teacher's abbreviation from a lesson */
