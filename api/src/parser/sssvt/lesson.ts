@@ -2,7 +2,15 @@ import { selectOne } from "css-select";
 import type { AnyNode } from "domhandler";
 import { textContent } from "domutils";
 
-import { DetailHandler, LessonCancellation, type LessonChange, LessonSubstitution, SubjectDetails } from "@/classes";
+import {
+    type AnyLessonChange,
+    DetailHandler,
+    Details,
+    DetailsType,
+    LessonCancellation,
+    LessonSubstitution,
+    TeacherDetails
+} from "@/classes";
 
 class SSSVTLessonParser {
     constructor(private details: DetailHandler) {}
@@ -12,7 +20,7 @@ class SSSVTLessonParser {
      *
      * @param lesson The lesson to parse
      */
-    parse(lesson: AnyNode): LessonChange | undefined {
+    parse(lesson: AnyNode): AnyLessonChange | undefined {
         // Check if the lesson has any text inside, if not, return
         if (!textContent(lesson).trim()) return;
 
@@ -23,11 +31,7 @@ class SSSVTLessonParser {
         // Find the subject in the details
         const subject =
             subjectAbbreviation &&
-            (this.details.getDetailByAbbreviation(
-                subjectAbbreviation,
-                () => new SubjectDetails(this.details.getNewId(), null, subjectAbbreviation)
-            ) ??
-                null);
+            (this.details.getDetail(subjectAbbreviation, () => new Details(DetailsType.Subject, subjectAbbreviation, null)) ?? null);
 
         // If there's no subject, it means that the lesson is cancelled
         // Note: Only check for null because the value can be an empty string
@@ -42,7 +46,7 @@ class SSSVTLessonParser {
             teacherAbbreviation !== null
                 ? this.details.getDetailByAbbreviation(
                       teacherAbbreviation,
-                      () => new SubjectDetails(this.details.getNewId(), null, teacherAbbreviation)
+                      () => new TeacherDetails(this.details.getNewId(), null, teacherAbbreviation)
                   )
                 : null;
 

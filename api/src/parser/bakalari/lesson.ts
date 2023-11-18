@@ -4,13 +4,14 @@ import { textContent } from "domutils";
 
 import {
     AbsenceLesson,
-    type BakalariLesson,
+    type AnyBakalariLesson,
     BakalariLessonType,
     DetailHandler,
+    Details,
+    DetailsType,
     type Group,
     NormalLesson,
     RemovedLesson,
-    SubjectDetails,
     TeacherDetails
 } from "@/classes";
 
@@ -41,7 +42,7 @@ class BakalariLessonParser {
      * @param node The node to parse
      * @returns The parsed lesson
      */
-    parse(node: AnyNode): BakalariLesson {
+    parse(node: AnyNode): AnyBakalariLesson {
         // Make sure the node is an element
         if (!isTag(node)) throw new Error("Node is not an element");
 
@@ -50,7 +51,6 @@ class BakalariLessonParser {
 
         switch (data.type) {
             case BakalariLessonType.Normal:
-                // I separated this into a separate file because it's a bit long
                 return this.normal(node, data);
             case BakalariLessonType.Removed:
                 return this.removed(data);
@@ -93,7 +93,7 @@ class BakalariLessonParser {
     }
 
     /** Parse the subject name and abbreviation for the given lesson */
-    private subject(lesson: AnyNode, data: BakalariData): SubjectDetails {
+    private subject(lesson: AnyNode, data: BakalariData): Details {
         // Get the subject abbreviation from the lesson
         const abbreviationNode = selectOne(".middle", lesson)!;
         const abbreviation = textContent(abbreviationNode).trim();
@@ -102,10 +102,7 @@ class BakalariLessonParser {
         const name = data.subjecttext.split("|")[0]?.trim() ?? abbreviation;
 
         // Find the subject in the details
-        const subject = this.details.getDetailByAbbreviation(
-            abbreviation,
-            () => new SubjectDetails(this.details.getNewId(), name, abbreviation)
-        );
+        const subject = this.details.getDetail(abbreviation, () => new Details(DetailsType.Subject, abbreviation, name));
 
         // Patch the name if it's null
         if (subject.name === null) subject.name = name;

@@ -1,7 +1,14 @@
-import type { LessonChange } from "@/classes/sssvt/change";
+import type { DetailHandler } from "@/classes";
+import { type AnyLessonChange, LessonChange, type LessonChangeJSON } from "@/classes/sssvt/change";
 
 /** A class in the SSSVT schedule. Each class has a list of lessons for each period */
-export type SSSVTClass = LessonChange[][];
+export type SSSVTClass = AnyLessonChange[][];
+
+/** SSSVT schedule serialized to JSON */
+export type SSSVTJSON = {
+    date: string | number;
+    classes: Record<string, LessonChangeJSON[][]>;
+};
 
 /**
  * SSSVT substitution schedule
@@ -17,9 +24,17 @@ class SSSVT {
         readonly classes: Record<string, SSSVTClass>
     ) {}
 
-    /** Create a new substitution schedule from an object of the same structure */
-    static fromObject(object: SSSVT): SSSVT {
-        return new SSSVT(object.date, object.classes);
+    /** Deserialize the schedule from JSON */
+    static fromJSON(json: SSSVTJSON, handler: DetailHandler): SSSVT {
+        const date = new Date(json.date);
+        const classes = Object.fromEntries(
+            Object.entries(json.classes).map(([name, cl]) => [
+                name,
+                cl.map((period) => period.map((lesson) => LessonChange.fromJSON(lesson, handler)))
+            ])
+        );
+
+        return new SSSVT(date, classes);
     }
 }
 

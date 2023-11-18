@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 
 import type { ApiContext } from "@/api/context";
-import { Details, type ScheduleType } from "@/classes";
+import { Details, DetailsType, type ScheduleJSON, type ScheduleType } from "@/classes";
 import fetchBakalari, { Week } from "@/loader/bakalari";
 
 const BakalariEndpoints = ({ details, bakalariParser }: ApiContext) =>
@@ -12,13 +12,13 @@ const BakalariEndpoints = ({ details, bakalariParser }: ApiContext) =>
         const { html } = await fetchBakalari(mode as Week, type as ScheduleType, id);
 
         // Find the id in the details
-        const detail = details.getDetail(id, () => new Details(id));
+        const detail = details.getDetail(id, () => new Details(DetailsType.Other, id, null));
 
         // Parse the schedule
         const parsed = await bakalariParser.parse(type as ScheduleType, detail, html);
 
-        // Return the schedule
-        return c.json(parsed);
+        // Return the schedule (cast as any because toJSON will be called by JSON.stringify)
+        return c.jsonT<ScheduleJSON[]>(parsed as any);
     });
 
 export default BakalariEndpoints;

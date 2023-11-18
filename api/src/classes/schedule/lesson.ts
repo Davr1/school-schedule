@@ -1,5 +1,12 @@
-import type { BakalariLesson } from "@/classes/bakalari";
-import type { LessonChange } from "@/classes/sssvt/change";
+import { type AnyBakalariLesson, BakalariLesson, type BakalariLessonJSON } from "@/classes/bakalari";
+import type { DetailHandler } from "@/classes/details";
+import { type AnyLessonChange, LessonChange, type LessonChangeJSON } from "@/classes/sssvt/change";
+
+/** Lesson seralized to JSON */
+export interface LessonJSON {
+    bakalari: BakalariLessonJSON | null;
+    sssvt: LessonChangeJSON | null;
+}
 
 /* A merged lesson */
 class Lesson {
@@ -9,11 +16,19 @@ class Lesson {
 
     constructor(
         /** The Bakalari lesson */
-        public bakalari: BakalariLesson | null,
+        public bakalari: AnyBakalariLesson | null,
 
         /** The SSSVT lesson */
-        public sssvt: LessonChange | null = null
+        public sssvt: AnyLessonChange | null = null
     ) {}
+
+    /** Deserialize the lesson from JSON */
+    static fromJSON(json: LessonJSON, handler: DetailHandler): Lesson {
+        return new Lesson(
+            json.bakalari ? BakalariLesson.fromJSON(json.bakalari, handler) : null,
+            json.sssvt ? LessonChange.fromJSON(json.sssvt, handler) : null
+        );
+    }
 }
 
 export default Lesson;

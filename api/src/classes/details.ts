@@ -1,38 +1,55 @@
-import type { ObjectId } from "bson";
+export type IdType = number | string;
 
-export type IdType = number | string | ObjectId;
+/** The type of a detail */
+export enum DetailsType {
+    Teacher = "teacher",
+    Subject = "subject",
+
+    // Remove this in the future
+    Other = "other"
+}
+
+/** Details serialized to JSON */
+export type DetailsJSON<T extends Details = AnyDetails> = Omit<T, "toJSON" | "toString">;
+
+/** Any details instance */
+export type AnyDetails = Details | TeacherDetails;
 
 export class Details {
-    constructor(public id: IdType) {}
+    constructor(
+        readonly type: DetailsType,
+        public id: IdType,
+        public name: string | null
+    ) {}
 
-    toJSON() {
-        return this.id;
+    /** Return the id of the detail when converted to a string */
+    toString() {
+        return this.id.toString();
     }
 
-    toBSON() {
-        return this.id;
+    /** Deserialize the detail from JSON */
+    static fromJSON(json: DetailsJSON<Details>) {
+        if (json.type === DetailsType.Teacher) return TeacherDetails.fromJSON(json as DetailsJSON<TeacherDetails>);
+
+        return new Details(json.type, json.id, json.name);
     }
 }
 
 export class TeacherDetails extends Details {
+    readonly type = DetailsType.Teacher;
+
     // In the future, more details may be added here
 
     constructor(
         id: IdType,
-        public name: string | null,
+        name: string | null,
         readonly abbreviation: string
     ) {
-        super(id);
+        super(DetailsType.Teacher, id, name);
     }
-}
 
-export class SubjectDetails extends Details {
-    constructor(
-        id: IdType,
-        public name: string | null,
-        readonly abbreviation: string
-    ) {
-        super(id);
+    static fromJSON(json: DetailsJSON<TeacherDetails>) {
+        return new TeacherDetails(json.id, json.name, json.abbreviation);
     }
 }
 
@@ -52,10 +69,10 @@ export class DetailHandler {
      * @param defaultDetail A default detail (or callback) to add and return if the detail doesn't exist.
      * @returns Detail with the given id or `undefined` if not found.
      */
-    getDetail<T extends Details = Details>(id: IdType): T;
+    getDetail<T extends Details = Details>(id: IdType): T | undefined;
     getDetail<T extends Details = Details>(id: IdType, defaultDetail: T | (() => T)): T;
     getDetail<T extends Details = Details>(id: IdType, defaultDetail?: T | (() => T)): T | undefined {
-        const detail = this._details.find((detail) => detail.id === id);
+        const detail = this._details.find((detail) => detail.id == id); // == is intentional, id can be a string or number
 
         if (!detail && defaultDetail) {
             const detail = typeof defaultDetail === "function" ? defaultDetail() : defaultDetail;
@@ -73,11 +90,11 @@ export class DetailHandler {
      * @param defaultDetail A default detail (or callback) to add and return if the detail doesn't exist.
      * @returns Detail with the given abbreviation or `undefined` if not found.
      */
-    getDetailByAbbreviation<T extends Details = Details>(abbreviation: string): T;
+    getDetailByAbbreviation<T extends Details = Details>(abbreviation: string): T | undefined;
     getDetailByAbbreviation<T extends Details = Details>(abbreviation: string, defaultDetail: T | (() => T)): T;
     getDetailByAbbreviation<T extends Details = Details>(abbreviation: string, defaultDetail?: T | (() => T)): T | undefined {
         const detail = this._details.find((detail) => {
-            if (detail instanceof TeacherDetails || detail instanceof SubjectDetails) {
+            if (detail instanceof TeacherDetails) {
                 return detail.abbreviation === abbreviation;
             }
 

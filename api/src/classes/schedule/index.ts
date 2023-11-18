@@ -1,5 +1,5 @@
-import type { Details } from "@/classes/details";
-import Lesson from "@/classes/schedule/lesson";
+import type { DetailHandler, Details } from "@/classes/details";
+import Lesson, { type LessonJSON } from "@/classes/schedule/lesson";
 import type { SSSVTClass } from "@/classes/sssvt";
 
 /** Type of the schedule */
@@ -11,6 +11,13 @@ export const enum ScheduleType {
 
 /** Possible lessons in a period, will usually just be between 0 and 2 */
 export type Period = Lesson[];
+
+/** Schedule serialized to JSON */
+export type ScheduleJSON = Omit<Schedule, "toJSON" | "merge" | "details" | "date" | "periods"> & {
+    details: string;
+    date: string | number;
+    periods: LessonJSON[][];
+};
 
 /** Schedule for a day */
 class Schedule {
@@ -35,9 +42,27 @@ class Schedule {
         readonly event: string | null = null
     ) {}
 
-    /** Create a new Schedule from an object of the same structure */
-    static fromObject(object: Schedule) {
-        return new this(object.type, object.details, object.date, object.periods, object.event);
+    /** Serialize the schedule to JSON */
+    toJSON(): ScheduleJSON {
+        const details = this.details.toString();
+        const date = this.date instanceof Date ? this.date.toISOString() : this.date;
+
+        return { ...this, details, date };
+    }
+
+    /** Deserialize the schedule from JSON */
+    static fromJSON(json: ScheduleJSON, handler: DetailHandler) {
+        // Find the details by id
+        const details = handler.getDetail(json.details);
+        if (!details) throw new Error("Details not found");
+
+        // Parse the date
+        const date = typeof json.date === "string" ? new Date(json.date) : json.date;
+
+        // Parse each lesson in the periods
+        const periods = json.periods.map((period) => period.map((lesson) => Lesson.fromJSON(lesson, handler)));
+
+        return new Schedule(json.type, details, date, periods, json.event);
     }
 
     /** Add the SSSVT changes to the schedule */

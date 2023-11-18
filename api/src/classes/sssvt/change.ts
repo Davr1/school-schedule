@@ -1,5 +1,6 @@
-import type { SubjectDetails, TeacherDetails } from "@/classes/details";
+import { type DetailHandler, type Details, TeacherDetails } from "@/classes/details";
 
+/** The type of a lesson change */
 export const enum LessonChangeType {
     /** The lesson was cancelled */
     Cancellation = "cancelled",
@@ -8,13 +9,15 @@ export const enum LessonChangeType {
     Substitution = "substituted"
 }
 
-/**
- * Used for the `fromObject` static methods of the LessonCancelation classes
- *
- * Omit these properties that are not needed in the `fromObject` method
- * @internal
- */
-type IgnoredProperties = "type" | "isCancellation" | "isSubstitution";
+/** Lesson seralized to JSON */
+export type LessonChangeJSON<T extends LessonChange = AnyLessonChange> = Omit<
+    T,
+    "isCancellation" | "isSubstitution" | "subject" | "teacher" | "toJSON"
+> &
+    (T extends LessonSubstitution ? { subject: string; teacher: string | null } : {});
+
+/** Any lesson change */
+export type AnyLessonChange = LessonCancellation | LessonSubstitution;
 
 /** Any change to a lesson (abstract) */
 export abstract class LessonChange {
@@ -24,6 +27,15 @@ export abstract class LessonChange {
         /** The group number of the changed lesson, null if the whole class is affected */
         readonly group: number | null
     ) {}
+
+    /** Deserialize the lesson from JSON */
+    static fromJSON(json: LessonChangeJSON<LessonChange>, handler: DetailHandler): AnyLessonChange {
+        if (json.type === LessonChangeType.Substitution)
+            return LessonSubstitution.fromJSON(json as LessonChangeJSON<LessonSubstitution>, handler);
+        else if (json.type === LessonChangeType.Cancellation)
+            return LessonCancellation.fromJSON(json as LessonChangeJSON<LessonCancellation>);
+        else throw new Error(`Unknown lesson type: ${json.type}`);
+    }
 
     // Type guards
 
@@ -40,9 +52,9 @@ export abstract class LessonChange {
 export class LessonCancellation extends LessonChange {
     readonly type = LessonChangeType.Cancellation;
 
-    /** Create a new LessonCancellation from an object of the same structure */
-    static fromObject(object: Omit<LessonCancellation, IgnoredProperties>): LessonCancellation {
-        return new LessonCancellation(object.group);
+    /** Deserialize the lesson from JSON */
+    static fromJSON(json: LessonChangeJSON<LessonCancellation>): LessonCancellation {
+        return new LessonCancellation(json.group);
     }
 }
 
@@ -54,7 +66,7 @@ export class LessonSubstitution extends LessonChange {
         group: number | null,
 
         /** The new subject */
-        readonly subject: "" | SubjectDetails,
+        readonly subject: "" | Details,
 
         /** The room the lesson is taught in */
         readonly room: string,
@@ -65,8 +77,25 @@ export class LessonSubstitution extends LessonChange {
         super(group);
     }
 
-    /** Create a new LessonSubstitution from an object of the same structure */
-    static fromObject(object: Omit<LessonSubstitution, IgnoredProperties>): LessonSubstitution {
-        return new LessonSubstitution(object.group, object.subject, object.room, object.teacher);
+    /** Serialize the lesson to JSON */
+    toJSON(): LessonChangeJSON<LessonSubstitution> {
+        return {
+            ...this,
+            subject: this.subject.toString(),
+            teacher: this.teacher?.toString() ?? null
+        };
+    }
+
+    /** Deserialize the lesson from JSON */
+    static fromJSON(json: LessonChangeJSON<LessonSubstitution>, handler: DetailHandler): LessonSubstitution {
+        // Get the subject details
+        const subject = json.subject && handler.getDetail(json.subject);
+        const teacher = json.teacher ? handler.getDetail<TeacherDetails>(json.teacher) : null;
+
+        // Check if the details exist
+        if (subject === undefined) throw new Error(`Subject with id ${json.subject} not found`);
+        if (teacher === undefined) throw new Error(`Teacher with id ${json.teacher} not found`);
+
+        return new LessonSubstitution(json.group, subject, json.room, teacher);
     }
 }

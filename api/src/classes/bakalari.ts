@@ -1,5 +1,6 @@
-import type { SubjectDetails, TeacherDetails } from "@/classes";
+import type { DetailHandler, Details, TeacherDetails } from "@/classes/details";
 
+/** The type of a bakalari lesson */
 export const enum BakalariLessonType {
     /** Normal lesson */
     Normal = "atom",
@@ -11,10 +12,15 @@ export const enum BakalariLessonType {
     Absence = "absent"
 }
 
-/** @private Object of a similar structure to a BakalariLesson */
-type BakalariLessonLike<T extends BakalariLesson = BakalariLesson> = Omit<T, "type" | "isNormal" | "isRemoved" | "isAbsence"> & {
-    type?: T["type"];
-};
+/** BakalariLesson seralized to JSON */
+export type BakalariLessonJSON<T extends BakalariLesson = AnyBakalariLesson> = Omit<
+    T,
+    "isNormal" | "isRemoved" | "isAbsence" | "subject" | "teacher" | "toJSON"
+> &
+    (T extends NormalLesson ? { subject: string; teacher: string | null } : {});
+
+/** Any Bakalari lesson */
+export type AnyBakalariLesson = NormalLesson | RemovedLesson | AbsenceLesson;
 
 /** A lesson in the schedule (abstract) */
 export abstract class BakalariLesson {
@@ -25,6 +31,20 @@ export abstract class BakalariLesson {
         /** Change info description */
         readonly change: string | null = null
     ) {}
+
+    /** Deserialize the lesson from JSON */
+    static fromJSON(json: BakalariLessonJSON, handler: DetailHandler): AnyBakalariLesson {
+        switch (json.type) {
+            case BakalariLessonType.Normal:
+                return NormalLesson.fromJSON(json as BakalariLessonJSON<NormalLesson>, handler);
+            case BakalariLessonType.Removed:
+                return RemovedLesson.fromJSON(json as BakalariLessonJSON<RemovedLesson>);
+            case BakalariLessonType.Absence:
+                return AbsenceLesson.fromJSON(json as BakalariLessonJSON<AbsenceLesson>);
+            default:
+                throw new Error(`Unknown lesson type: ${json.type}`);
+        }
+    }
 
     // Type guards
 
@@ -58,7 +78,7 @@ export class NormalLesson extends BakalariLesson {
 
     constructor(
         /** Information about the subject */
-        readonly subject: SubjectDetails,
+        readonly subject: Details,
 
         /** Information about the teacher */
         readonly teacher: TeacherDetails | null,
@@ -77,9 +97,25 @@ export class NormalLesson extends BakalariLesson {
         super(change);
     }
 
-    /** Create a new NormalLesson from an object of the same structure */
-    static fromObject(object: BakalariLessonLike<NormalLesson>): NormalLesson {
-        return new this(object.subject, object.teacher, object.room, object.groups, object.topic, object.change);
+    /** Serialize the lesson to JSON */
+    toJSON(): BakalariLessonJSON<NormalLesson> {
+        return {
+            ...this,
+            subject: this.subject.toString(),
+            teacher: this.teacher?.toString() ?? null
+        };
+    }
+
+    static fromJSON(object: BakalariLessonJSON<NormalLesson>, handler: DetailHandler) {
+        // Get the subject details
+        const subject = handler.getDetail(object.subject);
+        const teacher = object.teacher ? handler.getDetail<TeacherDetails>(object.teacher) : null;
+
+        // Check if the details exist
+        if (!subject) throw new Error(`Subject with id ${object.subject} not found`);
+        if (teacher === undefined) throw new Error(`Teacher with id ${object.teacher} not found`);
+
+        return new NormalLesson(subject, teacher, object.room, object.groups, object.topic, object.change);
     }
 }
 
@@ -91,9 +127,8 @@ export class RemovedLesson extends BakalariLesson {
         super();
     }
 
-    /** Create a new RemovedLesson from an object of the same structure */
-    static fromObject(object: BakalariLessonLike<RemovedLesson>): RemovedLesson {
-        return new this(object.change);
+    static fromJSON(object: BakalariLessonJSON<RemovedLesson>) {
+        return new RemovedLesson(object.change);
     }
 }
 
@@ -113,8 +148,7 @@ export class AbsenceLesson extends BakalariLesson {
         super(change);
     }
 
-    /** Create a new AbsenceLesson from an object of the same structure */
-    static fromObject(object: BakalariLessonLike<AbsenceLesson>): AbsenceLesson {
-        return new this(object.info, object.name, object.change);
+    static fromJSON(object: BakalariLessonJSON<AbsenceLesson>) {
+        return new AbsenceLesson(object.info, object.name, object.change);
     }
 }

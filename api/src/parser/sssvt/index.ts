@@ -2,7 +2,7 @@ import selectAll, { selectOne } from "css-select";
 import type { AnyNode } from "domhandler";
 import { hasChildren, isTag, textContent } from "domutils";
 
-import { DetailHandler, LessonChange, SSSVT, type SSSVTClass } from "@/classes";
+import { type AnyLessonChange, DetailHandler, SSSVT, type SSSVTClass } from "@/classes";
 import dom from "@/parser/dom";
 import SSSVTLessonParser from "@/parser/sssvt/lesson";
 
@@ -62,7 +62,7 @@ class SSSVTParser {
     }
 
     /** Parse data for the given period */
-    private period(lessonNode: AnyNode, split: AnyNode[]): LessonChange[] {
+    private period(lessonNode: AnyNode, split: AnyNode[]): AnyLessonChange[] {
         // Get the 1st lesson from the period, and return if there's no lesson (also check if it's a tag for type safety)
         const lesson1 = this.lessonParser.parse(lessonNode);
         if (!lesson1 || !isTag(lessonNode)) return [];
@@ -77,7 +77,7 @@ class SSSVTParser {
         const lesson2 = lesson2Node && this.lessonParser.parse(lesson2Node);
 
         // Return both lessons (filter out undefined, in case the 2nd lesson doesn't exist)
-        return [lesson1, lesson2].filter(Boolean) as LessonChange[];
+        return [lesson1, lesson2].filter(Boolean) as AnyLessonChange[];
     }
 }
 

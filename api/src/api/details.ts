@@ -2,12 +2,13 @@ import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 
 import type { ApiContext } from "@/api/context";
+import type { DetailsJSON } from "@/classes";
 
 const DetailsEndpoints = ({ details }: ApiContext) =>
     new Hono()
         // Get all details
         .get("/", async (c) => {
-            return c.json(details.details);
+            return c.jsonT<DetailsJSON[]>(details.details);
         })
 
         // Get a specific detail by id
@@ -15,7 +16,7 @@ const DetailsEndpoints = ({ details }: ApiContext) =>
             const detail = details.getDetail(c.req.param("id"));
 
             // Return the detail
-            if (detail) return c.json(detail);
+            if (detail) return c.jsonT<DetailsJSON>(detail);
             throw new HTTPException(404, { message: "Detail not found" });
         })
 
@@ -24,7 +25,7 @@ const DetailsEndpoints = ({ details }: ApiContext) =>
             const detail = details.getDetailByAbbreviation(c.req.param("abbr"));
 
             // Return the detail
-            if (detail) return c.json(detail);
+            if (detail) return c.jsonT<DetailsJSON>(detail);
             throw new HTTPException(404, { message: "Detail not found" });
         });
 
