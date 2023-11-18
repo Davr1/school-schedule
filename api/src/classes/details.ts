@@ -1,4 +1,4 @@
-export type IdType = number | string;
+import type { AnyDetailJSON, TeacherDetailJSON } from "@/schemas";
 
 /** The type of a detail */
 export enum DetailType {
@@ -8,16 +8,13 @@ export enum DetailType {
     Room = "Room"
 }
 
-/** Detail serialized to JSON */
-export type DetailJSON<T extends Detail = AnyDetail> = Omit<T, "toJSON" | "toString">;
-
 /** Any detail instance */
 export type AnyDetail = Detail | TeacherDetail;
 
 export class Detail {
     constructor(
         readonly type: DetailType,
-        public id: IdType,
+        public id: string,
         public name: string | null
     ) {}
 
@@ -27,10 +24,10 @@ export class Detail {
     }
 
     /** Deserialize the detail from JSON */
-    static fromJSON(json: DetailJSON<Detail>) {
-        if (json.type === DetailType.Teacher) return TeacherDetail.fromJSON(json as DetailJSON<TeacherDetail>);
+    static fromJSON(json: AnyDetailJSON): AnyDetail {
+        if (json.type === DetailType.Teacher) return TeacherDetail.fromJSON(json as TeacherDetailJSON);
 
-        return new Detail(json.type, json.id, json.name);
+        return new Detail(json.type, json.id, json.name ?? null);
     }
 }
 
@@ -40,15 +37,15 @@ export class TeacherDetail extends Detail {
     // In the future, more details may be added here
 
     constructor(
-        id: IdType,
+        id: string,
         name: string | null,
         readonly abbreviation: string
     ) {
         super(DetailType.Teacher, id, name);
     }
 
-    static fromJSON(json: DetailJSON<TeacherDetail>) {
-        return new TeacherDetail(json.id, json.name, json.abbreviation);
+    static fromJSON(json: TeacherDetailJSON) {
+        return new TeacherDetail(json.id, json.name ?? null, json.abbreviation);
     }
 }
 
@@ -68,10 +65,10 @@ export class DetailHandler {
      * @param defaultDetail A default detail (or callback) to add and return if the detail doesn't exist.
      * @returns Detail with the given id or `undefined` if not found.
      */
-    get<T extends Detail = Detail>(id: IdType): T | undefined;
-    get<T extends Detail = Detail>(id: IdType, defaultDetail: T | (() => T)): T;
-    get<T extends Detail = Detail>(id: IdType, defaultDetail?: T | (() => T)): T | undefined {
-        let detail = this._details.find((detail) => detail.id == id); // == is intentional, id can be a string or number
+    get<T extends Detail = Detail>(id: string): T | undefined;
+    get<T extends Detail = Detail>(id: string, defaultDetail: T | (() => T)): T;
+    get<T extends Detail = Detail>(id: string, defaultDetail?: T | (() => T)): T | undefined {
+        let detail = this._details.find((detail) => detail.id === id);
 
         // If the detail doesn't exist, add the default detail
         if (!detail && defaultDetail) detail = this.addDefaultDetail(defaultDetail);

@@ -90,6 +90,12 @@ importers:
 
   api:
     dependencies:
+      '@hono/swagger-ui':
+        specifier: ^0.1.0
+        version: 0.1.0(hono@3.10.1)
+      '@hono/zod-openapi':
+        specifier: ^0.8.6
+        version: 0.8.6(hono@3.10.1)(zod@3.22.4)
       croner:
         specifier: ^7.0.1
         version: 7.0.1
@@ -114,10 +120,13 @@ importers:
       typescript:
         specifier: ^5.0.0
         version: 5.1.6
+      zod:
+        specifier: ^3.22.4
+        version: 3.22.4
     devDependencies:
       bun-types:
         specifier: latest
-        version: 1.0.12
+        version: 1.0.13
 
 packages:
 
@@ -133,6 +142,15 @@ packages:
       '@jridgewell/gen-mapping': 0.3.3
       '@jridgewell/trace-mapping': 0.3.19
     dev: true
+
+  /@asteasolutions/zod-to-openapi@5.5.0(zod@3.22.4):
+    resolution: {integrity: sha512-d5HwrvM6dOKr3XdeF+DmashGvfEc+1oiEfbscugsiwSTrFtuMa7ETpW9sTNnVgn+hJaz+PRxPQUYD7q9/5dUig==}
+    peerDependencies:
+      zod: ^3.20.2
+    dependencies:
+      openapi3-ts: 4.1.2
+      zod: 3.22.4
+    dev: false
 
   /@babel/code-frame@7.22.13:
     resolution: {integrity: sha512-XktuhWlJ5g+3TJXc5upd9Ks1HutSArik6jf2eAjYFyIOf4ej3RN+184cZbzDvbPnuTJIUhPKKJE3cIsYTiAT3w==}
@@ -449,6 +467,37 @@ packages:
 
   /@fontsource/inter@5.0.8:
     resolution: {integrity: sha512-28knWH1BfOiRalfLs90U4sge5mpQ8ZH6FS0PTT+IZMKrZ7wNHDHRuKa1kQJg+uHcc6axBppnxll+HXM4c7zo/Q==}
+    dev: false
+
+  /@hono/swagger-ui@0.1.0(hono@3.10.1):
+    resolution: {integrity: sha512-W5WEEhk2QtiqdSfM40FcK98Q5Bz4H/NfNqBUSkcZ46ys+DG4wt1yGsmRZgdJMje6t5Vn8eFN+9nyO+/dAp3drA==}
+    peerDependencies:
+      hono: '*'
+    dependencies:
+      hono: 3.10.1
+    dev: false
+
+  /@hono/zod-openapi@0.8.6(hono@3.10.1)(zod@3.22.4):
+    resolution: {integrity: sha512-HQNmJoIGyu2kNK9DI8+gIyV4c+bZm5t75PytPSRqMTim9P9HAAPMtepxu44aPZO9ehDxK4KZlRVRqz8OBxOL1A==}
+    engines: {node: '>=16.0.0'}
+    peerDependencies:
+      hono: '>=3.9.0'
+      zod: 3.*
+    dependencies:
+      '@asteasolutions/zod-to-openapi': 5.5.0(zod@3.22.4)
+      '@hono/zod-validator': 0.1.11(hono@3.10.1)(zod@3.22.4)
+      hono: 3.10.1
+      zod: 3.22.4
+    dev: false
+
+  /@hono/zod-validator@0.1.11(hono@3.10.1)(zod@3.22.4):
+    resolution: {integrity: sha512-PQXeHUP0+36qpRt8yfeD7N2jbK3ETlGvSN6dMof/HwUC/APRokQRjpXZm4rrlG71Ft0aWE01+Bm4XejqPie5Uw==}
+    peerDependencies:
+      hono: '>=3.9.0'
+      zod: ^3.19.1
+    dependencies:
+      hono: 3.10.1
+      zod: 3.22.4
     dev: false
 
   /@jridgewell/gen-mapping@0.3.3:
@@ -855,8 +904,8 @@ packages:
     engines: {node: '>=6'}
     dev: true
 
-  /bun-types@1.0.12:
-    resolution: {integrity: sha512-jGXEQ9pkp1kwdgYY6X6SPP5V4kxEGGZQaZMEKUVeJ7T1/XFyrAwL4AeaM4lSvjYqwsPXIDdKCFgw5M1KLoK4qw==}
+  /bun-types@1.0.13:
+    resolution: {integrity: sha512-QQH6NLAOU+2tWgQuDSAYBFy+kQwVhPJLB0Q38QLjCmFUZJEYCiiq7tzvU784LAIX2onzO6gr+gIGXt8yCt0cJw==}
     dev: true
 
   /busboy@1.6.0:
@@ -1614,6 +1663,12 @@ packages:
     dependencies:
       wrappy: 1.0.2
 
+  /openapi3-ts@4.1.2:
+    resolution: {integrity: sha512-B7gOkwsYMZO7BZXwJzXCuVagym2xhqsrilVvV0dnq2Di4+iLUXKVX9gOK23ZqaAHZOwABXN0QTdW8QnkUTX6DA==}
+    dependencies:
+      yaml: 2.3.2
+    dev: false
+
   /parent-module@1.0.1:
     resolution: {integrity: sha512-GQ2EWRpQV8/o+Aw8YqtfZZPfNRWZYkbidE9k5rpl/hC3vtHHBfGm2Ifi6qWV+coDGkrUKZAxE3Lot5kcsRlh+g==}
     engines: {node: '>=6'}
@@ -2282,4 +2337,8 @@ packages:
   /yaml@2.3.2:
     resolution: {integrity: sha512-N/lyzTPaJasoDmfV7YTrYCI0G/3ivm/9wdG0aHuheKowWQwGTsK0Eoiw6utmzAnI6pkJa0DUVygvp3spqqEKXg==}
     engines: {node: '>= 14'}
+    dev: false
+
+  /zod@3.22.4:
+    resolution: {integrity: sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==}
     dev: false

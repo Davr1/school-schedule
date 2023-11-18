@@ -1,4 +1,5 @@
 import { type Detail, type DetailHandler, TeacherDetail } from "@/classes/details";
+import type { AnyLessonChangeJSON, LessonCancellationJSON, LessonSubstitutionJSON } from "@/schemas";
 
 /** The type of a lesson change */
 export const enum LessonChangeType {
@@ -8,13 +9,6 @@ export const enum LessonChangeType {
     /** The lesson was substituted for a different one */
     Substitution = "substituted"
 }
-
-/** Lesson seralized to JSON */
-export type LessonChangeJSON<T extends LessonChange = AnyLessonChange> = Omit<
-    T,
-    "isCancellation" | "isSubstitution" | "subject" | "teacher" | "toJSON"
-> &
-    (T extends LessonSubstitution ? { subject: string | null; teacher: string | null; room: string } : {});
 
 /** Any lesson change */
 export type AnyLessonChange = LessonCancellation | LessonSubstitution;
@@ -29,12 +23,10 @@ export abstract class LessonChange {
     ) {}
 
     /** Deserialize the lesson from JSON */
-    static fromJSON(json: LessonChangeJSON<LessonChange>, handler: DetailHandler): AnyLessonChange {
-        if (json.type === LessonChangeType.Substitution)
-            return LessonSubstitution.fromJSON(json as LessonChangeJSON<LessonSubstitution>, handler);
-        else if (json.type === LessonChangeType.Cancellation)
-            return LessonCancellation.fromJSON(json as LessonChangeJSON<LessonCancellation>);
-        else throw new Error(`Unknown lesson type: ${json.type}`);
+    static fromJSON(json: AnyLessonChangeJSON, handler: DetailHandler): AnyLessonChange {
+        if (json.type === LessonChangeType.Substitution) return LessonSubstitution.fromJSON(json as LessonSubstitutionJSON, handler);
+        else if (json.type === LessonChangeType.Cancellation) return LessonCancellation.fromJSON(json as LessonCancellationJSON);
+        else throw new Error(`Unknown lesson type: ${(json as AnyLessonChangeJSON).type}`);
     }
 
     // Type guards
@@ -53,8 +45,8 @@ export class LessonCancellation extends LessonChange {
     readonly type = LessonChangeType.Cancellation;
 
     /** Deserialize the lesson from JSON */
-    static fromJSON(json: LessonChangeJSON<LessonCancellation>): LessonCancellation {
-        return new LessonCancellation(json.group);
+    static fromJSON(json: LessonCancellationJSON): LessonCancellation {
+        return new LessonCancellation(json.group ?? null);
     }
 }
 
@@ -78,7 +70,7 @@ export class LessonSubstitution extends LessonChange {
     }
 
     /** Serialize the lesson to JSON */
-    toJSON(): LessonChangeJSON<LessonSubstitution> {
+    toJSON(): LessonSubstitutionJSON {
         return {
             ...this,
             subject: this.subject?.toString() ?? null,
@@ -88,7 +80,7 @@ export class LessonSubstitution extends LessonChange {
     }
 
     /** Deserialize the lesson from JSON */
-    static fromJSON(json: LessonChangeJSON<LessonSubstitution>, handler: DetailHandler): LessonSubstitution {
+    static fromJSON(json: LessonSubstitutionJSON, handler: DetailHandler): LessonSubstitution {
         // Get the details
         const subject = json.subject ? handler.get(json.subject) : null;
         const teacher = json.teacher ? handler.get<TeacherDetail>(json.teacher) : null;
@@ -99,6 +91,6 @@ export class LessonSubstitution extends LessonChange {
         if (teacher === undefined) throw new Error(`Teacher with id ${json.teacher} not found`);
         if (room === undefined) throw new Error(`Room with id ${json.room} not found`);
 
-        return new LessonSubstitution(json.group, subject, teacher, room);
+        return new LessonSubstitution(json.group ?? null, subject, teacher, room);
     }
 }

@@ -1,16 +1,10 @@
 import type { Detail, DetailHandler } from "@/classes/details";
-import Lesson, { type LessonJSON } from "@/classes/schedule/lesson";
+import Lesson from "@/classes/schedule/lesson";
 import type { SSSVTClass } from "@/classes/sssvt";
+import type { ScheduleJSON } from "@/schemas";
 
 /** Possible lessons in a period, will usually just be between 0 and 2 */
 export type Period = Lesson[];
-
-/** Schedule serialized to JSON */
-export type ScheduleJSON = Omit<Schedule, "toJSON" | "merge" | "detail" | "date" | "periods"> & {
-    detail: string;
-    date: string | number;
-    periods: LessonJSON[][];
-};
 
 /** Schedule for a day */
 class Schedule {
@@ -37,7 +31,7 @@ class Schedule {
         const detail = this.detail.toString();
         const date = this.date instanceof Date ? this.date.toISOString() : this.date;
 
-        return { ...this, detail, date };
+        return { ...this, detail, date } as ScheduleJSON;
     }
 
     /** Deserialize the schedule from JSON */

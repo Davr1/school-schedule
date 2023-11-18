@@ -1,14 +1,15 @@
-import { Hono } from "hono";
+import { OpenAPIHono } from "@hono/zod-openapi";
 import { HTTPException } from "hono/http-exception";
 
+import bakalariScheduleRoute from "@/api/bakalari/route";
 import type { ApiContext } from "@/api/context";
-import { type ScheduleJSON } from "@/classes";
 import fetchBakalari, { Week } from "@/loader/bakalari";
+import type { ScheduleJSON } from "@/schemas";
 
 const BakalariEndpoints = ({ details, bakalariParser }: ApiContext) =>
     // Fetch and parse a schedule from Bakalari
-    new Hono().get("/:mode/:id", async (c) => {
-        const { mode, id } = c.req.param();
+    new OpenAPIHono().openapi(bakalariScheduleRoute, async (c) => {
+        const { week, id } = c.req.valid("param");
 
         // Find the id in the details
         const detail = details.get(id);
@@ -17,7 +18,7 @@ const BakalariEndpoints = ({ details, bakalariParser }: ApiContext) =>
         // Fetch the schedule from the schedule loader
         let html: string;
         try {
-            html = (await fetchBakalari(mode as Week, detail)).html;
+            html = (await fetchBakalari(week as Week, detail)).html;
         } catch (e) {
             // If the error is a TypeError, it means that the input was invalid
             if (e instanceof TypeError) throw new HTTPException(400, { message: e.message });

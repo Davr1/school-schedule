@@ -1,7 +1,7 @@
 import { type Detail, DetailType } from "@/classes";
 import headers from "@/loader/headers";
 
-export const enum Week {
+export enum Week {
     Permanent = "Permanent",
     Current = "Actual",
     Next = "Next"

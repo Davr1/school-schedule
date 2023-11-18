@@ -1,14 +1,9 @@
-import type { DetailHandler } from "@/classes";
-import { type AnyLessonChange, LessonChange, type LessonChangeJSON } from "@/classes/sssvt/change";
+import type { DetailHandler } from "@/classes/details";
+import { type AnyLessonChange, LessonChange } from "@/classes/sssvt/change";
+import type { SSSVTJSON } from "@/schemas";
 
 /** A class in the SSSVT schedule. Each class has a list of lessons for each period */
 export type SSSVTClass = AnyLessonChange[][];
-
-/** SSSVT schedule serialized to JSON */
-export type SSSVTJSON = {
-    date: string | number;
-    classes: Record<string, LessonChangeJSON[][]>;
-};
 
 /**
  * SSSVT substitution schedule

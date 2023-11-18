@@ -1,7 +1,8 @@
 import type { Detail, DetailHandler, TeacherDetail } from "@/classes/details";
+import type { AbsenceLessonJSON, AnyBakalariLessonJSON, NormalLessonJSON, RemovedLessonJSON } from "@/schemas";
 
 /** The type of a bakalari lesson */
-export const enum BakalariLessonType {
+export enum BakalariLessonType {
     /** Normal lesson */
     Normal = "atom",
 
@@ -11,21 +12,6 @@ export const enum BakalariLessonType {
     /** Absence / Event */
     Absence = "absent"
 }
-
-/** BakalariLesson seralized to JSON */
-export type BakalariLessonJSON<T extends BakalariLesson = AnyBakalariLesson> = Omit<
-    T,
-    "isNormal" | "isRemoved" | "isAbsence" | "subject" | "teacher" | "room" | "groups" | "toJSON"
-> &
-    (T extends NormalLesson
-        ? // Special properties for NormalLesson
-          {
-              subject: string;
-              teacher: string | null;
-              room: string;
-              groups: { number: number | null; class: string | null }[];
-          }
-        : {});
 
 /** Any Bakalari lesson */
 export type AnyBakalariLesson = NormalLesson | RemovedLesson | AbsenceLesson;
@@ -41,16 +27,16 @@ export abstract class BakalariLesson {
     ) {}
 
     /** Deserialize the lesson from JSON */
-    static fromJSON(json: BakalariLessonJSON, handler: DetailHandler): AnyBakalariLesson {
+    static fromJSON(json: AnyBakalariLessonJSON, handler: DetailHandler): AnyBakalariLesson {
         switch (json.type) {
             case BakalariLessonType.Normal:
-                return NormalLesson.fromJSON(json as BakalariLessonJSON<NormalLesson>, handler);
+                return NormalLesson.fromJSON(json as NormalLessonJSON, handler);
             case BakalariLessonType.Removed:
-                return RemovedLesson.fromJSON(json as BakalariLessonJSON<RemovedLesson>);
+                return RemovedLesson.fromJSON(json as RemovedLessonJSON);
             case BakalariLessonType.Absence:
-                return AbsenceLesson.fromJSON(json as BakalariLessonJSON<AbsenceLesson>);
+                return AbsenceLesson.fromJSON(json as AbsenceLessonJSON);
             default:
-                throw new Error(`Unknown lesson type: ${json.type}`);
+                throw new Error(`Unknown lesson type: ${(json as AnyBakalariLessonJSON).type}`);
         }
     }
 
@@ -106,7 +92,7 @@ export class NormalLesson extends BakalariLesson {
     }
 
     /** Serialize the lesson to JSON */
-    toJSON(): BakalariLessonJSON<NormalLesson> {
+    toJSON(): NormalLessonJSON {
         return {
             ...this,
             subject: this.subject.toString(),
@@ -116,7 +102,7 @@ export class NormalLesson extends BakalariLesson {
         };
     }
 
-    static fromJSON(json: BakalariLessonJSON<NormalLesson>, handler: DetailHandler) {
+    static fromJSON(json: NormalLessonJSON, handler: DetailHandler) {
         // Get the details
         const subject = handler.get(json.subject);
         const teacher = json.teacher ? handler.get<TeacherDetail>(json.teacher) : null;
@@ -126,7 +112,7 @@ export class NormalLesson extends BakalariLesson {
             const detail = group.class ? handler.get(group.class) : null;
             if (detail === undefined) throw new Error(`Class with id ${group.class} not found`);
 
-            return { number: group.number, class: detail };
+            return { number: group.number ?? null, class: detail };
         });
 
         // Check if the details exist
@@ -146,7 +132,7 @@ export class RemovedLesson extends BakalariLesson {
         super();
     }
 
-    static fromJSON(object: BakalariLessonJSON<RemovedLesson>) {
+    static fromJSON(object: RemovedLessonJSON) {
         return new RemovedLesson(object.change);
     }
 }
@@ -167,7 +153,7 @@ export class AbsenceLesson extends BakalariLesson {
         super(change);
     }
 
-    static fromJSON(object: BakalariLessonJSON<AbsenceLesson>) {
-        return new AbsenceLesson(object.info, object.name, object.change);
+    static fromJSON(object: AbsenceLessonJSON) {
+        return new AbsenceLesson(object.info, object.name ?? null, object.change);
     }
 }

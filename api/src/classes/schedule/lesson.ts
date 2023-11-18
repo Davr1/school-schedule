@@ -1,12 +1,7 @@
-import { type AnyBakalariLesson, BakalariLesson, type BakalariLessonJSON } from "@/classes/bakalari";
+import { type AnyBakalariLesson, BakalariLesson } from "@/classes/bakalari";
 import type { DetailHandler } from "@/classes/details";
-import { type AnyLessonChange, LessonChange, type LessonChangeJSON } from "@/classes/sssvt/change";
-
-/** Lesson seralized to JSON */
-export interface LessonJSON {
-    bakalari: BakalariLessonJSON | null;
-    sssvt: LessonChangeJSON | null;
-}
+import { type AnyLessonChange, LessonChange } from "@/classes/sssvt/change";
+import type { LessonJSON } from "@/schemas";
 
 /* A merged lesson */
 class Lesson {
