@@ -1,15 +1,18 @@
 import { createRoute, z } from "@hono/zod-openapi";
 
-import { detailIdSchema, detailNotFoundErrorSchema, errorSchema, scheduleJSONSchema, weekSchema } from "@/schemas";
+import { Week } from "@/loader/bakalari";
+import { detailIdSchema, detailNotFoundErrorSchema, errorSchema, scheduleJSONSchema } from "@/schemas";
 
-const bakalariScheduleRoute = createRoute({
-    tags: ["Bakalari"],
-    description: 'Get a schedule for a Class, Teacher or Room detail. Note that each lesson\'s "sssvt" property will always be null.',
+const mergedScheduleRoute = createRoute({
+    tags: ["Merged"],
+    description: "Get a schedule for a class and merge it with a SSSVT substitution schedule.",
     method: "get",
     path: "/{week}/{id}",
     request: {
         params: z.object({
-            week: weekSchema,
+            week: z
+                .enum([Week.Current, Week.Next])
+                .openapi({ description: "The week to get the schedule for. Permanent schedules are forbidden." }),
             id: detailIdSchema
         })
     },
@@ -20,7 +23,7 @@ const bakalariScheduleRoute = createRoute({
                     schema: z.array(scheduleJSONSchema).openapi({ title: "Schedule array" })
                 }
             },
-            description: "Schedule for the given id"
+            description: "Merged class schedule for the given id"
         },
         400: {
             content: {
@@ -31,7 +34,7 @@ const bakalariScheduleRoute = createRoute({
                     })
                 }
             },
-            description: "Invalid week or schedule type"
+            description: "Invalid week or detail type"
         },
         404: {
             content: {
@@ -39,9 +42,9 @@ const bakalariScheduleRoute = createRoute({
                     schema: detailNotFoundErrorSchema
                 }
             },
-            description: "Detail for id not found"
+            description: "Detail not found"
         }
     }
 });
 
-export default bakalariScheduleRoute;
+export default mergedScheduleRoute;

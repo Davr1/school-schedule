@@ -3,7 +3,7 @@ import { HTTPException } from "hono/http-exception";
 
 import bakalariScheduleRoute from "@/api/bakalari/route";
 import type { ApiContext } from "@/api/context";
-import fetchBakalari, { Week } from "@/loader/bakalari";
+import fetchBakalari from "@/loader/bakalari";
 import type { ScheduleJSON } from "@/schemas";
 
 const BakalariEndpoints = ({ details, bakalariParser }: ApiContext) =>
@@ -18,7 +18,7 @@ const BakalariEndpoints = ({ details, bakalariParser }: ApiContext) =>
         // Fetch the schedule from the schedule loader
         let html: string;
         try {
-            html = (await fetchBakalari(week as Week, detail)).html;
+            html = (await fetchBakalari(week, detail)).html;
         } catch (e) {
             // If the error is a TypeError, it means that the input was invalid
             if (e instanceof TypeError) throw new HTTPException(400, { message: e.message });

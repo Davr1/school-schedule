@@ -80,4 +80,6 @@ export const absenceLessonJSONSchema = z
         }
     });
 
-export const anyBakalariLessonJSONSchema = z.union([normalLessonJSONSchema, removedLessonJSONSchema, absenceLessonJSONSchema]);
+export const anyBakalariLessonJSONSchema = z
+    .union([normalLessonJSONSchema, removedLessonJSONSchema, absenceLessonJSONSchema])
+    .openapi({ title: "AnyBakalariLesson" });

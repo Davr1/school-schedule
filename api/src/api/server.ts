@@ -10,11 +10,11 @@ const server = new OpenAPIHono({ strict: false })
     .use("*", logger())
     .use("*", prettyJSON())
 
-    // Add the api endpoints
-    .route("/api", api)
-
     // Add the swagger UI
-    .use("/api/docs", swaggerUI({ url: "/api/openapi" }));
+    .use("/api/docs", swaggerUI({ url: "/api/openapi" }))
+
+    // Add the api endpoints
+    .route("/api", api);
 
 // Log the available routes
 server.showRoutes();

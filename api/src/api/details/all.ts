@@ -11,7 +11,7 @@ const allDetailsRoute = createRoute({
         200: {
             content: {
                 "application/json": {
-                    schema: z.array(anyDetailJSONSchema)
+                    schema: z.array(anyDetailJSONSchema).openapi({ title: "Detail array" })
                 }
             },
             description: "A list of all details"

@@ -6,6 +6,8 @@ import { HTTPException } from "hono/http-exception";
 import BakalariEndpoints from "@/api/bakalari";
 import context from "@/api/context";
 import DetailsEndpoints from "@/api/details";
+import MergedEndpoints from "@/api/merge";
+import SSSVTEndpoints from "@/api/sssvt";
 
 import { version } from "../../package.json";
 
@@ -26,8 +28,14 @@ const api = new OpenAPIHono()
     // Details endpoints
     .route("/details", DetailsEndpoints(context))
 
-    // Bakalari endpoints
+    // Bakalari endpoint
     .route("/bakalari", BakalariEndpoints(context))
+
+    // SSSVT endpoint
+    .route("/sssvt", SSSVTEndpoints(context))
+
+    // Merged endpoint
+    .route("/merged", MergedEndpoints(context))
 
     // 404 handler
     .use("*", async (c) => c.json({ error: "Not found" }, 404))

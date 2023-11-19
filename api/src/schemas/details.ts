@@ -16,7 +16,7 @@ export const detailIdSchema = z.string().openapi({
 
 export const detailJSONSchema = z
     .object({
-        type: z.union([z.literal(DetailType.Class), z.literal(DetailType.Room), z.literal(DetailType.Subject)]),
+        type: z.enum([DetailType.Class, DetailType.Room, DetailType.Subject]),
         id: detailIdSchema,
         name: z.string().nullish()
     })
@@ -44,4 +44,4 @@ export const teacherDetailJSONSchema = z
 
 export const anyDetailJSONSchema = z
     .union([detailJSONSchema, teacherDetailJSONSchema])
-    .openapi({ description: "Any detail - a class, subject, room or teacher." });
+    .openapi({ title: "AnyDetail", description: "Any detail - a class, subject, room or teacher." });

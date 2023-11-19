@@ -1,6 +1,6 @@
 import { createRoute, z } from "@hono/zod-openapi";
 
-import { anyDetailJSONSchema, detailIdSchema, errorSchema } from "@/schemas";
+import { anyDetailJSONSchema, detailIdSchema, detailNotFoundErrorSchema } from "@/schemas";
 
 const detailByIdRoute = createRoute({
     tags: ["Details"],
@@ -24,7 +24,7 @@ const detailByIdRoute = createRoute({
         404: {
             content: {
                 "application/json": {
-                    schema: errorSchema.extend({ error: z.literal("Detail not found") })
+                    schema: detailNotFoundErrorSchema
                 }
             },
             description: "Detail not found"

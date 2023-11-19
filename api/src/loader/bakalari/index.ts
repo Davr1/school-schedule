@@ -23,10 +23,7 @@ export interface FetchBakalariResponse {
 async function fetchBakalari(week: Week, detail: Detail, sessionId?: string): Promise<FetchBakalariResponse> {
     // Throw an error if the detail type is not supported
     if (![DetailType.Class, DetailType.Teacher, DetailType.Room].includes(detail.type))
-        throw new TypeError(`Unsupported detail type: ${detail.type}`);
-
-    // Validate the week
-    if (![Week.Permanent, Week.Current, Week.Next].includes(week)) throw new TypeError(`Unsupported week: ${week}`);
+        throw new TypeError(`Unsupported schedule type: ${detail.type}`);
 
     const url = `https://is.sssvt.cz/IS/Timetable/Public/${week}/${detail.type}/${detail.id}`;
     const res = await fetch(url, {
