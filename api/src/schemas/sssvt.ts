@@ -44,7 +44,9 @@ export const lessonCancellationJSONSchema = lesssonChangeJSONSchema
         example: { group: null, type: LessonChangeType.Cancellation }
     });
 
-export const anyLessonChangeJSONSchema = z.union([lessonSubstitutionJSONSchema, lessonCancellationJSONSchema]);
+export const anyLessonChangeJSONSchema = z
+    .union([lessonSubstitutionJSONSchema, lessonCancellationJSONSchema])
+    .openapi({ title: "AnyLessonChange" });
 
 export const sssvtJSONSchema = z
     .object({
