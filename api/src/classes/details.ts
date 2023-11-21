@@ -67,6 +67,15 @@ export class DetailHandler {
     }
 
     /**
+     * Get all details of a given type.
+     * @param type Detail type.
+     * @returns Details of the given type.
+     */
+    getOfType<T extends Detail = Detail>(type: DetailType): T[] {
+        return this._details.filter((detail) => detail.type === type) as T[];
+    }
+
+    /**
      * Get a detail by its id.
      * @param id Detail id.
      * @param defaultDetail A default detail (or callback) to add and return if the detail doesn't exist.

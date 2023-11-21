@@ -6,7 +6,7 @@ const detailByIdRoute = createRoute({
     tags: ["Details"],
     description: "Get a detail by its id",
     method: "get",
-    path: "/{id}",
+    path: "/id/{id}",
     request: {
         params: z.object({
             id: detailIdSchema

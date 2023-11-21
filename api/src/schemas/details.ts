@@ -9,6 +9,11 @@ export type TeacherDetailJSON = z.infer<typeof teacherDetailJSONSchema>;
 export type AnyDetailJSON = DetailJSON | TeacherDetailJSON;
 
 // Zod schemas
+export const detailTypeSchema = z.nativeEnum(DetailType).openapi("DetailType", {
+    title: "DetailType",
+    description: "The type of the detail"
+});
+
 export const detailIdSchema = z.string().openapi({
     description: "The id of the detail",
     example: "UE"
