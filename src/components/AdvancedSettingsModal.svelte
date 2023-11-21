@@ -1,16 +1,11 @@
 <script lang="ts">
     import { config } from "$stores/config";
-    import Close from "@material-design-icons/svg/filled/close.svg?component";
 
-    import { addRipple } from "$lib/ripple";
-
-    import UwU from "$assets/uwu.svg?component";
-
+    import CacheButton from "$components/CacheButton.svelte";
+    import Switch from "$components/Controls/Switch.svelte";
     import Modal from "$components/Modal.svelte";
-    import Switch from "$components/Switch.svelte";
     import ThemeEditor from "$components/ThemeEditor.svelte";
 
-    import controlStyles from "$styles/modules/Controls.module.scss";
     import modalStyles from "$styles/modules/Modal.module.scss";
     import styles from "$styles/modules/Settings.module.scss";
 
@@ -19,13 +14,7 @@
 </script>
 
 <Modal bind:visible scrollable>
-    <div class={modalStyles.title}>
-        <h1>Advanced settings</h1>
-
-        <button class={`${controlStyles.button} big`} on:click={() => (visible = false)} use:addRipple>
-            <Close />
-        </button>
-    </div>
+    <h1>Advanced settings</h1>
 
     <div class={styles.optionRow}>Use the school's website for substitutions <Switch bind:value={$config.useWeb} /></div>
     <p>
@@ -40,10 +29,14 @@
         <span>Merges adjacent groups and subjects to reduce screen clutter.</span>
     </p>
     <div class={styles.optionRow}>
-        <span><UwU height="1em" style="vertical-align: sub;" /> loading screen</span>
+        <span>Loading screen</span>
         <Switch bind:value={$config.loadscreen} />
     </div>
-    <p><span>What's this?</span></p>
 
-    <ThemeEditor {visible} />
+    <CacheButton class={modalStyles.button} />
+
+    <!-- This is here to reset the primary / secondary selection on every open -->
+    {#key visible}
+        <ThemeEditor />
+    {/key}
 </Modal>

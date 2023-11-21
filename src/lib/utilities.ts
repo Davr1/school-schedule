@@ -1,8 +1,8 @@
 import { fetchWebSchedule } from "$lib/data";
 import { EmptySubject, StandardSubject } from "$lib/subject";
 
-import type { Value } from "$stores/config";
-import { scheduleMetadata } from "$stores/static";
+import { type ClassValue, possibleValues, type RoomValue, type ScheduleParams, type UncheckedParams, type WeekMode } from "$stores/config";
+import { scheduleMetadata, weekModes } from "$stores/static";
 
 // TODO: Remove this
 function createElement(el: any) {
@@ -94,7 +94,7 @@ export async function getWebSchedule(date: Date) {
                     subject.push(
                         new StandardSubject({
                             room: cell.$("[href*='/room/']")?.text,
-                            groups: [group],
+                            groups: group.split(",").map((s: string) => s.trim()),
                             abbreviation: cell.$("strong")?.text,
                             teacher: { name: "", abbreviation: cell.$("[href*='/teacher/']")?.text },
                             change: true
@@ -119,7 +119,7 @@ export async function getWebSchedule(date: Date) {
                     subject.push(
                         new StandardSubject({
                             room: alternativeGroup.$("[href*='/room/']")?.text,
-                            groups: [group2],
+                            groups: group2.split(",").map((s: string) => s.trim()),
                             abbreviation: alternativeGroup.$("strong")?.text,
                             teacher: { name: "", abbreviation: alternativeGroup.$("[href*='/teacher/']")?.text },
                             change: true
@@ -166,12 +166,23 @@ export function getPosition(element: HTMLElement) {
     };
 }
 
-export function isValidMetadata(value: string): value is Value {
-    return (
-        scheduleMetadata.classes.find((classMetadata) => classMetadata.name === value) !== undefined ||
-        scheduleMetadata.rooms.find((roomMetadata) => roomMetadata.name === value) !== undefined ||
-        scheduleMetadata.teachers.find((teacherMetadata) => teacherMetadata.name === value || teacherMetadata.abbr === value) !== undefined
-    );
+export function isValidMetadata(params: UncheckedParams): params is ScheduleParams {
+    if (!params.weekMode || !weekModes.includes(params.weekMode as WeekMode)) return false;
+    if (!params.value) return false;
+
+    switch (params.scheduleMode) {
+        case "Class":
+            return possibleValues.Class.includes(params.value as ClassValue);
+        case "Teacher":
+            return (
+                scheduleMetadata.teachers.find(
+                    (teacherMetadata) => teacherMetadata.name === params.value || teacherMetadata.abbr === params.value
+                ) !== undefined
+            );
+        case "Room":
+            return possibleValues.Room.includes(params.value as RoomValue);
+    }
+    return false;
 }
 
 export function isMergable(a: StandardSubject, b: StandardSubject, ignoreGroups: boolean = false): boolean {

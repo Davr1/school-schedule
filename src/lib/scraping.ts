@@ -13,9 +13,9 @@ export interface BakalariDay {
 
 export type BakalariSchedule = BakalariDay[];
 
-export async function getBakaSchedule(params: ScheduleParams): Promise<BakalariSchedule> {
+export async function getBakaSchedule(params: ScheduleParams, cache?: boolean): Promise<BakalariSchedule> {
     const newParams = toBakaParams(params);
-    const response = await fetchBaka(newParams);
+    const response = await fetchBaka(newParams, cache);
 
     const $ = load(response);
 
@@ -64,7 +64,7 @@ export async function getBakaSchedule(params: ScheduleParams): Promise<BakalariS
                                     abbreviation: $(group).find(".middle")?.text(),
                                     teacher: { name: detail.teacher, abbreviation: $(group).find(".bottom>span")?.text() ?? "" },
                                     room: detail.room,
-                                    groups: [detail.group],
+                                    groups: detail.group.split(",").map((s: string) => s.trim()),
                                     theme: detail.theme,
                                     change: $(group).hasClass("pink")
                                 });

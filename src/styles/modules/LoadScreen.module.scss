@@ -11,4 +11,24 @@
     background: var(--app-background);
 
     z-index: 3;
+
+    &.hidden {
+        display: none;
+    }
+}
+
+:local(.button) {
+    position: absolute;
+
+    bottom: 0;
+
+    margin: 1rem auto;
+
+    animation: loadscreen-cache-button 0.25s ease-in-out;
+
+    @keyframes loadscreen-cache-button {
+        from {
+            opacity: 0;
+        }
+    }
 }

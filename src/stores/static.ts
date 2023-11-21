@@ -124,7 +124,7 @@ export function toBakaParams(params: ScheduleParams): BakalariParams {
 
 // TODO: Remove and use enums instead
 export const weekModes = ["Permanent", "Current", "Next"] as const;
-export const sheduleModes = ["Class", "Teacher", "Room"] as const;
+export const scheduleModes = ["Class", "Teacher", "Room"] as const;
 
 export const hours = {
     offsets: [

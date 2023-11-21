@@ -1,20 +1,20 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
 
+    import { browser } from "$app/environment";
     import { getBakaSchedule, type BakalariSchedule } from "$lib/scraping";
     import { StandardSubject, Subject } from "$lib/subject";
     import { getWebSchedule, isMergable, joinText, parseGroup } from "$lib/utilities";
 
     import { config, scheduleParams, type ScheduleParams } from "$stores/config";
-    import { fetchCount, fetchQueue } from "$stores/main";
+    import { cache, fetchCount, fetchQueue } from "$stores/main";
     import { hours, scheduleMetadata } from "$stores/static";
 
     import GridCell from "$components/GridCell.svelte";
 
     import styles from "$styles/modules/Schedule.module.scss";
-    import { browser } from "$app/environment";
 
-    const dispatch = createEventDispatcher<{ loadingFinished: null }>();
+    const dispatch = createEventDispatcher<{ state: "fetching" | "rendered" | "finished" }>();
 
     let scheduleData: BakalariSchedule = [];
 
@@ -35,17 +35,19 @@
         let localFetchQueue = $fetchQueue;
 
         fetchProcess: {
+            dispatch("state", "fetching");
             // Show the next week if it's Saturday (or Sunday) and the user has enabled the option
             if ($scheduleParams.weekMode === "Current" && $config.saturdayOverride && (today === 0 || today === 6)) {
                 schedule.weekMode = "Next";
             }
 
-            scheduleData = await getBakaSchedule(schedule);
-            dispatch("loadingFinished");
+            scheduleData = await getBakaSchedule(schedule, $cache);
+            dispatch("state", "rendered");
             if (localFetchQueue !== $fetchQueue) break fetchProcess;
             fetchCount.update((v) => (v += 1));
 
-            if ($scheduleParams.weekMode === "Permanent" || $scheduleParams.scheduleMode !== "Class" || $config.useWeb === false) return;
+            if ($scheduleParams.weekMode === "Permanent" || $scheduleParams.scheduleMode !== "Class" || $config.useWeb === false)
+                break fetchProcess;
 
             let alternativeSchedule: ReturnType<typeof getWebSchedule>[] = [];
 
@@ -85,7 +87,7 @@
                                 theme = "";
                             }
 
-                            let teacher = s.teacher || foundSubject.teacher;
+                            let teacher = foundSubject.teacher || s.teacher;
                             if (foundSubject.teacher.abbreviation !== s.teacher.abbreviation) {
                                 let teacherName =
                                     scheduleMetadata.teachers.find((o) => o.abbr === s.teacher.abbreviation)?.name ??
@@ -114,6 +116,7 @@
                 scheduleData = scheduleData;
             }
         }
+        dispatch("state", "finished");
     }
 
     type Grid = GridRow[];
@@ -143,7 +146,7 @@
                         // odd groups are placed on the top, even groups on the bottom. If there are two groups per cell, order them by group number
                         let half = 0;
                         let height = 2;
-                        if (group.isStandard()) {
+                        if (group.isStandard() && group.groups.length === 1) {
                             const groupN = parseGroup(group.groups[0]);
                             half = (subject.length === 1 && ((groupN || 1) + 1) % 2) || k;
                             if (subject.length > 1 || groupN) height = 1;
@@ -232,7 +235,10 @@
                 {#each day.subjects as cell, j}
                     {#if cell.length > 0}
                         {#each cell as subject (subject.id)}
-                            <GridCell {...subject} on:modalOpen />
+                            <!-- Omit id from the subject before passing it to the GridCell component to avoid a warning -->
+                            {@const { id, ...cell } = subject}
+
+                            <GridCell {...cell} on:modalOpen />
                         {/each}
                     {:else}
                         <div class={styles.cell} style={`--row: ${i * 2}; --column: ${j}; --width: 1; --height: 2;`}></div>

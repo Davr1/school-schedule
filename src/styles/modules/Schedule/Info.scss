@@ -28,10 +28,7 @@
     text-decoration-line: underline;
     text-decoration-thickness: 2px;
 
-    cursor: pointer;
+    white-space: nowrap;
 
-    // Spacing between links
-    & + & {
-        margin-left: 0.5rem;
-    }
+    cursor: pointer;
 }

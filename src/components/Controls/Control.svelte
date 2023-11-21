@@ -20,18 +20,10 @@
      */
     export let name: string;
 
-    /**
-     * Should this control be selected by default
-     */
-    export let selected = false;
-
     const value = getContext<Writable<string>>(controlValueKey);
 
     // If the context is not set then throw an error as this control is not a child of a control group
     if (!value) throw new Error("Control must be a child of a control group");
-
-    // If this control is selected by default then set the value to the name
-    if (selected) $value = name;
 </script>
 
 <button class={styles.control} class:active={$value === name} on:click={() => ($value = name)} use:addRipple>

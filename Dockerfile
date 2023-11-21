@@ -1,5 +1,4 @@
 # Use Node 20 
-# This is used for both the builder and the runner
 FROM node:20-slim as base
 
 # pnpm setup ig
@@ -7,6 +6,11 @@ ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 
 RUN corepack enable
+
+# Install chromium
+RUN apt-get update && apt-get install -yq chromium
+ENV PUPPETEER_EXECUTABLE_PATH /usr/bin/chromium
+ENV PUPPETEER_SKIP_DOWNLOAD true
 
 # Set the working directory to /app
 WORKDIR /app
@@ -21,7 +25,7 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-l
 
 # The builder
 # This install all packages and builds the app using vite
-FROM base as builder
+FROM prod-deps as builder
 
 # Install all dependencies
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
@@ -47,7 +51,7 @@ RUN pnpm build
 # This starts the node server using the app we built in the builder
 FROM base as runner
 
-# Get the production dependencies (idk why it's not installed here, just following pnpm docs)
+# Get the production dependencies
 COPY --from=prod-deps /app/node_modules /app/node_modules
 
 # Copy the built app from the builder

@@ -58,7 +58,13 @@
 
         <div class={styles.content} {title}>
             <div class="top">
-                <div class="left">{joinText(" + ", ...subject.groups)}</div>
+                <div class="left">
+                    {#if subject.groups.length > 4}
+                        {subject.groups.length} skupin
+                    {:else}
+                        {joinText(" + ", ...subject.groups)}
+                    {/if}
+                </div>
                 {#if $scheduleParams.scheduleMode !== "Room"}<div class="right">{subject.room}</div>{/if}
             </div>
             <div class="middle">{subject.abbreviation}</div>
