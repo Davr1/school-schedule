@@ -12,6 +12,7 @@
         "^\\$components/(.+)$",
         "^\\$styles/(.+)$",
         "^\\$(.+)/(.+)$",
+        "^@/(.+)$",
         "^\\.{1,2}/(.+)$"
     ],
     "importOrderSeparation": true,

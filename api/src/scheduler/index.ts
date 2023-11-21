@@ -1,8 +1,9 @@
-import fetchAllClasses from "@/fetch/allClasses";
-import { Week } from "@/fetch/bakalari";
-import log from "@/log";
-import save from "@/save";
 import { Cron } from "croner";
+
+import { Week } from "@/loader/bakalari";
+import fetchAllClasses from "@/loader/bakalari/allClasses";
+import log from "@/log";
+import save from "@/scheduler/save";
 
 /**
  * Schedule download of all classes from Bakalari at ~11:30 every day.
@@ -32,6 +33,11 @@ async function scheduleAllClasses() {
         }
     });
 
+    // If the file is run directly and the env variable "NOW" is set to true, run the task immediately.
+    if (import.meta.main && process.env.NOW === "true") {
+        await task.trigger();
+    }
+
     // Log the next run time
     log(`Next run time for task "AllClasses": ${task.nextRun()?.toLocaleString()}`);
 }
@@ -39,4 +45,4 @@ async function scheduleAllClasses() {
 export default scheduleAllClasses;
 
 // If this file was run directly, schedule the task.
-if (import.meta.main) scheduleAllClasses();
+if (import.meta.main) void scheduleAllClasses();

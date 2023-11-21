@@ -1,22 +1,5 @@
-import fetchBakalari, { type FetchBakalariResponse, ScheduleType, Week } from "@/fetch/bakalari";
-
-/**
- * All the classes to fetch.
- */
-const classes = [
-    "UK", // P1.A
-    "UL", // P1.B
-    "UM", // T1.C
-    "UG", // P2.A
-    "UI", // P2.B
-    "UJ", // T2.C
-    "UD", // P3.A
-    "UE", // P3.B
-    "UF", // T3.C
-    "UA", // P4.A
-    "UB", // P4.B
-    "UC" // T4.C
-];
+import fetchBakalari, { type FetchBakalariResponse, Week } from "@/loader/bakalari";
+import { classes } from "@/static";
 
 interface FetchAllClassesResponse {
     [key: string]: FetchBakalariResponse;
@@ -35,15 +18,14 @@ async function fetchAllClasses(week: Week, sessionId?: string): Promise<FetchAll
     let lastSessionId = sessionId;
 
     // Randomize the order of classes.
-    const shuffled = new Array(...classes).sort(() => Math.random() - 0.5);
+    const shuffled = Array.from(classes).sort(() => Math.random() - 0.5);
 
     // Fetch all the schedules.
     const schedules: FetchAllClassesResponse = {};
-
-    for (const classId of shuffled) {
+    for (const detail of shuffled) {
         // Fetch the schedule and add it to the object.
-        const res = await fetchBakalari(week, ScheduleType.Class, classId, lastSessionId);
-        schedules[classId] = res;
+        const res = await fetchBakalari(week, detail, lastSessionId);
+        schedules[detail.id] = res;
 
         // Update the session ID.
         lastSessionId = res.sessionId;

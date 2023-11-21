@@ -5,6 +5,10 @@ import { defineConfig } from "vite";
 
 // https://vitejs.dev/config/
 export default defineConfig({
+    optimizeDeps: {
+        // Disable dependency optimization for workspace packages
+        exclude: ["@school-schedule/api"]
+    },
     server: {
         // In dev mode, by default, the proxy and cache of the production server will be used.
         // Can be disabled by setting the environment variable LOCAL_PROXY to true
@@ -45,7 +49,8 @@ export default defineConfig({
             $components: "/src/components",
             $stores: "/src/stores",
             $styles: "/src/styles",
-            $assets: "/src/assets"
+            $assets: "/src/assets",
+            "@/": "@school-schedule/api/src/"
         }
     },
     css: {

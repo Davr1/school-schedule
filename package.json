@@ -31,6 +31,7 @@
     "dependencies": {
         "@fontsource/inter": "^5.0.15",
         "@material-design-icons/svg": "^0.14.13",
+        "@school-schedule/api": "workspace:*",
         "autoprefixer": "^10.4.16",
         "axios": "^1.6.1",
         "bson": "^5.5.1",

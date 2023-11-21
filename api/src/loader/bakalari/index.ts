@@ -1,13 +1,7 @@
-import headers from "@/headers";
-import log from "@/log";
+import { type Detail, DetailType } from "@/classes";
+import headers from "@/loader/headers";
 
-export const enum ScheduleType {
-    Class = "Class",
-    Teacher = "Teacher",
-    Room = "Room"
-}
-
-export const enum Week {
+export enum Week {
     Permanent = "Permanent",
     Current = "Actual",
     Next = "Next"
@@ -22,26 +16,23 @@ export interface FetchBakalariResponse {
 /**
  * Fetch the public schedule from Bakalari.
  * @param week Week (Permanent, Actual, Next)
- * @param type Type (Class, Teacher, Room)
- * @param value Value of the schedule type (room, class or teacher id)
+ * @param detail The detail to fetch the schedule for
  * @param sessionId The session ID to use (i'm not sure if this is needed, but a real browser sends this on subsequent requests)
  * @returns The html of the schedule and the response object
  */
-async function fetchBakalari(week: Week, type: ScheduleType, value: string, sessionId?: string): Promise<FetchBakalariResponse> {
-    log(`Fetching ${type} ${value} for week ${week} with session Id: ${sessionId ?? "none"}`);
+async function fetchBakalari(week: Week, detail: Detail, sessionId?: string): Promise<FetchBakalariResponse> {
+    // Throw an error if the detail type is not supported
+    if (![DetailType.Class, DetailType.Teacher, DetailType.Room].includes(detail.type))
+        throw new TypeError(`Unsupported schedule type: ${detail.type}`);
 
-    // Cookies to send, will be empty if no session ID is provided
-    const cookies: string[] = [];
-    if (sessionId) cookies.push(`ASP.NET_SessionId=${sessionId}`);
-
-    const url = `https://is.sssvt.cz/IS/Timetable/Public/${week}/${type}/${value}`;
+    const url = `https://is.sssvt.cz/IS/Timetable/Public/${week}/${detail.type}/${detail.id}`;
     const res = await fetch(url, {
         headers: {
             // Firefox headers
             ...headers,
 
             // If there are cookies, send them
-            ...(cookies.length > 0 ? { Cookie: cookies.join("; ") } : {})
+            ...(sessionId ? { Cookie: "ASP.NET_SessionId=" + sessionId } : undefined)
         }
     });
 

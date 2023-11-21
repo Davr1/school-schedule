@@ -1,5 +1,6 @@
-import log from "@/log";
 import { mkdir } from "node:fs/promises";
+
+import log from "@/log";
 
 /**
  * Save the request to a cache
