@@ -4,8 +4,7 @@ export const errorSchema = z.object({
     error: z.string()
 });
 
-export const detailNotFoundErrorSchema = errorSchema
-    .extend({
-        error: z.literal("Detail not found")
-    })
-    .openapi({ title: '"Detail not found" Error' });
+export const detailNotFoundErrorSchema = errorSchema.openapi({
+    title: '"Detail not found" Error',
+    example: { error: "Detail with for parameter {param} with value {value} was not found" }
+});

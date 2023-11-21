@@ -14,8 +14,7 @@ const MergedEndpoints = ({ details, bakalariParser, sssvtParser }: ApiContext) =
         const { week, id } = c.req.valid("param");
 
         // Find the id in the details
-        const detail = details.get(id);
-        if (!detail) throw new HTTPException(404, { message: "Detail not found" });
+        const detail = details.getOne(id);
         if (detail.type !== DetailType.Class) throw new HTTPException(400, { message: "Unsupported schedule type" });
         if (detail.name === null) throw new HTTPException(500, { message: "Invalid class" });
 

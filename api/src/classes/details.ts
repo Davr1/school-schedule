@@ -11,6 +11,13 @@ export enum DetailType {
 /** Any detail instance */
 export type AnyDetail = Detail | TeacherDetail;
 
+/** An error thrown when a detail is not found */
+class DetailNotFoundError extends TypeError {
+    constructor(param: string, value: string) {
+        super(`Detail with for parameter ${param} with value ${value} was not found`);
+    }
+}
+
 export class Detail {
     constructor(
         readonly type: DetailType,
@@ -20,7 +27,7 @@ export class Detail {
 
     /** Return the id of the detail when converted to a string */
     toString() {
-        return this.id.toString();
+        return this.id;
     }
 
     /** Deserialize the detail from JSON */
@@ -76,6 +83,20 @@ export class DetailHandler {
         return detail as T;
     }
 
+    /** Get exactly one detail by its id. Throws an error if not found. */
+    getOne<T extends Detail = Detail>(id: string): T {
+        const detail = this.get<T>(id);
+
+        if (!detail) throw new DetailNotFoundError("id", id);
+        return detail;
+    }
+
+    /**
+     * Get a detail by its name.
+     * @param name The name to search for.
+     * @param defaultDetail A default detail (or callback) to add and return if the detail doesn't exist.
+     * @returns Detail with the given name or `undefined` if not found.
+     */
     getByName<T extends Detail = Detail>(name: string): T | undefined;
     getByName<T extends Detail = Detail>(name: string, defaultDetail: T | (() => T)): T;
     getByName<T extends Detail = Detail>(name: string, defaultDetail?: T | (() => T)): T | undefined {
@@ -85,6 +106,14 @@ export class DetailHandler {
         if (!detail && defaultDetail) detail = this.addDefaultDetail(defaultDetail);
 
         return detail as T;
+    }
+
+    /** Get exactly one detail by its name. Throws an error if not found. */
+    getOneByName<T extends Detail = Detail>(name: string): T {
+        const detail = this.getByName<T>(name);
+
+        if (!detail) throw new DetailNotFoundError("name", name);
+        return detail;
     }
 
     /**
@@ -110,6 +139,14 @@ export class DetailHandler {
         if (!detail && defaultDetail) detail = this.addDefaultDetail(defaultDetail);
 
         return detail as T;
+    }
+
+    /** Get exactly one detail by its abbreviation. Throws an error if not found. */
+    getOneByAbbreviation<T extends Detail = Detail>(abbreviation: string): T {
+        const detail = this.getByAbbreviation<T>(abbreviation);
+
+        if (!detail) throw new DetailNotFoundError("abbreviation", abbreviation);
+        return detail;
     }
 
     /**

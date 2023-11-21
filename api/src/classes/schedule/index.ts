@@ -37,8 +37,7 @@ class Schedule {
     /** Deserialize the schedule from JSON */
     static fromJSON(json: ScheduleJSON, handler: DetailHandler) {
         // Find the detail by id
-        const detail = handler.get(json.detail);
-        if (!detail) throw new Error("Detail not found");
+        const detail = handler.getOne(json.detail);
 
         // Parse the date
         const date = typeof json.date === "string" ? new Date(json.date) : json.date;

@@ -82,14 +82,9 @@ export class LessonSubstitution extends LessonChange {
     /** Deserialize the lesson from JSON */
     static fromJSON(json: LessonSubstitutionJSON, handler: DetailHandler): LessonSubstitution {
         // Get the details
-        const subject = json.subject ? handler.get(json.subject) : null;
-        const teacher = json.teacher ? handler.get<TeacherDetail>(json.teacher) : null;
-        const room = handler.get(json.room);
-
-        // Check if the details exist
-        if (subject === undefined) throw new Error(`Subject with id ${json.subject} not found`);
-        if (teacher === undefined) throw new Error(`Teacher with id ${json.teacher} not found`);
-        if (room === undefined) throw new Error(`Room with id ${json.room} not found`);
+        const subject = json.subject ? handler.getOne(json.subject) : null;
+        const teacher = json.teacher ? handler.getOne<TeacherDetail>(json.teacher) : null;
+        const room = handler.getOne(json.room);
 
         return new LessonSubstitution(json.group ?? null, subject, teacher, room);
     }

@@ -12,8 +12,7 @@ const BakalariEndpoints = ({ details, bakalariParser }: ApiContext) =>
         const { week, id } = c.req.valid("param");
 
         // Find the id in the details
-        const detail = details.get(id);
-        if (!detail) throw new HTTPException(404, { message: "Detail not found" });
+        const detail = details.getOne(id);
 
         // Fetch the schedule from the schedule loader
         let html: string;

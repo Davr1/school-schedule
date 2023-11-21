@@ -104,21 +104,15 @@ export class NormalLesson extends BakalariLesson {
 
     static fromJSON(json: NormalLessonJSON, handler: DetailHandler) {
         // Get the details
-        const subject = handler.get(json.subject);
-        const teacher = json.teacher ? handler.get<TeacherDetail>(json.teacher) : null;
-        const room = handler.get(json.room);
+        const subject = handler.getOne(json.subject);
+        const teacher = json.teacher ? handler.getOne<TeacherDetail>(json.teacher) : null;
+        const room = handler.getOne(json.room);
 
         const groups = json.groups.map((group) => {
-            const detail = group.class ? handler.get(group.class) : null;
-            if (detail === undefined) throw new Error(`Class with id ${group.class} not found`);
+            const detail = group.class ? handler.getOne(group.class) : null;
 
             return { number: group.number ?? null, class: detail };
         });
-
-        // Check if the details exist
-        if (!subject) throw new Error(`Subject with id ${json.subject} not found`);
-        if (teacher === undefined) throw new Error(`Teacher with id ${json.teacher} not found`);
-        if (room === undefined) throw new Error(`Room with id ${json.room} not found`);
 
         return new NormalLesson(subject, teacher, room, groups, json.topic, json.change);
     }

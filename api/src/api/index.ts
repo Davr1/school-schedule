@@ -49,6 +49,9 @@ const api = new OpenAPIHono()
 
             // Otherwise, send the error message as json
             return c.json({ error: err.message }, err.status);
+        } else if (err instanceof TypeError) {
+            // If the error is a TypeError, send a 400 error
+            return c.json({ error: err.message }, 400);
         }
 
         // If the error is not an HTTPException, send a 500 error

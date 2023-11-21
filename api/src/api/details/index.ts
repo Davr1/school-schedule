@@ -1,5 +1,4 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
-import { HTTPException } from "hono/http-exception";
 
 import type { ApiContext } from "@/api/context";
 import detailByAbbreviationRoute from "@/api/details/abbreviation";
@@ -16,21 +15,18 @@ const DetailsEndpoints = ({ details }: ApiContext) =>
 
         // Get a specific detail by id
         .openapi(detailByIdRoute, async (c) => {
-            const detail = details.get(c.req.param("id"));
-            console.log(detail, c.req.param("id"));
+            const detail = details.getOne(c.req.param("id"));
 
             // Return the detail
-            if (detail) return c.jsonT<DetailJSON>(detail as DetailJSON);
-            throw new HTTPException(404, { message: "Detail not found" });
+            return c.jsonT<DetailJSON>(detail as DetailJSON);
         })
 
         // Get a specific detail by its abbreviation
         .openapi(detailByAbbreviationRoute, async (c) => {
-            const detail = details.getByAbbreviation(c.req.param("abbr"));
+            const detail = details.getOneByAbbreviation(c.req.param("abbr"));
 
             // Return the detail
-            if (detail) return c.jsonT<DetailJSON>(detail as DetailJSON);
-            throw new HTTPException(404, { message: "Detail not found" });
+            return c.jsonT<DetailJSON>(detail as DetailJSON);
         });
 
 export default DetailsEndpoints;

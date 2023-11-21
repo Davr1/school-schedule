@@ -15,8 +15,6 @@ async function fetchSSSVT(date: Date): Promise<string> {
         headers
     });
 
-    console.log(res);
-
     // Return the html and the response object
     return await res.text();
 }
