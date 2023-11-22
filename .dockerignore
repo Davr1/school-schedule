@@ -6,9 +6,10 @@
 # Node files
 node_modules/
 
-# Svelte files
+# Generated files
 .svelte-kit/
 build/
+dist/
 
 # Docker files
 docker/

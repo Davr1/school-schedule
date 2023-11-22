@@ -4,6 +4,7 @@ import { logger } from "hono/logger";
 import { prettyJSON } from "hono/pretty-json";
 
 import api from "@/api";
+import scheduleAllClasses from "@/scheduler";
 
 const server = new OpenAPIHono({ strict: false })
     // Log all requests
@@ -18,5 +19,7 @@ const server = new OpenAPIHono({ strict: false })
 
 // Log the available routes
 server.showRoutes();
+
+if (import.meta.main) scheduleAllClasses();
 
 export default server;
