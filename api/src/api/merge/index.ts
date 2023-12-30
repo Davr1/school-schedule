@@ -29,8 +29,8 @@ const MergedEndpoints = ({ details, bakalariParser, sssvtParser }: ApiContext) =
                 // Try to find the class in the SSSVT schedule
                 const sssvtClass = sssvt.classes[detail.name!];
 
-                // Merge the schedules
-                day.merge(sssvtClass);
+                // Merge the schedules (if the class was found)
+                if (sssvtClass) day.merge(sssvtClass);
             })
         );
 

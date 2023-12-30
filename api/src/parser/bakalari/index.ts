@@ -57,7 +57,8 @@ class BakalariParser {
         // Don't return anything if the text is empty (for permanent schedules)
         if (!text) return;
 
-        const [day, month] = text.split("/").map(Number);
+        let [day, month] = text.split("/").map(Number);
+        month -= 1; // Months in the text are 1-indexed, but Date uses 0-indexed months
 
         const now = new Date();
         const currentYear = now.getFullYear();
@@ -72,7 +73,7 @@ class BakalariParser {
         else year = currentYear;
 
         // Parse the date into a Date object
-        return new Date(Date.UTC(year, month - 1, day));
+        return new Date(Date.UTC(year, month, day));
     }
 
     /** Parse a full day event from the day row */

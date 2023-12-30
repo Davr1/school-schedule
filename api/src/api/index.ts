@@ -54,7 +54,8 @@ const api = new OpenAPIHono()
             return c.json({ error: err.message }, 400);
         }
 
-        // If the error is not an HTTPException, send a 500 error
+        // Log all other errors and send a 500 response
+        console.error(err);
         return c.json({ error: "Internal server error" }, 500);
     });
 

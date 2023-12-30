@@ -53,12 +53,15 @@ class SSSVTParser {
 
     /** Parse the date from a substitution schedule page */
     private date(dom: AnyNode[]): Date | undefined {
-        // The date can be found in the title of the link to today's schedule,
-        // which is the first <a> tag after the <strong> tag that shows the day
-        const dateNode = selectOne("#dny strong + a", dom);
+        const node = selectOne("#dny strong", dom);
+        const date = node && textContent(node).trim();
+        if (!date) return;
 
-        // Parse the "title" attribute as a Date object (it's in the format "YYYY-MM-DD", so it can be parsed as is)
-        if (dateNode && isTag(dateNode)) return new Date(dateNode.attribs.title);
+        // Parse the date from the text (it's in czech format)
+        const czechDate = date.split(" ")[1];
+        const [day, month, year] = czechDate.split(".").map(Number);
+
+        return new Date(Date.UTC(year, month - 1, day));
     }
 
     /** Parse data for the given period */
