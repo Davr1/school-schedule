@@ -33,9 +33,15 @@
     user-select: none;
     white-space: nowrap;
 
-    @include transitions.all((background-color, color, box-shadow), 150ms, ease-out);
+    @include transitions.all((background-color, color, box-shadow, outline-color), 150ms, ease-out);
 
     box-sizing: border-box;
+
+    outline: transparent solid 0.225rem;
+    outline-offset: 0.1rem;
+    &:focus-visible {
+        outline-color: var(--accent-primary);
+    }
 
     @media (pointer: fine) {
         &:hover {
