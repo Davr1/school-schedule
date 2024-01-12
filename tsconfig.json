@@ -2,23 +2,9 @@
     "extends": "./.svelte-kit/tsconfig.json",
     "compilerOptions": {
         "allowJs": true,
-        "baseUrl": ".",
         "checkJs": true,
         "esModuleInterop": true,
         "forceConsistentCasingInFileNames": true,
-        "noEmit": true, // Only typecheck, don't emit JS. Handled by SvelteKit.
-        "paths": {
-            "$lib": ["./src/lib"],
-            "$lib/*": ["./src/lib/*"],
-            "$components": ["./src/components"],
-            "$components/*": ["./src/components/*"],
-            "$stores": ["./src/stores"],
-            "$stores/*": ["./src/stores/*"],
-            "$styles": ["./src/styles"],
-            "$styles/*": ["./src/styles/*"],
-            "$assets": ["./src/assets"],
-            "$assets/*": ["./src/assets/*"]
-        },
         "resolveJsonModule": true,
         "skipLibCheck": true,
         "sourceMap": true,

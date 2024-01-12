@@ -45,13 +45,7 @@ export default defineConfig({
         })
     ],
     resolve: {
-        alias: {
-            $components: "/src/components",
-            $stores: "/src/stores",
-            $styles: "/src/styles",
-            $assets: "/src/assets",
-            "@/": "@school-schedule/api/src/"
-        }
+        alias: { "@/": "@school-schedule/api/src/" }
     },
     css: {
         modules: {

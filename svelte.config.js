@@ -1,6 +1,6 @@
 import adapter from "@sveltejs/adapter-node";
+import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 import { readFile } from "fs/promises";
-import sveltePreprocess from "svelte-preprocess";
 
 // Get the version number from package.json.
 const { version } = JSON.parse(await readFile(new URL("./package.json", import.meta.url)));
@@ -9,9 +9,16 @@ const { version } = JSON.parse(await readFile(new URL("./package.json", import.m
 const config = {
     kit: {
         adapter: adapter(),
-        version: { name: version }
+        version: { name: version },
+        alias: {
+            $components: "./src/components/",
+            $stores: "./src/stores/",
+            $styles: "./src/styles/",
+            $assets: "./src/assets/",
+        },
     },
-    preprocess: sveltePreprocess()
+
+    preprocess: vitePreprocess()
 };
 
 export default config;
