@@ -1,4 +1,6 @@
 <script lang="ts">
+    // todo: rewrite this entire file 💖
+
     import { createEventDispatcher } from "svelte";
 
     import { browser } from "$app/environment";
@@ -162,9 +164,12 @@
             // first merge subjects vertically in the same cell
             subjects.forEach((currentCell) => {
                 const [first, second] = currentCell;
+
                 if (!first?.subject.isStandard() || !second?.subject.isStandard()) return;
+
                 if (isMergable(first.subject, second.subject, true)) {
                     currentCell.pop();
+
                     first.height = 2;
                     first.subject = new StandardSubject({
                         ...first.subject,
@@ -181,22 +186,30 @@
             subjects.forEach((currentCell, i) => {
                 currentCell.forEach((groupCell) => {
                     const { subject } = groupCell;
+
                     if (!subject.isStandard()) return;
 
-                    let offset = 0;
-                    while (++offset + i < subjects.length) {
-                        const nextCell = subjects[i + offset];
+                    for (let offset = i + 1; offset < subjects.length; offset++) {
+                        const nextCell = subjects[offset];
+
                         let mergableGroupIdx = nextCell.findIndex(
                             (group) => group.subject.isStandard() && isMergable(group.subject, subject)
                         );
+
                         if (mergableGroupIdx === -1) break;
+
+                        // prevent overlaps
+                        if (nextCell.length === 2 && nextCell[0].height !== groupCell.height) break;
+
                         // remove duplicate subject
                         let mergableSubject = nextCell.splice(mergableGroupIdx, 1)[0].subject as StandardSubject;
                         groupCell.width++;
+
                         // prevent overlaps
                         if (nextCell.length === 1 && nextCell[0].row === groupCell.row) {
                             nextCell[0].row = groupCell.row % 2 ? groupCell.row - 1 : groupCell.row + 1;
                         }
+
                         groupCell.subject = new StandardSubject({
                             ...subject,
                             subject: subject.name,
