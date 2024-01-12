@@ -57,13 +57,13 @@ export class TeacherDetail extends Detail {
 }
 
 export class DetailHandler {
-    private _details: Detail[] = [];
+    #details: Detail[] = [];
 
     /**
      * All details in this handler.
      */
     get details(): Detail[] {
-        return [...this._details];
+        return [...this.#details];
     }
 
     /**
@@ -72,7 +72,7 @@ export class DetailHandler {
      * @returns Details of the given type.
      */
     getOfType<T extends Detail = Detail>(type: DetailType): T[] {
-        return this._details.filter((detail) => detail.type === type) as T[];
+        return this.#details.filter((detail) => detail.type === type) as T[];
     }
 
     /**
@@ -84,10 +84,10 @@ export class DetailHandler {
     get<T extends Detail = Detail>(id: string): T | undefined;
     get<T extends Detail = Detail>(id: string, defaultDetail: T | (() => T)): T;
     get<T extends Detail = Detail>(id: string, defaultDetail?: T | (() => T)): T | undefined {
-        let detail = this._details.find((detail) => detail.id === id);
+        let detail = this.#details.find((detail) => detail.id === id);
 
         // If the detail doesn't exist, add the default detail
-        if (!detail && defaultDetail) detail = this.addDefaultDetail(defaultDetail);
+        if (!detail && defaultDetail) detail = this.#addDefaultDetail(defaultDetail);
 
         return detail as T;
     }
@@ -109,10 +109,10 @@ export class DetailHandler {
     getByName<T extends Detail = Detail>(name: string): T | undefined;
     getByName<T extends Detail = Detail>(name: string, defaultDetail: T | (() => T)): T;
     getByName<T extends Detail = Detail>(name: string, defaultDetail?: T | (() => T)): T | undefined {
-        let detail = this._details.find((detail) => detail.name === name);
+        let detail = this.#details.find((detail) => detail.name === name);
 
         // If the detail doesn't exist, add the default detail
-        if (!detail && defaultDetail) detail = this.addDefaultDetail(defaultDetail);
+        if (!detail && defaultDetail) detail = this.#addDefaultDetail(defaultDetail);
 
         return detail as T;
     }
@@ -134,7 +134,7 @@ export class DetailHandler {
     getByAbbreviation<T extends Detail = Detail>(abbreviation: string): T | undefined;
     getByAbbreviation<T extends Detail = Detail>(abbreviation: string, defaultDetail: T | (() => T)): T;
     getByAbbreviation<T extends Detail = Detail>(abbreviation: string, defaultDetail?: T | (() => T)): T | undefined {
-        let detail = this._details.find((detail) => {
+        let detail = this.#details.find((detail) => {
             if (detail instanceof TeacherDetail) {
                 return detail.abbreviation === abbreviation;
             } else if (detail instanceof Detail && detail.type === DetailType.Subject) {
@@ -145,7 +145,7 @@ export class DetailHandler {
         });
 
         // If the detail doesn't exist, add the default detail
-        if (!detail && defaultDetail) detail = this.addDefaultDetail(defaultDetail);
+        if (!detail && defaultDetail) detail = this.#addDefaultDetail(defaultDetail);
 
         return detail as T;
     }
@@ -163,11 +163,11 @@ export class DetailHandler {
      * @param detail Detail to add.
      */
     add(...details: Detail[]) {
-        this._details.push(...details);
+        this.#details.push(...details);
     }
 
     /** @private Get default detail helper */
-    private addDefaultDetail(d: Detail | (() => Detail)) {
+    #addDefaultDetail(d: Detail | (() => Detail)) {
         const detail = typeof d === "function" ? d.call(undefined) : d;
 
         this.add(detail);

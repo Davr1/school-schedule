@@ -7,10 +7,10 @@ import dom from "@/parser/dom";
 import SSSVTLessonParser from "@/parser/sssvt/lesson";
 
 class SSSVTParser {
-    private lessonParser: SSSVTLessonParser;
+    #lessonParser: SSSVTLessonParser;
 
     constructor(details: DetailHandler) {
-        this.lessonParser = new SSSVTLessonParser(details);
+        this.#lessonParser = new SSSVTLessonParser(details);
     }
 
     /**
@@ -24,7 +24,7 @@ class SSSVTParser {
         const scheduleDom = await dom(html);
 
         // Get the date of the schedule. If it's invalid, throw an error
-        const date = this.date(scheduleDom);
+        const date = this.#date(scheduleDom);
         if (!date || isNaN(date.getTime())) throw new Error("Invalid date");
 
         // Get all the classes from the table and parse them into an object (skips odd rows and the header)
@@ -44,7 +44,7 @@ class SSSVTParser {
             const split = selectAll("td:not(.heightfix)", node.next);
 
             // Loop through all the periods to parse them into an array and add them to the object
-            classes[name] = lessons.map((lesson) => this.period(lesson, split));
+            classes[name] = lessons.map((lesson) => this.#period(lesson, split));
         }
 
         // Return the parsed data as a SSSVT class
@@ -52,7 +52,7 @@ class SSSVTParser {
     }
 
     /** Parse the date from a substitution schedule page */
-    private date(dom: AnyNode[]): Date | undefined {
+    #date(dom: AnyNode[]): Date | undefined {
         const node = selectOne("#dny strong", dom);
         const date = node && textContent(node).trim();
         if (!date) return;
@@ -65,9 +65,9 @@ class SSSVTParser {
     }
 
     /** Parse data for the given period */
-    private period(lessonNode: AnyNode, split: AnyNode[]): AnyLessonChange[] {
+    #period(lessonNode: AnyNode, split: AnyNode[]): AnyLessonChange[] {
         // Get the 1st lesson from the period, and return if there's no lesson (also check if it's a tag for type safety)
-        const lesson1 = this.lessonParser.parse(lessonNode);
+        const lesson1 = this.#lessonParser.parse(lessonNode);
         if (!lesson1 || !isTag(lessonNode)) return [];
 
         // Check if there's a 2nd lesson, if not, return just the 1st lesson
@@ -77,7 +77,7 @@ class SSSVTParser {
         // Get the node for the 2nd lesson and parse it
         // (it's not gonna be on the same index, so I have to shift the array)
         const lesson2Node = split.shift();
-        const lesson2 = lesson2Node && this.lessonParser.parse(lesson2Node);
+        const lesson2 = lesson2Node && this.#lessonParser.parse(lesson2Node);
 
         // Return both lessons (filter out undefined, in case the 2nd lesson doesn't exist)
         return [lesson1, lesson2].filter(Boolean) as AnyLessonChange[];

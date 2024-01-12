@@ -7,10 +7,10 @@ import BakalariLessonParser from "@/parser/bakalari/lesson";
 import dom from "@/parser/dom";
 
 class BakalariParser {
-    private lessonParser: BakalariLessonParser;
+    #lessonParser: BakalariLessonParser;
 
     constructor(details: DetailHandler) {
-        this.lessonParser = new BakalariLessonParser(details);
+        this.#lessonParser = new BakalariLessonParser(details);
     }
 
     /**
@@ -28,10 +28,10 @@ class BakalariParser {
         // Parse each day and return the parsed data
         return dayNodes.map((node, index) => {
             // Get the date and the day of the week
-            const date = this.date(node) ?? index + 1;
+            const date = this.#date(node) ?? index + 1;
 
             // If there's a full day event, return that instead (there won't be any lessons)
-            const event = this.event(node);
+            const event = this.#event(node);
             if (event !== undefined) return new Schedule(detail, date, [], event);
 
             // Get each period node, and parse it
@@ -41,7 +41,7 @@ class BakalariParser {
                 const lessons = selectAll(".day-item-hover", node);
 
                 // Parse each lesson, then wrap the BakalariLesson in a Lesson class
-                return lessons.map(this.lessonParser.parse, this.lessonParser).map((lesson) => new Lesson(lesson));
+                return lessons.map(this.#lessonParser.parse, this.#lessonParser).map((lesson) => new Lesson(lesson));
             });
 
             // Return the parsed day
@@ -50,7 +50,7 @@ class BakalariParser {
     }
 
     /** Parse the day info from a row */
-    private date(node: AnyNode): Date | undefined {
+    #date(node: AnyNode): Date | undefined {
         const dayNode = selectOne(".bk-day-date", node);
         const text = dayNode && textContent(dayNode);
 
@@ -77,7 +77,7 @@ class BakalariParser {
     }
 
     /** Parse a full day event from the day row */
-    private event(node: AnyNode): string | undefined {
+    #event(node: AnyNode): string | undefined {
         // Find the full day event node
         const event = selectOne(".empty", node);
 
