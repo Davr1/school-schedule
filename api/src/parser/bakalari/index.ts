@@ -1,10 +1,6 @@
-import selectAll, { selectOne } from "css-select";
-import type { AnyNode } from "domhandler";
-import { textContent } from "domutils";
-
 import { Detail, type DetailHandler, Lesson, Schedule } from "@/classes";
 import BakalariLessonParser from "@/parser/bakalari/lesson";
-import dom from "@/parser/dom";
+import type { IElement, IParentNode } from "@/parser/interfaces";
 
 class BakalariParser {
     #lessonParser: BakalariLessonParser;
@@ -20,10 +16,9 @@ class BakalariParser {
      * @param html The html to parse
      * @returns The parsed days from the timetable
      */
-    async parse(detail: Detail, html: string): Promise<Schedule[]> {
+    async parse(detail: Detail, dom: IParentNode): Promise<Schedule[]> {
         // Parse the html into a dom, and select all the day row nodes
-        const scheduleDom = await dom(html);
-        const dayNodes = selectAll(".bk-timetable-row", scheduleDom);
+        const dayNodes = Array.from(dom.querySelectorAll(".bk-timetable-row"));
 
         // Parse each day and return the parsed data
         return dayNodes.map((node, index) => {
@@ -35,10 +30,10 @@ class BakalariParser {
             if (event !== undefined) return new Schedule(detail, date, [], event);
 
             // Get each period node, and parse it
-            const periodNodes = selectAll(".bk-timetable-cell", node);
+            const periodNodes = Array.from(node.querySelectorAll(".bk-timetable-cell"));
             const periods = periodNodes.map((node) => {
                 // Get all the lessons in the period
-                const lessons = selectAll(".day-item-hover", node);
+                const lessons = Array.from(node.querySelectorAll(".day-item-hover"));
 
                 // Parse each lesson, then wrap the BakalariLesson in a Lesson class
                 return lessons.map(this.#lessonParser.parse, this.#lessonParser).map((lesson) => new Lesson(lesson));
@@ -50,9 +45,8 @@ class BakalariParser {
     }
 
     /** Parse the day info from a row */
-    #date(node: AnyNode): Date | undefined {
-        const dayNode = selectOne(".bk-day-date", node);
-        const text = dayNode && textContent(dayNode);
+    #date(node: IElement): Date | undefined {
+        const text = node.querySelector(".bk-day-date")?.textContent;
 
         // Don't return anything if the text is empty (for permanent schedules)
         if (!text) return;
@@ -77,12 +71,11 @@ class BakalariParser {
     }
 
     /** Parse a full day event from the day row */
-    #event(node: AnyNode): string | undefined {
+    #event(node: IElement): string | undefined {
         // Find the full day event node
-        const event = selectOne(".empty", node);
+        const event = node.querySelector(".empty")?.textContent?.trim();
 
-        // Return the full day event text
-        if (event) return textContent(event).trim();
+        return event;
     }
 }
 

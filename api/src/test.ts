@@ -1,11 +1,10 @@
 import { statSync } from "fs";
 import { readdir } from "fs/promises";
 
-import { DetailHandler } from "@/classes";
-import { BakalariParser } from "@/parser";
+import context from "@/api/context";
+import { parseHTML } from "@/parser";
 
-const details = new DetailHandler();
-const bakalariParser = new BakalariParser(details);
+const { details, bakalariParser } = context;
 
 async function checkDir(dir: string = "../cache/") {
     const files = await readdir(dir);
@@ -20,13 +19,14 @@ async function checkDir(dir: string = "../cache/") {
             if (!detail) continue;
 
             const contents = await Bun.file(`${dir}/${file}`).text();
-            const parsed = await bakalariParser.parse(detail, contents);
+            const dom = await parseHTML(contents);
+            const parsed = await bakalariParser.parse(detail, dom);
 
-            console.log(parsed);
+            console.log(parsed, {});
         }
     }
 }
 
 await checkDir();
 
-console.log(details.details);
+// console.log(details.details);
