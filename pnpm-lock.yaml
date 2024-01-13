@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  windows-1250@3.0.4:
+    hash: fcbhloos7zezbcvb5a4f2ufk2m
+    path: patches/windows-1250@3.0.4.patch
+
 dependencies:
   '@fontsource/inter':
     specifier: ^5.0.16
@@ -34,7 +39,7 @@ dependencies:
     version: 3.4.1
   windows-1250:
     specifier: ^3.0.4
-    version: 3.0.4
+    version: 3.0.4(patch_hash=fcbhloos7zezbcvb5a4f2ufk2m)
 
 devDependencies:
   '@poppanator/sveltekit-svg':
@@ -2859,9 +2864,10 @@ packages:
       isexe: 2.0.0
     dev: false
 
-  /windows-1250@3.0.4:
+  /windows-1250@3.0.4(patch_hash=fcbhloos7zezbcvb5a4f2ufk2m):
     resolution: {integrity: sha512-DoHOT9o9N/TwKoLkLWe/pedZvZqhif3GY5YagTK/c8ONbu6K8tzt7lnH6do7oACmwU+q+6f2IwUjGyBzRZJXbA==}
     dev: false
+    patched: true
 
   /wrap-ansi@7.0.0:
     resolution: {integrity: sha512-YVGIj2kamLSTxw6NsZjoBxfSwsn0ycdesmc4p+Q21c5zPuZ1pl+NfxVdxPtdHvmNVOQ6XSYG4AUtyt/Fi7D16Q==}

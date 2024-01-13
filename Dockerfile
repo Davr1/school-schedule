@@ -42,7 +42,7 @@ ENV PROXY=${PROXY}
 ENV HOLIDAYS=${HOLIDAYS}
 
 # Run a check before building
-# RUN pnpm check
+RUN pnpm check
 
 # Build the app
 RUN pnpm build
