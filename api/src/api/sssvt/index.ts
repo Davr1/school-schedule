@@ -4,6 +4,7 @@ import { HTTPException } from "hono/http-exception";
 import type { ApiContext } from "@/api/context";
 import sssvtSubstitutionRoute from "@/api/sssvt/route";
 import fetchSSSVT from "@/loader/sssvt";
+import { parseHTML } from "@/parser";
 import type { SSSVTJSON } from "@/schemas";
 
 const SSSVTEndpoints = ({ sssvtParser }: ApiContext) =>
@@ -19,7 +20,8 @@ const SSSVTEndpoints = ({ sssvtParser }: ApiContext) =>
         const html = await fetchSSSVT(parsedDate);
 
         // Parse the schedule
-        const parsed = await sssvtParser.parse(html);
+        const dom = await parseHTML(html);
+        const parsed = sssvtParser.parse(dom);
 
         // Return the schedule (cast as any because toJSON will be called by JSON.stringify)
         return c.jsonT<SSSVTJSON>(parsed as any);

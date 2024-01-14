@@ -6,6 +6,7 @@ import mergedScheduleRoute from "@/api/merge/route";
 import { DetailType } from "@/classes";
 import fetchBakalari from "@/loader/bakalari";
 import fetchSSSVT from "@/loader/sssvt";
+import { parseHTML } from "@/parser";
 import type { ScheduleJSON } from "@/schemas";
 
 const MergedEndpoints = ({ details, bakalariParser, sssvtParser }: ApiContext) =>
@@ -19,12 +20,16 @@ const MergedEndpoints = ({ details, bakalariParser, sssvtParser }: ApiContext) =
         if (detail.name === null) throw new HTTPException(500, { message: "Invalid class" });
 
         // Fetch the schedule from the schedule loader and parse it
-        const parsed = await fetchBakalari(week, detail).then(({ html }) => bakalariParser.parse(detail, html));
+        const parsed = await fetchBakalari(week, detail)
+            .then(({ html }) => parseHTML(html))
+            .then((dom) => bakalariParser.parse(detail, dom));
 
         // Fetch substitutions from SSSVT
         await Promise.all(
             parsed.map(async (day) => {
-                const sssvt = await fetchSSSVT(day.date as Date).then((html) => sssvtParser.parse(html));
+                const sssvt = await fetchSSSVT(day.date as Date)
+                    .then((html) => parseHTML(html))
+                    .then((dom) => sssvtParser.parse(dom));
 
                 // Try to find the class in the SSSVT schedule
                 const sssvtClass = sssvt.classes[detail.name!];

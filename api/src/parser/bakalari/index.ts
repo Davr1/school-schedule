@@ -16,7 +16,7 @@ class BakalariParser {
      * @param html The html to parse
      * @returns The parsed days from the timetable
      */
-    async parse(detail: Detail, dom: IParentNode): Promise<Schedule[]> {
+    parse(detail: Detail, dom: IParentNode): Schedule[] {
         // Parse the html into a dom, and select all the day row nodes
         const dayNodes = Array.from(dom.querySelectorAll(".bk-timetable-row"));
 
