@@ -1,7 +1,7 @@
 import { z } from "@hono/zod-openapi";
 
 import { DetailType } from "@/classes";
-import { rooms, teachers } from "@/static";
+import { rooms, teachers } from "@/classes/details/static";
 
 // Typescript types
 export type DetailJSON = z.infer<typeof detailJSONSchema>;
