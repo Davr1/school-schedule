@@ -1,5 +1,7 @@
+/** Api entrypoint */
 import { swaggerUI } from "@hono/swagger-ui";
 import { OpenAPIHono } from "@hono/zod-openapi";
+import { showRoutes } from "hono/dev";
 import { logger } from "hono/logger";
 import { prettyJSON } from "hono/pretty-json";
 
@@ -18,8 +20,14 @@ const server = new OpenAPIHono({ strict: false })
     .route("/api", api);
 
 // Log the available routes
-server.showRoutes();
+showRoutes(server);
 
-if (import.meta.main) scheduleAllClasses();
+// Start the schedule
+await scheduleAllClasses();
 
+// Export the server as default. Bun will automatically start it when ran directly.
 export default server;
+
+// Quit the process if SIGINT or SIGTERM is received
+process.on("SIGINT", () => process.exit(0));
+process.on("SIGTERM", () => process.exit(0));
