@@ -9,8 +9,5 @@
         "skipLibCheck": true,
         "sourceMap": true,
         "strict": true
-    },
-
-    // Different config applies to the scripts folder...
-    "references": [{ "path": "scripts" }]
+    }
 }

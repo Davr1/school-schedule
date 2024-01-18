@@ -1,6 +1,5 @@
 @use "sass:color";
 @use "sass:map";
-@use "colors.scss" as *;
 
 :root.light {
     --app-background: #fff;
@@ -67,47 +66,4 @@
     --hover-accent-secondary: #{color.mix(#fff, #2dac45, 10%)}; // same as: filter: brightness(1.1);
 
     color-scheme: dark;
-}
-
-// Generate the CSS variables for the accent colors
-// This is used in the theme switcher
-$backgrounds: ("slate", "gray", "zinc", "neutral", "stone");
-
-$background-shades: ("50", "100", "200", "400", "500", "600", "700", "800", "900", "950");
-$accent-shades: ("400", "500", "600");
-
-@each $color, $shades in $colors {
-    // Generate the background shades if it's in the allow list
-    @if index($backgrounds, $color) {
-        .#{$color}-bg {
-            @each $shade, $value in $shades {
-                // Only proceed if it's the right shade
-                @if index($background-shades, $shade) {
-                    --background-#{$shade}: #{$value};
-                }
-            }
-        }
-    }
-
-    // Generate the accent colors
-
-    // As a primary color
-    .#{$color} {
-        @each $shade, $value in $shades {
-            // Only generate the shades in the allow list
-            @if index($accent-shades, $shade) {
-                --primary-#{$shade}: #{$value};
-            }
-        }
-    }
-
-    // As a secondary color
-    .#{$color}-2 {
-        @each $shade, $value in $shades {
-            // Only generate the shades in the allow list
-            @if index($accent-shades, $shade) {
-                --secondary-#{$shade}: #{$value};
-            }
-        }
-    }
 }

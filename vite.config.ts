@@ -1,4 +1,5 @@
 import svg from "@poppanator/sveltekit-svg";
+import { customCssColorsPlugin } from "@school-schedule/vite-plugins";
 import { sveltekit } from "@sveltejs/kit/vite";
 import autoprefixer from "autoprefixer";
 import { defineConfig } from "vite";
@@ -42,7 +43,8 @@ export default defineConfig({
                     { name: "addAttributesToSVGElement", params: { attributes: [{ fill: "currentColor" }] } }
                 ]
             }
-        })
+        }),
+        customCssColorsPlugin()
     ],
     resolve: {
         alias: { "@/": "@school-schedule/api/src/" }

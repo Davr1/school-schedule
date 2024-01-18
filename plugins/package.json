@@ -1,0 +1,13 @@
+{
+    "name": "@school-schedule/vite-plugins",
+    "version": "1.0.0",
+    "type": "module",
+    "exports": {
+        "default": "./index.js",
+        "types": "./index.d.ts"
+    },
+    "peerDependencies": {
+        "tailwindcss": "^3.4.1",
+        "vite": "^5.0.11"
+    }
+}
