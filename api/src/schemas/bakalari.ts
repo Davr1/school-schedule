@@ -19,7 +19,7 @@ export const weekSchema = z.nativeEnum(Week).openapi("Week", {
 export const normalLessonJSONSchema = z
     .object({
         type: z.literal(BakalariLessonType.Normal),
-        subject: detailIdSchema,
+        subject: detailIdSchema.nullish(),
         teacher: detailIdSchema.nullish(),
         room: detailIdSchema,
         groups: z.array(

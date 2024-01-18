@@ -69,7 +69,7 @@ class BakalariLessonParser {
 
         // Parse all the fields from the node and data
         const subject = this.#subject(node, data);
-        const teacher = this.#teacher(node, data) ?? null;
+        const teacher = this.#teacher(node, data);
         const groups = this.#groups(data);
         const change = this.#change(node, data);
 
@@ -94,10 +94,14 @@ class BakalariLessonParser {
     }
 
     /** Parse the subject name and abbreviation for the given lesson */
-    #subject(lesson: IElement, data: BakalariData): Detail {
+    #subject(lesson: IElement, data: BakalariData): Detail | null {
         // Get the subject abbreviation from the lesson
         const abbreviation = lesson.querySelector(".middle")?.textContent?.trim();
         if (!abbreviation) throw new Error("Couldn't find the subject abbreviation");
+
+        // If the abbreviation of the subject is equal to "....", return `null`.
+        // This is usually just some random event without a name
+        if (abbreviation === "....") return null;
 
         // Parse the full name from the data
         const name = data.subjecttext.split("|")[0]?.trim() ?? abbreviation;
@@ -112,10 +116,10 @@ class BakalariLessonParser {
     }
 
     /** Parse the teacher's name and abbreviation from a lesson */
-    #teacher(lesson: IElement, data: BakalariData): TeacherDetail | undefined {
+    #teacher(lesson: IElement, data: BakalariData): TeacherDetail | null {
         // Parse the full name from the data (make sure there's only one value)
         const name = data.teacher?.split(",")[0]?.trim();
-        if (!name) return;
+        if (!name) return null;
 
         // Get the abbreviation from the node
         // const abbreviationNode = selectOne(".bottom > span", lesson)!;
