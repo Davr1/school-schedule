@@ -53,7 +53,6 @@ for (const color of Object.keys(tailwindColors)) {
 export function customCssColorsPlugin() {
     return {
         name: "custom-css-colors-plugin",
-        apply: "build",
         transform(code, id) {
             // Inject the custom CSS colors into the global styles
             if (id.endsWith("global.scss")) return css + code;
