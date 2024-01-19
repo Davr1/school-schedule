@@ -16,7 +16,7 @@ const bgColors = ["slate", "gray", "zinc", "neutral", "stone"];
  * @returns Generated CSS variable
  */
 function variablesForColorShade(color, name, shades) {
-    return shades.map((shade) => `--${name}-${shade}: ${tailwindColors[color][shade]};`).join("");
+    return shades.map((shade) => `--${name}-${shade}: ${tailwindColors[color][shade]};`).join("\n\t\t\t");
 }
 
 // Generate the CSS for the colors
@@ -51,11 +51,20 @@ for (const color of Object.keys(tailwindColors)) {
  * @returns {import("vite").Plugin}
  */
 export function customCssColorsPlugin() {
+    const virtualModuleId = "virtual:custom-colors.css";
+    const resolvedVirtualModuleId = `\0${virtualModuleId}`;
+
     return {
         name: "custom-css-colors-plugin",
-        transform(code, id) {
-            // Inject the custom CSS colors into the global styles
-            if (id.endsWith("global.scss")) return css + code;
+        enforce: "pre",
+
+        // Resolve the virtual module ID for the CSS
+        resolveId(id) {
+            if (id === virtualModuleId) return resolvedVirtualModuleId;
+        },
+
+        load(id) {
+            if (id === resolvedVirtualModuleId) return css;
         }
     };
 }

@@ -7,6 +7,7 @@
     import theme from "$stores/theme";
 
     import "$styles/global.scss";
+    import "virtual:custom-colors.css";
 
     let match: MediaQueryList | undefined;
 
