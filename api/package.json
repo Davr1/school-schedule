@@ -1,7 +1,6 @@
 {
     "name": "@school-schedule/api",
     "version": "0.0.2",
-    "module": "src/index.ts",
     "type": "module",
     "devDependencies": {
         "bun-types": "latest"

@@ -8,6 +8,10 @@ export type Period = Lesson[];
 
 /** Schedule for a day */
 class Schedule {
+    get day() {
+        return this.date instanceof Date ? this.date.getDay() : this.date;
+    }
+
     constructor(
         /** Schedule detail */
         readonly detail: Detail,

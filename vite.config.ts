@@ -2,13 +2,13 @@ import svg from "@poppanator/sveltekit-svg";
 import { customCssColorsPlugin } from "@school-schedule/vite-plugins";
 import { sveltekit } from "@sveltejs/kit/vite";
 import autoprefixer from "autoprefixer";
-import { defineConfig } from "vite";
+import { defineConfig, searchForWorkspaceRoot } from "vite";
 
 // https://vitejs.dev/config/
 export default defineConfig({
     optimizeDeps: {
         // Disable dependency optimization for workspace packages
-        exclude: ["@school-schedule/api"]
+        // exclude: ["@school-schedule/api"]
     },
     server: {
         // In dev mode, by default, the proxy and cache of the production server will be used.
@@ -25,7 +25,11 @@ export default defineConfig({
                           target: "https://rozvrh.icy.cx",
                           changeOrigin: true
                       }
-                  }
+                  },
+
+        fs: {
+            allow: [searchForWorkspaceRoot(process.cwd())]
+        }
     },
     plugins: [
         sveltekit(),
@@ -46,9 +50,6 @@ export default defineConfig({
         }),
         customCssColorsPlugin()
     ],
-    resolve: {
-        alias: { "@/": "@school-schedule/api/src/" }
-    },
     css: {
         modules: {
             // By default, all class names in your components will be passed through to the final bundle.

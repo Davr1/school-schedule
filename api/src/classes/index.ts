@@ -7,10 +7,10 @@ export {
     AbsenceLesson,
     BakalariLesson,
     BakalariLessonType,
+    Group,
     NormalLesson,
     RemovedLesson,
-    type AnyBakalariLesson,
-    type Group
+    type AnyBakalariLesson
 } from "@/classes/bakalari";
 
 // SSSVT classes

@@ -1,5 +1,5 @@
 import type { Detail, DetailHandler, TeacherDetail } from "@/classes/details";
-import type { AbsenceLessonJSON, AnyBakalariLessonJSON, NormalLessonJSON, RemovedLessonJSON } from "@/schemas";
+import type { AbsenceLessonJSON, AnyBakalariLessonJSON, GroupJSON, NormalLessonJSON, RemovedLessonJSON } from "@/schemas";
 
 /** The type of a bakalari lesson */
 export enum BakalariLessonType {
@@ -20,6 +20,8 @@ export type AnyBakalariLesson = NormalLesson | RemovedLesson | AbsenceLesson;
 export abstract class BakalariLesson {
     /** The type of the lesson */
     abstract readonly type: BakalariLessonType;
+
+    abstract get title(): string;
 
     constructor(
         /** Change info description */
@@ -58,17 +60,67 @@ export abstract class BakalariLesson {
     }
 }
 
-export interface Group {
-    /** The group number, null if the whole class is targetted */
-    number: number | null;
-
+/** Class group */
+export class Group {
     /** The class, null if the schedule type is class */
-    class: Detail | null;
+    public class: Detail | null;
+
+    /** The group number, null if the whole class is targetted */
+    public number: number | null;
+
+    get name() {
+        return `${this.class?.name ?? ""} ${this.number !== null ? ` ${this.number}.sk` : ""}`.trim();
+    }
+
+    constructor(className: Detail | null = null, number: number | null = null) {
+        this.class = className;
+        this.number = number;
+    }
+
+    toJSON(): GroupJSON {
+        return {
+            class: this.class?.toString() ?? null,
+            number: this.number
+        };
+    }
+
+    static fromJSON(json: GroupJSON, handler: DetailHandler) {
+        return new Group(json.class ? handler.getOne(json.class) : null, json.number ?? null);
+    }
 }
 
 /** A normal lesson */
 export class NormalLesson extends BakalariLesson {
     readonly type = BakalariLessonType.Normal;
+
+    get title() {
+        return `
+            ${this.topic ?? ""}
+
+            ${this.subject?.name ?? "..."}
+            ${this.teacher?.name ?? ""}
+            ${this.room.name}
+        `
+            .split("\n")
+            .map((line) => line.trim())
+            .join("\n")
+            .trim();
+    }
+
+    get split(): boolean {
+        // Class schedules
+        return this.groups.some((group) => group.number !== null);
+    }
+
+    get hasIdenticalGroups(): boolean {
+        // It would be weird to do this when there's just 2 groups (or less)
+        if (this.groups.length <= 2) return false;
+
+        // This also shouldn't be done if the group numbers are null
+        if (this.groups[0].number === null) return false;
+
+        return this.groups.every((group) => group.number === this.groups[0].number);
+    }
 
     constructor(
         /** Information about the subject */
@@ -108,11 +160,7 @@ export class NormalLesson extends BakalariLesson {
         const teacher = json.teacher ? handler.getOne<TeacherDetail>(json.teacher) : null;
         const room = handler.getOne(json.room);
 
-        const groups = json.groups.map((group) => {
-            const detail = group.class ? handler.getOne(group.class) : null;
-
-            return { number: group.number ?? null, class: detail };
-        });
+        const groups = json.groups.map((group) => Group.fromJSON(group, handler));
 
         return new NormalLesson(subject, teacher, room, groups, json.topic, json.change);
     }
@@ -121,6 +169,10 @@ export class NormalLesson extends BakalariLesson {
 /** A removed lesson */
 export class RemovedLesson extends BakalariLesson {
     readonly type = BakalariLessonType.Removed;
+
+    get title() {
+        return this.change;
+    }
 
     constructor(readonly change: string) {
         super();
@@ -134,6 +186,10 @@ export class RemovedLesson extends BakalariLesson {
 /** Lesson absence */
 export class AbsenceLesson extends BakalariLesson {
     override readonly type = BakalariLessonType.Absence;
+
+    get title() {
+        return this.name ?? this.info;
+    }
 
     constructor(
         /** Absence info ig?, irl it's just "Absc" */

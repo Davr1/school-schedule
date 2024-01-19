@@ -5,6 +5,7 @@ import { Week } from "@/loader/bakalari";
 import { detailIdSchema } from "@/schemas/details";
 
 // Typescript types
+export type GroupJSON = z.infer<typeof groupJSONSchema>;
 export type NormalLessonJSON = z.infer<typeof normalLessonJSONSchema>;
 export type RemovedLessonJSON = z.infer<typeof removedLessonJSONSchema>;
 export type AbsenceLessonJSON = z.infer<typeof absenceLessonJSONSchema>;
@@ -16,18 +17,28 @@ export const weekSchema = z.nativeEnum(Week).openapi("Week", {
     description: "The week to get the schedule for. Can be either Permanent, Actual or Next"
 });
 
+export const groupJSONSchema = z
+    .object({
+        number: z.number().nullish(),
+        class: detailIdSchema.nullish()
+    })
+
+    .openapi("Group", {
+        title: "Group",
+        description: "Class group",
+        example: {
+            class: "UE",
+            number: 1
+        }
+    });
+
 export const normalLessonJSONSchema = z
     .object({
         type: z.literal(BakalariLessonType.Normal),
         subject: detailIdSchema.nullish(),
         teacher: detailIdSchema.nullish(),
         room: detailIdSchema,
-        groups: z.array(
-            z.object({
-                number: z.number().nullish(),
-                class: detailIdSchema.nullish()
-            })
-        ),
+        groups: z.array(groupJSONSchema),
         topic: z.string().nullish(),
         change: z.string().nullish()
     })

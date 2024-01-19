@@ -5,7 +5,7 @@ import {
     Detail,
     DetailHandler,
     DetailType,
-    type Group,
+    Group,
     NormalLesson,
     RemovedLesson,
     TeacherDetail
@@ -153,10 +153,7 @@ class BakalariLessonParser {
                     : null;
 
                 // Return the group
-                return {
-                    number: number ? Number(number) : null,
-                    class: classDetails
-                };
+                return new Group(classDetails, number ? Number(number) : null);
             })
             .filter((group) => !(group.number === null && group.class === null));
     }
