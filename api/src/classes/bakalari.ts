@@ -72,7 +72,7 @@ export class NormalLesson extends BakalariLesson {
 
     constructor(
         /** Information about the subject */
-        readonly subject: Detail,
+        readonly subject: Detail | null,
 
         /** Information about the teacher */
         readonly teacher: TeacherDetail | null,
@@ -95,7 +95,7 @@ export class NormalLesson extends BakalariLesson {
     toJSON(): NormalLessonJSON {
         return {
             ...this,
-            subject: this.subject.toString(),
+            subject: this.subject?.toString() ?? null,
             teacher: this.teacher?.toString() ?? null,
             room: this.room.toString(),
             groups: this.groups.map((group) => ({ number: group.number, class: group.class?.toString() ?? null }))
@@ -104,7 +104,7 @@ export class NormalLesson extends BakalariLesson {
 
     static fromJSON(json: NormalLessonJSON, handler: DetailHandler) {
         // Get the details
-        const subject = handler.getOne(json.subject);
+        const subject = json.subject ? handler.getOne(json.subject) : null;
         const teacher = json.teacher ? handler.getOne<TeacherDetail>(json.teacher) : null;
         const room = handler.getOne(json.room);
 

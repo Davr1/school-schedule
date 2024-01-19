@@ -4,6 +4,7 @@ import { HTTPException } from "hono/http-exception";
 import bakalariScheduleRoute from "@/api/bakalari/route";
 import type { ApiContext } from "@/api/context";
 import fetchBakalari from "@/loader/bakalari";
+import { parseHTML } from "@/parser";
 import type { ScheduleJSON } from "@/schemas";
 
 const BakalariEndpoints = ({ details, bakalariParser }: ApiContext) =>
@@ -27,7 +28,8 @@ const BakalariEndpoints = ({ details, bakalariParser }: ApiContext) =>
         }
 
         // Parse the schedule
-        const parsed = await bakalariParser.parse(detail, html);
+        const dom = await parseHTML(html);
+        const parsed = await bakalariParser.parse(detail, dom);
 
         // Return the schedule (cast as any because toJSON will be called by JSON.stringify)
         return c.jsonT<ScheduleJSON[]>(parsed as any);

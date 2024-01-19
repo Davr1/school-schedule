@@ -1,7 +1,3 @@
-import { selectOne } from "css-select";
-import { type AnyNode, type Element, isTag } from "domhandler";
-import { textContent } from "domutils";
-
 import {
     AbsenceLesson,
     type AnyBakalariLesson,
@@ -14,6 +10,7 @@ import {
     RemovedLesson,
     TeacherDetail
 } from "@/classes";
+import type { IElement } from "@/parser/interfaces";
 
 interface BakalariData {
     type: BakalariLessonType;
@@ -46,12 +43,9 @@ class BakalariLessonParser {
      * @param node The node to parse
      * @returns The parsed lesson
      */
-    parse(node: AnyNode): AnyBakalariLesson {
-        // Make sure the node is an element
-        if (!isTag(node)) throw new Error("Node is not an element");
-
+    parse(node: IElement): AnyBakalariLesson {
         // Get the data attribute from the node
-        const data = JSON.parse(node.attribs["data-detail"]) as BakalariData;
+        const data = JSON.parse(node.getAttribute("data-detail")!) as BakalariData;
 
         switch (data.type) {
             case BakalariLessonType.Normal:
@@ -66,7 +60,7 @@ class BakalariLessonParser {
     }
 
     /** Parse a normal lesson from a node */
-    #normal(node: Element, data: BakalariData): NormalLesson | AbsenceLesson {
+    #normal(node: IElement, data: BakalariData): NormalLesson | AbsenceLesson {
         // Check if this is in reality an absence lesson (the format is different)
         if (data.hasAbsent) {
             const [info, name] = data.absentInfoText.split("|").map((text) => text.trim());
@@ -75,7 +69,7 @@ class BakalariLessonParser {
 
         // Parse all the fields from the node and data
         const subject = this.#subject(node, data);
-        const teacher = this.#teacher(node, data) ?? null;
+        const teacher = this.#teacher(node, data);
         const groups = this.#groups(data);
         const change = this.#change(node, data);
 
@@ -100,10 +94,14 @@ class BakalariLessonParser {
     }
 
     /** Parse the subject name and abbreviation for the given lesson */
-    #subject(lesson: AnyNode, data: BakalariData): Detail {
+    #subject(lesson: IElement, data: BakalariData): Detail | null {
         // Get the subject abbreviation from the lesson
-        const abbreviationNode = selectOne(".middle", lesson)!;
-        const abbreviation = textContent(abbreviationNode).trim();
+        const abbreviation = lesson.querySelector(".middle")?.textContent?.trim();
+        if (!abbreviation) throw new Error("Couldn't find the subject abbreviation");
+
+        // If the abbreviation of the subject is equal to "....", return `null`.
+        // This is usually just some random event without a name
+        if (abbreviation === "....") return null;
 
         // Parse the full name from the data
         const name = data.subjecttext.split("|")[0]?.trim() ?? abbreviation;
@@ -118,14 +116,15 @@ class BakalariLessonParser {
     }
 
     /** Parse the teacher's name and abbreviation from a lesson */
-    #teacher(lesson: AnyNode, data: BakalariData): TeacherDetail | undefined {
+    #teacher(lesson: IElement, data: BakalariData): TeacherDetail | null {
         // Parse the full name from the data (make sure there's only one value)
         const name = data.teacher?.split(",")[0]?.trim();
-        if (!name) return;
+        if (!name) return null;
 
         // Get the abbreviation from the node
-        const abbreviationNode = selectOne(".bottom > span", lesson)!;
-        const abbreviation = textContent(abbreviationNode).trim();
+        // const abbreviationNode = selectOne(".bottom > span", lesson)!;
+        const abbreviation = lesson.querySelector(".bottom > span")?.textContent?.trim();
+        if (!abbreviation) throw new Error("Couldn't find the teacher's abbreviation");
 
         // Find the teacher detail
         const teacher = this.#details.getByAbbreviation(abbreviation, () => new TeacherDetail(abbreviation, name, abbreviation));
@@ -163,9 +162,9 @@ class BakalariLessonParser {
     }
 
     /** Parse info about a potential change */
-    #change(node: Element, data: BakalariData): string | undefined {
+    #change(node: IElement, data: BakalariData): string | undefined {
         // Check if there is a change (the element has the class "pink")
-        const changed = node.attribs.class?.includes("pink");
+        const changed = node.getAttribute("class")?.includes("pink");
 
         // Return the change info
         if (changed) return data.changeinfo;

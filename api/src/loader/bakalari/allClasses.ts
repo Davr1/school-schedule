@@ -1,5 +1,5 @@
+import { classes } from "@/classes/details/static";
 import fetchBakalari, { type FetchBakalariResponse, Week } from "@/loader/bakalari";
-import { classes } from "@/static";
 
 interface FetchAllClassesResponse {
     [key: string]: FetchBakalariResponse;

@@ -1,15 +1,5 @@
-import type { AnyDetailJSON, TeacherDetailJSON } from "@/schemas";
-
-/** The type of a detail */
-export enum DetailType {
-    Class = "Class",
-    Teacher = "Teacher",
-    Subject = "Subject",
-    Room = "Room"
-}
-
-/** Any detail instance */
-export type AnyDetail = Detail | TeacherDetail;
+import { Detail, DetailType, TeacherDetail } from "@/classes/details/details";
+import { classes, rooms, teachers } from "@/classes/details/static";
 
 /** An error thrown when a detail is not found */
 class DetailNotFoundError extends TypeError {
@@ -18,52 +8,21 @@ class DetailNotFoundError extends TypeError {
     }
 }
 
-export class Detail {
-    constructor(
-        readonly type: DetailType,
-        public id: string,
-        public name: string | null
-    ) {}
+export class DetailHandler extends Map<string, Detail> {
+    constructor() {
+        super();
 
-    /** Return the id of the detail when converted to a string */
-    toString() {
-        return this.id;
+        // Add default details
+        for (const detail of [...classes, ...teachers, ...rooms]) {
+            this.set(detail.id, detail);
+        }
     }
-
-    /** Deserialize the detail from JSON */
-    static fromJSON(json: AnyDetailJSON): AnyDetail {
-        if (json.type === DetailType.Teacher) return TeacherDetail.fromJSON(json as TeacherDetailJSON);
-
-        return new Detail(json.type, json.id, json.name ?? null);
-    }
-}
-
-export class TeacherDetail extends Detail {
-    readonly type = DetailType.Teacher;
-
-    // In the future, more details may be added here
-
-    constructor(
-        id: string,
-        name: string | null,
-        readonly abbreviation: string
-    ) {
-        super(DetailType.Teacher, id, name);
-    }
-
-    static fromJSON(json: TeacherDetailJSON) {
-        return new TeacherDetail(json.id, json.name ?? null, json.abbreviation);
-    }
-}
-
-export class DetailHandler {
-    #details: Detail[] = [];
 
     /**
      * All details in this handler.
      */
     get details(): Detail[] {
-        return [...this.#details];
+        return Array.from(this.values());
     }
 
     /**
@@ -72,7 +31,7 @@ export class DetailHandler {
      * @returns Details of the given type.
      */
     getOfType<T extends Detail = Detail>(type: DetailType): T[] {
-        return this.#details.filter((detail) => detail.type === type) as T[];
+        return this.details.filter((detail) => detail.type === type) as T[];
     }
 
     /**
@@ -84,7 +43,7 @@ export class DetailHandler {
     get<T extends Detail = Detail>(id: string): T | undefined;
     get<T extends Detail = Detail>(id: string, defaultDetail: T | (() => T)): T;
     get<T extends Detail = Detail>(id: string, defaultDetail?: T | (() => T)): T | undefined {
-        let detail = this.#details.find((detail) => detail.id === id);
+        let detail = super.get(id);
 
         // If the detail doesn't exist, add the default detail
         if (!detail && defaultDetail) detail = this.#addDefaultDetail(defaultDetail);
@@ -109,7 +68,7 @@ export class DetailHandler {
     getByName<T extends Detail = Detail>(name: string): T | undefined;
     getByName<T extends Detail = Detail>(name: string, defaultDetail: T | (() => T)): T;
     getByName<T extends Detail = Detail>(name: string, defaultDetail?: T | (() => T)): T | undefined {
-        let detail = this.#details.find((detail) => detail.name === name);
+        let detail = this.details.find((detail) => detail.name === name);
 
         // If the detail doesn't exist, add the default detail
         if (!detail && defaultDetail) detail = this.#addDefaultDetail(defaultDetail);
@@ -134,7 +93,7 @@ export class DetailHandler {
     getByAbbreviation<T extends Detail = Detail>(abbreviation: string): T | undefined;
     getByAbbreviation<T extends Detail = Detail>(abbreviation: string, defaultDetail: T | (() => T)): T;
     getByAbbreviation<T extends Detail = Detail>(abbreviation: string, defaultDetail?: T | (() => T)): T | undefined {
-        let detail = this.#details.find((detail) => {
+        let detail = this.details.find((detail) => {
             if (detail instanceof TeacherDetail) {
                 return detail.abbreviation === abbreviation;
             } else if (detail instanceof Detail && detail.type === DetailType.Subject) {
@@ -158,19 +117,11 @@ export class DetailHandler {
         return detail;
     }
 
-    /**
-     * Add a detail to this handler.
-     * @param detail Detail to add.
-     */
-    add(...details: Detail[]) {
-        this.#details.push(...details);
-    }
-
     /** @private Get default detail helper */
     #addDefaultDetail(d: Detail | (() => Detail)) {
         const detail = typeof d === "function" ? d.call(undefined) : d;
 
-        this.add(detail);
+        this.set(detail.id, detail);
         return detail;
     }
 }

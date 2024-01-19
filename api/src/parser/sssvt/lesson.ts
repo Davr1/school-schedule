@@ -1,8 +1,5 @@
-import { selectOne } from "css-select";
-import type { AnyNode } from "domhandler";
-import { textContent } from "domutils";
-
 import { type AnyLessonChange, Detail, DetailHandler, DetailType, LessonCancellation, LessonSubstitution, TeacherDetail } from "@/classes";
+import type { IElement } from "@/parser/interfaces";
 
 class SSSVTLessonParser {
     #details: DetailHandler;
@@ -16,9 +13,9 @@ class SSSVTLessonParser {
      *
      * @param lesson The lesson to parse
      */
-    parse(lesson: AnyNode): AnyLessonChange | undefined {
+    parse(lesson: IElement): AnyLessonChange | undefined {
         // Check if the lesson has any text inside, if not, return
-        if (!textContent(lesson).trim()) return;
+        if (!lesson.textContent?.trim()) return;
 
         // Get the group number and subject abbreviation
         const group = this.#group(lesson) ?? null;
@@ -47,38 +44,37 @@ class SSSVTLessonParser {
                 : null;
 
         // If there's no room, throw an error
-        if (!room) throw new Error(`Couldn't find the room in lesson: ${textContent(lesson)}`);
+        if (!room) throw new Error(`Couldn't find the room in lesson: ${lesson.textContent}`);
 
         return new LessonSubstitution(group, subject, teacher, room);
     }
 
     /** Parse the group number from the given lesson node */
-    #group(lesson: AnyNode): number | undefined {
+    #group(lesson: IElement): number | undefined {
         // Parse the group number from the lesson content in the format: (N.sk)
-        const content = textContent(lesson);
-        const match = content.match(/(?<=\()[0-9](?=\.sk\))/)?.[0];
+        const match = lesson.textContent?.match(/(?<=\()[0-9](?=\.sk\))/)?.[0];
 
         // If it exists, return it as a number
         if (match) return parseInt(match);
     }
 
     /** Parse the subject abbreviation from a lesson */
-    #subject(lesson: AnyNode): string | undefined {
+    #subject(lesson: IElement): string | undefined {
         // Get the subject abbreviation from the lesson
-        const subject = selectOne("strong", lesson);
+        const subject = lesson.querySelector("strong");
 
         // The subject is in the text content of the <strong> tag
-        if (subject) return textContent(subject).trim();
+        return subject?.textContent?.trim();
     }
 
     /** Parse the room for the given lesson */
-    #room(lesson: AnyNode): Detail | undefined {
+    #room(lesson: IElement): Detail | undefined {
         // Get the room number from the <a> tag with an href attribute
-        const link = selectOne("[href*='/room/']", lesson);
-        if (!link) return;
+        const link = lesson.querySelector("[href*='/room/']");
 
         // The room name is in the text content of the link
-        const name = textContent(link).trim();
+        const name = link?.textContent?.trim();
+        if (!name) return;
 
         // Find the room detail (or add it if it doesn't exist)
         const room = this.#details.getByName(name, () => new Detail(DetailType.Room, name, name));
@@ -87,12 +83,12 @@ class SSSVTLessonParser {
     }
 
     /** Parse the teacher's abbreviation from a lesson */
-    #teacher(lesson: AnyNode): string | undefined {
+    #teacher(lesson: IElement): string | undefined {
         // Get the teacher's abbreviation from the link
-        const teacher = selectOne("[href*='/teacher/']", lesson);
+        const teacher = lesson.querySelector("[href*='/teacher/']");
 
         // The teacher abbreviation is in the text content of the <em> tag
-        if (teacher) return textContent(teacher).trim();
+        return teacher?.textContent?.trim();
     }
 }
 

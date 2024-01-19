@@ -1,9 +1,5 @@
-import selectAll, { selectOne } from "css-select";
-import type { AnyNode } from "domhandler";
-import { hasChildren, isTag, textContent } from "domutils";
-
 import { type AnyLessonChange, DetailHandler, SSSVT, type SSSVTClass } from "@/classes";
-import dom from "@/parser/dom";
+import type { IElement, IParentNode } from "@/parser/interfaces";
 import SSSVTLessonParser from "@/parser/sssvt/lesson";
 
 class SSSVTParser {
@@ -16,35 +12,34 @@ class SSSVTParser {
     /**
      * Parse the data from the school substitution schedule
      *
-     * @param html The html to parse
+     * @param dom The dom to parse
      * @returns A substitution schedule with the parsed data
      */
-    async parse(html: string): Promise<SSSVT> {
-        // Parse the html into a dom
-        const scheduleDom = await dom(html);
-
+    parse(dom: IParentNode): SSSVT {
         // Get the date of the schedule. If it's invalid, throw an error
-        const date = this.#date(scheduleDom);
+        const date = this.#date(dom);
         if (!date || isNaN(date.getTime())) throw new Error("Invalid date");
 
         // Get all the classes from the table and parse them into an object (skips odd rows and the header)
         const classes = {} as Record<string, SSSVTClass>;
-        for (const node of selectAll(".table-responsive tr:nth-child(2n)", scheduleDom)) {
+
+        const nodes = Array.from(dom.querySelectorAll(".table-responsive tr:nth-child(2n)"));
+        for (const node of nodes) {
             // For type safety, make sure this node has children and that there's a row after it
-            if (!hasChildren(node) || !node.next || !node.firstChild) continue;
+            if (!node.nextSibling || !node.firstChild) continue;
 
             // Get the class name (it's the first cell in the row)
             // and if the name is falsy or "dozor v hodine", skip it
-            const name = textContent(node.firstChild);
+            const name = node.firstChild.textContent;
             if (!name || name === "DH") continue;
 
             // Get all the lessons (the cells after the first one; we don't have 0th period)
             // also skip ".heightfix" cuz that's just a spacer
-            const lessons = selectAll("td:not(:first-of-type, .heightfix)", node);
-            const split = selectAll("td:not(.heightfix)", node.next);
+            const lessons = node.querySelectorAll("td:not(:first-of-type, .heightfix)");
+            const split = Array.from(node.nextElementSibling?.querySelectorAll("td:not(.heightfix)") ?? []);
 
             // Loop through all the periods to parse them into an array and add them to the object
-            classes[name] = lessons.map((lesson) => this.#period(lesson, split));
+            classes[name] = Array.from(lessons).map((lesson) => this.#period(lesson, split));
         }
 
         // Return the parsed data as a SSSVT class
@@ -52,9 +47,8 @@ class SSSVTParser {
     }
 
     /** Parse the date from a substitution schedule page */
-    #date(dom: AnyNode[]): Date | undefined {
-        const node = selectOne("#dny strong", dom);
-        const date = node && textContent(node).trim();
+    #date(dom: IParentNode): Date | undefined {
+        const date = dom.querySelector("#dny strong")?.textContent?.trim();
         if (!date) return;
 
         // Parse the date from the text (it's in czech format)
@@ -65,13 +59,13 @@ class SSSVTParser {
     }
 
     /** Parse data for the given period */
-    #period(lessonNode: AnyNode, split: AnyNode[]): AnyLessonChange[] {
-        // Get the 1st lesson from the period, and return if there's no lesson (also check if it's a tag for type safety)
+    #period(lessonNode: IElement, split: IElement[]): AnyLessonChange[] {
+        // Get the 1st lesson from the period, and return if there's no lesson
         const lesson1 = this.#lessonParser.parse(lessonNode);
-        if (!lesson1 || !isTag(lessonNode)) return [];
+        if (!lesson1) return [];
 
         // Check if there's a 2nd lesson, if not, return just the 1st lesson
-        const has2ndLesson = lessonNode.attribs.rowspan === "1";
+        const has2ndLesson = lessonNode.getAttribute("rowspan") === "1";
         if (!has2ndLesson) return [lesson1];
 
         // Get the node for the 2nd lesson and parse it

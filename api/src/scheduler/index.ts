@@ -43,6 +43,3 @@ async function scheduleAllClasses() {
 }
 
 export default scheduleAllClasses;
-
-// If this file was run directly, schedule the task.
-if (import.meta.main) void scheduleAllClasses();
