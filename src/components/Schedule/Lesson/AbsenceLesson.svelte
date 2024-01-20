@@ -19,7 +19,7 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div
-    class={`${styles.subject} ${styles.cell} special`}
+    class={`${styles.subject} special`}
     class:floating={visible}
     class:active={bakalari.name}
     style={`--row: ${row}; --column: ${column}; --width: 1; --height: 2`}

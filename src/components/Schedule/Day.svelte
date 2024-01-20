@@ -34,12 +34,14 @@
     $: date = day.date instanceof Date ? normal.format(day.date) : weekdays[day.day - 1];
 </script>
 
-<span class={styles.day} style:grid-row={`${1 + row} / span 2`}>
+<span class={styles.date} style:grid-row={`${2 + row} / span 2`}>
     {date}
 </span>
 
-{#each day.periods as cell, i}
-    {#each cell as lesson}
-        <Lesson {lesson} on:modalOpen {row} column={i} />
+<div class={styles.day}>
+    {#each day.periods as cell, i}
+        {#each cell as lesson}
+            <Lesson {lesson} on:modalOpen {row} column={i} />
+        {/each}
     {/each}
-{/each}
+</div>

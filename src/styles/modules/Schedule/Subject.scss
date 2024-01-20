@@ -1,27 +1,15 @@
 @use "../../transitions.scss";
 
-:local(.cell) {
-    grid-area: calc(var(--row) + 1) / calc(var(--column) + 2) / span var(--height) / span var(--width);
-
-    min-height: calc(6.4vh * var(--height) + 0.5rem * (var(--height) - 1));
-
-    @media (max-aspect-ratio: 1/2) {
-        min-width: 9vh;
-    }
-
-    @media (min-aspect-ratio: 2/5) and (max-aspect-ratio: 3/2) {
-        min-width: 11vh;
-    }
-}
-
 :local(.subject) {
     position: relative;
     display: flex;
 
+    grid-area: calc(var(--row) + 2) / calc(var(--column) + 2) / span var(--height) / span var(--width);
+
     width: 100%;
+    min-height: calc(6.4vh * var(--height) + 0.5rem * (var(--height) - 1));
 
     flex-direction: column;
-    flex: 1 1 auto;
 
     background-color: var(--dimmed-background);
     border-radius: 0.3rem;
@@ -57,12 +45,20 @@
 
     // Only apply the hover effect on desktop if there's more than 1 cell
     @media (pointer: fine) {
-        :not(:only-child) > &.active:hover:not(.floating) {
+        &.active:hover:not(.floating) {
             // Use the --subject-hover variable when it's defined, fallback to the default hover color
             background-color: var(--subject-hover, var(--element-background));
 
             transform: scale(1.023);
         }
+    }
+
+    @media (max-aspect-ratio: 1/2) {
+        min-width: 9vh;
+    }
+
+    @media (min-aspect-ratio: 2/5) and (max-aspect-ratio: 3/2) {
+        min-width: 11vh;
     }
 }
 

@@ -9,8 +9,4 @@
     export let column: number;
 </script>
 
-<div
-    class={`${styles.subject} ${styles.cell} special`}
-    style={`--row: ${row}; --column: ${column}; --width: 1; --height: 2`}
-    title={bakalari.title}
-/>
+<div class={`${styles.subject} special`} style={`--row: ${row}; --column: ${column}; --width: 1; --height: 2`} title={bakalari.title} />

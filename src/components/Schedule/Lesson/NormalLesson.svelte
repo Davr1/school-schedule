@@ -25,7 +25,7 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div
-    class={`${styles.subject} ${styles.cell} active`}
+    class={`${styles.subject} active`}
     class:changed={bakalari.change !== null}
     class:floating={visible}
     style={`--row: ${row}; --column: ${column}; --width: 1; --height: ${height}`}
