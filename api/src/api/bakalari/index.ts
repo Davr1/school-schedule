@@ -4,7 +4,7 @@ import { HTTPException } from "hono/http-exception";
 import bakalariScheduleRoute from "@/api/bakalari/route";
 import type { ApiContext } from "@/api/context";
 import fetchBakalari from "@/loader/bakalari";
-import { parseHTML } from "@/parser";
+import { parseHTML } from "@/parser/domhandler";
 import type { ScheduleJSON } from "@/schemas";
 
 const BakalariEndpoints = ({ details, bakalariParser }: ApiContext) =>

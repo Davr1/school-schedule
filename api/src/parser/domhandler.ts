@@ -1,5 +1,5 @@
 import selectAll, { selectOne } from "css-select";
-import { type AnyNode, DomHandler, Element, type ParentNode } from "domhandler";
+import { type AnyNode, DomHandler, type Element, type ParentNode } from "domhandler";
 import { getChildren, nextElementSibling, prevElementSibling, textContent } from "domutils";
 import { ElementType, Parser } from "htmlparser2";
 

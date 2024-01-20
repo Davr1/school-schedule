@@ -1,6 +1,6 @@
 import { z } from "@hono/zod-openapi";
 
-import { DetailType } from "@/classes";
+import { DetailType } from "@/classes/details/details";
 import { rooms, teachers } from "@/classes/details/static";
 
 // Typescript types

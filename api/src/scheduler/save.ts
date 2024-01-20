@@ -1,4 +1,4 @@
-import { mkdir } from "node:fs/promises";
+import { mkdir, writeFile } from "node:fs/promises";
 
 import log from "@/log";
 
@@ -14,7 +14,7 @@ export async function save(text: string, name: string) {
     await mkdir(`./cache/${dateText}`, { recursive: true });
 
     // Save the file.
-    await Bun.write(`./cache/${dateText}/${name}.html`, text);
+    await writeFile(`./cache/${dateText}/${name}.html`, text);
 
     log(`Saved ${name}.html`);
 }

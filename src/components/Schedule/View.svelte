@@ -1,11 +1,11 @@
 <script lang="ts">
+    import type { Schedule } from "@school-schedule/api/classes";
+
     import { hours } from "$stores/static";
 
     import Day from "$components/Schedule/Day.svelte";
 
     import styles from "$styles/modules/Schedule.module.scss";
-
-    import type { Schedule } from "@/classes";
 
     export let schedule: Schedule[];
 </script>

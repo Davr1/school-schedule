@@ -1,4 +1,4 @@
-import type { AnyDetailJSON, TeacherDetailJSON } from "@/schemas";
+import type { AnyDetailJSON, TeacherDetailJSON } from "@/schemas/details";
 
 /** The type of a detail */
 export enum DetailType {

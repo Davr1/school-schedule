@@ -15,6 +15,8 @@ const config = {
             $stores: "./src/stores/",
             $styles: "./src/styles/",
             $assets: "./src/assets/",
+
+            // This needs to stay here unfortunately. This avoids having to build API, before building the frontend.
             "@": "./api/src/"
         }
     },

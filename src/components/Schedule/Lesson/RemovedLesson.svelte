@@ -1,7 +1,7 @@
 <script lang="ts">
-    import styles from "$styles/modules/Schedule.module.scss";
+    import type { RemovedLesson } from "@school-schedule/api/classes";
 
-    import type { RemovedLesson } from "@/classes";
+    import styles from "$styles/modules/Schedule.module.scss";
 
     export let bakalari: RemovedLesson;
 

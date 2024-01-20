@@ -1,5 +1,5 @@
 /** A file with all the static details because they barely change */
-import { Detail, DetailType, TeacherDetail } from "@/classes/details";
+import { Detail, DetailType, TeacherDetail } from "@/classes/details/details";
 
 export const classes = [
     new Detail(DetailType.Class, "UK", "P1.A"),

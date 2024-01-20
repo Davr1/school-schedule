@@ -1,9 +1,9 @@
 <script lang="ts">
+    import type { AbsenceLesson } from "@school-schedule/api/classes";
+
     import { addRipple } from "$lib/ripple";
 
     import styles from "$styles/modules/Schedule.module.scss";
-
-    import type { AbsenceLesson } from "@/classes";
 
     let cell: HTMLDivElement;
 

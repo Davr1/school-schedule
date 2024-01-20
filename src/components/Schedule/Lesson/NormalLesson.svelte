@@ -1,4 +1,6 @@
 <script lang="ts">
+    import type { NormalLesson } from "@school-schedule/api/classes";
+
     import { addRipple } from "$lib/ripple";
 
     import { joinText } from "$lib/utilities";
@@ -6,7 +8,6 @@
     import { scheduleParams } from "$stores/config";
 
     import styles from "$styles/modules/Schedule.module.scss";
-    import type { NormalLesson } from "@/classes";
 
     let cell: HTMLDivElement;
 

@@ -8,7 +8,7 @@ import { defineConfig, searchForWorkspaceRoot } from "vite";
 export default defineConfig({
     optimizeDeps: {
         // Disable dependency optimization for workspace packages
-        // exclude: ["@school-schedule/api"]
+        exclude: ["@school-schedule/api"]
     },
     server: {
         // In dev mode, by default, the proxy and cache of the production server will be used.

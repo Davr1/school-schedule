@@ -6,7 +6,7 @@ import mergedScheduleRoute from "@/api/merge/route";
 import { DetailType } from "@/classes";
 import fetchBakalari from "@/loader/bakalari";
 import fetchSSSVT from "@/loader/sssvt";
-import { parseHTML } from "@/parser";
+import { parseHTML } from "@/parser/domhandler";
 import type { ScheduleJSON } from "@/schemas";
 
 const MergedEndpoints = ({ details, bakalariParser, sssvtParser }: ApiContext) =>

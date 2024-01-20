@@ -16,11 +16,11 @@
 </script>
 
 <script lang="ts">
+    import type { Schedule } from "@school-schedule/api/classes";
+
     import Lesson from "$components/Schedule/Lesson/Lesson.svelte";
 
     import styles from "$styles/modules/Schedule.module.scss";
-
-    import type { Schedule } from "@/classes";
 
     export let day: Schedule;
 
