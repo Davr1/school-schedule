@@ -1,13 +1,13 @@
 import {
-    AbsenceLesson,
+    AbsenceBakalariLesson,
     type AnyBakalariLesson,
     BakalariLessonType,
     Detail,
     DetailHandler,
     DetailType,
     Group,
-    NormalLesson,
-    RemovedLesson,
+    NormalBakalariLesson,
+    RemovedBakalariLesson,
     TeacherDetail
 } from "@/classes";
 import type { IElement } from "@/parser/interfaces";
@@ -60,37 +60,36 @@ class BakalariLessonParser {
     }
 
     /** Parse a normal lesson from a node */
-    #normal(node: IElement, data: BakalariData): NormalLesson | AbsenceLesson {
+    #normal(node: IElement, data: BakalariData): NormalBakalariLesson | AbsenceBakalariLesson {
         // Check if this is in reality an absence lesson (the format is different)
         if (data.hasAbsent) {
             const [info, name] = data.absentInfoText.split("|").map((text) => text.trim());
-            return new AbsenceLesson(info, name, data.changeinfo);
+            return new AbsenceBakalariLesson(info, name, data.changeinfo);
         }
 
         // Parse all the fields from the node and data
-        const subject = this.#subject(node, data);
-        const teacher = this.#teacher(node, data);
-        const groups = this.#groups(data);
-        const change = this.#change(node, data);
-
-        // Get the room from the handler, or create a new one
-        const room = this.#details.getByName(data.room, () => new Detail(DetailType.Room, data.room, data.room));
-
-        return new NormalLesson(subject, teacher, room, groups, data.theme || null, change);
+        return new NormalBakalariLesson(
+            this.#subject(node, data),
+            this.#teacher(node, data),
+            this.#room(data),
+            this.#groups(data),
+            data.theme || null,
+            this.#change(node, data)
+        );
     }
 
     /** Parse a removed lesson from a node */
-    #removed(data: BakalariData): RemovedLesson | AbsenceLesson {
+    #removed(data: BakalariData): RemovedBakalariLesson | AbsenceBakalariLesson {
         // If there's absence info, return AbsenceLesson instead
         if (data.absentinfo) return this.#absence(data);
 
         // Just return the info about the removal...
-        return new RemovedLesson(data.removedinfo!);
+        return new RemovedBakalariLesson(data.removedinfo!);
     }
 
     /** Parse an absence from a node */
-    #absence(data: BakalariData): AbsenceLesson {
-        return new AbsenceLesson(data.absentinfo!, data.InfoAbsentName, data.removedinfo || null);
+    #absence(data: BakalariData): AbsenceBakalariLesson {
+        return new AbsenceBakalariLesson(data.absentinfo!, data.InfoAbsentName, data.removedinfo || null);
     }
 
     /** Parse the subject name and abbreviation for the given lesson */
@@ -133,6 +132,18 @@ class BakalariLessonParser {
         if (teacher.name === null) teacher.name = name;
 
         return teacher;
+    }
+
+    /** Parse the room from the data attribute of the lesson */
+    #room(data: BakalariData): Detail | null {
+        const { room } = data;
+
+        // If the room is equal to "mim", return `null`.
+        // This means that there is no room for the lesson, because it's outside
+        if (room === "mim") return null;
+
+        // Get the room from the handler, or create a new one
+        return this.#details.getByName(room, () => new Detail(DetailType.Room, room, room));
     }
 
     /** Parse the group number from the data attribute of the lesson */

@@ -1,9 +1,9 @@
 import type { DetailHandler } from "@/classes/details";
-import { type AnyLessonChange, LessonChange } from "@/classes/sssvt/change";
+import { type AnySSSVTChange, BaseSSSVTChange } from "@/classes/sssvt/change";
 import type { SSSVTJSON } from "@/schemas";
 
 /** A class in the SSSVT schedule. Each class has a list of lessons for each period */
-export type SSSVTClass = AnyLessonChange[][];
+export type SSSVTClass = AnySSSVTChange[][];
 
 /**
  * SSSVT substitution schedule
@@ -25,7 +25,7 @@ class SSSVT {
         const classes = Object.fromEntries(
             Object.entries(json.classes).map(([name, cl]) => [
                 name,
-                cl.map((period) => period.map((lesson) => LessonChange.fromJSON(lesson, handler)))
+                cl.map((period) => period.map((lesson) => BaseSSSVTChange.fromJSON(lesson, handler)))
             ])
         );
 

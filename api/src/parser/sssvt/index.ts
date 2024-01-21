@@ -1,4 +1,4 @@
-import { type AnyLessonChange, DetailHandler, SSSVT, type SSSVTClass } from "@/classes";
+import { type AnySSSVTChange, DetailHandler, SSSVT, type SSSVTClass } from "@/classes";
 import type { IElement, IParentNode } from "@/parser/interfaces";
 import SSSVTLessonParser from "@/parser/sssvt/lesson";
 
@@ -59,7 +59,7 @@ class SSSVTParser {
     }
 
     /** Parse data for the given period */
-    #period(lessonNode: IElement, split: IElement[]): AnyLessonChange[] {
+    #period(lessonNode: IElement, split: IElement[]): AnySSSVTChange[] {
         // Get the 1st lesson from the period, and return if there's no lesson
         const lesson1 = this.#lessonParser.parse(lessonNode);
         if (!lesson1) return [];
@@ -74,7 +74,7 @@ class SSSVTParser {
         const lesson2 = lesson2Node && this.#lessonParser.parse(lesson2Node);
 
         // Return both lessons (filter out undefined, in case the 2nd lesson doesn't exist)
-        return [lesson1, lesson2].filter(Boolean) as AnyLessonChange[];
+        return [lesson1, lesson2].filter(Boolean) as AnySSSVTChange[];
     }
 }
 

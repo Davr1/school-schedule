@@ -1,5 +1,6 @@
 import type { Detail, DetailHandler, TeacherDetail } from "@/classes/details";
-import type { AbsenceLessonJSON, AnyBakalariLessonJSON, GroupJSON, NormalLessonJSON, RemovedLessonJSON } from "@/schemas";
+import { Group } from "@/classes/schedule/group";
+import type { AbsenceBakalariLessonJSON, AnyBakalariLessonJSON, NormalBakalariLessonJSON, RemovedBakalariLessonJSON } from "@/schemas";
 
 /** The type of a bakalari lesson */
 export enum BakalariLessonType {
@@ -14,14 +15,12 @@ export enum BakalariLessonType {
 }
 
 /** Any Bakalari lesson */
-export type AnyBakalariLesson = NormalLesson | RemovedLesson | AbsenceLesson;
+export type AnyBakalariLesson = NormalBakalariLesson | RemovedBakalariLesson | AbsenceBakalariLesson;
 
 /** A lesson in the schedule (abstract) */
-export abstract class BakalariLesson {
+export abstract class BaseBakalariLesson {
     /** The type of the lesson */
     abstract readonly type: BakalariLessonType;
-
-    abstract get title(): string;
 
     constructor(
         /** Change info description */
@@ -32,11 +31,11 @@ export abstract class BakalariLesson {
     static fromJSON(json: AnyBakalariLessonJSON, handler: DetailHandler): AnyBakalariLesson {
         switch (json.type) {
             case BakalariLessonType.Normal:
-                return NormalLesson.fromJSON(json as NormalLessonJSON, handler);
+                return NormalBakalariLesson.fromJSON(json as NormalBakalariLessonJSON, handler);
             case BakalariLessonType.Removed:
-                return RemovedLesson.fromJSON(json as RemovedLessonJSON);
+                return RemovedBakalariLesson.fromJSON(json as RemovedBakalariLessonJSON);
             case BakalariLessonType.Absence:
-                return AbsenceLesson.fromJSON(json as AbsenceLessonJSON);
+                return AbsenceBakalariLesson.fromJSON(json as AbsenceBakalariLessonJSON);
             default:
                 throw new Error(`Unknown lesson type: ${(json as AnyBakalariLessonJSON).type}`);
         }
@@ -45,82 +44,24 @@ export abstract class BakalariLesson {
     // Type guards
 
     /** Check if the lesson is normal */
-    isNormal(): this is NormalLesson {
+    isNormal(): this is NormalBakalariLesson {
         return this.type === BakalariLessonType.Normal;
     }
 
     /** Check if the lesson was removed */
-    isRemoved(): this is RemovedLesson {
+    isRemoved(): this is RemovedBakalariLesson {
         return this.type === BakalariLessonType.Removed;
     }
 
     /** Check if the class is absent */
-    isAbsence(): this is AbsenceLesson {
+    isAbsence(): this is AbsenceBakalariLesson {
         return this.type === BakalariLessonType.Absence;
     }
 }
 
-/** Class group */
-export class Group {
-    /** The class, null if the schedule type is class */
-    public class: Detail | null;
-
-    /** The group number, null if the whole class is targetted */
-    public number: number | null;
-
-    get name() {
-        return `${this.class?.name ?? ""} ${this.number !== null ? ` ${this.number}.sk` : ""}`.trim();
-    }
-
-    constructor(className: Detail | null = null, number: number | null = null) {
-        this.class = className;
-        this.number = number;
-    }
-
-    toJSON(): GroupJSON {
-        return {
-            class: this.class?.toString() ?? null,
-            number: this.number
-        };
-    }
-
-    static fromJSON(json: GroupJSON, handler: DetailHandler) {
-        return new Group(json.class ? handler.getOne(json.class) : null, json.number ?? null);
-    }
-}
-
 /** A normal lesson */
-export class NormalLesson extends BakalariLesson {
+export class NormalBakalariLesson extends BaseBakalariLesson {
     readonly type = BakalariLessonType.Normal;
-
-    get title() {
-        return `
-            ${this.topic ?? ""}
-
-            ${this.subject?.name ?? "..."}
-            ${this.teacher?.name ?? ""}
-            ${this.room.name}
-        `
-            .split("\n")
-            .map((line) => line.trim())
-            .join("\n")
-            .trim();
-    }
-
-    get split(): boolean {
-        // Class schedules
-        return this.groups.some((group) => group.number !== null);
-    }
-
-    get hasIdenticalGroups(): boolean {
-        // It would be weird to do this when there's just 2 groups (or less)
-        if (this.groups.length <= 2) return false;
-
-        // This also shouldn't be done if the group numbers are null
-        if (this.groups[0].number === null) return false;
-
-        return this.groups.every((group) => group.number === this.groups[0].number);
-    }
 
     constructor(
         /** Information about the subject */
@@ -130,7 +71,7 @@ export class NormalLesson extends BakalariLesson {
         readonly teacher: TeacherDetail | null,
 
         /** The room the lesson is taught in */
-        readonly room: Detail,
+        readonly room: Detail | null,
 
         /** The groups the lesson targets */
         readonly groups: Group[],
@@ -144,30 +85,30 @@ export class NormalLesson extends BakalariLesson {
     }
 
     /** Serialize the lesson to JSON */
-    toJSON(): NormalLessonJSON {
+    toJSON(): NormalBakalariLessonJSON {
         return {
             ...this,
             subject: this.subject?.toString() ?? null,
             teacher: this.teacher?.toString() ?? null,
-            room: this.room.toString(),
+            room: this.room?.toString() ?? null,
             groups: this.groups.map((group) => ({ number: group.number, class: group.class?.toString() ?? null }))
         };
     }
 
-    static fromJSON(json: NormalLessonJSON, handler: DetailHandler) {
+    static fromJSON(json: NormalBakalariLessonJSON, handler: DetailHandler) {
         // Get the details
         const subject = json.subject ? handler.getOne(json.subject) : null;
         const teacher = json.teacher ? handler.getOne<TeacherDetail>(json.teacher) : null;
-        const room = handler.getOne(json.room);
+        const room = json.room ? handler.getOne(json.room) : null;
 
         const groups = json.groups.map((group) => Group.fromJSON(group, handler));
 
-        return new NormalLesson(subject, teacher, room, groups, json.topic, json.change);
+        return new NormalBakalariLesson(subject, teacher, room, groups, json.topic, json.change);
     }
 }
 
 /** A removed lesson */
-export class RemovedLesson extends BakalariLesson {
+export class RemovedBakalariLesson extends BaseBakalariLesson {
     readonly type = BakalariLessonType.Removed;
 
     get title() {
@@ -178,18 +119,14 @@ export class RemovedLesson extends BakalariLesson {
         super();
     }
 
-    static fromJSON(object: RemovedLessonJSON) {
-        return new RemovedLesson(object.change);
+    static fromJSON(object: RemovedBakalariLessonJSON) {
+        return new RemovedBakalariLesson(object.change);
     }
 }
 
 /** Lesson absence */
-export class AbsenceLesson extends BakalariLesson {
+export class AbsenceBakalariLesson extends BaseBakalariLesson {
     override readonly type = BakalariLessonType.Absence;
-
-    get title() {
-        return this.name ?? this.info;
-    }
 
     constructor(
         /** Absence info ig?, irl it's just "Absc" */
@@ -203,7 +140,7 @@ export class AbsenceLesson extends BakalariLesson {
         super(change);
     }
 
-    static fromJSON(object: AbsenceLessonJSON) {
-        return new AbsenceLesson(object.info, object.name ?? null, object.change);
+    static fromJSON(object: AbsenceBakalariLessonJSON) {
+        return new AbsenceBakalariLesson(object.info, object.name ?? null, object.change);
     }
 }

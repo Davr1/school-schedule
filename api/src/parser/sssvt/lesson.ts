@@ -1,4 +1,4 @@
-import { type AnyLessonChange, Detail, DetailHandler, DetailType, LessonCancellation, LessonSubstitution, TeacherDetail } from "@/classes";
+import { type AnySSSVTChange, Detail, DetailHandler, DetailType, SSSVTCancellation, SSSVTSubstitution, TeacherDetail } from "@/classes";
 import type { IElement } from "@/parser/interfaces";
 
 class SSSVTLessonParser {
@@ -13,7 +13,7 @@ class SSSVTLessonParser {
      *
      * @param lesson The lesson to parse
      */
-    parse(lesson: IElement): AnyLessonChange | undefined {
+    parse(lesson: IElement): AnySSSVTChange | undefined {
         // Check if the lesson has any text inside, if not, return
         if (!lesson.textContent?.trim()) return;
 
@@ -23,7 +23,7 @@ class SSSVTLessonParser {
 
         // If there's no subject, it means that the lesson is cancelled
         // Note: Only check for null because the value can be an empty string
-        if (subjectAbbreviation === null) return new LessonCancellation(group);
+        if (subjectAbbreviation === null) return new SSSVTCancellation(group);
 
         // Find the subject detail (or add it if it doesn't exist)
         const subject = subjectAbbreviation
@@ -46,7 +46,7 @@ class SSSVTLessonParser {
         // If there's no room, throw an error
         if (!room) throw new Error(`Couldn't find the room in lesson: ${lesson.textContent}`);
 
-        return new LessonSubstitution(group, subject, teacher, room);
+        return new SSSVTSubstitution(group, subject, teacher, room);
     }
 
     /** Parse the group number from the given lesson node */
@@ -64,7 +64,10 @@ class SSSVTLessonParser {
         const subject = lesson.querySelector("strong");
 
         // The subject is in the text content of the <strong> tag
-        return subject?.textContent?.trim();
+        const name = subject?.textContent?.trim();
+
+        // If the subject is "POS", replace it with "SPS" (it's the same subject)
+        return name === "POS" ? "SPS" : name;
     }
 
     /** Parse the room for the given lesson */

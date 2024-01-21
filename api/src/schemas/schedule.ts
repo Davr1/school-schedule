@@ -1,26 +1,13 @@
 import { z } from "@hono/zod-openapi";
 
-import { anyBakalariLessonJSONSchema } from "@/schemas/bakalari";
 import { detailIdSchema } from "@/schemas/details";
+import { anyLessonJSONSchema } from "@/schemas/lesson";
 import { dateSchema } from "@/schemas/shared";
-import { anyLessonChangeJSONSchema } from "@/schemas/sssvt";
 
 // Typescript types
-export type LessonJSON = z.infer<typeof lessonJSONSchema>;
 export type ScheduleJSON = z.infer<typeof scheduleJSONSchema>;
 
 // Zod schemas
-export const lessonJSONSchema = z
-    .object({
-        bakalari: anyBakalariLessonJSONSchema.nullish(),
-        sssvt: anyLessonChangeJSONSchema.nullish()
-    })
-
-    .openapi("Lesson", {
-        title: "Lesson",
-        description: "A merged lesson"
-    });
-
 export const scheduleJSONSchema = z
     .object({
         date: z.union([
@@ -29,7 +16,7 @@ export const scheduleJSONSchema = z
         ]),
         detail: detailIdSchema,
         event: z.string().nullish().openapi({ description: "An event description. When not null, periods will be empty." }),
-        periods: z.array(z.array(lessonJSONSchema)).openapi({ description: "The periods of the schedule" })
+        periods: z.array(z.array(anyLessonJSONSchema)).openapi({ description: "The periods of the schedule" })
     })
 
     .openapi("Schedule", {

@@ -1,10 +1,7 @@
 import type { Detail, DetailHandler } from "@/classes/details";
-import Lesson from "@/classes/schedule/lesson";
-import type { SSSVTClass } from "@/classes/sssvt";
+import { type AnyLesson, BaseLesson } from "@/classes/schedule/lesson";
+import type { SSSVTClass } from "@/classes/sssvt/schedule";
 import type { ScheduleJSON } from "@/schemas";
-
-/** Possible lessons in a period, will usually just be between 0 and 2 */
-export type Period = Lesson[];
 
 /** Schedule for a day */
 class Schedule {
@@ -24,7 +21,7 @@ class Schedule {
         readonly date: Date | number,
 
         /** The periods of the day */
-        readonly periods: Period[],
+        readonly periods: AnyLesson[][],
 
         /** Possible full day event */
         readonly event: string | null = null
@@ -47,40 +44,43 @@ class Schedule {
         const date = typeof json.date === "string" ? new Date(json.date) : json.date;
 
         // Parse each lesson in the periods
-        const periods = json.periods.map((period) => period.map((lesson) => Lesson.fromJSON(lesson, handler)));
+        const periods = json.periods.map((period) => period.map((lesson) => BaseLesson.fromJSON(lesson, handler)));
 
         return new Schedule(detail, date, periods, json.event);
     }
 
-    /** Add the SSSVT changes to the schedule */
+    /** Merge a class Bakalari schedule with a SSSVT class substituion schedule */
     merge(sssvt: SSSVTClass) {
         this.periods.forEach((period, index) => {
             // Get the SSSVT equivalent of the period
             const sssvtPeriod = sssvt[index] ?? [];
 
             // Match the lessons by group
+            const newPeriod: AnyLesson[] = [];
             period.forEach((lesson, index) => {
-                // If the bakalari lesson is empty, remove it completely from the schedule
                 const { bakalari } = lesson;
-                if (!bakalari) return void period.splice(index, 1);
+                if (!bakalari) return;
 
                 // Find the matching SSSVT lesson
                 const sssvtLesson = bakalari?.isNormal()
                     ? sssvtPeriod.find((s) => !s.group || s.group === bakalari.groups[0]?.number)
                     : sssvtPeriod[index];
 
-                // Set the SSSVT lesson
-                lesson.sssvt = sssvtLesson ?? null;
+                // Create the new merged lesson
+                newPeriod.push(BaseLesson.merge(bakalari, sssvtLesson));
             });
 
             // Find the SSSVT lessons that don't have a matching bakalari lesson
             sssvtPeriod.forEach((lesson) => {
                 // Try to find this inside the merged lessons
-                const mergedLesson = period.find((l) => l.sssvt === lesson);
+                const mergedLesson = newPeriod.find((l) => l.sssvt === lesson);
 
                 // If there's no merged lesson, add it
-                if (!mergedLesson) period.push(new Lesson(null, lesson));
+                if (!mergedLesson) newPeriod.push(BaseLesson.merge(null, lesson));
             });
+
+            // Replace the period
+            this.periods[index] = newPeriod;
         });
     }
 }

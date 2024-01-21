@@ -1,4 +1,4 @@
-import { Detail, type DetailHandler, Lesson, Schedule } from "@/classes";
+import { BaseLesson, Detail, type DetailHandler, Schedule } from "@/classes";
 import BakalariLessonParser from "@/parser/bakalari/lesson";
 import type { IElement, IParentNode } from "@/parser/interfaces";
 
@@ -36,7 +36,7 @@ class BakalariParser {
                 const lessons = Array.from(node.querySelectorAll(".day-item-hover"));
 
                 // Parse each lesson, then wrap the BakalariLesson in a Lesson class
-                return lessons.map(this.#lessonParser.parse, this.#lessonParser).map((lesson) => new Lesson(lesson));
+                return lessons.map(this.#lessonParser.parse, this.#lessonParser).map((lesson) => BaseLesson.merge(lesson));
             });
 
             // Return the parsed day
