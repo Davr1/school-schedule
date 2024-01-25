@@ -14,7 +14,7 @@
         "@poppanator/sveltekit-svg": "^4.2.0",
         "@school-schedule/vite-plugins": "workspace:*",
         "@sveltejs/adapter-node": "^3.0.0",
-        "@sveltejs/kit": "^2.3.2",
+        "@sveltejs/kit": "^2.4.3",
         "@sveltejs/vite-plugin-svelte": "^3.0.1",
         "@trivago/prettier-plugin-sort-imports": "^4.3.0",
         "@types/node": "^20.11.0",
