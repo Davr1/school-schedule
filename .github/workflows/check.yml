@@ -1,0 +1,29 @@
+# Run a type check on the project and try to build it
+
+name: Type Check + Build
+
+on:
+    push:
+        branches: ["main"]
+    pull_request:
+        branches: ["main"]
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v4
+            - uses: pnpm/action-setup@v2
+              with:
+                  version: 8
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: "20.x"
+                  cache: "pnpm"
+
+            - run: pnpm install
+              env:
+                  PUPPETEER_SKIP_DOWNLOAD: "true" # Don't download Chromium cuz it's useless for the type check and build
+            - run: pnpm check
+            - run: pnpm build
