@@ -1,3 +1,25 @@
+:local(.overlay) {
+    position: absolute;
+    display: flex;
+
+    inset: 0;
+
+    justify-content: center;
+    align-items: center;
+
+    background: #000a;
+    cursor: pointer;
+    animation: 100ms bg forwards ease-out;
+
+    @media not (pointer: fine) {
+        backdrop-filter: unset !important;
+    }
+
+    @media (max-aspect-ratio: 3/4) {
+        align-items: end;
+    }
+}
+
 :local(.modal) {
     position: relative;
 
@@ -17,24 +39,17 @@
     box-sizing: border-box;
     overflow: hidden;
 
+    cursor: default;
+
     animation: 50ms scale both ease-out;
 
     &.scrollable {
         height: 85vh;
     }
 
-    &::backdrop {
-        background: #000a;
-        cursor: pointer;
-        animation: 100ms bg forwards ease-out;
-        @media not (pointer: fine) {
-            backdrop-filter: unset !important;
-        }
-    }
-
     @media (max-aspect-ratio: 3/4) {
         border-radius: 1rem 1rem 0 0;
-        margin-bottom: 0;
+        width: 100%;
 
         &.scrollable {
             height: 60vh;
@@ -44,6 +59,7 @@
 
 :local(.content) {
     padding: 0.5rem 2.3rem;
+    padding-bottom: calc(0.5rem + env(safe-area-inset-bottom));
 
     scrollbar-width: thin;
     scrollbar-color: var(--element-background) var(--dimmed-background);
