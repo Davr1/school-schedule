@@ -11,14 +11,30 @@
     let className: string | undefined = undefined;
     export { className as class };
 
+    /** Should `inert` even be used? */
+    export let inert = true;
+
     /** A reference to the portal DOM node */
     let portal: HTMLDivElement;
 
     const inertElements: Element[] = [];
 
+    function close() {
+        dispatch("close");
+    }
+
     // On mount, add the element to the body
     onMount(() => {
         document.body.appendChild(portal);
+
+        // Add an event listener to #app, so when inert is disabled, we can still close the portal
+        setTimeout(() => {
+            const app = document.getElementById("app");
+            app?.addEventListener("click", close);
+        });
+
+        // Return if `inert` is false
+        if (!inert) return;
 
         // Disable scrolling on the body
         document.body.style.overflow = "hidden";
@@ -38,6 +54,13 @@
         if (!browser) return;
 
         portal.parentNode?.removeChild(portal);
+
+        // Remove the event listener from #app
+        const app = document.getElementById("app");
+        app?.removeEventListener("click", close);
+
+        // Return if `inert` is false
+        if (!inert) return;
 
         // Enable scrolling on the body
         document.body.style.overflow = "";
@@ -66,14 +89,6 @@ Don't keep this mounted when not needed, as it will block the entire page!
     }}
 />
 
-<div
-    bind:this={portal}
-    role="presentation"
-    class={className}
-    on:click|self={() => {
-        // When the portal is clicked, dispatch a close event
-        dispatch("close");
-    }}
->
+<div bind:this={portal} role="presentation" class={className} on:click|self={close}>
     <slot />
 </div>

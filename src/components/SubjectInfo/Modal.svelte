@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { Subject } from "$lib/subject";
 
-    import Modal from "$components/Modal.svelte";
+    import Modal from "$components/Base/Modal.svelte";
     import Content from "$components/SubjectInfo/Content.svelte";
 
     /** The subject to show the info for */

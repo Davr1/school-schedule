@@ -3,7 +3,7 @@
 
     import CacheButton from "$components/CacheButton.svelte";
     import Switch from "$components/Controls/Switch.svelte";
-    import Modal from "$components/Modal.svelte";
+    import Modal from "$components/Base/Modal.svelte";
     import ThemeEditor from "$components/ThemeEditor.svelte";
 
     import modalStyles from "$styles/modules/Modal.module.scss";
