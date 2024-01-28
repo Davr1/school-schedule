@@ -1,6 +1,6 @@
-import { DetailHandler } from "@school-schedule/api/classes";
+import { Detail, DetailHandler, Schedule } from "@school-schedule/api/classes";
 import { BakalariParser } from "@school-schedule/api/parser";
-import { parseHTML } from "@school-schedule/api/parser/domhandler";
+import type { DetailJSON, ScheduleJSON } from "@school-schedule/api/schemas";
 
 import { browser } from "$app/environment";
 
@@ -10,10 +10,13 @@ const details = new DetailHandler();
 const bk = new BakalariParser(details);
 
 export async function load({ fetch }) {
-    const html = await fetch("https://rozvrh.icy.cx/bakalari/UE").then((res) => res.text());
+    const scheduleJSON = await fetch("https://rozvrh-v3.icy.cx/api/bakalari/Actual/UE").then<ScheduleJSON[]>((res) => res.json());
 
-    const dom = browser ? parser!.parseFromString(html, "text/html") : await parseHTML(html);
-    const schedule = bk.parse(details.get("UE")!, dom);
+    await fetch("https://rozvrh-v3.icy.cx/api/details/Subject")
+        .then<DetailJSON[]>((res) => res.json())
+        .then((json) => json.forEach((d) => details.set(d.id, Detail.fromJSON(d))));
+
+    const schedule = scheduleJSON.map((s) => Schedule.fromJSON(s, details));
 
     return { schedule };
 }

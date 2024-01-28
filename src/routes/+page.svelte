@@ -2,9 +2,7 @@
     import Options from "$components/Options.svelte";
     import ScheduleView from "$components/Schedule/View.svelte";
 
-    import type { PageData } from "./$types";
-
-    export let data: PageData;
+    export let data;
 </script>
 
 <Options />

@@ -25,22 +25,43 @@ export class Group {
         };
     }
 
+    equals(group: Group): boolean {
+        return this.class === group.class && this.number === group.number;
+    }
+
     static fromJSON(json: GroupJSON, handler: DetailHandler) {
         return new Group(json.class ? handler.getOne(json.class) : null, json.number ?? null);
     }
 
     /** Determine the display name of multiple groups */
-    static name(group: Group): string;
     static name(groups: Group[]): string;
     static name(...groups: Group[]): string;
     static name(...all: Group[] | Group[][]): string {
-        const groups = all.flat();
+        // Flatten the groups and de-duplicate them
+        const groups = all.flat().filter((group, index, array) => array.findIndex((g) => g.equals(group)) === index);
 
+        // Empty array => empty string
         if (groups.length === 0) return "";
-        else if (groups.length === 1) return groups[0].name;
-        else if (groups.length > 2 && groups[0].number !== null && groups.every((g) => g.number === groups[0].number))
+
+        // 1 group => return the name
+        if (groups.length === 1) return groups[0].name;
+
+        // Multiple groups with the same number, but different classes => return just the number
+        if (groups.length > 2 && groups[0].number !== null && groups.every((g) => g.number === groups[0].number))
             return `${groups[0].number}.sk`;
-        else if (groups.length > 4) return `${groups.length} skupin`;
-        else return groups.map((group) => group.name).join(", ");
+
+        // 2 groups with the same class, but make up the entire class => return the class name
+        if (
+            groups.length === 2 &&
+            groups.find((g) => g.number === 1 || g.number === 3) &&
+            groups.find((g) => g.number === 2 || g.number === 4)
+        )
+            return groups[0].class?.name ?? "";
+
+        // More than 4 groups => return the amount of groups
+        if (groups.length > 4) return `${groups.length} skupin`;
+
+        // Multiple groups => return the names of the groups
+        return groups.map((group) => group.name).join(", ");
     }
 }
