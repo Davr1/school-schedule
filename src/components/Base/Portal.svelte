@@ -18,6 +18,7 @@
     let portal: HTMLDivElement;
 
     const inertElements: Element[] = [];
+    let oldFocus: HTMLElement | null = null;
 
     function close() {
         dispatch("close");
@@ -27,10 +28,18 @@
     onMount(() => {
         document.body.appendChild(portal);
 
-        // Add an event listener to #app, so when inert is disabled, we can still close the portal
         setTimeout(() => {
+            // Add an event listener to #app, so when inert is disabled, we can still close the portal
             const app = document.getElementById("app");
             app?.addEventListener("click", close);
+            app?.addEventListener("focusin", close);
+
+            // Get the element that is currently focused
+            oldFocus = document.activeElement as HTMLElement;
+
+            // Focus the portal
+            portal.tabIndex = -1;
+            portal.focus();
         });
 
         // Return if `inert` is false
@@ -58,6 +67,10 @@
         // Remove the event listener from #app
         const app = document.getElementById("app");
         app?.removeEventListener("click", close);
+        app?.removeEventListener("focusin", close);
+
+        // Focus the element that was focused before the portal was opened
+        oldFocus?.focus();
 
         // Return if `inert` is false
         if (!inert) return;
