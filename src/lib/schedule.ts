@@ -1,19 +1,27 @@
 /** Web specific modifications to the schedule api model */
 import {
     type AnyLesson,
-    type BaseLesson,
-    type ConflictLesson,
+    type Detail,
+    Group,
     LessonType,
     type NormalLesson,
     type RemovedLesson,
-    type Schedule
+    type Schedule,
+    type TeacherDetail
 } from "@school-schedule/api/classes";
 
-export class Cell<T extends BaseLesson = AnyLesson> {
+export type AnyCell = NormalCell | RemovedCell;
+
+export abstract class Cell {
     /** Type of the lesson in the cell. Will be the same for all lessons in the cell */
-    get type(): T["type"] {
-        return this.lessons[0].type;
+    abstract type: LessonType;
+
+    get style(): string {
+        return `--row: ${this.y}; --column: ${this.x}; --width: ${this.width}; --height: ${this.height};`;
     }
+
+    /** Cell title */
+    abstract get title(): string | null;
 
     constructor(
         /** X coordinate of the cell */
@@ -23,7 +31,7 @@ export class Cell<T extends BaseLesson = AnyLesson> {
         public y: number,
 
         /** Lessons in the cell */
-        public lessons: T[],
+        public lessons: AnyLesson[],
 
         /** Width of the cell */
         public width: number,
@@ -32,8 +40,23 @@ export class Cell<T extends BaseLesson = AnyLesson> {
         public height: number
     ) {}
 
+    /** Create a cell from lessons */
+    static #create(x: number, y: number, lessons: AnyLesson[], width: number, height: number): AnyCell {
+        const type = lessons[0].type;
+        if (lessons.some((l) => l.type !== type)) throw new Error("All lessons in a cell must be of the same type");
+
+        if (type === LessonType.Normal) return new NormalCell(x, y, lessons, width, height);
+        else if (type === LessonType.Removed) return new RemovedCell(x, y, lessons, width, height);
+
+        throw new Error(`Unknown lesson type: ${type}`);
+    }
+
     /** Convert a schedule to an array of cells, which can be used to render the schedule */
-    static fromSchedule(schedule: Schedule, merge = true): Cell[] {
+    static fromSchedule(schedule: Schedule, merge = true): AnyCell[] {
+        // The day index starts with Sunday (0), but we want to start with Monday (1) so we need to subtract 1
+        // There's also 2 rows per day, so we need to multiply the day index by 2
+        const row = (schedule.day - 1) * 2;
+
         return schedule.periods.flatMap((lessons, i) => {
             // Throw if there's more than 2 lessons in a period
             if (lessons.length > 2) throw new Error("Too many lessons in a period, can't render");
@@ -50,10 +73,10 @@ export class Cell<T extends BaseLesson = AnyLesson> {
             if (lesson2) {
                 if (merge && this.#canMerge(lesson1, lesson2)) {
                     // If merging is enabled, and the lessons are compatible, merge them
-                    return new Cell(i, 0, [lesson1, lesson2], 1, 2);
+                    return Cell.#create(i, row, [lesson1, lesson2], 1, 2);
                 } else {
                     // Otherwise, add them as separate cells
-                    return [new Cell(i, 0, [lesson1], 1, 1), new Cell(i, 1, [lesson2], 1, 1)];
+                    return [Cell.#create(i, row, [lesson1], 1, 1), Cell.#create(i, row + 1, [lesson2], 1, 1)];
                 }
             }
 
@@ -64,26 +87,12 @@ export class Cell<T extends BaseLesson = AnyLesson> {
                     // +1 because odd group numbers should come first
                     const y = (lesson1.groups[0].number! + 1) % 2;
 
-                    return new Cell(i, y, [lesson1], 1, 1);
+                    return Cell.#create(i, row + y, [lesson1], 1, 1);
                 } else {
-                    return new Cell(i, 0, [lesson1], 1, 2);
+                    return Cell.#create(i, row, [lesson1], 1, 2);
                 }
             }
         });
-    }
-
-    // Type guards for the lesson type
-
-    isNormal(): this is Cell<NormalLesson> {
-        return this.type === LessonType.Normal;
-    }
-
-    isRemoved(): this is Cell<RemovedLesson> {
-        return this.type === LessonType.Removed;
-    }
-
-    isConflict(): this is Cell<ConflictLesson> {
-        return this.type === LessonType.Conflict;
     }
 
     /** Can two lessons be merged */
@@ -102,5 +111,80 @@ export class Cell<T extends BaseLesson = AnyLesson> {
 
         // Otherwise, don't merge
         return false;
+    }
+}
+
+export class NormalCell extends Cell {
+    type = LessonType.Normal as const;
+
+    declare lessons: NormalLesson[];
+
+    /** Unique topics in the cell */
+    get topics(): string[] {
+        return this.lessons.flatMap((lesson) => lesson.topic ?? []).filter((topic, index, array) => array.indexOf(topic) === index);
+    }
+
+    /** Subject detail (will be the same for all lessons in the cell) */
+    get subject(): Detail | null {
+        return this.lessons[0].subject;
+    }
+
+    /** Teacher detail */
+    get teacher(): TeacherDetail | null {
+        return this.lessons[0].teacher;
+    }
+
+    /** Room detail */
+    get room(): Detail | null {
+        return this.lessons[0].room;
+    }
+
+    /** Class groups */
+    get groups(): Group[] {
+        return this.lessons.flatMap((lesson) => lesson.groups);
+    }
+
+    get change(): boolean {
+        return this.lessons.some((lesson) => lesson.change);
+    }
+
+    get title(): string {
+        return [...this.topics, "", this.subject?.name, this.teacher?.name, this.room?.name, Group.name(this.groups)]
+            .filter((item) => item !== null && item !== undefined)
+            .join("\n")
+            .trim();
+    }
+}
+
+export class RemovedCell extends Cell {
+    type = LessonType.Removed as const;
+
+    declare lessons: RemovedLesson[];
+
+    /** Lesson info */
+    get info(): string | null {
+        for (const lesson of this.lessons) {
+            if (lesson.info) return lesson.info;
+        }
+
+        return null;
+    }
+
+    /** Lesson name / change string */
+    get name(): string | null {
+        for (const lesson of this.lessons) {
+            if (lesson.name) return lesson.name;
+        }
+
+        return null;
+    }
+
+    get title(): string | null {
+        return this.name ?? this.info ?? null;
+    }
+
+    /** Whether the cell is active (has info and name) */
+    get active(): boolean {
+        return Boolean(this.info && this.name);
     }
 }

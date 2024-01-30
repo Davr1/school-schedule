@@ -27,10 +27,6 @@
 
     export let day: Schedule;
 
-    // The day index starts with Sunday (0), but we want to start with Monday (1) so we need to subtract 1
-    // There's also 2 rows per day, so we need to multiply the day index by 2
-    $: row = (day.day - 1) * 2;
-
     // Format the date if it's a Date object, otherwise use the weekday
     $: date = day.date instanceof Date ? normal.format(day.date) : weekdays[day.day];
 
@@ -41,12 +37,12 @@
     if (browser) console.log(day);
 </script>
 
-<span class={styles.date} style:grid-row={`${2 + row} / span 2`}>
+<span class={styles.date} style:grid-row={`${2 * day.day} / span 2`}>
     {date}
 </span>
 
 <div class={styles.day}>
     {#each cells as cell}
-        <Lesson {cell} {row} />
+        <Lesson {cell} />
     {/each}
 </div>

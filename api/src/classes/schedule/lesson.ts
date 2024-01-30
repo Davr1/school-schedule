@@ -168,14 +168,14 @@ export class RemovedLesson extends BaseLesson {
         return true;
     }
 
-    /** Lesson info? (will either be "Absc" or null) */
+    /** Lesson info  (will either usually be "Absc" or another short abbreviation) */
     get info(): string | null {
         return this.bakalari?.isAbsence() ? this.bakalari.info : null;
     }
 
-    /** Lesson name? (will either be "Obecná absence ..." or null) */
+    /** Lesson name (will either be "Obecná absence ..." or the change string for removed lessons) */
     get name(): string | null {
-        return this.bakalari?.isAbsence() ? this.bakalari.name : null;
+        return this.bakalari?.isAbsence() ? this.bakalari.name : this.bakalari?.change ?? null;
     }
 
     constructor(

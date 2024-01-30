@@ -1,18 +1,16 @@
 <script lang="ts">
-    import type { Cell } from "$lib/schedule";
+    import { LessonType } from "@school-schedule/api/classes";
+
+    import type { AnyCell } from "$lib/schedule";
 
     import NormalCell from "$components/Schedule/Cell/NormalCell.svelte";
     import RemovedCell from "$components/Schedule/Cell/RemovedCell.svelte";
 
-    export let cell: Cell;
-
-    export let row: number;
-
-    $: y = row + cell.y;
+    export let cell: AnyCell;
 </script>
 
-{#if cell.isNormal()}
-    <NormalCell {cell} {y} />
-{:else if cell.isRemoved()}
-    <RemovedCell {cell} {y} />
+{#if cell.type === LessonType.Normal}
+    <NormalCell {cell} />
+{:else if cell.type === LessonType.Removed}
+    <RemovedCell {cell} />
 {/if}

@@ -1,22 +1,16 @@
 <script lang="ts">
-    import { Group, type NormalLesson } from "@school-schedule/api/classes";
+    import { Group } from "@school-schedule/api/classes";
 
     import { addRipple } from "$lib/ripple";
-    import type { Cell } from "$lib/schedule";
+    import type { NormalCell } from "$lib/schedule";
 
     import { scheduleParams } from "$stores/config";
 
     import styles from "$styles/modules/Schedule.module.scss";
 
-    // let cell: HTMLDivElement;
+    export let cell: NormalCell;
 
-    export let cell: Cell<NormalLesson>;
-    export let y: number;
-
-    $: lesson = cell.lessons[0];
-    $: groups = cell.lessons.flatMap((l) => l.groups);
-    $: changed = cell.lessons.some((l) => l.change);
-
+    let node: HTMLDivElement;
     let visible = false;
 </script>
 
@@ -24,29 +18,29 @@
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div
     class={`${styles.subject} active`}
-    class:changed
+    class:changed={cell.change}
     class:floating={visible}
-    style={`--row: ${y}; --column: ${cell.x}; --width: ${cell.width}; --height: ${cell.height}`}
+    style={cell.style}
+    title={cell.title}
     on:click={() => (visible = !visible)}
     use:addRipple
+    bind:this={node}
 >
-    <!-- <SubjectInfo {cell} subject={lesson} bind:visible /> -->
-
     <div class={styles.content}>
         <div class="top">
             <div class="left">
-                {Group.name(groups)}
+                {Group.name(cell.groups)}
             </div>
 
             {#if $scheduleParams.scheduleMode !== "Room"}
-                <div class="right">{lesson.room?.name ?? "mim"}</div>
+                <div class="right">{cell.room?.name ?? "mim"}</div>
             {/if}
         </div>
 
-        <div class="middle">{lesson.subject?.id ?? "???"}</div>
+        <div class="middle">{cell.subject?.id ?? "???"}</div>
 
-        {#if lesson.teacher}
-            <div class="bottom">{lesson.teacher.abbreviation}</div>
+        {#if cell.teacher}
+            <div class="bottom">{cell.teacher.abbreviation}</div>
         {/if}
     </div>
 </div>
