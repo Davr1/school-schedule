@@ -61,6 +61,13 @@ export abstract class BaseBakalariLesson {
         }
     }
 
+    /** Patch a public schedule lesson (this) with a auth schedule lesson (other) */
+    patch(other: BaseBakalariLesson): this {
+        if (this.type !== other.type) throw new Error(`Can't patch lessons of different types: ${this.type} and ${other.type}`);
+
+        return this;
+    }
+
     // Type guards
 
     /** Check if the lesson is normal */
@@ -100,14 +107,35 @@ export class NormalBakalariLesson extends BaseBakalariLesson {
         readonly topic: string | null = null,
 
         /** Absence info */
-        readonly absence: BakalariAbsenceType | null = null,
+        public absence: BakalariAbsenceType | null = null,
 
         /** Homework */
-        readonly homework: string[] = [],
+        public homework: string[] = [],
 
         change: string | null = null
     ) {
         super(change);
+    }
+
+    patch(other: BaseBakalariLesson): this {
+        super.patch(other);
+
+        // Check if the other lesson is normal
+        if (!other.isNormal()) throw new Error(`Can't patch a normal lesson with a ${other.type} lesson`);
+
+        // Verify that the details are the same
+        if (this.subject?.id !== other.subject?.id || this.teacher?.id !== other.teacher?.id || this.room?.id !== other.room?.id)
+            throw new Error(`Can't patch a lesson with different details`);
+
+        // Verify that the groups are the same (the other can only have one group)
+        if (this.groups.length > 0 && !this.groups.some((g) => g.number === other.groups[0]?.number))
+            throw new Error(`Can't patch a lesson with different groups`);
+
+        // Patch absence and homework (since those are the only additional fields in the auth schedule)
+        this.absence = other.absence;
+        this.homework = other.homework;
+
+        return this;
     }
 
     /** Serialize the lesson to JSON */

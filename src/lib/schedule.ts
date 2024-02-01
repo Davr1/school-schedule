@@ -144,6 +144,21 @@ export class NormalCell extends Cell {
         return this.lessons.flatMap((lesson) => lesson.groups);
     }
 
+    /** Absence type */
+    get absence(): string | null {
+        // TODO: Change
+        for (const lesson of this.lessons) {
+            if (lesson.absence) return lesson.absence;
+        }
+
+        return null;
+    }
+
+    /** Homework */
+    get homework(): string[] {
+        return this.lessons.flatMap((lesson) => lesson.homework);
+    }
+
     get change(): boolean {
         return this.lessons.some((lesson) => lesson.change);
     }

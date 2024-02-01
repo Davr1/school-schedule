@@ -31,10 +31,12 @@ class BakalariParser {
             if (event !== undefined) return new Schedule(detail, date, [], event);
 
             // Get each period node, and parse it
-            const oldNodes = Array.from(node.querySelectorAll(".bk-timetable-cell"));
-            const newNodes = Array.from(node.querySelectorAll(".day-item"));
+            let periodNodes = node.querySelectorAll(".bk-timetable-cell");
 
-            const periods = [...oldNodes, ...newNodes].map((node) => {
+            // New bakalari has a different class name for the period nodes that conflicts with the old one
+            if (periodNodes.length === 0) periodNodes = node.querySelectorAll(".day-item");
+
+            const periods = Array.from(periodNodes, (node) => {
                 // Get all the lessons in the period
                 const lessons = Array.from(node.querySelectorAll(".day-item-hover"));
 

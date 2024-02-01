@@ -1,3 +1,4 @@
+import { BakalariLessonType } from "@/classes/bakalari";
 import type { Detail, DetailHandler } from "@/classes/details";
 import { type AnyLesson, BaseLesson } from "@/classes/schedule/lesson";
 import type { SSSVTClass } from "@/classes/sssvt/schedule";
@@ -24,7 +25,7 @@ class Schedule {
         readonly periods: AnyLesson[][],
 
         /** Possible full day event */
-        readonly event: string | null = null
+        public event: string | null = null
     ) {}
 
     /** Serialize the schedule to JSON */
@@ -82,6 +83,46 @@ class Schedule {
             // Replace the period
             this.periods[index] = newPeriod;
         });
+    }
+
+    /** Patch the public bakalari schedule with an authenticated one (won't work properly the other way around!) */
+    patch(bakalari: Schedule) {
+        // Check if the dates are the same
+        if (this.date instanceof Date && bakalari.date instanceof Date && this.date.toISOString() !== bakalari.date.toISOString())
+            throw new Error("Can't patch different dates");
+
+        // Patch each lesson
+        this.periods.forEach((period, index) => {
+            period.forEach((lesson) => {
+                if (!lesson.bakalari) return;
+
+                // Find the matching lesson in the other schedule
+                const otherLesson = bakalari.periods[index]?.find((l) => {
+                    const auth = l.bakalari;
+                    const pub = lesson.bakalari;
+
+                    if (!auth || !pub || auth.type !== pub.type) return false;
+
+                    // Non-normal lessons
+                    if (auth.type !== BakalariLessonType.Normal || pub.type !== BakalariLessonType.Normal) return true;
+
+                    // Compare the details
+                    if (auth.subject?.id !== pub.subject?.id || auth.teacher?.id !== pub.teacher?.id || auth.room?.id !== pub.room?.id)
+                        return false;
+
+                    // Compare the groups (auth schedules only show 1 group, so we only need to compare the first one)
+                    if (pub.groups.length > 0 && !pub.groups.some((g) => g.number === auth.groups[0]?.number)) return false;
+
+                    return true;
+                });
+
+                // Patch the lesson
+                if (otherLesson) lesson.bakalari.patch(otherLesson.bakalari!);
+            });
+        });
+
+        // Patch the event
+        if (bakalari.event) this.event = bakalari.event;
     }
 }
 
