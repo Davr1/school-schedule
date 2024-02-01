@@ -1,6 +1,7 @@
 import {
     AbsenceBakalariLesson,
     type AnyBakalariLesson,
+    type BakalariAbsenceType,
     BaseBakalariLesson,
     NormalBakalariLesson,
     RemovedBakalariLesson
@@ -141,6 +142,16 @@ export class NormalLesson extends BaseLesson {
         if (this.sssvt) return true;
 
         return this.bakalari?.change !== null;
+    }
+
+    /** Absence type (if the schedule is from an authenticated source) */
+    get absence(): BakalariAbsenceType | null {
+        return this.bakalari?.absence ?? null;
+    }
+
+    /** Homework (also only for authenticated schedules) */
+    get homework(): string[] {
+        return this.bakalari?.homework ?? [];
     }
 
     constructor(

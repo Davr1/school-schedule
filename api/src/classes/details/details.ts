@@ -34,17 +34,32 @@ export class Detail {
 export class TeacherDetail extends Detail {
     readonly type = DetailType.Teacher;
 
-    // In the future, more details may be added here
+    get fullName() {
+        const prefix = this.prefix && this.prefix + ".";
+        const suffix = this.suffix && this.suffix + ".";
+
+        return `${prefix ?? ""} ${this.name ?? ""} ${suffix ?? ""}`.trim();
+    }
 
     constructor(
         id: string,
+        public abbreviation: string,
         name: string | null,
-        readonly abbreviation: string
+        public login: string | null = null,
+        public prefix: string | null = null,
+        public suffix: string | null = null
     ) {
         super(DetailType.Teacher, id, name);
     }
 
     static fromJSON(json: TeacherDetailJSON) {
-        return new TeacherDetail(json.id, json.name ?? null, json.abbreviation);
+        return new TeacherDetail(
+            json.id,
+            json.abbreviation,
+            json.name ?? null,
+            json.login ?? null,
+            json.prefix ?? null,
+            json.suffix ?? null
+        );
     }
 }

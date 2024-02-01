@@ -10,6 +10,7 @@ import {
     RemovedBakalariLesson,
     TeacherDetail
 } from "@/classes";
+import type { BakalariAbsenceType } from "@/classes/bakalari";
 import type { IElement } from "@/parser/interfaces";
 
 interface BakalariData {
@@ -21,7 +22,7 @@ interface BakalariData {
     theme: string;
     notice: string;
     changeinfo: string;
-    homeworks: unknown;
+    homeworks: string[] | null;
     absencetext: unknown;
     hasAbsent: boolean;
     absentinfo: string | null;
@@ -74,6 +75,8 @@ class BakalariLessonParser {
             this.#room(data),
             this.#groups(data),
             data.theme || null,
+            this.#absenceType(node),
+            this.#homework(data),
             this.#change(node, data)
         );
     }
@@ -121,9 +124,17 @@ class BakalariLessonParser {
         if (!name) return null;
 
         // Get the abbreviation from the node
-        // const abbreviationNode = selectOne(".bottom > span", lesson)!;
-        const abbreviation = lesson.querySelector(".bottom > span")?.textContent?.trim();
-        if (!abbreviation) throw new Error("Couldn't find the teacher's abbreviation");
+        const abbreviation = lesson.querySelector(".bottom")?.textContent?.trim();
+        if (!abbreviation) {
+            // Try and lookup by name
+            const teacher = this.#details.getByName<TeacherDetail>(name);
+
+            // If the teacher exists, return it
+            if (teacher) return teacher;
+
+            // Otherwise, throw an error
+            throw new Error("Couldn't find the teacher's abbreviation");
+        }
 
         // Find the teacher detail
         const teacher = this.#details.getByAbbreviation(abbreviation, () => new TeacherDetail(abbreviation, name, abbreviation));
@@ -176,6 +187,29 @@ class BakalariLessonParser {
 
         // Return the change info
         if (changed) return data.changeinfo;
+    }
+
+    /** Parse absence type (only works for authenticated schedules) */
+    #absenceType(node: IElement): BakalariAbsenceType | null {
+        // Get the absence info node. Return null if it doesn't exist
+        const absenceInfoNode = node.querySelector(".absence");
+        if (!absenceInfoNode) return null;
+
+        // Parse the class name from the node
+        const className = absenceInfoNode.getAttribute("class");
+        const absenceInfo = className?.match(/_Absent[a-zA-Z]*/)?.[0] ?? null;
+
+        // Return the absence info
+        return absenceInfo as BakalariAbsenceType;
+    }
+
+    /** Parse homework (only works for authenticated schedules) */
+    #homework(data: BakalariData): string[] {
+        // Get the homework from the data
+        const homework = data.homeworks;
+
+        // Return the homework
+        return homework ?? [];
     }
 }
 

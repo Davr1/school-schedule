@@ -14,6 +14,26 @@ export enum BakalariLessonType {
     Absence = "absent"
 }
 
+export enum BakalariAbsenceType {
+    /* Absence studenta */
+    Absent = "_Absent",
+
+    /* Omluvená absence */
+    Ok = "_AbsentOk",
+
+    /* Neomluvená absence */
+    Miss = "_AbsentMiss",
+
+    /* Pozdní příchod */
+    Late = "_AbsentLate",
+
+    /* Nezapočtená absence */
+    School = "_AbsentSchool",
+
+    /* Brzký odchod */
+    Soon = "_AbsentSoon"
+}
+
 /** Any Bakalari lesson */
 export type AnyBakalariLesson = NormalBakalariLesson | RemovedBakalariLesson | AbsenceBakalariLesson;
 
@@ -79,6 +99,12 @@ export class NormalBakalariLesson extends BaseBakalariLesson {
         /** The topic (or theme. idk). will be null if the teacher din't write anything */
         readonly topic: string | null = null,
 
+        /** Absence info */
+        readonly absence: BakalariAbsenceType | null = null,
+
+        /** Homework */
+        readonly homework: string[] = [],
+
         change: string | null = null
     ) {
         super(change);
@@ -103,7 +129,7 @@ export class NormalBakalariLesson extends BaseBakalariLesson {
 
         const groups = json.groups.map((group) => Group.fromJSON(group, handler));
 
-        return new NormalBakalariLesson(subject, teacher, room, groups, json.topic, json.change);
+        return new NormalBakalariLesson(subject, teacher, room, groups, json.topic, json.absence, json.homework, json.change);
     }
 }
 
