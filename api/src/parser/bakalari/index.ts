@@ -1,11 +1,13 @@
-import { BaseLesson, Detail, type DetailHandler, Schedule } from "@/classes";
+import { BaseLesson, Detail, type DetailHandler, Schedule, User } from "@/classes";
 import BakalariLessonParser from "@/parser/bakalari/lesson";
 import type { IElement, IParentNode } from "@/parser/interfaces";
 
 class BakalariParser {
+    #details: DetailHandler;
     #lessonParser: BakalariLessonParser;
 
     constructor(details: DetailHandler) {
+        this.#details = details;
         this.#lessonParser = new BakalariLessonParser(details);
     }
 
@@ -40,6 +42,10 @@ class BakalariParser {
                 // Get all the lessons in the period
                 const lessons = Array.from(node.querySelectorAll(".day-item-hover"));
 
+                // If the period node has the class "day-item-hover", add it to the list of lessons as well
+                if (node.getAttribute("class")?.includes("day-item-hover")) lessons.push(node);
+                console.log(lessons);
+
                 // Parse each lesson, then wrap the BakalariLesson in a Lesson class
                 return lessons.map(this.#lessonParser.parse, this.#lessonParser).map((lesson) => BaseLesson.merge(lesson));
             });
@@ -47,6 +53,16 @@ class BakalariParser {
             // Return the parsed day
             return new Schedule(detail, date, periods);
         });
+    }
+
+    parseUser(dom: IParentNode): User | undefined {
+        const [_, className, name] = dom.querySelector(".lusername")?.textContent?.match(/([A-Z]\d\.[A-Z]), (.+)/) ?? [];
+        if (!className || !name) return;
+
+        const classDetail = this.#details.getByName(className);
+        if (!classDetail) return;
+
+        return new User(name, classDetail);
     }
 
     /** Parse the day info from a row */

@@ -5,7 +5,7 @@ import {
     BaseBakalariLesson,
     NormalBakalariLesson,
     RemovedBakalariLesson
-} from "@/classes/bakalari";
+} from "@/classes/bakalari/lesson";
 import type { Detail, DetailHandler, TeacherDetail } from "@/classes/details";
 import type { Group } from "@/classes/schedule/group";
 import { type AnySSSVTChange, BaseSSSVTChange, SSSVTCancellation, SSSVTSubstitution } from "@/classes/sssvt/change";

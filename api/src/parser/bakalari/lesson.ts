@@ -10,7 +10,7 @@ import {
     RemovedBakalariLesson,
     TeacherDetail
 } from "@/classes";
-import type { BakalariAbsenceType } from "@/classes/bakalari";
+import type { BakalariAbsenceType } from "@/classes/bakalari/lesson";
 import type { IElement } from "@/parser/interfaces";
 
 interface BakalariData {

@@ -12,7 +12,8 @@ export {
     NormalBakalariLesson,
     RemovedBakalariLesson,
     type AnyBakalariLesson
-} from "@/classes/bakalari";
+} from "@/classes/bakalari/lesson";
+export { User } from "@/classes/bakalari/user";
 
 // SSSVT classes
 export { BaseSSSVTChange, SSSVTCancellation, SSSVTChangeType, SSSVTSubstitution, type AnySSSVTChange } from "@/classes/sssvt/change";

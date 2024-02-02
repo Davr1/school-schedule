@@ -1,4 +1,4 @@
-import { BakalariLessonType } from "@/classes/bakalari";
+import { BakalariLessonType } from "@/classes/bakalari/lesson";
 import type { Detail, DetailHandler } from "@/classes/details";
 import { type AnyLesson, BaseLesson } from "@/classes/schedule/lesson";
 import type { SSSVTClass } from "@/classes/sssvt/schedule";

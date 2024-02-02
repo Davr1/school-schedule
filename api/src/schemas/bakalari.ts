@@ -1,6 +1,6 @@
 import { z } from "@hono/zod-openapi";
 
-import { BakalariAbsenceType, BakalariLessonType } from "@/classes/bakalari";
+import { BakalariAbsenceType, BakalariLessonType } from "@/classes/bakalari/lesson";
 import { Week } from "@/loader/bakalari";
 import { detailIdSchema } from "@/schemas/details";
 import { groupJSONSchema } from "@/schemas/group";
