@@ -1,6 +1,7 @@
 /** Web specific modifications to the schedule api model */
 import {
     type AnyLesson,
+    BakalariAbsenceType,
     type Detail,
     Group,
     LessonType,
@@ -145,7 +146,7 @@ export class NormalCell extends Cell {
     }
 
     /** Absence type */
-    get absence(): string | null {
+    get absence(): BakalariAbsenceType | null {
         // TODO: Change
         for (const lesson of this.lessons) {
             if (lesson.absence) return lesson.absence;

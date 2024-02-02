@@ -6,6 +6,7 @@ export { BaseLesson, ConflictLesson, LessonType, NormalLesson, RemovedLesson, ty
 // Bakalari classes
 export {
     AbsenceBakalariLesson,
+    BakalariAbsenceType,
     BakalariLessonType,
     BaseBakalariLesson,
     NormalBakalariLesson,

@@ -69,19 +69,19 @@
         app?.removeEventListener("click", close);
         app?.removeEventListener("focusin", close);
 
+        // Undo the changes made to the body and all elements if `inert` is true
+        if (inert) {
+            // Enable scrolling on the body
+            document.body.style.overflow = "";
+
+            // Enable tabbing on all elements
+            for (const element of inertElements) {
+                element.removeAttribute("inert");
+            }
+        }
+
         // Focus the element that was focused before the portal was opened
         oldFocus?.focus();
-
-        // Return if `inert` is false
-        if (!inert) return;
-
-        // Enable scrolling on the body
-        document.body.style.overflow = "";
-
-        // Enable tabbing on all elements
-        for (const element of inertElements) {
-            element.removeAttribute("inert");
-        }
     });
 </script>
 

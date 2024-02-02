@@ -4,6 +4,9 @@
     justify-content: center;
     align-items: center;
 
+    // This element is literally just a backdrop, so we don't want it to be focusable
+    outline: none;
+
     @media (max-aspect-ratio: 3/4) {
         align-items: end;
     }

@@ -50,9 +50,24 @@
     // Used by children to get the context
     // This allows them to target the correct control
     setContext(controlValueKey, selectionStore);
+
+    /**
+     * What the `visible` variable will be set to on click
+     *
+     * This is used to prevent the dropdown from reopening when the button is clicked while the dropdown is open
+     */
+    let onclick = true;
 </script>
 
-<button bind:this={button} class={styles.dropdownButton} class:visible {id} use:addRipple on:click={() => (visible = !visible)}>
+<button
+    bind:this={button}
+    class={styles.dropdownButton}
+    class:visible
+    {id}
+    use:addRipple
+    on:click={() => (onclick ? (visible = true) : (onclick = true))}
+    on:focus={() => visible && (onclick = false)}
+>
     {selection}
 
     <ExpandMore />
