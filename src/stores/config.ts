@@ -26,6 +26,7 @@ export interface Config {
     loadscreen: boolean;
     mergeSubjects: boolean;
     version: string;
+    debug: boolean;
 
     scheduleParams: ScheduleParams;
 }
@@ -45,6 +46,7 @@ export const defaultConfig: Config = {
     saturdayOverride: true,
     loadscreen: true,
     mergeSubjects: true,
+    debug: false,
     scheduleParams: {
         scheduleMode: "Class",
         weekMode: "Current",

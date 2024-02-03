@@ -6,6 +6,9 @@
 
     animation: 100ms bg forwards ease-out;
 
+    // This element is literally just a backdrop, so we don't want it to be focusable
+    outline: none;
+
     cursor: pointer;
 
     @media (pointer: fine) {

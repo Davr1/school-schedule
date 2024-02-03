@@ -6,6 +6,8 @@
 
     import { scheduleParams } from "$stores/config";
 
+    import NormalInfo from "$components/Schedule/Cell/Info/NormalInfo.svelte";
+
     import styles from "$styles/modules/Schedule.module.scss";
 
     export let cell: NormalCell;
@@ -22,7 +24,7 @@
     class:floating={visible}
     style={cell.style}
     title={cell.title}
-    on:click={() => (visible = !visible)}
+    on:click={() => (visible = true)}
     use:addRipple
     bind:this={node}
 >
@@ -44,3 +46,7 @@
         {/if}
     </div>
 </div>
+
+{#if visible}
+    <NormalInfo {cell} {node} on:close={() => (visible = false)} />
+{/if}

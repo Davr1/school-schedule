@@ -29,6 +29,9 @@
         document.body.appendChild(portal);
 
         setTimeout(() => {
+            // If the portal has been unmounted like right after it was mounted, don't do anything
+            if (!portal) return;
+
             // Add an event listener to #app, so when inert is disabled, we can still close the portal
             const app = document.getElementById("app");
             app?.addEventListener("click", close);
