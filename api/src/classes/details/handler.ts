@@ -68,7 +68,7 @@ export class DetailHandler extends Map<string, Detail> {
     getByName<T extends Detail = Detail>(name: string): T | undefined;
     getByName<T extends Detail = Detail>(name: string, defaultDetail: T | (() => T)): T;
     getByName<T extends Detail = Detail>(name: string, defaultDetail?: T | (() => T)): T | undefined {
-        let detail = this.details.find((detail) => detail.name === name || (detail instanceof TeacherDetail && detail.fullName === name));
+        let detail = this.details.find((detail) => detail.name === name || (detail instanceof TeacherDetail && detail.matches(name)));
 
         // If the detail doesn't exist, add the default detail
         if (!detail && defaultDetail) detail = this.#addDefaultDetail(defaultDetail);

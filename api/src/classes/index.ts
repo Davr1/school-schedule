@@ -21,3 +21,4 @@ export { default as SSSVT, type SSSVTClass } from "@/classes/sssvt/schedule";
 
 // Detail classes
 export { Detail, DetailHandler, DetailType, TeacherDetail, type AnyDetail } from "@/classes/details";
+export { classes, rooms, teachers } from "@/classes/details/static";

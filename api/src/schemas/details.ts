@@ -38,8 +38,9 @@ export const teacherDetailJSONSchema = z
         type: z.literal(DetailType.Teacher),
         id: detailIdSchema,
         abbreviation: z.string(),
-        name: z.string().nullish(),
-        login: z.string().nullish(),
+        name: z.string().nullish().openapi({ description: "The login name of the teacher" }),
+        firstName: z.string().nullish(),
+        lastName: z.string().nullish(),
         prefix: z.string().nullish(),
         suffix: z.string().nullish()
     })
