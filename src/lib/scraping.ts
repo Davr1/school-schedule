@@ -83,6 +83,11 @@ export async function getBakaSchedule(params: ScheduleParams, cache?: boolean): 
                             special: $(cell).find("span")?.text()
                         })
                     );
+
+                    // fill the rest with empty subjects
+                    subjects.push(subject, ...new Array(12).fill([]));
+
+                    return;
                 }
 
                 subjects.push(subject);

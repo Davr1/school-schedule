@@ -156,7 +156,7 @@
                         }
 
                         // full day events should be 6 wide
-                        if (group.isSpecial() && subjects.length === 1) width = 6;
+                        if (group.isSpecial() && subjects.filter((s) => s.length).length === 1) width = 6;
 
                         return { subject: group, row: i * 2 + half, column: j, width, height, id: group.id };
                     })
