@@ -65,4 +65,6 @@
     {/if}
 </nav>
 
-<AdvancedSettingsModal bind:visible={advancedSettingsModal} />
+{#if advancedSettingsModal}
+    <AdvancedSettingsModal on:close={() => (advancedSettingsModal = false)} />
+{/if}

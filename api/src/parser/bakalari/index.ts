@@ -1,11 +1,13 @@
-import { Detail, type DetailHandler, Lesson, Schedule } from "@/classes";
+import { BaseLesson, Detail, type DetailHandler, Schedule, User } from "@/classes";
 import BakalariLessonParser from "@/parser/bakalari/lesson";
 import type { IElement, IParentNode } from "@/parser/interfaces";
 
 class BakalariParser {
+    #details: DetailHandler;
     #lessonParser: BakalariLessonParser;
 
     constructor(details: DetailHandler) {
+        this.#details = details;
         this.#lessonParser = new BakalariLessonParser(details);
     }
 
@@ -18,10 +20,11 @@ class BakalariParser {
      */
     parse(detail: Detail, dom: IParentNode): Schedule[] {
         // Parse the html into a dom, and select all the day row nodes
-        const dayNodes = Array.from(dom.querySelectorAll(".bk-timetable-row"));
+        const oldNodes = Array.from(dom.querySelectorAll(".bk-timetable-row"));
+        const newNodes = Array.from(dom.querySelectorAll(".day-row"));
 
         // Parse each day and return the parsed data
-        return dayNodes.map((node, index) => {
+        return [...oldNodes, ...newNodes].map((node, index) => {
             // Get the date and the day of the week
             const date = this.#date(node) ?? index + 1;
 
@@ -30,13 +33,20 @@ class BakalariParser {
             if (event !== undefined) return new Schedule(detail, date, [], event);
 
             // Get each period node, and parse it
-            const periodNodes = Array.from(node.querySelectorAll(".bk-timetable-cell"));
-            const periods = periodNodes.map((node) => {
+            let periodNodes = node.querySelectorAll(".bk-timetable-cell");
+
+            // New bakalari has a different class name for the period nodes that conflicts with the old one
+            if (periodNodes.length === 0) periodNodes = node.querySelectorAll(".day-item");
+
+            const periods = Array.from(periodNodes, (node) => {
                 // Get all the lessons in the period
                 const lessons = Array.from(node.querySelectorAll(".day-item-hover"));
 
+                // If the period node has the class "day-item-hover", add it to the list of lessons as well
+                if (node.getAttribute("class")?.includes("day-item-hover")) lessons.push(node);
+
                 // Parse each lesson, then wrap the BakalariLesson in a Lesson class
-                return lessons.map(this.#lessonParser.parse, this.#lessonParser).map((lesson) => new Lesson(lesson));
+                return lessons.map(this.#lessonParser.parse, this.#lessonParser).map((lesson) => BaseLesson.merge(lesson));
             });
 
             // Return the parsed day
@@ -44,14 +54,24 @@ class BakalariParser {
         });
     }
 
+    parseUser(dom: IParentNode): User | undefined {
+        const [_, className, name] = dom.querySelector(".lusername")?.textContent?.match(/([A-Z]\d\.[A-Z]), (.+)/) ?? [];
+        if (!className || !name) return;
+
+        const classDetail = this.#details.getByName(className);
+        if (!classDetail) return;
+
+        return new User(name, classDetail);
+    }
+
     /** Parse the day info from a row */
     #date(node: IElement): Date | undefined {
-        const text = node.querySelector(".bk-day-date")?.textContent;
+        const text = (node.querySelector(".bk-day-date") || node.querySelector(".day-name span"))?.textContent;
 
         // Don't return anything if the text is empty (for permanent schedules)
         if (!text) return;
 
-        let [day, month] = text.split("/").map(Number);
+        let [day, month] = text.split(/\/|\./).map(Number);
         month -= 1; // Months in the text are 1-indexed, but Date uses 0-indexed months
 
         const now = new Date();
@@ -75,7 +95,7 @@ class BakalariParser {
         // Find the full day event node
         const event = node.querySelector(".empty")?.textContent?.trim();
 
-        return event;
+        return event || undefined;
     }
 }
 

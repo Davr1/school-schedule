@@ -1,16 +1,28 @@
 :local(.info) {
-    position: absolute;
-    z-index: 2;
-
     width: max-content;
+    max-width: calc(var(--max-width) - 4rem);
 
     margin: -0.67em 2rem;
     padding: 0 1.4rem;
 
-    background: inherit;
-    border-radius: inherit;
+    background: var(--dimmed-background);
+    border-radius: 0.3rem;
 
-    box-shadow: inherit;
+    box-shadow: 0 0.0625rem 0.25rem -0.125rem #000;
+    box-sizing: border-box;
+
+    &.primary,
+    &.secondary {
+        color: #fff;
+    }
+
+    &.primary {
+        background: var(--accent-primary);
+    }
+
+    &.secondary {
+        background: var(--accent-secondary);
+    }
 
     svg {
         width: 2rem;

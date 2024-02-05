@@ -1,19 +1,16 @@
 <script lang="ts">
     import { config } from "$stores/config";
 
+    import Modal from "$components/Base/Modal.svelte";
     import CacheButton from "$components/CacheButton.svelte";
     import Switch from "$components/Controls/Switch.svelte";
-    import Modal from "$components/Modal.svelte";
     import ThemeEditor from "$components/ThemeEditor.svelte";
 
     import modalStyles from "$styles/modules/Modal.module.scss";
     import styles from "$styles/modules/Settings.module.scss";
-
-    /** Whether the AdvancedSettingsModal is visible */
-    export let visible: boolean;
 </script>
 
-<Modal bind:visible scrollable>
+<Modal scrollable on:close>
     <h1>Advanced settings</h1>
 
     <div class={styles.optionRow}>Use the school's website for substitutions <Switch bind:value={$config.useWeb} /></div>
@@ -35,8 +32,13 @@
 
     <CacheButton class={modalStyles.button} />
 
-    <!-- This is here to reset the primary / secondary selection on every open -->
-    {#key visible}
-        <ThemeEditor />
-    {/key}
+    <ThemeEditor />
+
+    <div class={styles.optionRow}>
+        <span>Debug mode 👀</span>
+        <Switch bind:value={$config.debug} />
+    </div>
+    <p>
+        <span>Shows JSON in lesson info...</span>
+    </p>
 </Modal>

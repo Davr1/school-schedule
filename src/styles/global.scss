@@ -12,6 +12,8 @@ body,
     font-family: Inter, sans-serif;
     font-feature-settings: "tnum";
 
+    touch-action: manipulation;
+
     @media (max-aspect-ratio: 1/2) {
         font-size: 1.3vh;
     }
@@ -35,6 +37,9 @@ body {
     justify-content: center;
     align-items: center;
     flex-direction: column;
+
+    box-sizing: border-box;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
 
 * {

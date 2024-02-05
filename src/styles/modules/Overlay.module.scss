@@ -1,0 +1,32 @@
+:local(.overlay) {
+    position: fixed;
+    inset: 0;
+
+    background: #000a;
+
+    animation: 100ms bg forwards ease-out;
+
+    // This element is literally just a backdrop, so we don't want it to be focusable
+    outline: none;
+
+    cursor: pointer;
+
+    @media (pointer: fine) {
+        // This is dumb af. Here's the reason for this....
+        // https://discord.com/channels/@me/1115648324821843999/1126108195857891410
+        &.dimmed {
+            backdrop-filter: blur(5px);
+        }
+    }
+}
+
+@keyframes bg {
+    from {
+        opacity: 0;
+        backdrop-filter: blur(0);
+    }
+    to {
+        opacity: 1;
+        backdrop-filter: blur(5px);
+    }
+}

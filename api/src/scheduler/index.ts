@@ -33,8 +33,8 @@ async function scheduleAllClasses() {
         }
     });
 
-    // If the file is run directly and the env variable "NOW" is set to true, run the task immediately.
-    if (import.meta.main && process.env.NOW === "true") {
+    // If the env variable "NOW" is set to true, run the task immediately.
+    if (process.env.NOW === "true") {
         await task.trigger();
     }
 

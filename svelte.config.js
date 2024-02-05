@@ -1,5 +1,5 @@
 import adapter from "@sveltejs/adapter-node";
-import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
+import { vitePreprocess } from "@sveltejs/vite-plugin-svelte";
 import { readFile } from "fs/promises";
 
 // Get the version number from package.json.
@@ -15,7 +15,10 @@ const config = {
             $stores: "./src/stores/",
             $styles: "./src/styles/",
             $assets: "./src/assets/",
-        },
+
+            // This needs to stay here unfortunately. This avoids having to build API, before building the frontend.
+            "@": "./api/src/"
+        }
     },
 
     preprocess: vitePreprocess()

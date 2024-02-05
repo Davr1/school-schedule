@@ -1,15 +1,45 @@
 {
     "name": "@school-schedule/api",
     "version": "0.0.2",
-    "module": "src/index.ts",
     "type": "module",
+    "exports": {
+        ".": "./src/api/index.ts",
+        "./server": "./src/api/server.ts",
+        "./classes": "./src/classes/index.ts",
+        "./parser": "./src/parser/index.ts",
+        "./parser/domhandler": "./src/parser/domhandler.ts",
+        "./scheduler": "./src/scheduler/index.ts",
+        "./schemas": "./src/schemas/index.ts"
+    },
+    "files": [
+        "dist",
+        "src"
+    ],
+    "publishConfig": {
+        "exports": {
+            ".": "./dist/api/index.js",
+            "./server": "./dist/api/server.js",
+            "./classes": "./dist/classes/index.js",
+            "./parser": "./dist/parser/index.js",
+            "./parser/domhandler": "./dist/parser/domhandler.js",
+            "./scheduler": "./dist/scheduler/index.js",
+            "./schemas": "./dist/schemas/index.js"
+        }
+    },
+    "scripts": {
+        "build": "tsup",
+        "start": "bun run src/api/server.ts",
+        "start:node": "node dist/api/node.js",
+        "prepack": "pnpm build"
+    },
     "devDependencies": {
-        "bun-types": "latest"
+        "tsup": "^8.0.1"
     },
     "peerDependencies": {
         "typescript": "^5.0.0"
     },
     "dependencies": {
+        "@hono/node-server": "^1.4.0",
         "@hono/swagger-ui": "^0.2.1",
         "@hono/zod-openapi": "^0.9.5",
         "croner": "^8.0.0",
@@ -18,7 +48,23 @@
         "domutils": "^3.1.0",
         "hono": "^3.12.5",
         "htmlparser2": "^9.1.0",
-        "mongodb": "^6.3.0",
         "zod": "^3.22.4"
+    },
+    "tsup": {
+        "entry": [
+            "./src/api/index.ts",
+            "./src/api/server.ts",
+            "./src/api/node.ts",
+            "./src/classes/index.ts",
+            "./src/parser/index.ts",
+            "./src/parser/domhandler.ts",
+            "./src/scheduler/index.ts",
+            "./src/schemas/index.ts"
+        ],
+        "splitting": true,
+        "sourcemap": true,
+        "format": "esm",
+        "clean": true,
+        "dts": true
     }
 }

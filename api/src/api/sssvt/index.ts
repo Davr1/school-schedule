@@ -4,7 +4,7 @@ import { HTTPException } from "hono/http-exception";
 import type { ApiContext } from "@/api/context";
 import sssvtSubstitutionRoute from "@/api/sssvt/route";
 import fetchSSSVT from "@/loader/sssvt";
-import { parseHTML } from "@/parser";
+import { parseHTML } from "@/parser/domhandler";
 import type { SSSVTJSON } from "@/schemas";
 
 const SSSVTEndpoints = ({ sssvtParser }: ApiContext) =>
