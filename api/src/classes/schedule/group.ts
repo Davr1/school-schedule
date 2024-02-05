@@ -1,10 +1,10 @@
-import type { Detail, DetailHandler } from "@/classes/details";
+import { ClassDetail, type DetailHandler } from "@/classes/details";
 import type { GroupJSON } from "@/schemas/group";
 
 /** Class group */
 export class Group {
     /** The class, null if the schedule type is class */
-    public class: Detail | null;
+    public class: ClassDetail | null;
 
     /** The group number, null if the whole class is targetted */
     public number: number | null;
@@ -13,7 +13,7 @@ export class Group {
         return `${this.class?.name ?? ""} ${this.number !== null ? ` ${this.number}.sk` : ""}`.trim();
     }
 
-    constructor(className: Detail | null = null, number: number | null = null) {
+    constructor(className: ClassDetail | null = null, number: number | null = null) {
         this.class = className;
         this.number = number;
     }
@@ -30,7 +30,7 @@ export class Group {
     }
 
     static fromJSON(json: GroupJSON, handler: DetailHandler) {
-        return new Group(json.class ? handler.getOne(json.class) : null, json.number ?? null);
+        return new Group(json.class ? handler.getOne<ClassDetail>(json.class) : null, json.number ?? null);
     }
 
     /** Determine the display name of multiple groups */

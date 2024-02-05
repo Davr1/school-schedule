@@ -44,7 +44,6 @@ class BakalariParser {
 
                 // If the period node has the class "day-item-hover", add it to the list of lessons as well
                 if (node.getAttribute("class")?.includes("day-item-hover")) lessons.push(node);
-                console.log(lessons);
 
                 // Parse each lesson, then wrap the BakalariLesson in a Lesson class
                 return lessons.map(this.#lessonParser.parse, this.#lessonParser).map((lesson) => BaseLesson.merge(lesson));

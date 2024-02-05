@@ -9,12 +9,21 @@ class DetailNotFoundError extends TypeError {
 }
 
 export class DetailHandler extends Map<string, Detail> {
+    static #instance: DetailHandler | undefined;
+
+    /** Get the singleton instance of this class, you can still create new instances if you want */
+    static get instance() {
+        if (!this.#instance) this.#instance = new DetailHandler();
+
+        return this.#instance;
+    }
+
     constructor() {
         super();
 
         // Add default details
-        for (const detail of [...classes, ...teachers, ...rooms]) {
-            this.set(detail.id, detail);
+        for (const values of [classes, teachers, rooms]) {
+            for (const detail of Object.values(values)) this.add(detail);
         }
     }
 
@@ -37,18 +46,10 @@ export class DetailHandler extends Map<string, Detail> {
     /**
      * Get a detail by its id.
      * @param id Detail id.
-     * @param defaultDetail A default detail (or callback) to add and return if the detail doesn't exist.
      * @returns Detail with the given id or `undefined` if not found.
      */
-    get<T extends Detail = Detail>(id: string): T | undefined;
-    get<T extends Detail = Detail>(id: string, defaultDetail: T | (() => T)): T;
-    get<T extends Detail = Detail>(id: string, defaultDetail?: T | (() => T)): T | undefined {
-        let detail = super.get(id);
-
-        // If the detail doesn't exist, add the default detail
-        if (!detail && defaultDetail) detail = this.#addDefaultDetail(defaultDetail);
-
-        return detail as T;
+    get<T extends Detail = Detail>(id: string): T | undefined {
+        return super.get(id) as T;
     }
 
     /** Get exactly one detail by its id. Throws an error if not found. */
@@ -62,16 +63,10 @@ export class DetailHandler extends Map<string, Detail> {
     /**
      * Get a detail by its name.
      * @param name The name to search for.
-     * @param defaultDetail A default detail (or callback) to add and return if the detail doesn't exist.
      * @returns Detail with the given name or `undefined` if not found.
      */
-    getByName<T extends Detail = Detail>(name: string): T | undefined;
-    getByName<T extends Detail = Detail>(name: string, defaultDetail: T | (() => T)): T;
-    getByName<T extends Detail = Detail>(name: string, defaultDetail?: T | (() => T)): T | undefined {
-        let detail = this.details.find((detail) => detail.name === name || (detail instanceof TeacherDetail && detail.matches(name)));
-
-        // If the detail doesn't exist, add the default detail
-        if (!detail && defaultDetail) detail = this.#addDefaultDetail(defaultDetail);
+    getByName<T extends Detail = Detail>(name: string): T | undefined {
+        let detail = this.details.find((detail) => detail.name === name);
 
         return detail as T;
     }
@@ -87,24 +82,18 @@ export class DetailHandler extends Map<string, Detail> {
     /**
      * Get a detail by its abbreviation.
      * @param abbreviation Detail abbreviation.
-     * @param defaultDetail A default detail (or callback) to add and return if the detail doesn't exist.
      * @returns Detail with the given abbreviation or `undefined` if not found.
      */
-    getByAbbreviation<T extends Detail = Detail>(abbreviation: string): T | undefined;
-    getByAbbreviation<T extends Detail = Detail>(abbreviation: string, defaultDetail: T | (() => T)): T;
-    getByAbbreviation<T extends Detail = Detail>(abbreviation: string, defaultDetail?: T | (() => T)): T | undefined {
+    getByAbbreviation<T extends Detail = Detail>(abbreviation: string): T | undefined {
         let detail = this.details.find((detail) => {
             if (detail instanceof TeacherDetail) {
                 return detail.abbreviation === abbreviation;
-            } else if (detail instanceof Detail && detail.type === DetailType.Subject) {
+            } else if (detail.type === DetailType.Subject) {
                 return detail.id === abbreviation;
             }
 
             return false;
         });
-
-        // If the detail doesn't exist, add the default detail
-        if (!detail && defaultDetail) detail = this.#addDefaultDetail(defaultDetail);
 
         return detail as T;
     }
@@ -117,11 +106,24 @@ export class DetailHandler extends Map<string, Detail> {
         return detail;
     }
 
-    /** @private Get default detail helper */
-    #addDefaultDetail(d: Detail | (() => Detail)) {
-        const detail = typeof d === "function" ? d.call(undefined) : d;
+    /** Get a detail by checking if it's a match (includes id, name, and other properties) */
+    getByMatch<T extends Detail = Detail>(str: string): T | undefined {
+        return this.details.find((detail) => detail.matches(str)) as T;
+    }
 
-        this.set(detail.id, detail);
+    /** Get exactly one detail by checking if it's a match. Throws an error if not found. */
+    getOneByMatch<T extends Detail = Detail>(str: string): T {
+        const detail = this.getByMatch<T>(str);
+
+        if (!detail) throw new DetailNotFoundError("match", str);
         return detail;
+    }
+
+    /** Add a detail to this handler */
+    add<T extends Detail = Detail>(detail: T | (() => T)) {
+        const d = typeof detail === "function" ? detail.call(undefined) : detail;
+
+        this.set(d.id, d);
+        return d;
     }
 }

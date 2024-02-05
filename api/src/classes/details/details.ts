@@ -1,4 +1,5 @@
-import type { AnyDetailJSON, TeacherDetailJSON } from "@/schemas/details";
+import type { DetailHandler } from "@/classes/details/handler";
+import type { AnyDetailJSON, ClassDetailJSON, TeacherDetailJSON } from "@/schemas/details";
 
 /** The type of a detail */
 export enum DetailType {
@@ -9,7 +10,7 @@ export enum DetailType {
 }
 
 /** Any detail instance */
-export type AnyDetail = Detail | TeacherDetail;
+export type AnyDetail = Detail | ClassDetail | TeacherDetail;
 
 export class Detail {
     constructor(
@@ -31,10 +32,48 @@ export class Detail {
     }
 
     /** Deserialize the detail from JSON */
-    static fromJSON(json: AnyDetailJSON): AnyDetail {
-        if (json.type === DetailType.Teacher) return TeacherDetail.fromJSON(json as TeacherDetailJSON);
+    static fromJSON(json: AnyDetailJSON, details: DetailHandler): AnyDetail {
+        if (json.type === DetailType.Teacher) return TeacherDetail.fromJSON(json, details);
+        if (json.type === DetailType.Class) return ClassDetail.fromJSON(json, details);
 
         return new Detail(json.type, json.id, json.name ?? null);
+    }
+}
+
+export class ClassDetail extends Detail {
+    readonly type = DetailType.Class;
+
+    constructor(
+        id: string,
+        public name: string,
+        public teacher: TeacherDetail | null = null,
+        public room: Detail | null = null
+    ) {
+        super(DetailType.Class, id, name);
+    }
+
+    matches(str: string): boolean {
+        if (super.matches(str)) return true;
+
+        // Replace dots with nothing and compare the strings
+        str = str.replace(/\./g, "").toLowerCase();
+        const name = this.name.replace(/\./g, "").toLowerCase();
+
+        // And also check for the name without the first character
+        return name === str || name.slice(1) === str;
+    }
+
+    static fromJSON(json: ClassDetailJSON, details: DetailHandler) {
+        return new ClassDetail(
+            json.id,
+            json.name,
+            json.teacher ? details.getOne<TeacherDetail>(json.teacher) : null,
+            json.room ? details.getOne(json.room) : null
+        );
+    }
+
+    toJSON(): AnyDetailJSON {
+        return { type: this.type, id: this.id, name: this.name, teacher: this.teacher?.toString(), room: this.room?.toString() };
     }
 }
 
@@ -58,7 +97,7 @@ export class TeacherDetail extends Detail {
     constructor(
         id: string,
         public abbreviation: string,
-        name: string | null, // Login name
+        public name: string, // Login name
         public firstName: string | null = null,
         public lastName: string | null = null,
         public prefix: string | null = null,
@@ -70,13 +109,12 @@ export class TeacherDetail extends Detail {
     matches(name: string) {
         if (super.matches(name)) return true;
 
-        if (!this.name && !this.firstName && !this.lastName) return false;
+        if (!this.firstName && !this.lastName) return false;
 
         const prefix = this.prefix && this.prefix + ".";
         const suffix = this.suffix && this.suffix + ".";
 
-        const baseVariants = [];
-        if (this.name) baseVariants.push(this.name);
+        const baseVariants = [this.name];
         if (this.lastName) baseVariants.push(this.lastName);
         if (this.firstName && this.lastName) baseVariants.push(`${this.firstName} ${this.lastName}`, `${this.lastName} ${this.firstName}`);
 
@@ -88,11 +126,11 @@ export class TeacherDetail extends Detail {
         return variants.some((variant) => variant.toLowerCase() === name.toLowerCase());
     }
 
-    static fromJSON(json: TeacherDetailJSON) {
+    static fromJSON(json: TeacherDetailJSON, _: DetailHandler) {
         return new TeacherDetail(
             json.id,
             json.abbreviation,
-            json.name ?? null,
+            json.name,
             json.firstName ?? null,
             json.lastName ?? null,
             json.prefix ?? null,

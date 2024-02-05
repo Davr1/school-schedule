@@ -2,13 +2,14 @@ import {
     AbsenceBakalariLesson,
     type AnyBakalariLesson,
     BakalariLessonType,
+    type ClassDetail,
     Detail,
     DetailHandler,
     DetailType,
     Group,
     NormalBakalariLesson,
     RemovedBakalariLesson,
-    TeacherDetail
+    type TeacherDetail
 } from "@/classes";
 import type { BakalariAbsenceType } from "@/classes/bakalari/lesson";
 import type { IElement } from "@/parser/interfaces";
@@ -108,8 +109,8 @@ class BakalariLessonParser {
         // Parse the full name from the data
         const name = data.subjecttext.split("|")[0]?.trim() ?? abbreviation;
 
-        // Find the subject detail
-        const subject = this.#details.get(abbreviation, () => new Detail(DetailType.Subject, abbreviation, name));
+        // Find the subject detail, or create a new one
+        const subject = this.#details.get(abbreviation) ?? this.#details.add(new Detail(DetailType.Subject, abbreviation, name));
 
         // Patch the name if it's null
         if (subject.name === null) subject.name = name;
@@ -125,24 +126,12 @@ class BakalariLessonParser {
 
         // Get the abbreviation from the node
         const abbreviation = lesson.querySelector(".bottom")?.textContent?.trim();
-        if (!abbreviation) {
-            // Try and lookup by name
-            const teacher = this.#details.getByName<TeacherDetail>(name);
 
-            // If the teacher exists, return it
-            if (teacher) return teacher;
+        // Try and lookup by full name, if the abbreviation is missing (abbreviations are more reliable)
+        if (!abbreviation) return this.#details.getOneByMatch<TeacherDetail>(name);
 
-            // Otherwise, throw an error
-            throw new Error("Couldn't find the teacher's abbreviation");
-        }
-
-        // Find the teacher detail
-        const teacher = this.#details.getByAbbreviation(abbreviation, () => new TeacherDetail(abbreviation, name, abbreviation));
-
-        // Patch the name if it's null
-        if (teacher.name === null) teacher.name = name;
-
-        return teacher;
+        // Find the teacher detail, throw an error if not found
+        return this.#details.getOneByAbbreviation<TeacherDetail>(abbreviation);
     }
 
     /** Parse the room from the data attribute of the lesson */
@@ -153,8 +142,8 @@ class BakalariLessonParser {
         // This means that there is no room for the lesson, because it's outside
         if (room === "mim") return null;
 
-        // Get the room from the handler, or create a new one
-        return this.#details.getByName(room, () => new Detail(DetailType.Room, room, room));
+        // Get the room from the handler
+        return this.#details.getOneByName(room);
     }
 
     /** Parse the group number from the data attribute of the lesson */
@@ -170,9 +159,7 @@ class BakalariLessonParser {
                 const className = group.match(/[A-Z][0-9]\.[A-C]/)?.[0];
 
                 // Get the class detail from the details handler, or create a new one
-                const classDetails = className
-                    ? this.#details.getByName(className, () => new Detail(DetailType.Class, className, className))
-                    : null;
+                const classDetails = className ? this.#details.getOneByName<ClassDetail>(className) : null;
 
                 // Return the group
                 return new Group(classDetails, number ? Number(number) : null);

@@ -1,7 +1,7 @@
 import { DetailHandler } from "@/classes";
 import { BakalariParser, SSSVTParser } from "@/parser";
 
-const details = new DetailHandler();
+const details = DetailHandler.instance;
 
 const context = {
     details,

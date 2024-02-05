@@ -18,7 +18,7 @@ async function fetchAllClasses(week: Week, sessionId?: string): Promise<FetchAll
     let lastSessionId = sessionId;
 
     // Randomize the order of classes.
-    const shuffled = Array.from(classes).sort(() => Math.random() - 0.5);
+    const shuffled = Object.values(classes).sort(() => Math.random() - 0.5);
 
     // Fetch all the schedules.
     const schedules: FetchAllClassesResponse = {};

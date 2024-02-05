@@ -1,4 +1,4 @@
-import { DetailHandler } from "@school-schedule/api/classes";
+import { type ClassDetail, DetailHandler, DetailType } from "@school-schedule/api/classes";
 import { error, redirect } from "@sveltejs/kit";
 
 /** Handle aliases for details */
@@ -7,8 +7,12 @@ export function GET({ params: { detail, week } }) {
     week = week?.toLowerCase();
     if (week === "current" || week === "actual") week = undefined;
 
-    const item = DetailHandler.instance.getByMatch(detail);
-    if (item) redirect(301, `${week ? `/${week}` : ""}/${item.name}`);
+    const item = DetailHandler.instance.getByMatch<ClassDetail>(detail);
+    if (item) {
+        if (item.type !== DetailType.Class) return error(400, "Only classes can be merged");
+
+        redirect(301, `${week ? `/${week}` : ""}/merged/${item.name}`);
+    }
 
     error(404, "Schedule not found");
 }

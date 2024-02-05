@@ -55,7 +55,7 @@ class SSSVTLessonParser {
         if (subject === "POS") subject = "SPS";
 
         // Find the subject detail (or add it if it doesn't exist)
-        return this.#details.get(subject, () => new Detail(DetailType.Subject, subject!, null));
+        return this.#details.get(subject) ?? this.#details.add(new Detail(DetailType.Subject, subject, null));
     }
 
     /** Parse the room for the given lesson */
@@ -67,10 +67,8 @@ class SSSVTLessonParser {
         const name = link?.textContent?.trim();
         if (!name) throw new Error("Couldn't find the room in lesson");
 
-        // Find the room detail (or add it if it doesn't exist)
-        const room = this.#details.getByName(name, () => new Detail(DetailType.Room, name, name));
-
-        return room;
+        // Find the room detail
+        return this.#details.getOneByName(name);
     }
 
     /** Parse the teacher's abbreviation from a lesson */
@@ -80,8 +78,8 @@ class SSSVTLessonParser {
         const teacher = lesson.querySelector("[href*='/teacher/']")?.textContent?.trim();
         if (!teacher) return null;
 
-        // Find the teacher detail (or add it if it doesn't exist)
-        return this.#details.getByAbbreviation<TeacherDetail>(teacher, () => new TeacherDetail(teacher, teacher, null));
+        // Find the teacher detail
+        return this.#details.getOneByAbbreviation<TeacherDetail>(teacher);
     }
 }
 

@@ -1,7 +1,5 @@
-import { classes, rooms, teachers } from "@school-schedule/api/classes";
+import { DetailHandler } from "@school-schedule/api/classes";
 
 export function match(name) {
-    return [...teachers, ...classes, ...rooms].some((item) => {
-        return item.name === name;
-    });
+    return Boolean(DetailHandler.instance.getByName(name));
 }
