@@ -148,12 +148,17 @@
                         // odd groups are placed on the top, even groups on the bottom. If there are two groups per cell, order them by group number
                         let half = 0;
                         let height = 2;
+                        let width = 1;
                         if (group.isStandard() && group.groups.length === 1) {
                             const groupN = parseGroup(group.groups[0]);
                             half = (subject.length === 1 && ((groupN || 1) + 1) % 2) || k;
                             if (subject.length > 1 || groupN) height = 1;
                         }
-                        return { subject: group, row: i * 2 + half, column: j, width: 1, height, id: group.id };
+
+                        // full day events should be 6 wide
+                        if (group.isSpecial() && subjects.length === 1) width = 6;
+
+                        return { subject: group, row: i * 2 + half, column: j, width, height, id: group.id };
                     })
             )
         }));
