@@ -1,7 +1,7 @@
 <script lang="ts">
-    import { TeacherDetail } from "@school-schedule/api/classes";
+    import ScheduleView from "$components/Schedule/View.svelte";
 
     export let data;
 </script>
 
-<h1>{data.week} - {data.detail instanceof TeacherDetail ? data.detail.fullName : data.detail.name}</h1>
+<ScheduleView schedule={data.schedule} />

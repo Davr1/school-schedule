@@ -8,7 +8,7 @@ export function GET({ params: { detail, week } }) {
     if (week === "current" || week === "actual") week = undefined;
 
     const item = DetailHandler.instance.getByMatch(detail);
-    if (item) redirect(301, `${week ? `/${week}` : ""}/${item.name}`);
+    if (item?.name) redirect(301, `${week ? `/${week}` : ""}/${encodeURIComponent(item.name)}`);
 
     error(404, "Schedule not found");
 }

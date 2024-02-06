@@ -125,7 +125,7 @@ class BakalariLessonParser {
         if (!name) return null;
 
         // Get the abbreviation from the node
-        const abbreviation = lesson.querySelector(".bottom")?.textContent?.trim();
+        const abbreviation = lesson.querySelector(".bottom")?.textContent?.split(",")[0]?.trim();
 
         // Try and lookup by full name, if the abbreviation is missing (abbreviations are more reliable)
         if (!abbreviation) return this.#details.getOneByMatch<TeacherDetail>(name);
