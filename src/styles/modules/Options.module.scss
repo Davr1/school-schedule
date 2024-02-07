@@ -18,23 +18,12 @@
 
     // Mobile layout
     @media (max-aspect-ratio: 3/4) {
-        &:not(.cache) {
-            display: grid;
-
-            grid-template-columns: 1fr 1fr 2fr;
-
-            > :not(#weekButtons) {
-                width: 100%;
-            }
-        }
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
 
         #weekButtons {
             grid-column: 1 / span 3;
             grid-row: 1;
         }
     }
-}
-
-:local(.cache) {
-    flex: 1;
 }

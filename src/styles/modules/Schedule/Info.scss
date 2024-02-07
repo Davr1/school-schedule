@@ -11,6 +11,9 @@
     box-shadow: 0 0.0625rem 0.25rem -0.125rem #000;
     box-sizing: border-box;
 
+    user-select: none;
+    cursor: default;
+
     &.primary,
     &.secondary {
         color: #fff;

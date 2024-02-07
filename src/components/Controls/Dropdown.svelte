@@ -11,17 +11,28 @@
 
     import styles from "$styles/modules/Controls.module.scss";
 
+    type T = $$Generic;
+
     /**
      * The name of the selected control
      *
      * This is also passed to the children via context.
      */
-    export let selection: string;
+    export let selection: T;
 
     /**
      * Whether the dropdown is visible
      */
     export let visible = false;
+
+    /**
+     * Should the selection be read-only
+     *
+     * This is used to prevent the selection from being changed by children
+     *
+     * Useful for when the selection is determined by the url for example
+     */
+    export let readonly = false;
 
     /**
      * Optional id for the control group
@@ -40,16 +51,20 @@
 
     // Wrap the selection in a custom store so that it can be updated from children
     const selectionStore = writable(selection);
-    selectionStore.subscribe((val) => {
-        selection = val;
-        visible = false;
-    });
+    if (!readonly)
+        selectionStore.subscribe((val) => {
+            selection = val;
+            visible = false;
+        });
 
     $: $selectionStore = selection;
 
+    // If the value is changed programmatically then close the dropdown
+    $: selection, (visible = false);
+
     // Used by children to get the context
     // This allows them to target the correct control
-    setContext(controlValueKey, selectionStore);
+    setContext(controlValueKey, readonly ? { subscribe: selectionStore.subscribe } : selectionStore);
 
     /**
      * What the `visible` variable will be set to on click
@@ -68,7 +83,9 @@
     on:click={() => (onclick ? (visible = true) : (onclick = true))}
     on:focus={() => visible && (onclick = false)}
 >
-    {selection}
+    <slot name="button">
+        {selection}
+    </slot>
 
     <ExpandMore />
 </button>

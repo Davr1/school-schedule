@@ -1,15 +1,25 @@
+<script lang="ts" context="module">
+    import { Week } from "@/loader/bakalari";
+    import { DetailHandler, DetailType, type Detail } from "@school-schedule/api/classes";
+
+    const values = {
+        [DetailType.Class]: DetailHandler.instance.getOfType(DetailType.Class),
+        [DetailType.Teacher]: DetailHandler.instance.getOfType(DetailType.Teacher),
+        [DetailType.Room]: DetailHandler.instance.getOfType(DetailType.Room)
+    } as Record<DetailType, Detail[]>;
+</script>
+
 <script lang="ts">
-    import { config, possibleValues, scheduleParams } from "$stores/config";
-    import { cache, fetchCount } from "$stores/main";
-    import { scheduleModes } from "$stores/static";
+    import { TeacherDetail } from "@school-schedule/api/classes";
+
+    import { invalidateAll } from "$app/navigation";
 
     import MoreHoriz from "@material-design-icons/svg/filled/more_horiz.svg?component";
     import Refresh from "@material-design-icons/svg/filled/refresh.svg?component";
 
     import AdvancedSettingsModal from "$components/AdvancedSettingsModal.svelte";
-    import CacheButton from "$components/CacheButton.svelte";
     import Button from "$components/Controls/Button.svelte";
-    import Control from "$components/Controls/Control.svelte";
+    import ControlLink from "$components/Controls/ControlLink.svelte";
     import Dropdown from "$components/Controls/Dropdown.svelte";
     import Segmented from "$components/Controls/Segmented.svelte";
 
@@ -18,51 +28,46 @@
     /** Whether the advanced settings modal is visible, false by default */
     let advancedSettingsModal = false;
 
-    let maxFetchCount: number;
-    $: if ($scheduleParams.weekMode === "Permanent" || $scheduleParams.scheduleMode !== "Class" || $config.useWeb === false) {
-        maxFetchCount = 1;
-    } else {
-        maxFetchCount = 6;
-    }
+    export let week: Week;
+    export let detail: Detail;
+
+    $: mode = detail.type;
 </script>
 
-<nav class={styles.options} class:cache={$cache}>
-    {#if !$cache}
-        <Dropdown bind:selection={$scheduleParams.scheduleMode}>
-            {#each scheduleModes as mode}
-                <Control name={mode} />
-            {/each}
-        </Dropdown>
-    {/if}
-
-    <Dropdown bind:selection={$scheduleParams.value}>
-        {#each possibleValues[$scheduleParams.scheduleMode] as value}
-            <Control name={value} />
-        {/each}
+<nav class={styles.options}>
+    <Dropdown selection={mode} readonly>
+        <ControlLink value={DetailType.Class} href="./P3.B" />
+        <ControlLink value={DetailType.Teacher} href="./masek" />
+        <ControlLink value={DetailType.Room} href="./104" />
     </Dropdown>
 
-    {#if !$cache}
-        <Segmented bind:selection={$scheduleParams.weekMode} id="weekButtons">
-            <Control name="Permanent" />
-            <Control name="Current" />
-            <Control name="Next" />
+    <Dropdown selection={detail} readonly>
+        {#each values[mode] as value}
+            <ControlLink {value} href={`./${value.name}`}>
+                {value instanceof TeacherDetail ? value.reverseName : value.name}
+            </ControlLink>
+        {/each}
 
-            <Button on:click={() => (advancedSettingsModal = true)}>
-                <MoreHoriz />
-            </Button>
-        </Segmented>
+        <svelte:fragment slot="button">
+            {detail instanceof TeacherDetail ? detail.lastName : detail.name}
+        </svelte:fragment>
+    </Dropdown>
 
-        <Button on:click={() => scheduleParams.update((_) => _)}>
-            <Refresh />
-            <span id="info">{Math.min($fetchCount, maxFetchCount)} / {maxFetchCount} fetched</span>
-        </Button>
-    {:else}
-        <CacheButton class={styles.cache} />
+    <Segmented selection={week} id="weekButtons" readonly>
+        <ControlLink href={`/${Week.Permanent}/${detail.name}`} value={Week.Permanent} />
+        <ControlLink href={`/${detail.name}`} value={Week.Current}>Current</ControlLink>
+        <ControlLink href={`/${Week.Next}/${detail.name}`} value={Week.Next} />
 
         <Button on:click={() => (advancedSettingsModal = true)}>
             <MoreHoriz />
         </Button>
-    {/if}
+    </Segmented>
+
+    <Button on:click={invalidateAll}>
+        <Refresh />
+
+        Refresh
+    </Button>
 </nav>
 
 {#if advancedSettingsModal}

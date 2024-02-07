@@ -6,7 +6,7 @@
 </script>
 
 <script lang="ts">
-    import { onMount } from "svelte";
+    import { createEventDispatcher, onMount } from "svelte";
 
     import Portal from "$components/Base/Portal.svelte";
 
@@ -19,6 +19,11 @@
     export { className as class };
 
     export let popover: HTMLDivElement | undefined = undefined;
+
+    const dispatch = createEventDispatcher<{
+        /** Called when the portal should be closed */
+        close: null;
+    }>();
 
     /** Update the position of the popover */
     function update() {
@@ -83,7 +88,7 @@
 <svelte:window on:resize={update} />
 
 <Portal class={portalClass} on:close {inert}>
-    <div class={className} bind:this={popover} style:position="absolute">
+    <div class={className} bind:this={popover} style:position="absolute" on:click={() => dispatch("close")} role="presentation">
         <slot />
     </div>
 </Portal>

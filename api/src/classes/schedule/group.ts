@@ -53,6 +53,7 @@ export class Group {
         // 2 groups with the same class, but make up the entire class => return the class name
         if (
             groups.length === 2 &&
+            groups[0].class === groups[1].class &&
             groups.find((g) => g.number === 1 || g.number === 3) &&
             groups.find((g) => g.number === 2 || g.number === 4)
         )
