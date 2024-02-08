@@ -59,11 +59,14 @@
     let SVG: SVGSVGElement;
 
     async function update() {
+        // On safari, don't update the favicon, because it doesn't support SVG favicons
+        if (!browser || (navigator.userAgent.includes("Safari") && !navigator.userAgent.includes("Chrome"))) return;
+
         // wait for the SVG to fully render
         await tick();
 
         // don't update if the variables haven't been loaded yet
-        if (!browser || !colors) return;
+        if (!colors) return;
 
         let favicon = document.getElementById("favicon") as HTMLLinkElement;
         favicon.href = "data:image/svg+xml," + encodeURIComponent(SVG.outerHTML);

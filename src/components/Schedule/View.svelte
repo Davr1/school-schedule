@@ -25,25 +25,23 @@
     export let schedule: Schedule[];
 </script>
 
-<main class={styles.view}>
-    <div class={styles.grid}>
-        <!-- The top left corner should be empty -->
-        <span />
+<div class={styles.grid}>
+    <!-- The top left corner should be empty -->
+    <span />
 
-        <!-- Hour labels -->
-        <div class={styles.day}>
-            {#each hours as hour, index}
-                <div class={styles.hour}>
-                    <div class={styles.num}>{index + 1}</div>
+    <!-- Hour labels -->
+    <div class={styles.day}>
+        {#each hours as hour, index}
+            <div class={styles.hour}>
+                <div class={styles.num}>{index + 1}</div>
 
-                    <span>{hour}</span>
-                </div>
-            {/each}
-        </div>
-
-        <!-- Days -->
-        {#each schedule as day}
-            <Day {day} />
+                <span>{hour}</span>
+            </div>
         {/each}
     </div>
-</main>
+
+    <!-- Days -->
+    {#each schedule as day}
+        <Day {day} />
+    {/each}
+</div>

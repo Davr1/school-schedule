@@ -8,10 +8,6 @@
 
     import styles from "$styles/modules/LoadScreen.module.scss";
 
-    // whether the load screen is visible in the browser
-    export let visible: boolean;
-    // whether the app is loading something in the background (this affects the state of the favicon)
-    export let loading: boolean;
     // whether the cache button is visible
     let show = false;
 
@@ -22,8 +18,8 @@
     });
 </script>
 
-<div class={styles.overlay} class:hidden={!visible}>
-    <Favicon {loading} />
+<div class={styles.loading}>
+    <Favicon loading />
     <Loading height="4rem" />
 
     {#if show}
