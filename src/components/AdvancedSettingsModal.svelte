@@ -1,7 +1,7 @@
 <script lang="ts">
     import { config } from "$stores/config";
 
-    import Modal from "$components/Base/Modal.svelte";
+    import Modal from "$components/Modal.svelte";
     import CacheButton from "$components/CacheButton.svelte";
     import Switch from "$components/Controls/Switch.svelte";
     import ThemeEditor from "$components/ThemeEditor.svelte";

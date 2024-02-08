@@ -1,8 +1,9 @@
 :local(.info) {
     width: max-content;
-    max-width: calc(var(--max-width) - 4rem);
+    max-width: calc(var(--anchor-max-width) - 4rem);
+    max-height: calc(var(--anchor-max-height) + var(--anchor-height) - 1.5rem);
 
-    margin: -0.67em 2rem;
+    margin: 0 2rem;
     padding: 0 1.4rem;
 
     background: var(--dimmed-background);
@@ -11,8 +12,15 @@
     box-shadow: 0 0.0625rem 0.25rem -0.125rem #000;
     box-sizing: border-box;
 
+    transform: translateY(calc(var(--anchor-height) * var(--y, -1) - 0.75rem));
+    overflow: auto;
+
     user-select: none;
     cursor: default;
+
+    &.anchor-top {
+        --y: 1;
+    }
 
     &.primary,
     &.secondary {

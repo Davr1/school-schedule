@@ -1,10 +1,9 @@
 <script lang="ts">
     import { onMount } from "svelte";
 
-    import Modal from "$components/Base/Modal.svelte";
-    import Popover, { Anchor } from "$components/Base/Popover.svelte";
+    import Popover from "$components/Popover.svelte";
+    import Modal from "$components/Modal.svelte";
 
-    import overlay from "$styles/modules/Overlay.module.scss";
     import styles from "$styles/modules/Schedule.module.scss";
 
     /** DOM node for the popover, will be ignored by the modal */
@@ -27,7 +26,7 @@
 <svelte:window on:resize={update} />
 
 {#if desktop}
-    <Popover on:close {node} anchor={Anchor.Horizontal} class={`${styles.info} ${popoverClass}`.trim()} portalClass={overlay.overlay}>
+    <Popover on:close {node} class={`${styles.info} ${popoverClass}`.trim()}>
         <slot />
     </Popover>
 {:else}

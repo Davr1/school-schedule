@@ -10,15 +10,18 @@
 }
 
 :local(.dropdown) {
+    position: absolute;
     display: flex;
 
     flex-direction: column;
     gap: 0.5rem;
     overflow-y: auto;
 
-    width: max-content;
     min-width: 10.5rem;
-    max-height: calc(var(--max-height) - 1rem);
+    width: max-content;
+    max-width: calc(var(--anchor-max-width) - 1rem);
+
+    max-height: calc(var(--anchor-max-height) - 1rem);
 
     padding: 0.5rem;
     margin-block: 0.5rem;
@@ -30,7 +33,14 @@
 
     white-space: pre;
 
+    transform: translateX(calc(var(--anchor-width) * var(--x, -1))); // Correctly position the dropdown based on the anchor's position
     box-sizing: border-box;
+
+    outline: none; // This element is not focusable, so we don't want the outline to show up
+
+    &.anchor-left {
+        --x: 1; // When the anchor is on the left, the dropdown should be on the right. So we set the x to 1 and thus the translateX to -100%.
+    }
 
     // Disable the button's box shadow in light theme (but not for active buttons)
     :root.light & :local(.button):not(.active) {
