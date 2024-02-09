@@ -19,9 +19,10 @@
 
     min-width: 10.5rem;
     width: max-content;
-    max-width: calc(var(--anchor-max-width) - 1rem);
+    max-width: calc(var(--anchor-max-width) + var(--anchor-width) - 1rem);
 
-    max-height: calc(var(--anchor-max-height) - 1rem);
+    // When the anchor is on the bottom, we need to account for the safe area inset.
+    max-height: calc(var(--anchor-max-height) - var(--h, env(safe-area-inset-bottom)) - 1rem);
 
     padding: 0.5rem;
     margin-block: 0.5rem;
@@ -40,6 +41,10 @@
 
     &.anchor-left {
         --x: 1; // When the anchor is on the left, the dropdown should be on the right. So we set the x to 1 and thus the translateX to -100%.
+    }
+
+    &.anchor-top {
+        --h: env(safe-area-inset-top); // When the anchor is on the top, we need to account for the safe area inset.
     }
 
     // Disable the button's box shadow in light theme (but not for active buttons)

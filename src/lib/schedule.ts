@@ -165,7 +165,7 @@ export class NormalCell extends Cell {
     }
 
     get title(): string {
-        return [...this.topics, "", this.subject?.name, this.teacher?.name, this.room?.name, Group.name(this.groups)]
+        return [...this.topics, "", this.subject?.name, this.teacher?.fullName, this.room?.name, Group.name(this.groups)]
             .filter((item) => item !== null && item !== undefined)
             .join("\n")
             .trim();

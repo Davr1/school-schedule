@@ -50,10 +50,16 @@ export function inert(element: HTMLElement) {
         if (sibling !== element) sibling.setAttribute("inert", "");
     });
 
+    // Disable scrolling on the body
+    document.body.style.overflow = "hidden";
+
     return {
         destroy() {
             // Make all siblings non-inert
             siblings.forEach((sibling) => sibling.removeAttribute("inert"));
+
+            // Enable scrolling on the body
+            document.body.style.overflow = "";
         }
     };
 }

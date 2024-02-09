@@ -1,10 +1,12 @@
 <script lang="ts">
-    import { onDestroy, onMount, tick } from "svelte";
+    import { onMount, tick } from "svelte";
 
     import { browser } from "$app/environment";
 
+    import theme from "$stores/theme";
+
     import Icon, { type Colors } from "$components/Icon/Icon.svelte";
-    import theme, { Theme } from "$stores/theme";
+    import { colors as globalColors } from "$components/Theme.svelte";
 
     export let loading: boolean;
     let frame: number;
@@ -13,54 +15,39 @@
     // the animation actually starts playing at the fourth frame
     $: loading, (frame = 0);
 
-    // start a timer on mount
-    // the minimum delay that chromium allows is ~250ms, while firefox allows about 125ms
-    let timer: NodeJS.Timeout; // the type irl is actually number, but ts types are set to Node
+    // Can the browser display SVG favicons? (Safari can't)
+    $: enabled = browser && !(navigator.userAgent.includes("Safari") && !navigator.userAgent.includes("Chrome"));
+
+    let favicon: HTMLLinkElement;
+
     onMount(() => {
-        timer = setInterval(() => {
+        // start a timer on mount
+        // the minimum delay that chromium allows is ~250ms, while firefox allows about 125ms
+        const timer = setInterval(() => {
             if (loading) frame++;
         }, 250);
-    });
 
-    // clear the timer on unmount
-    onDestroy(() => {
-        if (timer !== undefined) clearInterval(timer);
+        // store the original href (Theme.svelte will change it instead, if present)
+        favicon = document.getElementById("favicon") as HTMLLinkElement;
+        favicon.dataset.original = favicon.href;
+
+        return () => {
+            if (timer !== undefined) clearInterval(timer);
+
+            // reset the href
+            favicon.href = favicon.dataset.original!;
+            favicon.removeAttribute("data-original");
+        };
     });
 
     // On load, set the colors to the actual values of the CSS variables
     let colors: Colors;
-    $: {
-        if (!browser) break $;
-
-        // Use $theme.active, .background and .primary as dependencies for this reactive statement
-        // This is to make sure that the colors are updated when the theme changes
-        $theme.active, $theme.background, $theme.primary;
-
-        // Get the actual values of the css variables
-        const style = getComputedStyle(document.documentElement);
-
-        // Replace the values in the colors object
-        colors = {
-            BG: style.getPropertyValue("--icon-bg"),
-            FG: style.getPropertyValue("--icon-fg"),
-            Accent: style.getPropertyValue("--accent-primary")
-        };
-
-        // Update the other icons to match
-        document.querySelectorAll("link[rel$='icon']").forEach((node) => {
-            if (node instanceof HTMLLinkElement)
-                node.href = node.href.replace(
-                    /\w+-\w+$/,
-                    $theme.active === Theme.Original ? "original-original" : `${$theme.background}-${$theme.primary}`
-                );
-        });
-    }
+    $: if ($globalColors) colors = { BG: $globalColors.icon.background, FG: $globalColors.icon.foreground, Accent: $globalColors.accent };
 
     let SVG: SVGSVGElement;
 
     async function update() {
-        // On safari, don't update the favicon, because it doesn't support SVG favicons
-        if (!browser || (navigator.userAgent.includes("Safari") && !navigator.userAgent.includes("Chrome"))) return;
+        if (!enabled) return;
 
         // wait for the SVG to fully render
         await tick();
@@ -68,7 +55,6 @@
         // don't update if the variables haven't been loaded yet
         if (!colors) return;
 
-        let favicon = document.getElementById("favicon") as HTMLLinkElement;
         favicon.href = "data:image/svg+xml," + encodeURIComponent(SVG.outerHTML);
     }
 

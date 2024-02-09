@@ -12,7 +12,8 @@ body,
     font-family: Inter, sans-serif;
     font-feature-settings: "tnum";
 
-    touch-action: manipulation;
+    touch-action: pan-x pan-y;
+    overscroll-behavior: none;
 
     @media (max-aspect-ratio: 1/2) {
         font-size: 1.3vh;

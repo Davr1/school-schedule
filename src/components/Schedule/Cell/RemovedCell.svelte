@@ -19,7 +19,7 @@
     style={cell.style}
     title={cell.title}
     on:click={() => cell.active && (visible = !visible)}
-    use:addRipple
+    use:addRipple={cell.active}
 >
     {#if cell.info}
         <div class={styles.content}>
