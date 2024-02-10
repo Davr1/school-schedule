@@ -91,5 +91,5 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/icons/png/180/2/0/{icon}" type="image/png" />
 
     <!-- Inline script that sets the theme based on the user's preference before js is loaded -->
-    <svelte:element this="script">{inline}</svelte:element>
+    {@html `<script>${inline}</script>`}
 </svelte:head>

@@ -1,9 +1,12 @@
-var theme = JSON.parse(localStorage.getItem("theme") || "") || {
-    active: "system",
-    primary: "blue",
-    secondary: "green",
-    background: "zinc"
-};
+var json = localStorage.getItem("theme");
+var theme = json
+    ? JSON.parse(json)
+    : {
+          active: "system",
+          primary: "blue",
+          secondary: "green",
+          background: "zinc"
+      };
 
 if (theme.active === "system") theme.active = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 
