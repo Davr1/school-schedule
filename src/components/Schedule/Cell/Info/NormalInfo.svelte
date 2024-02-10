@@ -1,4 +1,7 @@
 <script lang="ts">
+    import { DetailType } from "@school-schedule/api/classes";
+
+    import { page } from "$app/stores";
     import type { NormalCell } from "$lib/schedule";
 
     import { config } from "$stores/config";
@@ -12,6 +15,9 @@
 
     export let cell: NormalCell;
     export let node: HTMLElement;
+
+    // Kind of a hack to get the type of the selected detail
+    $: type = $page.data.detail.type as DetailType;
 </script>
 
 <Info {node} on:close popoverClass={cell.change ? "primary" : ""}>
@@ -29,22 +35,23 @@
                 {cell.subject.name ?? cell.subject.id}
             {/if}
 
-            {#if cell.room}
-                <Link detail={cell.room} />
-            {:else}
-                mim
+            {#if type !== DetailType.Room}
+                <Link detail={cell.room}>{cell.room?.name ?? "mim"}</Link>
             {/if}
 
-            {#if cell.groups.length > 0}
-                / {cell.groups.map((group) => group.name).join(", ")}
-            {/if}
+            {#each cell.groups as group, i}
+                <!-- Separate the groups with a comma and add a slash before the first one -->
+                {i === 0 ? "/" : ","}
+
+                <Link detail={group.class}>{group.name}</Link>
+            {/each}
         </h2>
 
         {#if cell.teacher}
             <h2>
                 <Person />
 
-                <Link detail={cell.teacher} />
+                <Link detail={cell.teacher}>{cell.teacher.fullName}</Link>
             </h2>
         {/if}
     {/if}

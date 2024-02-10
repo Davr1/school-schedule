@@ -1,0 +1,93 @@
+@use "../../transitions.scss";
+
+:local(.lesson) {
+    position: relative;
+    display: flex;
+
+    grid-area: calc(var(--row) + 2) / calc(var(--column) + 2) / span var(--height) / span var(--width);
+
+    width: 100%;
+    min-height: calc(6.4vh * var(--height) + 0.5rem * (var(--height) - 1));
+
+    padding: 0.2rem;
+
+    flex-direction: column;
+    justify-content: space-between;
+
+    background-color: var(--dimmed-background);
+    border-radius: 0.3rem;
+
+    box-shadow: 0 0.0625rem 0.25rem -0.125rem #000;
+    box-sizing: border-box;
+
+    user-select: none;
+
+    @include transitions.all((background-color, transform), ease-out, 200ms);
+
+    // Original style
+    .original & {
+        background-color: var(--active-background);
+        --hover: var(--icon-fg);
+    }
+
+    &.primary,
+    &.secondary {
+        color: #fff;
+    }
+
+    &.primary {
+        --hover: var(--hover-accent-primary);
+        background-color: var(--accent-primary);
+    }
+
+    &.secondary {
+        --hover: var(--hover-accent-secondary);
+        background-color: var(--accent-secondary);
+    }
+
+    &.active:not(.floating):hover {
+        cursor: pointer;
+
+        @media (pointer: fine) {
+            // Use the --subject-hover variable when it's defined, fallback to the default hover color
+            background-color: var(--hover, var(--element-background));
+
+            transform: scale(1.023);
+        }
+    }
+
+    &.floating {
+        // Disable the transition when the lesson is floating
+        transition: none;
+
+        @media not (max-aspect-ratio: 3/4) {
+            z-index: 1;
+        }
+    }
+
+    @media (max-aspect-ratio: 1/2) {
+        min-width: 9vh;
+    }
+
+    @media (min-aspect-ratio: 2/5) and (max-aspect-ratio: 3/2) {
+        min-width: 11vh;
+    }
+}
+
+:local(.top) {
+    display: flex;
+    justify-content: space-between;
+}
+
+:local(.middle) {
+    margin: auto;
+
+    font-size: 1.45rem;
+    font-weight: 500;
+    text-align: center;
+    line-height: 0;
+}
+
+:local(.bottom) {
+    text-align: center;
+}
