@@ -1,5 +1,6 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
+    import { fade, fly } from "svelte/transition";
 
     import { inert, portal } from "$lib/portal";
 
@@ -26,8 +27,15 @@
     }}
 />
 
-<div class={`${styles.overlay} ${overlay.overlay}`} on:click|self={() => dispatch("close")} use:portal use:inert role="presentation">
-    <div class={styles.modal} class:scrollable role="dialog">
+<div
+    class={`${styles.overlay} ${overlay.overlay}`}
+    on:click|self={() => dispatch("close")}
+    use:portal
+    use:inert
+    role="presentation"
+    transition:fade|global={{ duration: 125 }}
+>
+    <div class={styles.modal} class:scrollable role="dialog" transition:fly|global={{ y: 35, duration: 150 }}>
         <div class={styles.content}>
             <Button class="big floating" on:click={() => dispatch("close")}>
                 <Close />

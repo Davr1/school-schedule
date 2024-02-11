@@ -5,7 +5,7 @@
     const values = {
         [DetailType.Class]: DetailHandler.instance.getOfType(DetailType.Class),
         [DetailType.Teacher]: DetailHandler.instance.getOfType(DetailType.Teacher),
-        [DetailType.Room]: DetailHandler.instance.getOfType(DetailType.Room)
+        [DetailType.Room]: DetailHandler.instance.getOfType(DetailType.Room).sort((a, b) => Number(a.name) - Number(b.name))
     } as Record<DetailType, Detail[]>;
 </script>
 
@@ -43,7 +43,7 @@
 
     <Dropdown selection={detail} readonly>
         {#each values[mode] as value}
-            <ControlLink {value} href={`./${value.name}`}>
+            <ControlLink {value} href="./{value.name}">
                 {value instanceof TeacherDetail ? value.reverseName : value.name}
             </ControlLink>
         {/each}
@@ -54,9 +54,9 @@
     </Dropdown>
 
     <Segmented selection={week} id="weekButtons" readonly>
-        <ControlLink href={`/${Week.Permanent}/${detail.name}`} value={Week.Permanent} />
-        <ControlLink href={`/${detail.name}`} value={Week.Current}>Current</ControlLink>
-        <ControlLink href={`/${Week.Next}/${detail.name}`} value={Week.Next} />
+        <ControlLink href="/{Week.Permanent}/{detail.name}" value={Week.Permanent} />
+        <ControlLink href="/{detail.name}" value={Week.Current}>Current</ControlLink>
+        <ControlLink href="/{Week.Next}/{detail.name}" value={Week.Next} />
 
         <Button on:click={() => (advancedSettingsModal = true)}>
             <MoreHoriz />

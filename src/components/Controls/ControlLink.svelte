@@ -33,8 +33,11 @@
 
     // Scroll into view when the control is selected
     $: if ($selection === value) link?.scrollIntoView({ block: "center" });
+
+    // Disable the link when the selection is the same as the value
+    $: url = $selection !== value ? href : undefined;
 </script>
 
-<a {href} class={styles.control} class:active={$selection === value} use:addRipple bind:this={link} data-sveltekit-preload-data="off">
+<a href={url} class={styles.control} class:active={$selection === value} use:addRipple bind:this={link} data-sveltekit-preload-data="off">
     <slot>{value}</slot>
 </a>

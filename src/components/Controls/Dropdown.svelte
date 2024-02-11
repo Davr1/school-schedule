@@ -1,11 +1,11 @@
 <script lang="ts">
+    import { getContext, onDestroy, setContext } from "svelte";
+    import { writable } from "svelte/store";
+    import { fly } from "svelte/transition";
+
     import { browser } from "$app/environment";
     import { anchor } from "$lib/anchor";
     import { portal } from "$lib/portal";
-
-    import { getContext, onDestroy, setContext } from "svelte";
-    import { writable } from "svelte/store";
-
     import { addRipple } from "$lib/ripple";
 
     import ExpandMore from "@material-design-icons/svg/filled/expand_more.svg?component";
@@ -49,6 +49,11 @@
      */
     let button: HTMLButtonElement;
 
+    /**
+     * The dropdown element
+     */
+    let dropdown: HTMLDivElement;
+
     // If the context is already set then throw an error (because these shouldn't be nested)
     if (getContext(controlValueKey)) throw new Error("Control groups cannot be nested");
 
@@ -63,7 +68,7 @@
     $: $selectionStore = selection;
 
     // If the value is changed programmatically then close the dropdown
-    $: selection, (visible = false);
+    $: selection, close();
 
     // Used by children to get the context
     // This allows them to target the correct control
@@ -71,9 +76,10 @@
 
     // Add event listeners to the app so it can be closed (ignore self)
     function close(e?: Event) {
-        if (!browser || e?.target === button) return;
+        if (!browser || e?.target === button || !visible) return;
+        dropdown.focus(); // Small hack to allow the dropdown focus not to jump on close before the animation is finished
 
-        if (e) visible = false;
+        visible = false;
 
         // Remove the event listener
         const app = document.getElementById("app");
@@ -89,13 +95,20 @@
         setTimeout(() => {
             app?.addEventListener("click", close, { once: true });
             app?.addEventListener("focusin", close, { once: true });
-        });
+        }, 200);
     }
 
     onDestroy(close);
 </script>
 
-<button bind:this={button} class={styles.dropdownButton} class:visible {id} use:addRipple on:click={() => (visible = !visible)}>
+<button
+    bind:this={button}
+    class={styles.dropdownButton}
+    class:visible
+    {id}
+    use:addRipple
+    on:click={() => (visible ? close() : (visible = true))}
+>
     <slot name="button">
         {selection}
     </slot>
@@ -103,12 +116,20 @@
     <ExpandMore />
 </button>
 
-<svelte:window on:keydown={(e) => e.key === "Escape" && (visible = false)} />
+<svelte:window on:keydown={(e) => e.key === "Escape" && close()} />
 
 {#if visible}
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-    <div on:click={() => (visible = false)} class={styles.dropdown} role="alertdialog" use:anchor={button} use:portal>
+    <div
+        bind:this={dropdown}
+        on:click={close}
+        class={styles.dropdown}
+        role="alertdialog"
+        use:anchor={button}
+        use:portal
+        transition:fly={{ y: -15, duration: 150 }}
+    >
         <slot />
     </div>
 {/if}

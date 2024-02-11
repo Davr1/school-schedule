@@ -3,6 +3,7 @@
 :local(.button) {
     appearance: none;
     display: inline-flex;
+    position: relative;
 
     flex-direction: row;
     justify-content: center;

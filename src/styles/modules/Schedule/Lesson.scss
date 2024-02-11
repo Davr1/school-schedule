@@ -59,6 +59,7 @@
     &.floating {
         // Disable the transition when the lesson is floating
         transition: none;
+        pointer-events: none;
 
         @media not (max-aspect-ratio: 3/4) {
             z-index: 1;

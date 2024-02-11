@@ -1,5 +1,6 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
+    import { fade } from "svelte/transition";
 
     import { anchor } from "$lib/anchor";
     import { inert, portal } from "$lib/portal";
@@ -33,7 +34,15 @@
     }}
 />
 
-<div class={overlay.overlay} on:click={() => dispatch("close")} role="presentation" use:portal use:inert>
+<div
+    class={overlay.overlay}
+    on:click={() => dispatch("close")}
+    role="presentation"
+    use:portal
+    use:inert
+    in:fade|global={{ duration: 100 }}
+    out:fade|global={{ duration: 75 }}
+>
     <div class={className} bind:this={popover} style:position="absolute" role="alertdialog" use:anchor={node}>
         <slot />
     </div>

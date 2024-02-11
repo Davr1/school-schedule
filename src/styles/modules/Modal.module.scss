@@ -30,8 +30,6 @@
 
     cursor: default;
 
-    animation: 50ms scale both ease-out;
-
     &.scrollable {
         height: 85vh;
     }
@@ -41,7 +39,7 @@
         width: 100%;
 
         &.scrollable {
-            height: 60vh;
+            height: 75vh;
         }
     }
 }
@@ -86,13 +84,4 @@
 
 :local(.button) {
     margin: 0.5rem 0;
-}
-
-@keyframes scale {
-    from {
-        transform: scale(0.97);
-    }
-    to {
-        transform: scale(1);
-    }
 }

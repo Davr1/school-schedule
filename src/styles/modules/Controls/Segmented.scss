@@ -31,6 +31,17 @@
         :root.light &:not(.active) {
             box-shadow: none;
         }
+
+        &:not(.active) + :local(.button):not(.active)::before {
+            content: "";
+            position: absolute;
+
+            width: 0.125rem;
+            height: 1.5rem;
+            background-color: var(--element-background);
+
+            left: calc(-0.125rem / 2 - 0.25rem);
+        }
     }
 
     :local(.control) {
