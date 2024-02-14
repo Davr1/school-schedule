@@ -11,6 +11,7 @@
 :local(.event) {
     display: flex;
     align-items: center;
+    justify-content: center;
 
     grid-column: 2 / span 6;
     min-height: calc(12.8vh + 0.6rem);
@@ -28,6 +29,11 @@
     font-weight: 600;
 
     user-select: none;
+
+    // Mobile
+    @media (max-aspect-ratio: 3 / 4) {
+        justify-content: flex-start;
+    }
 }
 
 :local(.day) {
