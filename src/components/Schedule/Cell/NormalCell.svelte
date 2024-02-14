@@ -7,7 +7,7 @@
 
     import NormalInfo from "$components/Schedule/Cell/Info/NormalInfo.svelte";
 
-    import styles from "$styles/modules/Schedule.module.scss";
+    import styles from "$styles/modules/Schedule/Lesson.module.scss";
 
     export let cell: NormalCell;
 

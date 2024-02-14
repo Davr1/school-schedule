@@ -23,7 +23,7 @@
 
     import Lesson from "$components/Schedule/Cell/Cell.svelte";
 
-    import styles from "$styles/modules/Schedule.module.scss";
+    import styles from "$styles/modules/Schedule/Day.module.scss";
 
     export let day: Schedule;
 
@@ -41,8 +41,14 @@
     {date}
 </span>
 
-<div class={styles.day}>
-    {#each cells as cell}
-        <Lesson {cell} />
-    {/each}
-</div>
+{#if day.event}
+    <span class={styles.event} style:grid-row={`${2 * day.day} / span 2`}>
+        {day.event}
+    </span>
+{:else}
+    <div class={styles.day}>
+        {#each cells as cell}
+            <Lesson {cell} />
+        {/each}
+    </div>
+{/if}

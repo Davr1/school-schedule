@@ -44,18 +44,3 @@
         vertical-align: sub;
     }
 }
-
-:local(.link) {
-    white-space: nowrap;
-
-    color: currentColor;
-}
-
-a:local(.link) {
-    // Safari doesn't support the shorthand well...
-    text-decoration-style: dotted;
-    text-decoration-line: underline;
-    text-decoration-thickness: 2px;
-
-    cursor: pointer;
-}

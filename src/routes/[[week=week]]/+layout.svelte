@@ -3,7 +3,7 @@
 
     import Options from "$components/Options.svelte";
 
-    import styles from "$styles/modules/Schedule.module.scss";
+    import styles from "$styles/modules/Schedule/View.module.scss";
 
     export let data;
 </script>

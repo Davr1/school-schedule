@@ -2,7 +2,7 @@
     height: 100%;
     width: 100%;
 
-    overflow: auto hidden;
+    overflow: scroll hidden;
     scrollbar-width: thin;
 
     @media (max-aspect-ratio: 3/4) {
@@ -31,4 +31,16 @@
     padding: 0.3rem;
 
     box-sizing: border-box;
+}
+
+:local(.hour) {
+    width: 100%;
+    text-align: center;
+
+    min-width: max-content;
+}
+
+:local(.num) {
+    font-weight: 500;
+    font-size: 1.4rem;
 }

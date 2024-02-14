@@ -4,7 +4,7 @@
 
     import RemovedInfo from "$components/Schedule/Cell/Info/RemovedInfo.svelte";
 
-    import styles from "$styles/modules/Schedule.module.scss";
+    import styles from "$styles/modules/Schedule/Lesson.module.scss";
 
     export let cell: RemovedCell;
 

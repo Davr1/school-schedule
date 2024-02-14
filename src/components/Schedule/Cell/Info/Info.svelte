@@ -1,10 +1,10 @@
 <script lang="ts">
     import { onMount } from "svelte";
 
-    import Popover from "$components/Popover.svelte";
     import Modal from "$components/Modal.svelte";
+    import Popover from "$components/Popover.svelte";
 
-    import styles from "$styles/modules/Schedule.module.scss";
+    import styles from "$styles/modules/Schedule/Info.module.scss";
 
     /** DOM node for the popover, will be ignored by the modal */
     export let node: HTMLElement;

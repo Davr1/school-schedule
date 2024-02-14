@@ -20,7 +20,7 @@
 
     import Day from "$components/Schedule/Day.svelte";
 
-    import styles from "$styles/modules/Schedule.module.scss";
+    import styles from "$styles/modules/Schedule/View.module.scss";
 
     export let schedule: Schedule[];
 </script>
@@ -30,15 +30,13 @@
     <span />
 
     <!-- Hour labels -->
-    <div class={styles.day}>
-        {#each hours as hour, index}
-            <div class={styles.hour}>
-                <div class={styles.num}>{index + 1}</div>
+    {#each hours as hour, index}
+        <div class={styles.hour}>
+            <div class={styles.num}>{index + 1}</div>
 
-                <span>{hour}</span>
-            </div>
-        {/each}
-    </div>
+            <span>{hour}</span>
+        </div>
+    {/each}
 
     <!-- Days -->
     {#each schedule as day}
