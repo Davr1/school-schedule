@@ -3,6 +3,15 @@ import type { IElement, IParentNode } from "@/parser/interfaces";
 import SSSVTLessonParser from "@/parser/sssvt/lesson";
 
 class SSSVTParser {
+    static #instance: SSSVTParser | undefined;
+
+    /** Get the singleton instance of this class, you can still create new instances if you want */
+    static get instance() {
+        if (!this.#instance) this.#instance = new SSSVTParser(DetailHandler.instance);
+
+        return this.#instance;
+    }
+
     #lessonParser: SSSVTLessonParser;
 
     constructor(details: DetailHandler) {

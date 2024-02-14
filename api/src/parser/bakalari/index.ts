@@ -1,8 +1,17 @@
-import { BaseLesson, Detail, type DetailHandler, Schedule, User } from "@/classes";
+import { BaseLesson, Detail, DetailHandler, Schedule, User } from "@/classes";
 import BakalariLessonParser from "@/parser/bakalari/lesson";
 import type { IElement, IParentNode } from "@/parser/interfaces";
 
 class BakalariParser {
+    static #instance: BakalariParser | undefined;
+
+    /** Get the singleton instance of this class, you can still create new instances if you want */
+    static get instance() {
+        if (!this.#instance) this.#instance = new BakalariParser(DetailHandler.instance);
+
+        return this.#instance;
+    }
+
     #details: DetailHandler;
     #lessonParser: BakalariLessonParser;
 

@@ -1,4 +1,4 @@
-import type { Detail } from "@/classes";
+import type { Detail } from "@/classes/details";
 
 export class User {
     /** The user's name */

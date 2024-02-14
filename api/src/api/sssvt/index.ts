@@ -1,18 +1,17 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { HTTPException } from "hono/http-exception";
 
-import type { ApiContext } from "@/api/context";
 import sssvtSubstitutionRoute from "@/api/sssvt/route";
 import fetchSSSVT from "@/loader/sssvt";
+import { SSSVTParser } from "@/parser";
 import { parseHTML } from "@/parser/domhandler";
 import type { SSSVTJSON } from "@/schemas";
 
-const SSSVTEndpoints = ({ sssvtParser }: ApiContext) =>
+const SSSVTEndpoints = new OpenAPIHono()
     // Fetch and parse a substitution schedule from SSSVT
-    new OpenAPIHono().openapi(sssvtSubstitutionRoute, async (c) => {
-        const { date } = c.req.valid("param");
-
+    .openapi(sssvtSubstitutionRoute, async (c) => {
         // Parse the date
+        const { date } = c.req.valid("param");
         const parsedDate = new Date(date);
         if (isNaN(parsedDate.getTime())) throw new HTTPException(400, { message: "Invalid date" });
 
@@ -21,10 +20,10 @@ const SSSVTEndpoints = ({ sssvtParser }: ApiContext) =>
 
         // Parse the schedule
         const dom = await parseHTML(html);
-        const parsed = sssvtParser.parse(dom);
+        const parsed = SSSVTParser.instance.parse(dom);
 
         // Return the schedule (cast as any because toJSON will be called by JSON.stringify)
-        return c.jsonT<SSSVTJSON>(parsed as any);
+        return c.json<SSSVTJSON>(parsed as any);
     });
 
 export default SSSVTEndpoints;

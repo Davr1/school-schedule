@@ -2,18 +2,19 @@ import { OpenAPIHono } from "@hono/zod-openapi";
 import { HTTPException } from "hono/http-exception";
 
 import bakalariScheduleRoute from "@/api/bakalari/route";
-import type { ApiContext } from "@/api/context";
+import { DetailHandler } from "@/classes";
 import fetchBakalari from "@/loader/bakalari";
+import { BakalariParser } from "@/parser";
 import { parseHTML } from "@/parser/domhandler";
 import type { ScheduleJSON } from "@/schemas";
 
-const BakalariEndpoints = ({ details, bakalariParser }: ApiContext) =>
+const BakalariEndpoints = new OpenAPIHono()
     // Fetch and parse a schedule from Bakalari
-    new OpenAPIHono().openapi(bakalariScheduleRoute, async (c) => {
+    .openapi(bakalariScheduleRoute, async (c) => {
         const { week, id } = c.req.valid("param");
 
         // Find the id in the details
-        const detail = details.getOne(id);
+        const detail = DetailHandler.instance.getOne(id);
 
         // Fetch the schedule from the schedule loader
         let html: string;
@@ -29,10 +30,10 @@ const BakalariEndpoints = ({ details, bakalariParser }: ApiContext) =>
 
         // Parse the schedule
         const dom = await parseHTML(html);
-        const parsed = await bakalariParser.parse(detail, dom);
+        const parsed = BakalariParser.instance.parse(detail, dom);
 
         // Return the schedule (cast as any because toJSON will be called by JSON.stringify)
-        return c.jsonT<ScheduleJSON[]>(parsed as any);
+        return c.json<ScheduleJSON[]>(parsed as any);
     });
 
 export default BakalariEndpoints;

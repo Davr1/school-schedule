@@ -145,7 +145,9 @@ export class NormalBakalariLesson extends BaseBakalariLesson {
             subject: this.subject?.toString() ?? null,
             teacher: this.teacher?.toString() ?? null,
             room: this.room?.toString() ?? null,
-            groups: this.groups.map((group) => ({ number: group.number, class: group.class?.toString() ?? null }))
+            groups: this.groups.map((group) => group.toJSON()),
+            absence: this.absence ?? undefined,
+            homework: this.homework.length > 0 ? this.homework : undefined
         };
     }
 
@@ -157,7 +159,7 @@ export class NormalBakalariLesson extends BaseBakalariLesson {
 
         const groups = json.groups.map((group) => Group.fromJSON(group, handler));
 
-        return new NormalBakalariLesson(subject, teacher, room, groups, json.topic, json.absence, json.homework, json.change);
+        return new NormalBakalariLesson(subject, teacher, room, groups, json.topic, json.absence, json.homework ?? [], json.change);
     }
 }
 

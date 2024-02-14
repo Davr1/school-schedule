@@ -26,7 +26,7 @@ export const normalBakalariLessonJSONSchema = z
         groups: z.array(groupJSONSchema),
         topic: z.string().nullish(),
         absence: z.nativeEnum(BakalariAbsenceType).nullish().openapi({ description: "Unavailable in the api!" }),
-        homework: z.array(z.string()).openapi({ description: "Unavailable in the api!" }),
+        homework: z.array(z.string()).nullish().openapi({ description: "Unavailable in the api!" }),
         change: z.string().nullish()
     })
 
@@ -40,8 +40,6 @@ export const normalBakalariLessonJSONSchema = z
             room: "OG",
             groups: [{ number: 1, class: "UE" }],
             topic: "Some english topic",
-            absence: null,
-            homework: [],
             change: "Added into timetable: ..."
         }
     });

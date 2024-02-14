@@ -6,11 +6,13 @@ import { logger } from "hono/logger";
 import { prettyJSON } from "hono/pretty-json";
 
 import api from "@/api";
+import { minifyJSON } from "@/api/minify";
 import scheduleAllClasses from "@/scheduler";
 
 const server = new OpenAPIHono({ strict: false })
     // Log all requests
     .use("*", logger())
+    .use("*", minifyJSON)
     .use("*", prettyJSON())
 
     // Add the swagger UI
