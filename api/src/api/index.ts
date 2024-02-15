@@ -2,10 +2,12 @@ import { OpenAPIHono } from "@hono/zod-openapi";
 import { cors } from "hono/cors";
 import { etag } from "hono/etag";
 import { HTTPException } from "hono/http-exception";
+import { prettyJSON } from "hono/pretty-json";
 
 import BakalariEndpoints from "@/api/bakalari";
 import DetailsEndpoints from "@/api/details";
 import MergedEndpoints from "@/api/merge";
+import { minifyJSON } from "@/api/minify";
 import SSSVTEndpoints from "@/api/sssvt";
 
 import { version } from "../../package.json";
@@ -18,8 +20,8 @@ const api = new OpenAPIHono()
         servers: [{ url: "/api" }]
     })
 
-    // Allow CORS from all origins and add the etag header
-    .use("*", cors(), etag())
+    // Allow CORS from all origins, add the etag header and allow ?pretty and ?minify query parameters
+    .use("*", cors(), etag(), minifyJSON, prettyJSON())
 
     // Base endpoint, returns version
     .get("/", (c) => c.json({ version }))

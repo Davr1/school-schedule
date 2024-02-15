@@ -66,16 +66,12 @@ const builtinApi: Handle = async ({ event, resolve }) => {
         headers.delete("Content-Encoding");
         headers.delete("Content-Length");
 
-        console.log("proxy", event.request);
-
         return new Response(res.body, { ...res, headers });
     }
 
     // Otherwise, use the built-in api
     else {
         url.pathname = url.pathname.replace(/^\/api/, "");
-
-        console.log("local", event.request);
 
         return api.fetch(new Request(url, event.request));
     }
