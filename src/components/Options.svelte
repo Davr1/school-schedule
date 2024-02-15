@@ -1,6 +1,6 @@
 <script lang="ts" context="module">
-    import { Week } from "@/loader/bakalari";
     import { DetailHandler, DetailType, type Detail } from "@school-schedule/api/classes";
+    import { Week } from "@school-schedule/api/request";
 
     const values = {
         [DetailType.Class]: DetailHandler.instance.getOfType(DetailType.Class),

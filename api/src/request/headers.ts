@@ -1,5 +1,14 @@
 /**
+ * Only accept english, because the parser doesn't support other date formats
+ */
+const language = {
+    "Accept-Language": "en-US,en;q=0.5"
+};
+
+/**
  * Headers from Mozilla Firefox 115.4.0esr (64-bit) on Windows 10
+ *
+ * This only works for server side requests, on browsers you can't change them
  */
 const headers = {
     // user agent
@@ -7,7 +16,7 @@ const headers = {
 
     // accept everything that firefox does
     Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
-    "Accept-Language": "en-US,en;q=0.5",
+    ...language,
 
     // upgrade insecure requests
     "Upgrade-Insecure-Requests": "1",
@@ -23,4 +32,5 @@ const headers = {
     Pragma: "no-cache"
 } as const;
 
-export default headers;
+// Export the headers, on the browser only the language is used
+export default typeof window === "undefined" ? headers : language;

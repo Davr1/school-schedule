@@ -3,10 +3,9 @@ import { HTTPException } from "hono/http-exception";
 
 import mergedScheduleRoute from "@/api/merge/route";
 import { DetailHandler, DetailType } from "@/classes";
-import fetchBakalari from "@/loader/bakalari";
-import fetchSSSVT from "@/loader/sssvt";
 import { BakalariParser, SSSVTParser } from "@/parser";
 import { parseHTML } from "@/parser/domhandler";
+import { BakalariRequest, SSSVTRequest } from "@/request";
 import type { ScheduleJSON } from "@/schemas";
 
 const MergedEndpoints = new OpenAPIHono()
@@ -19,29 +18,34 @@ const MergedEndpoints = new OpenAPIHono()
         if (detail.type !== DetailType.Class) throw new HTTPException(400, { message: "Unsupported schedule type" });
         if (detail.name === null) throw new HTTPException(500, { message: "Invalid class" });
 
-        // Fetch the schedule from the schedule loader and parse it
-        const parsed = await fetchBakalari(week, detail)
-            .then(({ html }) => parseHTML(html))
-            .then((dom) => BakalariParser.instance.parse(detail, dom))
-            .then((schedule) =>
-                schedule.map(async (day) => {
-                    // Fetch substitutions from SSSVT
-                    const sssvt = await fetchSSSVT(day.date as Date)
-                        .then((html) => parseHTML(html))
-                        .then((dom) => SSSVTParser.instance.parse(dom));
+        // Get the week dates
+        const sunday = new Date();
+        sunday.setDate(sunday.getDate() - sunday.getDay());
 
-                    // Try to find the class in the SSSVT schedule
-                    const sssvtClass = sssvt.classes[detail.name!];
+        // Fetch substitutions from SSSVT
+        const sssvt = [1, 2, 3, 4, 5].map((i) => {
+            const date = new Date(sunday);
+            date.setDate(date.getDate() + i);
 
-                    // Merge the schedules (if the class was found)
-                    if (sssvtClass) day.merge(sssvtClass);
-                    return day;
-                })
-            )
-            .then((p) => Promise.all(p)); // i'm not doing `Promise.all` cuz typescript was having issues with it
+            const req = new SSSVTRequest(date);
+            return fetch(req)
+                .then((res) => res.text())
+                .then(parseHTML)
+                .then((dom) => SSSVTParser.instance.parse(dom));
+        });
+
+        // Fetch and parse the schedule from bakalari
+        const req = new BakalariRequest(week, detail);
+        const bakalari = await fetch(req)
+            .then((res) => res.text())
+            .then(parseHTML)
+            .then((dom) => BakalariParser.instance.parse(detail, dom));
+
+        // Merge the schedules
+        await Promise.all(bakalari.map(async (schedule, i) => schedule.merge((await sssvt[i]).classes[detail.name!])));
 
         // Return the schedule (cast as any because toJSON will be called by JSON.stringify)
-        return c.json<ScheduleJSON[]>(parsed as any);
+        return c.json<ScheduleJSON[]>(bakalari as any);
     });
 
 export default MergedEndpoints;

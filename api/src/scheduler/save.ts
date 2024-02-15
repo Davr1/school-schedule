@@ -1,7 +1,5 @@
 import { mkdir, writeFile } from "node:fs/promises";
 
-import log from "@/log";
-
 /**
  * Save the request to a cache
  * ("/cache/*" in cwd)
@@ -16,7 +14,7 @@ export async function save(text: string, name: string) {
     // Save the file.
     await writeFile(`./cache/${dateText}/${name}.html`, text);
 
-    log(`Saved ${name}.html`);
+    console.log(`Saved ${name}.html`);
 }
 
 export default save;

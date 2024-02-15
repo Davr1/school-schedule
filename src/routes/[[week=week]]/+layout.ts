@@ -1,6 +1,5 @@
+import { Week } from "@school-schedule/api/request";
 import { redirect } from "@sveltejs/kit";
-
-import { Week } from "@/loader/bakalari";
 
 /** Parse the week from the params */
 export function load({ params: { week }, url }) {

@@ -1,11 +1,10 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
-import { HTTPException } from "hono/http-exception";
 
 import bakalariScheduleRoute from "@/api/bakalari/route";
 import { DetailHandler } from "@/classes";
-import fetchBakalari from "@/loader/bakalari";
 import { BakalariParser } from "@/parser";
 import { parseHTML } from "@/parser/domhandler";
+import { BakalariRequest } from "@/request";
 import type { ScheduleJSON } from "@/schemas";
 
 const BakalariEndpoints = new OpenAPIHono()
@@ -16,24 +15,15 @@ const BakalariEndpoints = new OpenAPIHono()
         // Find the id in the details
         const detail = DetailHandler.instance.getOne(id);
 
-        // Fetch the schedule from the schedule loader
-        let html: string;
-        try {
-            html = (await fetchBakalari(week, detail)).html;
-        } catch (e) {
-            // If the error is a TypeError, it means that the input was invalid
-            if (e instanceof TypeError) throw new HTTPException(400, { message: e.message });
-
-            // Otherwise, it's a server error ig
-            throw new HTTPException(500, { message: "Failed to fetch schedule" });
-        }
-
-        // Parse the schedule
-        const dom = await parseHTML(html);
-        const parsed = BakalariParser.instance.parse(detail, dom);
+        // Fetch and parse the schedule from bakalari
+        const req = new BakalariRequest(week, detail);
+        const res = await fetch(req)
+            .then((res) => res.text())
+            .then(parseHTML)
+            .then((dom) => BakalariParser.instance.parse(detail, dom));
 
         // Return the schedule (cast as any because toJSON will be called by JSON.stringify)
-        return c.json<ScheduleJSON[]>(parsed as any);
+        return c.json<ScheduleJSON[]>(res as any);
     });
 
 export default BakalariEndpoints;

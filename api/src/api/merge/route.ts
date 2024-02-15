@@ -1,6 +1,6 @@
 import { createRoute, z } from "@hono/zod-openapi";
 
-import { Week } from "@/loader/bakalari";
+import { Week } from "@/request/bakalari";
 import { detailIdSchema, detailNotFoundErrorSchema, errorSchema, scheduleJSONSchema } from "@/schemas";
 
 const mergedScheduleRoute = createRoute({

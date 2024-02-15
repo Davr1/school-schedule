@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { Week } from "@/loader/bakalari";
+    import { Week } from "@school-schedule/api/request";
     import { onMount } from "svelte";
 
     import { replaceState } from "$app/navigation";

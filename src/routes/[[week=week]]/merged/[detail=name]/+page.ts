@@ -1,7 +1,6 @@
 import { type ClassDetail, DetailHandler, DetailType } from "@school-schedule/api/classes";
+import { Week } from "@school-schedule/api/request";
 import { error } from "@sveltejs/kit";
-
-import { Week } from "@/loader/bakalari";
 
 export async function load({ params: { detail }, parent }) {
     // Get the week

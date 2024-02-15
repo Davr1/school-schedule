@@ -8,6 +8,7 @@
         "./classes": "./src/classes/index.ts",
         "./parser": "./src/parser/index.ts",
         "./parser/domhandler": "./src/parser/domhandler.ts",
+        "./request": "./src/request/index.ts",
         "./scheduler": "./src/scheduler/index.ts",
         "./schemas": "./src/schemas/index.ts"
     },
@@ -22,6 +23,7 @@
             "./classes": "./dist/classes/index.js",
             "./parser": "./dist/parser/index.js",
             "./parser/domhandler": "./dist/parser/domhandler.js",
+            "./request": "./dist/request/index.js",
             "./scheduler": "./dist/scheduler/index.js",
             "./schemas": "./dist/schemas/index.js"
         }
@@ -58,6 +60,7 @@
             "./src/classes/index.ts",
             "./src/parser/index.ts",
             "./src/parser/domhandler.ts",
+            "./src/request/index.ts",
             "./src/scheduler/index.ts",
             "./src/schemas/index.ts"
         ],
