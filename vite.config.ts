@@ -11,22 +11,6 @@ export default defineConfig({
         exclude: ["@school-schedule/api"]
     },
     server: {
-        // In dev mode, by default, the proxy and cache of the production server will be used.
-        // Can be disabled by setting the environment variable LOCAL_PROXY to true
-        proxy:
-            process.env.LOCAL_PROXY === "true"
-                ? {}
-                : {
-                      "/sssvt": {
-                          target: "https://rozvrh.icy.cx",
-                          changeOrigin: true
-                      },
-                      "/bakalari": {
-                          target: "https://rozvrh.icy.cx",
-                          changeOrigin: true
-                      }
-                  },
-
         fs: {
             allow: [searchForWorkspaceRoot(process.cwd())]
         }

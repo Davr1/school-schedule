@@ -18,11 +18,11 @@ export async function load({ fetch, params: { detail }, parent }) {
     // On the server, timeout after 3 seconds and instead show a loading screen
     const signal = !browser ? AbortSignal.timeout(3000) : undefined;
 
-    let schedule: Promise<Schedule[] | void> | Schedule[] = fetch(`https://rozvrh-v3.icy.cx/api/bakalari/${week}/${item}`, { signal })
-        .then<ScheduleJSON[]>((res) => res.json())
+    let schedule: Promise<Schedule[] | void> | Schedule[] = fetch(`/api/bakalari/${week}/${item}?minify`, { signal })
+        .then<ScheduleJSON[]>(async (res) => res.json())
         .then(async (json) => {
             // Load details that aren't hardcoded
-            await fetch("https://rozvrh-v3.icy.cx/api/details/Subject")
+            await fetch("/api/details/Subject?minify")
                 .then<DetailJSON[]>((res) => res.json())
                 .then((json) => json.forEach((d) => DetailHandler.instance.add(Detail.fromJSON(d, DetailHandler.instance))));
 
