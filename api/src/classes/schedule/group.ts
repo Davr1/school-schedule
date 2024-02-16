@@ -33,12 +33,17 @@ export class Group {
         return new Group(json.class ? handler.getOne<ClassDetail>(json.class) : null, json.number ?? null);
     }
 
+    /** De-duplicate groups */
+    static dedupe(groups: Group[]): Group[] {
+        return groups.filter((group, index, array) => array.findIndex((g) => g.equals(group)) === index);
+    }
+
     /** Determine the display name of multiple groups */
     static name(groups: Group[]): string;
     static name(...groups: Group[]): string;
     static name(...all: Group[] | Group[][]): string {
         // Flatten the groups and de-duplicate them
-        const groups = all.flat().filter((group, index, array) => array.findIndex((g) => g.equals(group)) === index);
+        const groups = Group.dedupe(all.flat());
 
         // Empty array => empty string
         if (groups.length === 0) return "";

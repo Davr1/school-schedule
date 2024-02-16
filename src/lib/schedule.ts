@@ -193,7 +193,7 @@ export class NormalCell extends Cell {
 
     /** Class groups */
     get groups(): Group[] {
-        return this.lessons.flatMap((lesson) => lesson.groups);
+        return Group.dedupe(this.lessons.flatMap((lesson) => lesson.groups));
     }
 
     /** Absence type */
