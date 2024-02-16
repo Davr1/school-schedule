@@ -58,7 +58,7 @@ export abstract class Cell {
         // There's also 2 rows per day, so we need to multiply the day index by 2
         const row = (schedule.day - 1) * 2;
 
-        return schedule.periods.flatMap((lessons, i) => {
+        const pass1 = schedule.periods.flatMap((lessons, i) => {
             // Throw if there's more than 2 lessons in a period
             if (lessons.length > 2) throw new Error("Too many lessons in a period, can't render");
 
@@ -83,7 +83,7 @@ export abstract class Cell {
 
             // only 1 lesson in the period => add it as a cell
             else {
-                // Use the smaller height for the cell if the lesson is a normal lesson with groups that have a class
+                // Use the smaller height for the cell if the lesson is a normal lesson with groups that don't have a class
                 if (lesson1.type === LessonType.Normal && lesson1.groups.length > 0 && lesson1.groups.every((g) => g.class === null)) {
                     // +1 because odd group numbers should come first
                     const y = (lesson1.groups[0].number! + 1) % 2;
@@ -94,19 +94,70 @@ export abstract class Cell {
                 }
             }
         });
+
+        if (!merge) return pass1;
+
+        // Merge the cells horizontally, when merging is enabled
+        const pass2: AnyCell[] = [];
+        for (let i = 0; i < pass1.length; i++) {
+            const cell = pass1[i];
+
+            // Skip x=0 cells (cuz we start from the left, so there won't be any cells to merge with)
+            if (cell.x === 0) {
+                pass2.push(cell);
+                continue;
+            }
+
+            // Find one cell that can be merged with the current cell (from the previous cells, where height is the same)
+            const prev = pass2.find((c) => c.x === cell.x - c.width && c.height === cell.height && Cell.#canMerge(c, cell, true)) as
+                | Cell
+                | undefined;
+
+            // If there's a cell that can be merged, merge them
+            if (prev) {
+                prev.lessons.push(...cell.lessons);
+                prev.width++;
+
+                // If the cell that we just merged with was at a different y coordinate, we need to move any cells with the same X coord
+                if (prev.y !== cell.y) {
+                    for (const c of pass2) {
+                        if (c.x + c.width - 1 === cell.x && c !== prev) {
+                            c.y = cell.y;
+                        }
+                    }
+                }
+            }
+
+            // Otherwise, add the cell as is (it can't be merged with any other cell, yet)
+            else {
+                pass2.push(cell);
+
+                // If there's another cell at the same x (including width) and y coordinate, we need to move the current cell
+                for (const c of pass2) {
+                    if (c.x + c.width - 1 === cell.x && c.y === cell.y && c !== cell) {
+                        cell.y = row + ((c.y + 1) % 2);
+                    }
+                }
+            }
+        }
+
+        return pass2;
     }
 
-    /** Can two lessons be merged */
-    static #canMerge(lesson1: AnyLesson, lesson2: AnyLesson): boolean {
+    /** Can two lessons (or cells) be merged */
+    static #canMerge(lesson1: AnyLesson | AnyCell, lesson2: AnyLesson | AnyCell, strictGroups = false): boolean {
         // If at least one of the lessons is a conflict, they can't be merged
         if (lesson1.type === LessonType.Conflict || lesson2.type === LessonType.Conflict) return false;
 
         if (lesson1.type === LessonType.Normal && lesson2.type === LessonType.Normal) {
-            // If both lessons are normal, they can be merged if they have the same subject, room and teacher
+            // If both lessons are normal, they can be merged if they have the same subject, room and teacher (and groups if strictGroups is true)
             return (
                 lesson1.subject?.id === lesson2.subject?.id &&
                 lesson1.room?.id === lesson2.room?.id &&
-                lesson1.teacher?.id === lesson2.teacher?.id
+                lesson1.teacher?.id === lesson2.teacher?.id &&
+                (strictGroups
+                    ? lesson1.groups.every((g) => lesson2.groups.some((g2) => g.number === g2.number && g.class?.id === g2.class?.id))
+                    : true)
             );
         }
 
