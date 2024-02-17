@@ -63,8 +63,8 @@ export class SSSVTSubstitution extends BaseSSSVTChange {
         /** The teacher's detail (can be null in rare cases) */
         readonly teacher: TeacherDetail | null,
 
-        /** The room the lesson is taught in */
-        readonly room: Detail
+        /** The room the lesson is taught in (there is one documented case of this missing...)*/
+        readonly room: Detail | null
     ) {
         super(group);
     }
@@ -75,7 +75,7 @@ export class SSSVTSubstitution extends BaseSSSVTChange {
             ...this,
             subject: this.subject?.toString() ?? null,
             teacher: this.teacher?.toString() ?? null,
-            room: this.room.toString()
+            room: this.room?.toString() ?? null
         };
     }
 
@@ -84,7 +84,7 @@ export class SSSVTSubstitution extends BaseSSSVTChange {
         // Get the details
         const subject = json.subject ? handler.getOne(json.subject) : null;
         const teacher = json.teacher ? handler.getOne<TeacherDetail>(json.teacher) : null;
-        const room = handler.getOne(json.room);
+        const room = json.room ? handler.getOne(json.room) : null;
 
         return new SSSVTSubstitution(json.group ?? null, subject, teacher, room);
     }

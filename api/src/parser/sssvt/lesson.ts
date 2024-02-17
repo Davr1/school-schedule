@@ -59,13 +59,13 @@ class SSSVTLessonParser {
     }
 
     /** Parse the room for the given lesson */
-    #room(lesson: IElement): Detail {
+    #room(lesson: IElement): Detail | null {
         // Get the room number from the <a> tag with an href attribute
         const link = lesson.querySelector("[href*='/room/']");
 
         // The room name is in the text content of the link
         const name = link?.textContent?.trim();
-        if (!name) throw new Error("Couldn't find the room in lesson");
+        if (!name) return null;
 
         // Find the room detail
         return this.#details.getOneByName(name);

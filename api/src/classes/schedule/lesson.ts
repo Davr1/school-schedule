@@ -76,9 +76,9 @@ export abstract class BaseLesson {
             return (
                 // There's a conflict if:
                 // Subjects are different (SSSVT doesn't always have a subject)
-                (bakalari.subject !== null && sssvt.subject !== null && bakalari.subject.id !== sssvt.subject.id) ||
+                (bakalari.subject && sssvt.subject && bakalari.subject.id !== sssvt.subject.id) ||
                 // Room is different, there's a conflict
-                (bakalari.room && bakalari.room.id !== sssvt.room.id) ||
+                (bakalari.room && sssvt.room && bakalari.room.id !== sssvt.room.id) ||
                 // Teacher is different (SSSVT doesn't always have a teacher)
                 (sssvt.teacher && bakalari.teacher!.id !== sssvt.teacher.id) ||
                 // Groups are different (SSSVT can only have one group, so check if the bakalari lesson has more than one)

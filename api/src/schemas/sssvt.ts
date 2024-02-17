@@ -23,7 +23,7 @@ export const sssvtSubstitutionJSONSchema = sssvtChangeJSONSchema
         type: z.literal(SSSVTChangeType.Substitution),
         subject: detailIdSchema.nullish(),
         teacher: detailIdSchema.nullish(),
-        room: detailIdSchema
+        room: detailIdSchema.nullish()
     })
 
     .openapi("SSSVTSubstitution", {
