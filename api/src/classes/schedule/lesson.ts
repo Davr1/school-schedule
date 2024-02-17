@@ -49,7 +49,7 @@ export abstract class BaseLesson {
             case "normal":
                 return NormalLesson.fromJSON(json as NormalLessonJSON, handler);
             case "removed":
-                return RemovedLesson.fromJSON(json as RemovedLessonJSON, handler);
+                return RemovedLesson.fromJSON(json as RemovedLessonJSON);
         }
     }
 
@@ -199,7 +199,7 @@ export class RemovedLesson extends BaseLesson {
         super(bakalari, sssvt);
     }
 
-    static fromJSON(json: RemovedLessonJSON, handler: DetailHandler): RemovedLesson {
+    static fromJSON(json: RemovedLessonJSON): RemovedLesson {
         return new RemovedLesson(
             json.bakalari
                 ? json.bakalari.type === "removed"

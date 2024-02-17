@@ -77,3 +77,37 @@ export const classes = {
     "P4.B": new ClassDetail("UB", "P4.B", teachers.pelikanova, rooms[209]),
     "T4.C": new ClassDetail("UC", "T4.C", teachers.fiala, rooms[103])
 };
+
+export const subjects = {
+    ANJ: new Detail(DetailType.Subject, "ANJ", "Anglický jazyk"),
+    CJL: new Detail(DetailType.Subject, "CJL", "Český jazyk a literatura"),
+    CS1: new Detail(DetailType.Subject, "CS1", "Cisco Academy"),
+    CVM: new Detail(DetailType.Subject, "CVM", "Cvičení z matematiky"),
+    DBS: new Detail(DetailType.Subject, "DBS", "Databázové systémy"),
+    DEJ: new Detail(DetailType.Subject, "DEJ", "Dějepis"),
+    EKO: new Detail(DetailType.Subject, "EKO", "Ekonomika"),
+    FYZ: new Detail(DetailType.Subject, "FYZ", "Fyzika"),
+    GRS: new Detail(DetailType.Subject, "GRS", "Grafické systémy"),
+    MAT: new Detail(DetailType.Subject, "MAT", "Matematika"),
+    NEJ: new Detail(DetailType.Subject, "NEJ", "Německý jazyk"),
+    OBN: new Detail(DetailType.Subject, "OBN", "Občanská nauka"),
+    PET: new Detail(DetailType.Subject, "PET", "Příprava na FCE"),
+    PGR: new Detail(DetailType.Subject, "PGR", "Prezentační grafika"),
+    POS: new Detail(DetailType.Subject, "POS", "Počítačové sítě"),
+    PRG: new Detail(DetailType.Subject, "PRG", "Programování"),
+    PVY: new Detail(DetailType.Subject, "PVY", "Programové vybavení"),
+    RMA: new Detail(DetailType.Subject, "RMA", "Repetitorium matematiky"),
+    SHR: new Detail(DetailType.Subject, "SHR", "Sportovní hry"),
+    SPS: new Detail(DetailType.Subject, "SPS", "Správa počítačových sítí"),
+    TEA: new Detail(DetailType.Subject, "TEA", "Technika administrativy"),
+    TEV: new Detail(DetailType.Subject, "TEV", "Tělesná výchova"),
+    TEZ: new Detail(DetailType.Subject, "TEZ", "Technické zobrazování"),
+    TGR: new Detail(DetailType.Subject, "TGR", "Technická grafika"),
+    TVY: new Detail(DetailType.Subject, "TVY", "Technické vybavení"),
+    TWE: new Detail(DetailType.Subject, "TWE", "Tvorba webu"),
+    ZPR: new Detail(DetailType.Subject, "ZPR", "Základy programování"),
+    ZPV: new Detail(DetailType.Subject, "ZPV", "Základy přírodních věd")
+};
+
+// Set all details as static
+for (const collection of [teachers, rooms, classes, subjects]) for (const detail of Object.values(collection)) detail.static = true;

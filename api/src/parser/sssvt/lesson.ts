@@ -51,9 +51,6 @@ class SSSVTLessonParser {
         if (subject === undefined) return; // Undefined => cancelled lesson
         if (subject === "") return null; // Empty string => no subject specified
 
-        // If the subject is "POS", replace it with "SPS" (it's the same subject)
-        if (subject === "POS") subject = "SPS";
-
         // Find the subject detail (or add it if it doesn't exist)
         return this.#details.get(subject) ?? this.#details.add(new Detail(DetailType.Subject, subject, null));
     }
@@ -68,7 +65,7 @@ class SSSVTLessonParser {
         if (!name) return null;
 
         // Find the room detail
-        return this.#details.getOneByName(name);
+        return this.#details.getByName(name) ?? this.#details.add(new Detail(DetailType.Room, name, name));
     }
 
     /** Parse the teacher's abbreviation from a lesson */
@@ -79,7 +76,7 @@ class SSSVTLessonParser {
         if (!teacher) return null;
 
         // Find the teacher detail
-        return this.#details.getOneByAbbreviation<TeacherDetail>(teacher);
+        return this.#details.getByAbbreviation<TeacherDetail>(teacher) ?? this.#details.add(new TeacherDetail(teacher, teacher, teacher));
     }
 }
 

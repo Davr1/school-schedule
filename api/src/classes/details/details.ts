@@ -13,6 +13,11 @@ export enum DetailType {
 export type AnyDetail = Detail | ClassDetail | TeacherDetail;
 
 export class Detail {
+    /**
+     * Is the detail static
+     */
+    static = false;
+
     constructor(
         readonly type: DetailType,
         public id: string,
@@ -31,9 +36,18 @@ export class Detail {
         return this.id;
     }
 
+    /** Serialize the detail to JSON */
+    toJSON(): AnyDetailJSON {
+        return {
+            type: this.type as DetailType.Subject | DetailType.Room,
+            id: this.id,
+            name: this.name
+        };
+    }
+
     /** Deserialize the detail from JSON */
-    static fromJSON(json: AnyDetailJSON, details: DetailHandler): AnyDetail {
-        if (json.type === DetailType.Teacher) return TeacherDetail.fromJSON(json, details);
+    static fromJSON(json: AnyDetailJSON, details?: DetailHandler): AnyDetail {
+        if (json.type === DetailType.Teacher) return TeacherDetail.fromJSON(json);
         if (json.type === DetailType.Class) return ClassDetail.fromJSON(json, details);
 
         return new Detail(json.type, json.id, json.name ?? null);
@@ -63,17 +77,23 @@ export class ClassDetail extends Detail {
         return name === str || name.slice(1) === str;
     }
 
-    static fromJSON(json: ClassDetailJSON, details: DetailHandler) {
+    toJSON(): ClassDetailJSON {
+        return {
+            type: this.type,
+            id: this.id,
+            name: this.name,
+            teacher: this.teacher?.toString() ?? null,
+            room: this.room?.toString() ?? null
+        };
+    }
+
+    static fromJSON(json: ClassDetailJSON, details?: DetailHandler) {
         return new ClassDetail(
             json.id,
             json.name,
-            json.teacher ? details.getOne<TeacherDetail>(json.teacher) : null,
-            json.room ? details.getOne(json.room) : null
+            json.teacher && details ? details.getOne<TeacherDetail>(json.teacher) : null,
+            json.room && details ? details.getOne(json.room) : null
         );
-    }
-
-    toJSON(): AnyDetailJSON {
-        return { type: this.type, id: this.id, name: this.name, teacher: this.teacher?.toString(), room: this.room?.toString() };
     }
 }
 
@@ -126,7 +146,20 @@ export class TeacherDetail extends Detail {
         return variants.some((variant) => variant.toLowerCase() === name.toLowerCase());
     }
 
-    static fromJSON(json: TeacherDetailJSON, _: DetailHandler) {
+    toJSON(): TeacherDetailJSON {
+        return {
+            type: this.type,
+            id: this.id,
+            abbreviation: this.abbreviation,
+            name: this.name,
+            firstName: this.firstName ?? null,
+            lastName: this.lastName ?? null,
+            prefix: this.prefix ?? null,
+            suffix: this.suffix ?? null
+        };
+    }
+
+    static fromJSON(json: TeacherDetailJSON) {
         return new TeacherDetail(
             json.id,
             json.abbreviation,

@@ -1,5 +1,5 @@
 import { Detail, DetailType, TeacherDetail } from "@/classes/details/details";
-import { classes, rooms, teachers } from "@/classes/details/static";
+import { classes, rooms, subjects, teachers } from "@/classes/details/static";
 
 /** An error thrown when a detail is not found */
 class DetailNotFoundError extends TypeError {
@@ -11,20 +11,18 @@ class DetailNotFoundError extends TypeError {
 export class DetailHandler extends Map<string, Detail> {
     static #instance: DetailHandler | undefined;
 
-    /** Get the singleton instance of this class, you can still create new instances if you want */
+    /** Get the singleton instance of this class, you can still create new instances if you want (but they won't include the default details) */
     static get instance() {
-        if (!this.#instance) this.#instance = new DetailHandler();
+        // If the instance doesn't exist, create a new one with the default details
+        if (!this.#instance) {
+            this.#instance = new DetailHandler();
+
+            // Add the default details
+            for (const collection of [teachers, rooms, classes, subjects])
+                for (const detail of Object.values(collection)) this.#instance.add(detail);
+        }
 
         return this.#instance;
-    }
-
-    constructor() {
-        super();
-
-        // Add default details
-        for (const values of [classes, teachers, rooms]) {
-            for (const detail of Object.values(values)) this.add(detail);
-        }
     }
 
     /**
@@ -119,11 +117,25 @@ export class DetailHandler extends Map<string, Detail> {
         return detail;
     }
 
-    /** Add a detail to this handler */
-    add<T extends Detail = Detail>(detail: T | (() => T)) {
-        const d = typeof detail === "function" ? detail.call(undefined) : detail;
+    /**
+     * Add a detail to this handler
+     *
+     * If the detail already exists, the old detail will be returned
+     * @param detail The detail to add
+     */
+    add<T extends Detail = Detail>(detail: T): T {
+        if (this.has(detail.id)) return this.getOne<T>(detail.id);
 
-        this.set(d.id, d);
-        return d;
+        this.set(detail.id, detail);
+        return detail;
+    }
+
+    /**
+     * Delete a detail from this handler
+     */
+    delete(detail: string | Detail): boolean {
+        if (detail instanceof Detail) detail = detail.id;
+
+        return super.delete(detail);
     }
 }
