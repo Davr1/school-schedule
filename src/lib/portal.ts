@@ -1,14 +1,15 @@
+import type { ActionReturn } from "svelte/action";
+
 import { browser } from "$app/environment";
 
 /**
  * Attach this element to the body to render it outside of the current component
  *
- * @type {import('svelte/action').Action}
+ * @param element The element to attach to the body
+ * @param focus The element to focus after the portal is opened, defaults to the currently focused element
  */
-export function portal(element: HTMLElement) {
+export function portal(element: HTMLElement, focus?: HTMLElement | null): ActionReturn<HTMLElement | null | undefined> | void {
     if (!browser) return;
-
-    let focus: HTMLElement | null = null;
 
     document.body.appendChild(element);
 
@@ -16,20 +17,29 @@ export function portal(element: HTMLElement) {
         // If the element has been unmounted like right after it was mounted, don't do anything
         if (!element) return;
 
-        // Get the element that is currently focused
-        focus = document.activeElement as HTMLElement;
+        // Get the element that is currently focused (if it wasn't passed as an argument)
+        focus ??= document.activeElement as HTMLElement;
 
         // Focus the element
         element.tabIndex = -1;
         element.focus();
     });
 
+    const refocus = () => setTimeout(() => (focus?.focus(), (focus = null)));
+
+    // If the element has a transition, listen for the outrostart event to refocus the element that was focused before the portal was opened
+    element.addEventListener("outrostart", refocus);
+
     return {
         destroy() {
             element.parentNode?.removeChild(element);
 
             // Refocus the element that was focused before the portal was opened
-            setTimeout(() => focus?.focus());
+            refocus();
+        },
+
+        update(param) {
+            focus = param;
         }
     };
 }
@@ -53,13 +63,17 @@ export function inert(element: HTMLElement) {
     // Disable scrolling on the body
     document.body.style.overflow = "hidden";
 
-    return {
-        destroy() {
-            // Make all siblings non-inert
-            siblings.forEach((sibling) => sibling.removeAttribute("inert"));
+    function destroy() {
+        // Make all siblings non-inert
+        siblings.forEach((sibling) => sibling.removeAttribute("inert"));
+        siblings.length = 0;
 
-            // Enable scrolling on the body
-            document.body.style.overflow = "";
-        }
-    };
+        // Enable scrolling on the body
+        document.body.style.overflow = "";
+    }
+
+    // When the element has an outro, reset the inertness
+    element.addEventListener("outrostart", destroy);
+
+    return { destroy };
 }

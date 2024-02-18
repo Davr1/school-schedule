@@ -77,7 +77,6 @@
     // Add event listeners to the app so it can be closed (ignore self)
     function close(e?: Event) {
         if (!browser || e?.target === button || !visible) return;
-        dropdown.focus(); // Small hack to allow the dropdown focus not to jump on close before the animation is finished
 
         visible = false;
 
@@ -95,7 +94,7 @@
         setTimeout(() => {
             app?.addEventListener("click", close, { once: true });
             app?.addEventListener("focusin", close, { once: true });
-        }, 200);
+        }, 10);
     }
 
     onDestroy(close);
@@ -127,8 +126,8 @@
         class={styles.dropdown}
         role="alertdialog"
         use:anchor={button}
-        use:portal
-        transition:fly={{ y: -15, duration: 150 }}
+        use:portal={button}
+        transition:fly={{ y: -15, duration: 200 }}
     >
         <slot />
     </div>
