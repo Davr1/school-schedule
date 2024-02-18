@@ -1,5 +1,5 @@
-import type { DetailHandler } from "@/classes/details";
-import { type AnySSSVTChange, BaseSSSVTChange } from "@/classes/sssvt/change";
+import type { Detail, DetailHandler } from "@/classes/details";
+import { type AnySSSVTChange, BaseSSSVTChange, SSSVTSubstitution } from "@/classes/sssvt/change";
 import type { SSSVTJSON } from "@/schemas";
 
 /** A class in the SSSVT schedule. Each class has a list of lessons for each period */
@@ -30,6 +30,34 @@ class SSSVT {
         );
 
         return new SSSVT(date, classes);
+    }
+
+    /**
+     * Extract all details from the schedule
+     *
+     * @param predicate Predicate to filter the details
+     * @param thisArg The value to use as `this` when executing the predicate
+     */
+    extractDetails(predicate?: (detail: Detail) => boolean, thisArg?: any): Set<Detail> {
+        const details = new Set<Detail>();
+
+        function add(detail: Detail) {
+            if (predicate && !predicate.call(thisArg, detail)) return;
+            details.add(detail);
+        }
+
+        for (const schedule of Object.values(this.classes))
+            for (const period of schedule)
+                for (const lesson of period) {
+                    if (!(lesson instanceof SSSVTSubstitution)) continue;
+                    const { subject, teacher, room } = lesson;
+
+                    if (subject) add(subject);
+                    if (teacher) add(teacher);
+                    if (room) add(room);
+                }
+
+        return details;
     }
 }
 

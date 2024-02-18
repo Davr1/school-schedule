@@ -1,6 +1,7 @@
-import { BakalariLessonType } from "@/classes/bakalari/lesson";
+import { BakalariLessonType, NormalBakalariLesson } from "@/classes/bakalari/lesson";
 import type { Detail, DetailHandler } from "@/classes/details";
 import { type AnyLesson, BaseLesson } from "@/classes/schedule/lesson";
+import { SSSVTSubstitution } from "@/classes/sssvt/change";
 import type { SSSVTClass } from "@/classes/sssvt/schedule";
 import type { ScheduleJSON } from "@/schemas";
 
@@ -123,6 +124,51 @@ class Schedule {
 
         // Patch the event
         if (bakalari.event) this.event = bakalari.event;
+    }
+
+    extractDetails(predicate?: (detail: Detail) => boolean, thisArg?: any): Set<Detail> {
+        return Schedule.extractDetails([this], predicate, thisArg);
+    }
+
+    /**
+     * Extract all details from schedules
+     *
+     * @param schedules The schedules to extract the details from
+     * @param predicate Predicate to filter the details
+     * @param thisArg The value to use as `this` when executing the predicate
+     */
+    static extractDetails(schedules: Schedule[], predicate?: (detail: Detail) => boolean, thisArg?: any): Set<Detail> {
+        const details = new Set<Detail>();
+
+        function add(detail: Detail) {
+            if (predicate && !predicate.call(thisArg, detail)) return;
+            details.add(detail);
+        }
+
+        for (const schedule of schedules) {
+            add(schedule.detail);
+
+            for (const period of schedule.periods)
+                for (const lesson of period) {
+                    if (lesson.bakalari instanceof NormalBakalariLesson) {
+                        const { subject, teacher, room, groups } = lesson.bakalari;
+
+                        if (subject) add(subject);
+                        if (teacher) add(teacher);
+                        if (room) add(room);
+                        groups.forEach((group) => group.class && add(group.class));
+                    }
+
+                    if (lesson.sssvt instanceof SSSVTSubstitution) {
+                        const { subject, teacher, room } = lesson.sssvt;
+
+                        if (subject) add(subject);
+                        if (teacher) add(teacher);
+                        if (room) add(room);
+                    }
+                }
+        }
+        return details;
     }
 }
 

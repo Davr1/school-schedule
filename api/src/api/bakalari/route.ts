@@ -1,23 +1,42 @@
 import { createRoute, z } from "@hono/zod-openapi";
 
-import { detailIdSchema, detailNotFoundErrorSchema, errorSchema, scheduleJSONSchema, weekSchema } from "@/schemas";
+import {
+    additionalDetailsSchema,
+    detailIdSchema,
+    detailNotFoundErrorSchema,
+    detailsParamDescription,
+    detailsParamSchema,
+    errorSchema,
+    scheduleJSONSchema,
+    weekSchema
+} from "@/schemas";
+
+export type BakalariScheduleResponse = z.infer<typeof bakalariScheduleResponseSchema>;
+
+const bakalariScheduleResponseSchema = z.object({
+    schedules: z.array(scheduleJSONSchema),
+    additionalDetails: additionalDetailsSchema
+});
 
 const bakalariScheduleRoute = createRoute({
     tags: ["Bakalari"],
-    description: 'Get a schedule for a Class, Teacher or Room detail. Note that each lesson\'s "sssvt" property will always be null.',
+    description: `Get a schedule for a Class, Teacher or Room detail. Note that each lesson\'s "sssvt" property will always be null.\n\n${detailsParamDescription}`,
     method: "get",
     path: "/{week}/{id}",
     request: {
         params: z.object({
             week: weekSchema,
             id: detailIdSchema
+        }),
+        query: z.object({
+            details: detailsParamSchema
         })
     },
     responses: {
         200: {
             content: {
                 "application/json": {
-                    schema: z.array(scheduleJSONSchema).openapi({ title: "Schedule array" })
+                    schema: bakalariScheduleResponseSchema
                 }
             },
             description: "Schedule for the given id"

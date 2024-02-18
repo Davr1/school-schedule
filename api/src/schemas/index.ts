@@ -1,3 +1,4 @@
+export * from "@/schemas/additionalDetails";
 export * from "@/schemas/bakalari";
 export * from "@/schemas/details";
 export * from "@/schemas/error";

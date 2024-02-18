@@ -1,5 +1,7 @@
 import { z } from "@hono/zod-openapi";
 
+export type ErrorResponse = z.infer<typeof errorSchema>;
+
 export const errorSchema = z.object({
     error: z.string()
 });

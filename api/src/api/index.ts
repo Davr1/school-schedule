@@ -12,6 +12,10 @@ import SSSVTEndpoints from "@/api/sssvt";
 
 import { version } from "../../package.json";
 
+export type { BakalariScheduleResponse } from "@/api/bakalari/route";
+export type { MergedScheduleResponse } from "@/api/merge/route";
+export type { SSSVTSubstitutionResponse } from "@/api/sssvt/route";
+
 const api = new OpenAPIHono()
     // Register the openapi endpoint
     .doc("/openapi", {

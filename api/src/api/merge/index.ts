@@ -1,17 +1,19 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { HTTPException } from "hono/http-exception";
 
-import mergedScheduleRoute from "@/api/merge/route";
-import { DetailHandler, DetailType } from "@/classes";
+import mergedScheduleRoute, { type MergedScheduleResponse } from "@/api/merge/route";
+import { type AnyDetail, Detail, DetailHandler, DetailType, Schedule } from "@/classes";
 import { BakalariParser, SSSVTParser } from "@/parser";
 import { parseHTML } from "@/parser/domhandler";
-import { BakalariRequest, SSSVTRequest } from "@/request";
-import type { ScheduleJSON } from "@/schemas";
+import { BakalariRequest, SSSVTRequest, Week } from "@/request";
+import { DetailsParam } from "@/schemas";
 
 const MergedEndpoints = new OpenAPIHono()
     // Merge a bakalari and sssvt schedule
     .openapi(mergedScheduleRoute, async (c) => {
         const { week, id } = c.req.valid("param");
+        const { details } = c.req.valid("query");
+        const minify = c.req.query("minify");
 
         // Find the id in the details
         const detail = DetailHandler.instance.getOne(id);
@@ -21,6 +23,8 @@ const MergedEndpoints = new OpenAPIHono()
         // Get the week dates
         const sunday = new Date();
         sunday.setDate(sunday.getDate() - sunday.getDay());
+
+        if (week === Week.Next) sunday.setDate(sunday.getDate() + 7);
 
         // Fetch substitutions from SSSVT
         const sssvt = [1, 2, 3, 4, 5].map((i) => {
@@ -44,8 +48,23 @@ const MergedEndpoints = new OpenAPIHono()
         // Merge the schedules
         await Promise.all(bakalari.map(async (schedule, i) => schedule.merge((await sssvt[i]).classes[detail.name!])));
 
+        // Extract the details from the schedules, depending on the details parameter
+        let additionalDetails: AnyDetail[] | undefined;
+        if (details === DetailsParam.All) additionalDetails = DetailHandler.instance.details;
+        else {
+            const predicate = details === DetailsParam.Minimal ? undefined : (d: Detail) => !d.static;
+
+            additionalDetails = Array.from(Schedule.extractDetails(bakalari, predicate));
+        }
+
+        // If minifying is enabled and no additional details are requested, remove the additionalDetails field
+        if (minify !== undefined && !additionalDetails.length) additionalDetails = undefined;
+
         // Return the schedule (cast as any because toJSON will be called by JSON.stringify)
-        return c.json<ScheduleJSON[]>(bakalari as any);
+        return c.json<MergedScheduleResponse>({
+            schedules: bakalari.map((s) => s.toJSON()),
+            additionalDetails: additionalDetails?.map((d) => d.toJSON())
+        });
     });
 
 export default MergedEndpoints;
