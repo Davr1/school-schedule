@@ -15,10 +15,11 @@ ENV PUPPETEER_SKIP_DOWNLOAD true
 # Set the working directory to /app
 WORKDIR /app
 
-# Copy the package.json and package-lock.json
+# Copy the package.json and other files
 # Note: I'm doing this before copying the rest of the files so Docker can cache the node_modules
-COPY package.json .
-COPY pnpm-lock.yaml .
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
+COPY api/package.json api/pnpm-lock.yaml api/
+COPY plugins/package.json plugins/pnpm-lock.yaml plugins/
 COPY patches ./patches 
 
 FROM base AS prod-deps

@@ -10,8 +10,10 @@ import { readFile } from "fs/promises";
 export function rawMinifyPlugin() {
     return {
         name: "raw-minify-plugin",
+        enforce: "pre", // Run before Vite's own ?raw loader
 
-        async transform(_, id) {
+        /** Step 1: Load the raw file and minify it */
+        async load(id) {
             if (!id.endsWith("?raw&minify")) return;
             id = id.slice(0, -11);
 
@@ -19,14 +21,30 @@ export function rawMinifyPlugin() {
             if (!input) return;
 
             const loader = id.endsWith(".css") ? "css" : id.endsWith(".ts") ? "ts" : "js";
-            const { code } = await transform(input, {
+            const { code, map } = await transform(input, {
                 loader,
                 minify: true,
                 treeShaking: true,
-                format: "esm"
+                format: "esm",
+                sourcefile: id,
+                sourcemap: "external"
             });
 
-            return `export default ${JSON.stringify(code.trim())};`;
+            return { map, code };
+        },
+
+        /** Step 2: Export the result as a string */
+        async transform(input, id) {
+            if (!id.endsWith("?raw&minify")) return;
+
+            const { map, code } = await transform(input, {
+                loader: "text", // Default export of the input as a string
+                format: "esm",
+                sourcefile: id,
+                sourcemap: "external"
+            });
+
+            return { map, code };
         }
     };
 }
