@@ -20,7 +20,7 @@
     import { writable, type Readable } from "svelte/store";
 
     import { browser } from "$app/environment";
-    import inline from "$lib/inline?raw";
+    import inline from "$lib/inline?raw&minify";
     import { SystemTheme, update } from "$lib/theme";
     import theme, { Theme } from "$stores/theme";
 

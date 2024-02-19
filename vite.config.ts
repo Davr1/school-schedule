@@ -1,5 +1,5 @@
 import svg from "@poppanator/sveltekit-svg";
-import { customCssColorsPlugin } from "@school-schedule/vite-plugins";
+import { customCssColorsPlugin, rawMinifyPlugin } from "@school-schedule/vite-plugins";
 import { sveltekit } from "@sveltejs/kit/vite";
 import autoprefixer from "autoprefixer";
 import { defineConfig, searchForWorkspaceRoot } from "vite";
@@ -32,7 +32,8 @@ export default defineConfig({
                 ]
             }
         }),
-        customCssColorsPlugin()
+        customCssColorsPlugin(),
+        rawMinifyPlugin()
     ],
     css: {
         modules: {
