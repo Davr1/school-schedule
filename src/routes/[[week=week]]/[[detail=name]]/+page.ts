@@ -1,5 +1,7 @@
 import type { BakalariScheduleResponse } from "@school-schedule/api";
 import { Detail, DetailHandler, DetailType, Schedule } from "@school-schedule/api/classes";
+import { BakalariParser } from "@school-schedule/api/parser";
+import { BakalariRequest, language } from "@school-schedule/api/request";
 import type { ErrorResponse } from "@school-schedule/api/schemas";
 import { error } from "@sveltejs/kit";
 
@@ -20,15 +22,31 @@ export async function load({ fetch, params: { detail }, parent }) {
     // On the server, timeout after 3 seconds and instead show a loading screen
     const signal = !browser ? AbortSignal.timeout(3000) : undefined;
 
-    let schedule: MaybePromise<Schedule[]> = fetch(`/api/bakalari/${week}/${item}?minify`, { signal })
-        .then<BakalariScheduleResponse | ErrorResponse>((res) => res.json())
-        .then((json) => {
-            if ("error" in json) throw new Error(json.error);
+    // On the server, this fetch request is caught by hooks.server.ts and instead requests the api server
+    // This means we don't have to include Bakalari's html in our response, and we can just use the parsed schedules
+    // But on the client, we obviously have to fetch the html and parse it here (it's faster anyway)
+    let schedule: MaybePromise<Schedule[]> = fetch(new BakalariRequest(week, item, { headers: language }), { signal })
+        .then<BakalariScheduleResponse | ErrorResponse | string>((res) => {
+            // If the response is JSON (meaning we're either on server or hydrating, and the request is actually from the api) parse it as JSON,
+            // otherwise as text (which means we're on the client, and we have to parse the HTML ourselves)
+            if (res.headers.get("content-type")?.startsWith("application/json")) return res.json();
 
-            // Register the additional details
-            for (const detail of json.additionalDetails ?? []) DetailHandler.instance.add(Detail.fromJSON(detail, DetailHandler.instance));
+            return res.text();
+        })
+        .then((res) => {
+            // If the response is a string, parse it as HTML
+            if (typeof res === "string") {
+                const dom = new DOMParser().parseFromString(res, "text/html");
+                return BakalariParser.instance.parse(item, dom);
+            }
 
-            return json.schedules.map((s) => Schedule.fromJSON(s, DetailHandler.instance));
+            // If the response is an error, throw it
+            if ("error" in res) throw new Error(res.error);
+
+            // Register the additional details from the api response
+            for (const detail of res.additionalDetails ?? []) DetailHandler.instance.add(Detail.fromJSON(detail, DetailHandler.instance));
+
+            return res.schedules.map((s) => Schedule.fromJSON(s, DetailHandler.instance));
         })
         .catch((err) => {
             if (browser || dev) console.error(err);

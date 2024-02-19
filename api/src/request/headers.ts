@@ -1,7 +1,9 @@
+/// <reference lib="dom" />
+
 /**
  * Only accept english, because the parser doesn't support other date formats
  */
-const language = {
+export const language = {
     "Accept-Language": "en-US,en;q=0.5"
 };
 

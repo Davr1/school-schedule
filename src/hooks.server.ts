@@ -1,5 +1,6 @@
 import api from "@school-schedule/api";
 import { DetailHandler, DetailType } from "@school-schedule/api/classes";
+import type { Week } from "@school-schedule/api/request";
 import type { Handle } from "@sveltejs/kit";
 import { sequence } from "@sveltejs/kit/hooks";
 
@@ -77,4 +78,27 @@ const builtinApi: Handle = async ({ event, resolve }) => {
     }
 };
 
-export const handle = sequence(rootRedirect, preloadFonts, builtinApi);
+/** Include the `Content-Type` header in responses */
+const contentType: Handle = ({ resolve, event }) => {
+    return resolve(event, {
+        filterSerializedResponseHeaders: (name) => name.toLowerCase() === "content-type"
+    });
+};
+
+export const handle = sequence(rootRedirect, preloadFonts, builtinApi, contentType);
+
+/**
+ * A small "hack" to get around how SvelteKit handles inserting the output of `fetch` inside universal load function.
+ *
+ * This will replace all requests to Bakalari with requests to the new API.
+ * Note: this only happens for server side requests, client side requests are not affected.
+ */
+export function handleFetch({ fetch, request }) {
+    const match = request.url.match(/^https:\/\/is.sssvt.cz\/IS\/Timetable\/Public\/([A-Z][a-z]+)\/[A-Z][a-z]+\/([A-Z0-9]+)$/);
+    if (!match) return fetch(request);
+
+    const week = match[1] as Week;
+    const id = match[2];
+
+    return fetch(`/api/bakalari/${week}/${id}?minify`);
+}
