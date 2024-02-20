@@ -10,12 +10,12 @@ const sssvtSubstitutionResponseSchema = sssvtJSONSchema.extend({
 
 const sssvtSubstitutionRoute = createRoute({
     tags: ["SSSVT"],
-    description: `Get a SSSVT substitution schedule\n\n${detailsParamDescription}`,
+    description: `Get a SSSVT substitution schedule for a given date.\n\n${detailsParamDescription}`,
     method: "get",
     path: "/{date}",
     request: {
         params: z.object({
-            date: z.string().openapi({ description: "A date string ", example: "2023-09-04" })
+            date: z.string().openapi({ description: "A date string", example: "2023-09-04" })
         }),
         query: z.object({
             details: detailsParamSchema

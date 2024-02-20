@@ -14,7 +14,8 @@ import { version } from "../../package.json";
 
 export type { BakalariScheduleResponse } from "@/api/bakalari/route";
 export type { MergedScheduleResponse } from "@/api/merge/route";
-export type { SSSVTSubstitutionResponse } from "@/api/sssvt/route";
+export type { SSSVTSubstitutionResponse } from "@/api/sssvt/day";
+export type { SSSVTWeekSubstitutionResponse } from "@/api/sssvt/week";
 
 const api = new OpenAPIHono()
     // Register the openapi endpoint
