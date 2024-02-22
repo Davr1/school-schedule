@@ -66,6 +66,7 @@
         ],
         "splitting": true,
         "sourcemap": true,
+        "treeshake": true,
         "format": "esm",
         "clean": true,
         "dts": true

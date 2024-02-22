@@ -32,13 +32,18 @@ class SSSVT {
         return new SSSVT(date, classes);
     }
 
+    extractDetails(predicate?: (detail: Detail) => boolean, thisArg?: any): Set<Detail> {
+        return SSSVT.extractDetails([this], predicate, thisArg);
+    }
+
     /**
-     * Extract all details from the schedule
+     * Extract all details from schedules
      *
+     * @param schedules The schedules to extract the details from
      * @param predicate Predicate to filter the details
      * @param thisArg The value to use as `this` when executing the predicate
      */
-    extractDetails(predicate?: (detail: Detail) => boolean, thisArg?: any): Set<Detail> {
+    static extractDetails(schedules: SSSVT[], predicate?: (detail: Detail) => boolean, thisArg?: any): Set<Detail> {
         const details = new Set<Detail>();
 
         function add(detail: Detail) {
@@ -46,16 +51,17 @@ class SSSVT {
             details.add(detail);
         }
 
-        for (const schedule of Object.values(this.classes))
-            for (const period of schedule)
-                for (const lesson of period) {
-                    if (!(lesson instanceof SSSVTSubstitution)) continue;
-                    const { subject, teacher, room } = lesson;
+        for (const sssvt of schedules)
+            for (const schedule of Object.values(sssvt.classes))
+                for (const period of schedule)
+                    for (const lesson of period) {
+                        if (!(lesson instanceof SSSVTSubstitution)) continue;
+                        const { subject, teacher, room } = lesson;
 
-                    if (subject) add(subject);
-                    if (teacher) add(teacher);
-                    if (room) add(room);
-                }
+                        if (subject) add(subject);
+                        if (teacher) add(teacher);
+                        if (room) add(room);
+                    }
 
         return details;
     }

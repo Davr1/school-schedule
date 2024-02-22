@@ -1,12 +1,11 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { HTTPException } from "hono/http-exception";
 
+import { extractDetails } from "@/api/helpers/extractDetails";
+import { getBakalari, getSSSVT } from "@/api/helpers/get";
+import { getWeek } from "@/api/helpers/getWeek";
 import mergedScheduleRoute, { type MergedScheduleResponse } from "@/api/merge/route";
-import { type AnyDetail, Detail, DetailHandler, DetailType, Schedule } from "@/classes";
-import { BakalariParser, SSSVTParser } from "@/parser";
-import { parseHTML } from "@/parser/domhandler";
-import { BakalariRequest, SSSVTRequest, Week } from "@/request";
-import { DetailsParam } from "@/schemas";
+import { DetailHandler, DetailType } from "@/classes";
 
 const MergedEndpoints = new OpenAPIHono()
     // Merge a bakalari and sssvt schedule
@@ -20,50 +19,28 @@ const MergedEndpoints = new OpenAPIHono()
         if (detail.type !== DetailType.Class) throw new HTTPException(400, { message: "Unsupported schedule type" });
         if (detail.name === null) throw new HTTPException(500, { message: "Invalid class" });
 
-        // Get the week dates
-        const sunday = new Date();
-        sunday.setDate(sunday.getDate() - sunday.getDay());
-
-        if (week === Week.Next) sunday.setDate(sunday.getDate() + 7);
-
         // Fetch substitutions from SSSVT
+        const sunday = getWeek(week);
         const sssvt = [1, 2, 3, 4, 5].map((i) => {
             const date = new Date(sunday);
             date.setDate(date.getDate() + i);
 
-            const req = new SSSVTRequest(date);
-            return fetch(req)
-                .then((res) => res.text())
-                .then(parseHTML)
-                .then((dom) => SSSVTParser.instance.parse(dom));
+            return getSSSVT(date);
         });
 
-        // Fetch and parse the schedule from bakalari
-        const req = new BakalariRequest(week, detail);
-        const bakalari = await fetch(req)
-            .then((res) => res.text())
-            .then(parseHTML)
-            .then((dom) => BakalariParser.instance.parse(detail, dom));
+        // Get the schedule from Bakalari
+        const bakalari = await getBakalari(week, detail);
 
-        // Merge the schedules
+        // Merge the schedules and extract details
         await Promise.all(bakalari.map(async (schedule, i) => schedule.merge((await sssvt[i]).classes[detail.name!])));
+        const additionalDetails = extractDetails(bakalari, details);
 
-        // Extract the details from the schedules, depending on the details parameter
-        let additionalDetails: AnyDetail[] | undefined;
-        if (details === DetailsParam.All) additionalDetails = DetailHandler.instance.details;
-        else {
-            const predicate = details === DetailsParam.Minimal ? undefined : (d: Detail) => !d.static;
-
-            additionalDetails = Array.from(Schedule.extractDetails(bakalari, predicate));
-        }
-
-        // If minifying is enabled and no additional details are requested, remove the additionalDetails field
-        if (minify !== undefined && !additionalDetails.length) additionalDetails = undefined;
-
-        // Return the schedule (cast as any because toJSON will be called by JSON.stringify)
+        // Return the schedule
         return c.json<MergedScheduleResponse>({
             schedules: bakalari.map((s) => s.toJSON()),
-            additionalDetails: additionalDetails?.map((d) => d.toJSON())
+
+            // If minifying is enabled and no additional details are requested, remove the additionalDetails field
+            additionalDetails: minify !== undefined && !additionalDetails.length ? undefined : additionalDetails.map((d) => d.toJSON())
         });
     });
 

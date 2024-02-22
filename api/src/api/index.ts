@@ -7,7 +7,7 @@ import { prettyJSON } from "hono/pretty-json";
 import BakalariEndpoints from "@/api/bakalari";
 import DetailsEndpoints from "@/api/details";
 import MergedEndpoints from "@/api/merge";
-import { minifyJSON } from "@/api/minify";
+import { minifyJSON } from "@/api/helpers/minify";
 import SSSVTEndpoints from "@/api/sssvt";
 
 import { version } from "../../package.json";

@@ -17,6 +17,14 @@ export const weekSchema = z.nativeEnum(Week).openapi("Week", {
     description: "The week to get the schedule for. Can be either Permanent, Actual or Next"
 });
 
+// For typescript only, don't include in openapi!
+const privateNormalBakalariLessonJSONSchema = false
+    ? {
+          absence: z.nativeEnum(BakalariAbsenceType).nullish(),
+          homework: z.array(z.string()).nullish()
+      }
+    : ({} as never);
+
 export const normalBakalariLessonJSONSchema = z
     .object({
         type: z.literal(BakalariLessonType.Normal),
@@ -25,8 +33,7 @@ export const normalBakalariLessonJSONSchema = z
         room: detailIdSchema.nullish(),
         groups: z.array(groupJSONSchema),
         topic: z.string().nullish(),
-        absence: z.nativeEnum(BakalariAbsenceType).nullish().openapi({ description: "Unavailable in the api!" }),
-        homework: z.array(z.string()).nullish().openapi({ description: "Unavailable in the api!" }),
+        ...privateNormalBakalariLessonJSONSchema, // Unavailable in the api!
         change: z.string().nullish()
     })
 
