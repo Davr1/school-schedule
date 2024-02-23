@@ -1,4 +1,4 @@
-import { type AnySSSVTChange, DetailHandler, SSSVT, type SSSVTClass } from "@/classes";
+import { type AnySSSVTChange, ClassDetail, DetailHandler, SSSVT, type SSSVTClass } from "@/classes";
 import type { IElement, IParentNode } from "@/parser/interfaces";
 import SSSVTLessonParser from "@/parser/sssvt/lesson";
 
@@ -12,9 +12,11 @@ class SSSVTParser {
         return this.#instance;
     }
 
+    #details: DetailHandler;
     #lessonParser: SSSVTLessonParser;
 
     constructor(details: DetailHandler) {
+        this.#details = details;
         this.#lessonParser = new SSSVTLessonParser(details);
     }
 
@@ -42,13 +44,16 @@ class SSSVTParser {
             const name = node.firstChild.textContent;
             if (!name || name === "DH") continue;
 
+            // Find the class detail, or create a new one if it doesn't exist
+            const detail = this.#details.getByName<ClassDetail>(name) ?? this.#details.add(new ClassDetail(name, name));
+
             // Get all the lessons (the cells after the first one; we don't have 0th period)
             // also skip ".heightfix" cuz that's just a spacer
             const lessons = node.querySelectorAll("td:not(:first-of-type, .heightfix)");
             const split = Array.from(node.nextElementSibling?.querySelectorAll("td:not(.heightfix)") ?? []);
 
             // Loop through all the periods to parse them into an array and add them to the object
-            classes[name] = Array.from(lessons).map((lesson) => this.#period(lesson, split));
+            classes[`${detail}`] = Array.from(lessons).map((lesson) => this.#period(lesson, split));
         }
 
         // Return the parsed data as a SSSVT class

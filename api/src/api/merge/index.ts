@@ -32,7 +32,7 @@ const MergedEndpoints = new OpenAPIHono()
         const bakalari = await getBakalari(week, detail);
 
         // Merge the schedules and extract details
-        await Promise.all(bakalari.map(async (schedule, i) => schedule.merge((await sssvt[i]).classes[detail.name!])));
+        await Promise.all(bakalari.map(async (schedule, i) => schedule.merge((await sssvt[i]).classes[`${detail}`])));
         const additionalDetails = extractDetails(bakalari, details);
 
         // Return the schedule

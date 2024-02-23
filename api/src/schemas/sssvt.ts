@@ -50,10 +50,10 @@ export const anySSSVTChangeJSONSchema = z
 export const sssvtJSONSchema = z
     .object({
         date: dateSchema,
-        classes: z.record(z.string(), z.array(z.array(anySSSVTChangeJSONSchema)))
+        classes: z.record(detailIdSchema, z.array(z.array(anySSSVTChangeJSONSchema)))
     })
 
     .openapi("SSSVT", {
         title: "SSSVT",
-        description: "SSSVT substitution schedule"
+        description: "SSSVT substitution schedule. Classes are indexed by their bakalari id!"
     });
