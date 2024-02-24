@@ -25,9 +25,10 @@ class BakalariParser {
      *
      * @param detail The detail of the schedule
      * @param html The html to parse
+     * @param fetchDate Optional date of when the timetable was fetched, if not provided, the current date will be used. This is used to determine the year of dates in the timetable. (Bakalari only provides the day and month)
      * @returns The parsed days from the timetable
      */
-    parse(detail: Detail, dom: IParentNode): Schedule[] {
+    parse(detail: Detail, dom: IParentNode, fetchDate?: Date): Schedule[] {
         // Parse the html into a dom, and select all the day row nodes
         const oldNodes = Array.from(dom.querySelectorAll(".bk-timetable-row"));
         const newNodes = Array.from(dom.querySelectorAll(".day-row"));
@@ -35,7 +36,7 @@ class BakalariParser {
         // Parse each day and return the parsed data
         return [...oldNodes, ...newNodes].map((node, index) => {
             // Get the date and the day of the week
-            const date = this.#date(node) ?? index + 1;
+            const date = this.#date(node, fetchDate) ?? index + 1;
 
             // If there's a full day event, return that instead (there won't be any lessons)
             const event = this.#event(node);
@@ -74,7 +75,7 @@ class BakalariParser {
     }
 
     /** Parse the day info from a row */
-    #date(node: IElement): Date | undefined {
+    #date(node: IElement, now = new Date()): Date | undefined {
         const text = (node.querySelector(".bk-day-date") || node.querySelector(".day-name span"))?.textContent;
 
         // Don't return anything if the text is empty (for permanent schedules)
@@ -83,7 +84,6 @@ class BakalariParser {
         let [day, month] = text.split(/\/|\./).map(Number);
         month -= 1; // Months in the text are 1-indexed, but Date uses 0-indexed months
 
-        const now = new Date();
         const currentYear = now.getFullYear();
         const currentMonth = now.getMonth();
 

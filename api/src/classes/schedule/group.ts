@@ -18,6 +18,10 @@ export class Group {
         this.number = number;
     }
 
+    equals(group: Group): boolean {
+        return this.class === group.class && this.number === group.number;
+    }
+
     toJSON(): GroupJSON {
         return {
             class: this.class?.toString() ?? null,
@@ -25,8 +29,8 @@ export class Group {
         };
     }
 
-    equals(group: Group): boolean {
-        return this.class === group.class && this.number === group.number;
+    toBSON() {
+        return this.toJSON();
     }
 
     static fromJSON(json: GroupJSON, handler: DetailHandler) {

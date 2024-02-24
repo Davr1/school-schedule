@@ -138,17 +138,19 @@ export class NormalBakalariLesson extends BaseBakalariLesson {
         return this;
     }
 
-    /** Serialize the lesson to JSON */
     toJSON(): NormalBakalariLessonJSON {
         return {
             ...this,
             subject: this.subject?.toString() ?? null,
             teacher: this.teacher?.toString() ?? null,
             room: this.room?.toString() ?? null,
-            groups: this.groups.map((group) => group.toJSON()),
             absence: this.absence ?? undefined,
             homework: this.homework.length > 0 ? this.homework : undefined
-        };
+        } as NormalBakalariLessonJSON;
+    }
+
+    toBSON() {
+        return this.toJSON();
     }
 
     static fromJSON(json: NormalBakalariLessonJSON, handler: DetailHandler) {

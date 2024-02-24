@@ -44,7 +44,6 @@ export abstract class BaseSSSVTChange {
 export class SSSVTCancellation extends BaseSSSVTChange {
     readonly type = SSSVTChangeType.Cancellation;
 
-    /** Deserialize the lesson from JSON */
     static fromJSON(json: SSSVTCancellationJSON): SSSVTCancellation {
         return new SSSVTCancellation(json.group ?? null);
     }
@@ -69,7 +68,6 @@ export class SSSVTSubstitution extends BaseSSSVTChange {
         super(group);
     }
 
-    /** Serialize the lesson to JSON */
     toJSON(): SSSVTSubstitutionJSON {
         return {
             ...this,
@@ -79,7 +77,10 @@ export class SSSVTSubstitution extends BaseSSSVTChange {
         };
     }
 
-    /** Deserialize the lesson from JSON */
+    toBSON() {
+        return this.toJSON();
+    }
+
     static fromJSON(json: SSSVTSubstitutionJSON, handler: DetailHandler): SSSVTSubstitution {
         // Get the details
         const subject = json.subject ? handler.getOne(json.subject) : null;

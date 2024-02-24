@@ -29,15 +29,17 @@ class Schedule {
         public event: string | null = null
     ) {}
 
-    /** Serialize the schedule to JSON */
     toJSON(): ScheduleJSON {
-        const detail = this.detail.toString();
-        const date = this.date instanceof Date ? this.date.toISOString() : this.date;
-
-        return { ...this, detail, date } as ScheduleJSON;
+        return {
+            ...this,
+            detail: `${this.detail}`
+        } as ScheduleJSON;
     }
 
-    /** Deserialize the schedule from JSON */
+    toBSON() {
+        return this.toJSON();
+    }
+
     static fromJSON(json: ScheduleJSON, handler: DetailHandler) {
         // Find the detail by id
         const detail = handler.getOne(json.detail);
