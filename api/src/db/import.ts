@@ -21,13 +21,17 @@ for (const item of items) {
 
     // SSSVT import
     if (item.endsWith(".bson")) {
+        if (item === "data.bson") continue;
+
         const contents = deserialize(await gunZip(await readFile(itemPath)));
-        const date = new Date(contents.timestamp);
         if (!contents.response) continue;
 
-        const name = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}/sssvt.html`;
-        const upload = fs.openUploadStream(name, {
-            metadata: { contentType: "text/html", date, source: "sssvt" }
+        const date = new Date(contents.timestamp);
+        const scheduleDate = new Date(item.replace(".bson", ""));
+        scheduleDate.setUTCHours(0, 0, 0, 0);
+
+        const upload = fs.openUploadStream(`${scheduleDate.toISOString().split("T")[0]}/sssvt.html`, {
+            metadata: { date, scheduleDate, contentType: "text/html", source: "sssvt" }
         });
 
         upload.end(contents.response);
@@ -42,10 +46,15 @@ for (const item of items) {
             const detail = DetailHandler.instance.getOne(id);
             const date = new Date(item);
 
+            const scheduleDate = new Date(date);
+            scheduleDate.setDate(scheduleDate.getDate() - scheduleDate.getDay());
+            scheduleDate.setUTCHours(0, 0, 0, 0);
+
             // Read the file and upload it to the database
             const contents = await readFile(join(itemPath, file), "utf-8");
-            const name = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}/${detail.name}.html`;
-            const upload = fs.openUploadStream(name, { metadata: { date, contentType: "text/html", source: "bakalari", detail: id } });
+            const upload = fs.openUploadStream(`${date.toISOString().split("T")[0]}/${detail.name}.html`, {
+                metadata: { date, scheduleDate, contentType: "text/html", source: "bakalari", detail: id }
+            });
 
             upload.end(contents);
         }

@@ -1,6 +1,6 @@
 /** Delete all data and re-parse it from gridfs */
 import { DetailHandler } from "@/classes";
-import { bakalari, client, fs, sssvt } from "@/db";
+import { bakalari, client, files, fs, sssvt } from "@/db";
 import { BakalariParser, SSSVTParser } from "@/parser";
 import { parseHTML } from "@/parser/domhandler";
 
@@ -10,7 +10,20 @@ console.time("Re-parse");
 await bakalari.deleteMany({});
 await sssvt.deleteMany({});
 
-for await (const file of fs.find()) {
+// Get latest schedules from gridfs (we don't want to re-parse the same old data)
+const latest = files.aggregate([
+    { $sort: { "metadata.date": -1 } },
+    {
+        $group: {
+            _id: { source: "$metadata.source", scheduleDate: "$metadata.scheduleDate", detail: "$metadata.detail" },
+            __id: { $first: "$_id" },
+            metadata: { $first: "$metadata" }
+        }
+    },
+    { $project: { _id: "$__id", metadata: 1 } }
+]);
+
+for await (const file of latest) {
     // Read the file contents
     const stream = fs.openDownloadStream(file._id);
     const html = await new Promise<string>((resolve, reject) => {
@@ -39,6 +52,9 @@ for await (const file of fs.find()) {
     // SSSVT
     else {
         const schedule = SSSVTParser.instance.parse(await parseHTML(html));
+
+        // @ts-expect-error - Add the fetch date to the schedule
+        schedule.fetchDate = date;
 
         // Insert the schedule (`.toBSON()` will get called automatically, so I'm just doing a type cast)
         await sssvt.insertOne(schedule as any);

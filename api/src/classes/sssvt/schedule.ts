@@ -1,5 +1,6 @@
 import type { Detail, DetailHandler } from "@/classes/details";
 import { type AnySSSVTChange, BaseSSSVTChange, SSSVTSubstitution } from "@/classes/sssvt/change";
+import type { SSSVTBSON } from "@/db";
 import type { SSSVTJSON } from "@/schemas";
 
 /** A class in the SSSVT schedule. Each class has a list of lessons for each period */
@@ -19,8 +20,7 @@ class SSSVT {
         readonly classes: Record<string, SSSVTClass>
     ) {}
 
-    /** Deserialize the schedule from JSON */
-    static fromJSON(json: SSSVTJSON, handler: DetailHandler): SSSVT {
+    static fromJSON(json: SSSVTJSON | SSSVTBSON, handler: DetailHandler): SSSVT {
         const date = new Date(json.date);
         const classes = Object.fromEntries(
             Object.entries(json.classes).map(([name, cl]) => [
