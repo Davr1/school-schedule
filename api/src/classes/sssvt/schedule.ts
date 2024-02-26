@@ -12,6 +12,9 @@ export type SSSVTClass = AnySSSVTChange[][];
  * Note: This only contains info about the substitutions for a given day
  */
 class SSSVT {
+    /** @private Fetch date */
+    fetchDate: Date | undefined;
+
     constructor(
         /** The date of the schedule */
         readonly date: Date,

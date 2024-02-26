@@ -38,6 +38,9 @@ dependencies:
   typescript:
     specifier: ^5.0.0
     version: 5.3.3
+  windows-1250:
+    specifier: ^3.0.4
+    version: 3.0.4
   zod:
     specifier: ^3.22.4
     version: 3.22.4
@@ -1355,6 +1358,10 @@ packages:
     dependencies:
       isexe: 2.0.0
     dev: true
+
+  /windows-1250@3.0.4:
+    resolution: {integrity: sha512-DoHOT9o9N/TwKoLkLWe/pedZvZqhif3GY5YagTK/c8ONbu6K8tzt7lnH6do7oACmwU+q+6f2IwUjGyBzRZJXbA==}
+    dev: false
 
   /wrap-ansi@7.0.0:
     resolution: {integrity: sha512-YVGIj2kamLSTxw6NsZjoBxfSwsn0ycdesmc4p+Q21c5zPuZ1pl+NfxVdxPtdHvmNVOQ6XSYG4AUtyt/Fi7D16Q==}

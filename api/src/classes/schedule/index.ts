@@ -3,10 +3,14 @@ import type { Detail, DetailHandler } from "@/classes/details";
 import { type AnyLesson, BaseLesson } from "@/classes/schedule/lesson";
 import { SSSVTSubstitution } from "@/classes/sssvt/change";
 import type { SSSVTClass } from "@/classes/sssvt/schedule";
+import type { ScheduleBSON } from "@/db";
 import type { ScheduleJSON } from "@/schemas";
 
 /** Schedule for a day */
 class Schedule {
+    /** @private Fetch date */
+    fetchDate: Date | undefined;
+
     get day() {
         return this.date instanceof Date ? this.date.getDay() : this.date;
     }
@@ -40,7 +44,7 @@ class Schedule {
         return this.toJSON();
     }
 
-    static fromJSON(json: ScheduleJSON, handler: DetailHandler) {
+    static fromJSON(json: ScheduleJSON | ScheduleBSON, handler: DetailHandler) {
         // Find the detail by id
         const detail = handler.getOne(json.detail);
 

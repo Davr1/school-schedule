@@ -1,10 +1,10 @@
-import { GridFSBucket, type GridFSFile, MongoClient } from "mongodb";
+import { GridFSBucket, type GridFSBucketWriteStreamOptions, type GridFSFile, MongoClient } from "mongodb";
 
 import type { AnyBakalariLessonJSON, ScheduleJSON, SSSVTJSON } from "@/schemas";
 import type { GroupJSON } from "@/schemas/group";
 
 export type SSSVTBSON = Omit<SSSVTJSON, "date"> & { date: Date };
-export type BakalariBSON = Omit<ScheduleJSON, "date"> & { date: Date; fetchDate: Date };
+export type ScheduleBSON = Omit<ScheduleJSON, "date"> & { date: Date | number; fetchDate: Date };
 export type BakalariLessonJSON = AnyBakalariLessonJSON & { date: Date; period: number; groups: GroupJSON[] };
 
 export const client = new MongoClient(process.env.MONGO_URI ?? "mongodb://localhost:27017");
@@ -13,12 +13,12 @@ await client.connect();
 export const db = client.db("school-schedule");
 
 // Collections
-export const bakalari = db.collection<BakalariBSON>("bakalari");
+export const bakalari = db.collection<ScheduleBSON>("bakalari");
 export const sssvt = db.collection<SSSVTBSON>("sssvt");
 
 // Indexes
-await bakalari.createIndex({ date: 1, detail: 1 });
-await sssvt.createIndex({ date: 1 });
+await bakalari.createIndex([{ date: -1 }, { detail: 1 }]);
+await sssvt.createIndex({ date: -1 });
 
 // Views
 export const bkEvents = await db.createCollection<{ date: Date; event: string }>("bakalari-events", {
@@ -68,3 +68,14 @@ export const bkLessons = await db.createCollection<BakalariLessonJSON>("bakalari
 // GridFS
 export const fs = new GridFSBucket(db);
 export const files = db.collection<GridFSFile>("fs.files");
+
+export function upload(filename: string, file: any, options?: GridFSBucketWriteStreamOptions): Promise<void> {
+    return new Promise((resolve, reject) => {
+        const stream = fs.openUploadStream(filename, options);
+        stream.on("finish", resolve);
+        stream.on("error", reject);
+
+        stream.write(file);
+        stream.end();
+    });
+}

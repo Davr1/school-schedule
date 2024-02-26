@@ -7,6 +7,7 @@ import { gunzip } from "zlib";
 
 import { DetailHandler } from "@/classes";
 import { client, fs } from "@/db";
+import { formatDate, mondayOfWeek } from "@/util";
 
 const gunZip = promisify(gunzip);
 
@@ -28,9 +29,8 @@ for (const item of items) {
 
         const date = new Date(contents.timestamp);
         const scheduleDate = new Date(item.replace(".bson", ""));
-        scheduleDate.setUTCHours(0, 0, 0, 0);
 
-        const upload = fs.openUploadStream(`${scheduleDate.toISOString().split("T")[0]}/sssvt.html`, {
+        const upload = fs.openUploadStream(`${formatDate(scheduleDate)}/sssvt.html`, {
             metadata: { date, scheduleDate, contentType: "text/html", source: "sssvt" }
         });
 
@@ -46,13 +46,11 @@ for (const item of items) {
             const detail = DetailHandler.instance.getOne(id);
             const date = new Date(item);
 
-            const scheduleDate = new Date(date);
-            scheduleDate.setDate(scheduleDate.getDate() - scheduleDate.getDay());
-            scheduleDate.setUTCHours(0, 0, 0, 0);
+            const scheduleDate = mondayOfWeek(date);
 
             // Read the file and upload it to the database
             const contents = await readFile(join(itemPath, file), "utf-8");
-            const upload = fs.openUploadStream(`${date.toISOString().split("T")[0]}/${detail.name}.html`, {
+            const upload = fs.openUploadStream(`${formatDate(date)}/${detail.name}.html`, {
                 metadata: { date, scheduleDate, contentType: "text/html", source: "bakalari", detail: id }
             });
 

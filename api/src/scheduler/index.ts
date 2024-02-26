@@ -1,8 +1,8 @@
 import { Cron } from "croner";
 
+import { getBakalari } from "@/api/helpers/get";
 import { DetailHandler, DetailType } from "@/classes";
-import { BakalariRequest, Week } from "@/request";
-import save from "@/scheduler/save";
+import { Week } from "@/request";
 
 /**
  * Schedule download of all classes from Bakalari every 4 hours and at 23:00.
@@ -26,10 +26,10 @@ async function scheduleAllClasses() {
         // Fetch the schedules in random order
         const details = DetailHandler.instance.getOfType(DetailType.Class).sort(() => Math.random() - 0.5);
         for (const detail of details) {
-            // Fetch the schedule for the detail and save it
-            fetch(new BakalariRequest(Week.Current, detail))
-                .then((res) => (console.log(res), res.text()))
-                .then((html) => save(html, detail.id));
+            console.log(`Fetching schedule for class: ${detail.name}`);
+
+            // Get the schedules for the current week
+            await getBakalari(Week.Current, detail, true);
 
             // Wait between 5 and 10 seconds.
             await new Promise((resolve) => setTimeout(resolve, Math.random() * 5000 + 5000));

@@ -42,7 +42,7 @@ for await (const file of latest) {
         const detail = DetailHandler.instance.getOne(file.metadata!.detail as string);
         const schedules = BakalariParser.instance.parse(detail, await parseHTML(html), date);
 
-        // @ts-expect-error - Add the fetch date to the schedules
+        // Add the fetch date to the schedules
         for (const schedule of schedules) schedule.fetchDate = date;
 
         // Insert the schedules (`.toBSON()` will get called automatically, so I'm just doing a type cast)
@@ -53,7 +53,7 @@ for await (const file of latest) {
     else {
         const schedule = SSSVTParser.instance.parse(await parseHTML(html));
 
-        // @ts-expect-error - Add the fetch date to the schedule
+        // Add the fetch date to the schedule
         schedule.fetchDate = date;
 
         // Insert the schedule (`.toBSON()` will get called automatically, so I'm just doing a type cast)
