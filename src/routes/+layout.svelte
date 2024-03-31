@@ -6,6 +6,7 @@
 
     import theme from "$stores/theme";
 
+    import Subscription from "$components/AprilFools/Subscription.svelte";
     import "$styles/global.scss";
     import "virtual:custom-colors.css";
 
@@ -38,6 +39,8 @@
         match?.removeEventListener("change", updateMatch);
     });
 </script>
+
+<Subscription />
 
 <!-- Preload the fonts and set the appropriate class name -->
 <svelte:head>

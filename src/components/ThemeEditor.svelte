@@ -38,7 +38,7 @@
     -->
 
     <div class={styles.optionRow} style="margin-top: 1rem;">
-        <span class={themeStyles.accentTitle}>Accent color</span>
+        <span class={themeStyles.accentTitle} style:opacity="0.5" style:text-decoration="line-through">Accent color</span>
 
         <RoundSelect
             options={[
@@ -52,16 +52,8 @@
     </div>
 
     <p>
-        Currently selecting the
-        <!-- apply the accent class depending on the selection, this is to show the currently selected color -->
-        <span class={`${accent === AccentSelection.Primary ? $theme.primary : $theme.secondary} ${themeStyles.accentLabel}`}>
-            {accent === AccentSelection.Primary ? "primary" : "secondary"}
-        </span>
-        accent.
-
-        <br />
-
-        Tap the option above to switch between them.
+        <strong>300 Kč</strong>
+        theme editor™️ DLC is coming soon!
     </p>
 
     {#if accent === AccentSelection.Primary}
@@ -77,10 +69,8 @@
         and edit the BackgroundColor enum and add the appropriate color variables
     -->
     <div class={styles.optionRow}>
-        <span>Background color</span>
+        <span style:opacity="0.5" style:text-decoration="line-through">Background color</span>
     </div>
-
-    <p>If you're unsure, go with Zinc...</p>
 
     <RoundSelect options={Object.entries(BackgroundColor)} bind:selection={$theme.background} id="background" />
 {/if}
