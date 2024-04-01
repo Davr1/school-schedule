@@ -4,7 +4,6 @@
     import LoadScreen from "$components/LoadScreen.svelte";
     import Options from "$components/Options.svelte";
     import ScheduleView from "$components/ScheduleView.svelte";
-    import Status from "$components/AprilFools/Status.svelte";
 
     let isLoadScreenVisible = $config.loadscreen;
     let loading: boolean = true;
@@ -13,9 +12,6 @@
 <LoadScreen visible={isLoadScreenVisible} {loading} />
 
 <Options />
-
-<Status />
-
 <ScheduleView
     on:state={({ detail }) => {
         loading = detail !== "finished";

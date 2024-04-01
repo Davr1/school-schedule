@@ -34,8 +34,8 @@
         {@const label = option[0]}
         {@const className = option[2] || value}
 
-        <label class={`${styles.option} ${className}`} style:opacity={id != "theme" ? 0.5 : 1}>
-            <input class={styles.radio} class:small type="radio" name={id} bind:group={selection} {value} disabled={id != "theme"} />
+        <label class={`${styles.option} ${className}`}>
+            <input class={styles.radio} class:small type="radio" name={id} bind:group={selection} {value} />
 
             <span>{label}</span>
         </label>
