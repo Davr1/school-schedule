@@ -11,14 +11,14 @@
     },
     "dependencies": {
         "@hono/swagger-ui": "^0.2.1",
-        "@hono/zod-openapi": "^0.9.5",
-        "croner": "^8.0.0",
+        "@hono/zod-openapi": "^0.9.10",
+        "croner": "^8.0.1",
         "css-select": "^5.1.0",
         "domhandler": "^5.0.3",
         "domutils": "^3.1.0",
-        "hono": "^3.12.5",
+        "hono": "^4.2.2",
         "htmlparser2": "^9.1.0",
-        "mongodb": "^6.3.0",
+        "mongodb": "^6.5.0",
         "zod": "^3.22.4"
     }
 }
