@@ -7,9 +7,9 @@ ENV PATH="$PNPM_HOME:$PATH"
 
 RUN corepack enable
 
-# Install chromium
-RUN apt-get update && apt-get install -yq chromium
-ENV PUPPETEER_EXECUTABLE_PATH /usr/bin/chromium
+# Don't download Google Chrome here!
+# You should run a chromium instance in a separate container and set
+# the PUPPETEER_BROWSER_URL env variable to that container's address
 ENV PUPPETEER_SKIP_DOWNLOAD true
 
 # Set the working directory to /app

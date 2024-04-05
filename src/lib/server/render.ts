@@ -1,19 +1,41 @@
+import { promises as dns } from "dns";
 import puppeteer, { type Browser } from "puppeteer";
 import type { ComponentProps, ComponentType, SvelteComponent } from "svelte";
 
-// Declare the global `puppeteer` variable
+import { env } from "$env/dynamic/private";
+
+// Declare the global `__puppeteer` variable (to preserve it between HMR reloads)
 declare global {
-    var _puppeteer: Browser;
+    var __puppeteer: Browser | undefined;
+}
+
+/** Get the browser instance */
+export async function getBrowser(): Promise<Browser> {
+    // Skip the browser launch if it's already running
+    // If the environment variable `PUPPETEER_BROWSER_URL` is set, connect to that browser instead of launching a new one
+    if (!globalThis.__puppeteer)
+        if (env.PUPPETEER_BROWSER_URL) {
+            // Parse the URL
+            let url = new URL(env.PUPPETEER_BROWSER_URL);
+
+            // Resolve the hostname (Chromium doesn't accept requests whose `Host` header isn't an IP address)
+            if (url.hostname !== "localhost") {
+                let lookup = await dns.lookup(url.hostname);
+                url.hostname = lookup.family === 4 ? lookup.address : `[${lookup.address}]`;
+            }
+
+            globalThis.__puppeteer = await puppeteer.connect({ browserURL: url.href });
+        } else globalThis.__puppeteer = await puppeteer.launch();
+
+    // In case the browser failed to launch
+    if (!globalThis.__puppeteer) throw new Error("Failed to launch puppeteer");
+    return globalThis.__puppeteer;
 }
 
 /** Render HTML as a png, using headless chromium */
 export async function renderHTML(html: string, width: number, height: number): Promise<Buffer> {
-    // Initialize puppeteer if it hasn't been initialized yet
-    if (!globalThis._puppeteer) {
-        globalThis._puppeteer = await puppeteer.launch({ headless: "new", args: ["--no-sandbox"] });
-    }
-
-    const page = await globalThis._puppeteer.newPage();
+    const browser = await getBrowser();
+    const page = await browser.newPage();
 
     // Set the HTML
     await page.setContent(html);
@@ -32,7 +54,7 @@ export async function renderHTML(html: string, width: number, height: number): P
 
 /** Render a Svelte component as HTML */
 export function renderComponent<T extends SvelteComponent>(component: ComponentType<T>, props: ComponentProps<T>): string {
-    // @ts-expect-error - Svelte components' types don't have a `render` method, even the object does
+    // @ts-expect-error - Svelte components' types don't have a `render` method, even tho the object does
     const { html } = component.render(props);
 
     return html;
