@@ -1,3 +1,5 @@
+@use "../extras.scss";
+
 @property --size {
     inherits: true;
     syntax: "<length>";
@@ -21,6 +23,10 @@
     }
     --duration: 300ms;
     animation: var(--duration) fadeout;
+
+    @include extras.classic {
+        --duration: 0ms;
+    }
 }
 
 :local(.ripple)::after {

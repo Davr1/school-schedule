@@ -1,4 +1,5 @@
 @use "../../transitions.scss";
+@use "../../extras.scss";
 
 :local(.cell) {
     grid-area: calc(var(--row) + 1) / calc(var(--column) + 2) / span var(--height) / span var(--width);
@@ -29,6 +30,9 @@
     box-shadow: 0 0.0625rem 0.25rem -0.125rem #000;
 
     @include transitions.all((background-color, transform), ease-out, 200ms);
+
+    // Classic theme
+    @include extras.classic-highlight;
 
     &.changed {
         --subject-hover: var(--hover-accent-primary);
