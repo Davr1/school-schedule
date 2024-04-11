@@ -17,6 +17,10 @@
     }
 }
 
+:root.light %light-shadow {
+    box-shadow: 0 1px 3px #0004;
+}
+
 @mixin classic-highlight {
     @extend %classic-highlight;
 

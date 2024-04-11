@@ -27,7 +27,7 @@
     background-color: var(--dimmed-background);
     border-radius: 0.3rem;
 
-    box-shadow: 0 0.0625rem 0.25rem -0.125rem #000;
+    @extend %light-shadow;
 
     @include transitions.all((background-color, transform), ease-out, 200ms);
 
