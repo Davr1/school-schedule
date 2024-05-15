@@ -10,12 +10,16 @@
     background-color: var(--element-background);
 
     border-radius: 1rem;
-    outline: 0.2rem transparent;
-    outline-offset: 0.2rem;
 
     cursor: pointer;
 
     @include transitions.all((background-color, outline-color), 150ms, ease-out);
+
+    outline: transparent solid 0.225rem;
+    outline-offset: 0.2rem;
+    &:focus-visible {
+        outline-color: var(--accent-primary);
+    }
 
     &::before {
         content: "";
@@ -30,11 +34,6 @@
         transform: scale(0.75);
 
         @include transitions.all((background-color, transform), 150ms, ease-out);
-    }
-
-    &:focus-visible {
-        outline-style: solid;
-        outline-color: var(--accent-primary);
     }
 
     &:checked {
