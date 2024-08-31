@@ -1,4 +1,5 @@
 @use "../../transitions.scss";
+@use "../../extras.scss";
 
 :local(.select) {
     display: grid;
@@ -70,6 +71,16 @@
         height: 3rem;
     }
 
+    @include extras.classic-highlight {
+        &:checked {
+            box-shadow:
+                0 0 0 1px black,
+                inset 2px 2px white,
+                inset -2px -2px var(--background-400),
+                inset 0 0 0 0.25rem var(--radio-ring);
+        }
+    }
+
     // Special styles for the theme picker
     #theme & {
         border: 0.25rem solid var(--active-foreground);
@@ -90,12 +101,34 @@
 
         &[value="original"] {
             background-color: #434c56;
-            // border-width: 0.5rem;
-            // border-color: #434c56;
-            // border-color: #1f6feb;
             border: none;
 
             box-shadow: inset 0 0 0.5rem 0.5rem #1f6feb;
+
+            @include extras.classic {
+                box-shadow: inset 0 0 0 0.5rem #1f6feb;
+            }
+        }
+
+        &[value="classic"] {
+            position: relative;
+
+            background-color: var(--background-200);
+            border: 0.25rem inset var(--background-400);
+
+            &::before {
+                content: "";
+                position: absolute;
+                display: block;
+
+                width: 4rem;
+                height: 4px;
+
+                background-color: var(--background-400);
+
+                transform: rotate(-45deg) translate(-4px, -2px);
+                top: 1.5rem;
+            }
         }
 
         &:checked {

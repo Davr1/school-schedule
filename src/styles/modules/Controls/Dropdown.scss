@@ -1,3 +1,5 @@
+@use "../../extras.scss";
+
 @use "Button.scss";
 
 // can't use just .button since I'm extending it...
@@ -44,7 +46,8 @@
     background-color: var(--dimmed-background);
     border-radius: 0.6rem;
 
-    box-shadow: 0 0.0625rem 0.25rem -0.125rem #000;
+    box-shadow: 0 0.0625rem 0.5rem -0.125rem #000;
+    @extend %light-shadow;
 
     white-space: pre;
 
@@ -55,6 +58,8 @@
     :root.light & :local(.button):not(.active) {
         box-shadow: none;
     }
+
+    @include extras.classic-highlight;
 
     // scroll bars
     scrollbar-width: thin;

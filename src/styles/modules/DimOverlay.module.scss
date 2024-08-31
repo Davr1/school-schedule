@@ -1,3 +1,5 @@
+@use "../extras.scss";
+
 :local(.overlay) {
     position: absolute;
     inset: 0;
@@ -22,5 +24,10 @@
         &.dimmed {
             backdrop-filter: blur(5px);
         }
+    }
+
+    @include extras.classic {
+        background: #000b;
+        backdrop-filter: unset !important;
     }
 }

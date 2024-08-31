@@ -7,7 +7,8 @@ export enum Theme {
     System = "system",
     Light = "light",
     Dark = "dark",
-    Original = "original"
+    Original = "original",
+    Classic = "classic"
 }
 
 /** All colors gray colors from `tailwindcss/colors` */

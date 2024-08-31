@@ -1,3 +1,5 @@
+@use "../extras.scss";
+
 :local(.modal) {
     position: relative;
 
@@ -18,6 +20,13 @@
     overflow: hidden;
 
     animation: 50ms scale both ease-out;
+
+    @include extras.classic-highlight {
+        &::backdrop {
+            background: #000b;
+            backdrop-filter: unset !important;
+        }
+    }
 
     &.scrollable {
         height: 85vh;

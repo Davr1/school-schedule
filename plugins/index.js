@@ -5,8 +5,7 @@ const deprecated = ["lightBlue", "warmGray", "trueGray", "coolGray", "blueGray"]
 
 // Generate the CSS for the colors
 const shades = ["400", "500", "600"];
-const bgShades = ["50", "100", "200", "400", "500", "600", "700", "800", "900", "950"];
-const bgColors = ["slate", "gray", "zinc", "neutral", "stone"];
+const bg = ["slate", "gray", "zinc", "neutral", "stone"];
 
 /**
  * Genrates the CSS variable for a color shade
@@ -15,7 +14,7 @@ const bgColors = ["slate", "gray", "zinc", "neutral", "stone"];
  * @param {string[]} shades Shades to generate
  * @returns Generated CSS variable
  */
-function variablesForColorShade(color, name, shades) {
+function variablesForColorShade(color, name, shades = Object.keys(tailwindColors[color])) {
     return shades.map((shade) => `--${name}-${shade}: ${tailwindColors[color][shade]};`).join("\n\t\t\t");
 }
 
@@ -37,11 +36,11 @@ for (const color of Object.keys(tailwindColors)) {
     `;
 
     // Background color classes (only for certain colors)
-    if (!bgColors.includes(color)) continue;
+    if (!bg.includes(color)) continue;
 
     css += `
         .${color}-bg {
-            ${variablesForColorShade(color, "background", bgShades)}
+            ${variablesForColorShade(color, "background")}
         }
     `;
 }

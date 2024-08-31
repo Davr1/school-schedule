@@ -1,7 +1,7 @@
 @use "sass:color";
 @use "sass:map";
 
-:root.light {
+:root:is(.light, .classic) {
     --app-background: #fff;
     --app-foreground: var(--background-600);
 
@@ -35,8 +35,7 @@
     color-scheme: dark;
 }
 
-:root.light,
-:root.dark {
+:root:is(.light, .dark, .classic) {
     --icon-bg: var(--background-800);
     --icon-fg: var(--background-600);
 
@@ -66,4 +65,14 @@
     --hover-accent-secondary: #{color.mix(#fff, #2dac45, 10%)}; // same as: filter: brightness(1.1);
 
     color-scheme: dark;
+}
+
+:root.classic {
+    --app-background: var(--background-100);
+    --app-foreground: var(--background-600);
+
+    --dimmed-background: var(--background-200);
+    --dimmed-foreground: var(--background-400);
+
+    --element-background: var(--background-300);
 }
