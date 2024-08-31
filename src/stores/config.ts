@@ -48,14 +48,14 @@ export const defaultConfig: Config = {
     scheduleParams: {
         scheduleMode: "Class",
         weekMode: "Current",
-        value: "P3.B"
+        value: "P4.B"
     },
 
     version
 };
 
 const defaultValues: Record<ScheduleMode, Value> = {
-    Class: "P3.B",
+    Class: "P4.B",
     Teacher: "Mašek Petr",
     Room: "104"
 };
