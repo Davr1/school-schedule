@@ -1,0 +1,41 @@
+:local(.page) {
+    display: grid;
+    grid:
+        "icon title"
+        "text text"
+        / auto 1fr;
+    align-items: center;
+    gap: 1rem;
+    padding: 2rem;
+
+    max-width: 40rem;
+}
+
+:local(.title) {
+    font-size: 3.5rem;
+    font-weight: 600;
+
+    .status {
+        font-weight: 800;
+        font-size: 4rem;
+        color: var(--accent-primary);
+    }
+}
+
+:local(.gone) {
+    font-size: 2rem;
+    grid-area: text;
+}
+
+:local(.icon) {
+    cursor: pointer;
+    transition: transform ease-out 0.1s;
+
+    &:active {
+        transform: scale(0.9);
+    }
+}
+
+:local(.url) {
+    color: var(--accent-secondary);
+}
